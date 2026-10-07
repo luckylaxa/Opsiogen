@@ -151,6 +151,14 @@ async function run() {
 }
 
 run().catch((err) => {
-  console.error(err);
+  if (err?.statusCode === 401 || err?.statusCode === 403) {
+    console.error(
+      `\nSanity refused the token (${err.statusCode}). Use an API token created in this project: ` +
+        `https://www.sanity.io/manage/project/${projectId}/api#tokens → Add API token → Editor.\n` +
+        `Sanity said: ${err.details?.description ?? err.message}`,
+    );
+  } else {
+    console.error(err);
+  }
   process.exit(1);
 });
