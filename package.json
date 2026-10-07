@@ -1,0 +1,43 @@
+{
+  "name": "opsiogen-website",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "next typegen && tsc --noEmit",
+    "seed": "sanity exec scripts/seed.ts",
+    "placeholders": "python3 scripts/generate-placeholders.py"
+  },
+  "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "@sanity/client": "^8.9.0",
+    "@sanity/icons": "^5.2.3",
+    "@sanity/image-url": "^2.1.1",
+    "@sanity/vision": "^6.18.0",
+    "gsap": "^3.15.0",
+    "next": "16.4.0",
+    "next-sanity": "^13.3.4",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "resend": "^6.32.1",
+    "sanity": "^6.18.0",
+    "server-only": "^0.0.1",
+    "styled-components": "^6.5.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=20.9"
+  }
+}
