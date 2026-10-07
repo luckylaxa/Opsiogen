@@ -164,7 +164,7 @@ export function SiteSearch({
           id={listId}
           role="listbox"
           aria-label="Search results"
-          className="absolute inset-x-0 top-[calc(100%+8px)] z-50 max-h-[min(70vh,560px)] min-w-[min(440px,calc(100vw-32px))] overflow-y-auto rounded-card bg-white p-2 shadow-[0_24px_60px_-12px_rgb(0_0_0/0.25),0_0_0_1px_rgb(0_0_0/0.05)]"
+          className="absolute inset-x-0 top-[calc(100%+8px)] z-50 max-h-[min(70vh,560px)] min-w-[min(440px,calc(100vw-32px))] overflow-y-auto rounded-card bg-surface p-2 dark:ring-1 dark:ring-white/10 shadow-[0_24px_60px_-12px_rgb(0_0_0/0.25),0_0_0_1px_rgb(0_0_0/0.05)]"
         >
           {groups.length === 0 && (
             <div className="px-3 py-6 text-base text-ink-2" role="status">

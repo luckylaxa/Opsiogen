@@ -74,7 +74,7 @@ export function Dock({ menu, button }: { menu: LinkItem[]; button: LinkItem }) {
         </MenuButton>
         <Link
           href={button.href}
-          className="flex items-center rounded-[clamp(7px,0.42vw,8px)] bg-band px-[clamp(14px,calc(0.6vw+11.8px),23px)] font-medium text-ink transition-colors duration-300 hover:bg-white"
+          className="theme-light flex items-center rounded-[clamp(7px,0.42vw,8px)] bg-band px-[clamp(14px,calc(0.6vw+11.8px),23px)] font-medium text-ink transition-colors duration-300 hover:bg-white"
         >
           {button.label}
         </Link>

@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* `dark:` styles apply when the visitor picks the dark theme (data-theme on <html>). */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 /*
  * Opsiogen design tokens.
  * Measured from the design reference at a 1903px viewport and scaled fluidly
@@ -19,6 +22,11 @@
   --color-dock: rgb(34 34 34 / 0.8);
   --color-ticker: #ececec;
   --color-sticker: #ffd84d;
+  --color-surface: #ffffff;
+  --color-on-ink: #ffffff;
+  --color-ink-hover: #3a3a3a;
+  --color-rule: #a9a9a9;
+  --color-error: #b42318;
 
   --font-sans: var(--font-inter-tight), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 
@@ -70,6 +78,45 @@
     --ticker-h: clamp(34px, calc(0.79vw + 31px), 48px);
   }
 
+  /*
+   * Dark theme: the same tokens with dark values. Dark cards (coal, night)
+   * stay as they are. `.theme-light` keeps an element light in both themes,
+   * e.g. light buttons and fields on dark cards and the menu.
+   */
+  [data-theme="dark"] {
+    --color-page: #101010;
+    --color-band: #1b1b1b;
+    --color-field: #222222;
+    --color-ink: #ededed;
+    --color-ink-2: #c2c2c2;
+    --color-mute: #929292;
+    --color-line: #3a3a3a;
+    --color-dock: rgb(46 46 46 / 0.85);
+    --color-ticker: #181818;
+    --color-surface: #1a1a1a;
+    --color-on-ink: #101010;
+    --color-ink-hover: #cfcfcf;
+    --color-rule: #4a4a4a;
+    --color-error: #f97066;
+    color-scheme: dark;
+  }
+
+  .theme-light {
+    --color-page: #f8f8f8;
+    --color-band: #e9e9e9;
+    --color-field: #ebebeb;
+    --color-ink: #222222;
+    --color-ink-2: #444444;
+    --color-mute: #6f6f6f;
+    --color-line: #c9c9c9;
+    --color-surface: #ffffff;
+    --color-on-ink: #ffffff;
+    --color-ink-hover: #3a3a3a;
+    --color-rule: #a9a9a9;
+    --color-error: #b42318;
+    color-scheme: light;
+  }
+
   html {
     background: var(--color-page);
     color: var(--color-ink);
@@ -110,7 +157,7 @@
   /* Dotted divider used between rows and above the footer bottom row. */
   .rule-dotted {
     height: 1px;
-    background-image: linear-gradient(to right, #a9a9a9 1.5px, transparent 1.5px);
+    background-image: linear-gradient(to right, var(--color-rule) 1.5px, transparent 1.5px);
     background-size: 5px 1px;
     background-repeat: repeat-x;
   }

@@ -3,6 +3,7 @@ import { Inter_Tight } from "next/font/google";
 import "../globals.css";
 import { getProjects, getServices, getSettings } from "@/lib/data";
 import { buildMenuGroups, buildSearchItems } from "@/lib/search";
+import { THEME_BAR, THEME_SCRIPT } from "@/lib/theme";
 import { siteUrl } from "@/lib/utils";
 import { Header } from "@/components/site/Header";
 import { Logo } from "@/components/site/Logo";
@@ -40,7 +41,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#e9e9e9",
+  themeColor: THEME_BAR.light,
 };
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
@@ -48,16 +49,19 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   const searchItems = buildSearchItems(projects, services);
   const groups = buildMenuGroups(services);
   return (
-    <html lang="en" className={interTight.variable}>
+    // The head scripts change <html> before React hydrates, hence suppressHydrationWarning.
+    <html lang="en" className={interTight.variable} suppressHydrationWarning>
       <head>
         {/* Lets CSS hide media that fades in on scroll, only when JS runs. */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+        {/* Applies a saved dark theme before the first paint. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
       </head>
       <body>
         <MenuProvider>
           <a
             href="#main"
-            className="sr-only z-[60] rounded-[var(--radius-btn)] bg-ink px-4 py-3 text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+            className="sr-only z-[60] rounded-[var(--radius-btn)] bg-ink px-4 py-3 text-on-ink focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
           >
             Skip to content
           </a>

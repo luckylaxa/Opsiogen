@@ -13,7 +13,7 @@ type Option = { value: string; label: string };
 type Props = { needs: Option[]; sources: string[]; preselect?: string | null };
 
 const field =
-  "w-full rounded-[6px] border border-transparent bg-field px-[clamp(14px,calc(0.4vw+12.5px),20px)] text-base text-ink placeholder:text-mute transition-[border-color,background-color] duration-200 hover:border-ink/20 focus:border-ink focus:bg-white focus:outline-none aria-[invalid=true]:border-[#b42318]";
+  "w-full rounded-[6px] border border-transparent bg-field px-[clamp(14px,calc(0.4vw+12.5px),20px)] text-base text-ink placeholder:text-mute transition-[border-color,background-color] duration-200 hover:border-ink/20 focus:border-ink focus:bg-surface focus:outline-none aria-[invalid=true]:border-error";
 
 const initial: EnquiryState = { status: "idle" };
 
@@ -50,7 +50,7 @@ export function ContactForm({ needs, sources, preselect }: Props) {
 
   const err = (name: string) =>
     errors[name] ? (
-      <p id={`${id}-${name}-error`} className="mt-2 text-small text-[#b42318]">
+      <p id={`${id}-${name}-error`} className="mt-2 text-small text-error">
         {errors[name]}
       </p>
     ) : null;
@@ -66,7 +66,7 @@ export function ContactForm({ needs, sources, preselect }: Props) {
         ref={status}
         tabIndex={-1}
         role="alert"
-        className={cn("outline-none sm:col-span-2", state.status === "error" ? "text-base text-[#b42318]" : "sr-only")}
+        className={cn("outline-none sm:col-span-2", state.status === "error" ? "text-base text-error" : "sr-only")}
       >
         {state.status === "error" ? state.message : ""}
       </div>
@@ -94,7 +94,7 @@ export function ContactForm({ needs, sources, preselect }: Props) {
           {needs.map((n) => (
             <label key={n.value} className="relative cursor-pointer">
               <input type="checkbox" name="needs" value={n.value} defaultChecked={checked(n.value)} className="peer sr-only" />
-              <span className="flex h-[clamp(40px,calc(0.72vw+37.3px),49px)] items-center gap-2 rounded-[7px] border border-ink/15 px-[clamp(14px,calc(0.33vw+12.8px),19px)] text-base transition-[background-color,border-color,color] duration-200 hover:border-ink/60 peer-checked:border-ink peer-checked:bg-ink peer-checked:text-white peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink [&>svg]:hidden peer-checked:[&>svg]:block">
+              <span className="flex h-[clamp(40px,calc(0.72vw+37.3px),49px)] items-center gap-2 rounded-[7px] border border-ink/15 px-[clamp(14px,calc(0.33vw+12.8px),19px)] text-base transition-[background-color,border-color,color] duration-200 hover:border-ink/60 peer-checked:border-ink peer-checked:bg-ink peer-checked:text-on-ink peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink [&>svg]:hidden peer-checked:[&>svg]:block">
                 <Check className="size-4" strokeWidth={2} />
                 {n.label}
               </span>

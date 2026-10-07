@@ -9,6 +9,7 @@ import { CloseIcon } from "@/components/ui/Icons";
 import { buttonClass } from "@/components/ui/Button";
 import { useMenu } from "./MenuContext";
 import { SiteSearch, type SearchItem } from "./SiteSearch";
+import { ThemeToggle } from "./ThemeToggle";
 
 /** Full-screen menu for small screens. Opened from the header or the dock. */
 export function MenuOverlay({
@@ -107,17 +108,20 @@ export function MenuOverlay({
         <Link href="/" className="text-[26px] font-semibold tracking-[-0.02em]" onClick={closeMenu}>
           {wordmark}
         </Link>
-        <button
-          type="button"
-          data-menu-close
-          onClick={closeMenu}
-          className="-mr-2 grid size-11 place-items-center rounded-[var(--radius-btn)] text-white"
-          aria-label="Close menu"
-        >
-          <CloseIcon className="size-7" />
-        </button>
+        <div className="-mr-2 flex items-center gap-1">
+          <ThemeToggle className="text-white hover:bg-white/10" />
+          <button
+            type="button"
+            data-menu-close
+            onClick={closeMenu}
+            className="grid size-11 place-items-center rounded-[var(--radius-btn)] text-white"
+            aria-label="Close menu"
+          >
+            <CloseIcon className="size-7" />
+          </button>
+        </div>
       </div>
-      <div data-menu-item className="relative z-10 text-ink">
+      <div data-menu-item className="theme-light relative z-10 text-ink">
         <SiteSearch items={searchItems} />
       </div>
       <nav aria-label="Menu" className="mt-[6vh] flex flex-1 flex-col">

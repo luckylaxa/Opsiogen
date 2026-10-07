@@ -98,7 +98,7 @@ function ServicesItem({ item, groups }: { item: LinkItem; groups: MenuGroup[] })
       <div
         id={`${id}-panel`}
         hidden={!open}
-        className="absolute left-[-24px] top-[calc(100%+18px)] z-50 w-[min(860px,calc(100vw-64px))] rounded-card bg-white p-[clamp(20px,1.6vw,32px)] shadow-[0_24px_60px_-12px_rgb(0_0_0/0.25),0_0_0_1px_rgb(0_0_0/0.05)] before:absolute before:inset-x-0 before:-top-5 before:h-5 before:content-['']"
+        className="absolute left-[-24px] top-[calc(100%+18px)] z-50 w-[min(860px,calc(100vw-64px))] rounded-card bg-surface p-[clamp(20px,1.6vw,32px)] dark:ring-1 dark:ring-white/10 shadow-[0_24px_60px_-12px_rgb(0_0_0/0.25),0_0_0_1px_rgb(0_0_0/0.05)] before:absolute before:inset-x-0 before:-top-5 before:h-5 before:content-['']"
       >
         <div className="grid grid-cols-3 gap-x-[clamp(20px,2vw,40px)]">
           {groups.map((g) => (

@@ -8,10 +8,10 @@ const base =
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-btn)] border font-medium transition-[background-color,color,border-color] duration-300 ease-out";
 
 const variants: Record<Variant, string> = {
-  dark: "border-ink bg-ink text-white hover:bg-[#3a3a3a] hover:border-[#3a3a3a]",
-  outline: "border-ink bg-transparent text-ink hover:bg-ink hover:text-white",
-  "outline-light": "border-white/90 bg-transparent text-white hover:bg-page hover:text-ink hover:border-page",
-  light: "border-band bg-band text-ink hover:bg-white hover:border-white",
+  dark: "border-ink bg-ink text-on-ink hover:bg-ink-hover hover:border-ink-hover",
+  outline: "border-ink bg-transparent text-ink hover:bg-ink hover:text-on-ink",
+  "outline-light": "border-white/90 bg-transparent text-white hover:bg-white hover:text-coal hover:border-white",
+  light: "theme-light border-band bg-band text-ink hover:bg-white hover:border-white",
 };
 
 const sizes: Record<Size, string> = {

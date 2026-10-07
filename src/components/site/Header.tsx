@@ -6,10 +6,11 @@ import { Logo } from "./Logo";
 import { MenuButton } from "./MenuContext";
 import { NavMenu, type MenuGroup } from "./NavMenu";
 import { SiteSearch, type SearchItem } from "./SiteSearch";
+import { ThemeToggle } from "./ThemeToggle";
 
 /**
  * Top bar from the reference: logo, menu (Services opens a drop-down), the
- * search bar and the main button. Scrolls away with the page; the floating
+ * search bar, the theme switch and the main button. Scrolls away with the page; the floating
  * dock stays.
  */
 export function Header({
@@ -32,6 +33,7 @@ export function Header({
         className="mx-[clamp(20px,2.1vw,40px)] hidden flex-1 lg:block"
       />
       <div className="ml-auto flex items-center gap-2 lg:ml-0">
+        <ThemeToggle className="hover:bg-ink/[0.07]" />
         <div className="hidden sm:block">
           <ButtonLink href={settings.headerButton.href}>{settings.headerButton.label}</ButtonLink>
         </div>

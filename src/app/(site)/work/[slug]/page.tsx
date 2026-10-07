@@ -149,7 +149,7 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
               <span className={cn(giantClass(next.name), "font-semibold uppercase text-balance transition-opacity duration-300 group-hover:opacity-60")}>
                 {next.name}
               </span>
-              <span className={cn(buttonClass("outline", "md"), "mt-[clamp(24px,calc(1.7vw+17.6px),50px)] group-hover:bg-ink group-hover:text-white")}>
+              <span className={cn(buttonClass("outline", "md"), "mt-[clamp(24px,calc(1.7vw+17.6px),50px)] group-hover:bg-ink group-hover:text-on-ink")}>
                 View project
                 <ArrowRight className="size-[1.1em] transition-transform duration-300 group-hover:translate-x-1" />
               </span>

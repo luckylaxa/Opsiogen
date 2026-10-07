@@ -59,7 +59,7 @@ function ServiceGroup({ title, items, level: Heading }: { title: string; items: 
               <span className="text-row font-medium">{s.name}</span>
               <span className="col-start-1 row-start-2 text-row text-ink-2 md:col-start-auto md:row-start-auto">{s.tagline}</span>
               <span aria-hidden="true" className="hidden md:block">
-                <span className={cn(buttonClass("outline", "md"), "group-hover:bg-ink group-hover:text-white")}>View</span>
+                <span className={cn(buttonClass("outline", "md"), "group-hover:bg-ink group-hover:text-on-ink")}>View</span>
               </span>
               <ArrowRight className="col-start-2 row-span-2 row-start-1 size-6 transition-transform duration-300 group-hover:translate-x-1 md:hidden" />
             </Link>
@@ -186,7 +186,7 @@ function ServiceCard({ service, work }: { service: Service; work: ProjectCard[] 
   const cover = work[0]?.cover;
   const pad = "px-[clamp(18px,calc(0.9vw+14px),36px)]";
   return (
-    <Link href={`/services/${service.slug}`} data-reveal className="group flex h-full flex-col overflow-hidden rounded-card bg-white">
+    <Link href={`/services/${service.slug}`} data-reveal className="group flex h-full flex-col overflow-hidden rounded-card bg-surface">
       <div className="relative aspect-[16/10] overflow-hidden bg-coal">
         {cover ? (
           <Media

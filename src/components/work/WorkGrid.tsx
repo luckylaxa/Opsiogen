@@ -43,7 +43,7 @@ export function WorkGrid({ projects, filters, pageSize, headingLevel }: Props) {
                 onClick={() => choose(f.slug)}
                 className={cn(
                   "h-[clamp(38px,calc(0.72vw+35.3px),49px)] rounded-[7px] border px-[clamp(14px,calc(0.33vw+12.8px),19px)] text-base transition-[background-color,border-color,color] duration-300",
-                  on ? "border-ink bg-ink text-white" : "border-ink/15 bg-transparent text-ink hover:border-ink/60",
+                  on ? "border-ink bg-ink text-on-ink" : "border-ink/15 bg-transparent text-ink hover:border-ink/60",
                 )}
               >
                 {f.shortName}

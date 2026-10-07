@@ -38,3 +38,10 @@ export const SearchIcon = svg(
     <path d="m16 16 4 4" />
   </>,
 );
+export const MoonIcon = svg(<path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z" />);
+export const SunIcon = svg(
+  <>
+    <circle cx="12" cy="12" r="4" />
+    <path d="M12 2.5v2m0 15v2M2.5 12h2m15 0h2M5.3 5.3l1.4 1.4m10.6 10.6 1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" />
+  </>,
+);

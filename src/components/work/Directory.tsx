@@ -101,7 +101,7 @@ export function Directory({ projects, services, pageSize, children }: Props) {
               ))}
             </Select>
           )}
-          <label className="flex h-[clamp(38px,calc(0.5vw+36px),46px)] min-w-[200px] flex-1 basis-full items-center gap-2 rounded-[6px] px-3 focus-within:bg-white lg:basis-auto">
+          <label className="flex h-[clamp(38px,calc(0.5vw+36px),46px)] min-w-[200px] flex-1 basis-full items-center gap-2 rounded-[6px] px-3 focus-within:bg-surface lg:basis-auto">
             <SearchIcon className="size-[1.1em] shrink-0 text-ink-2" />
             <span className="sr-only">Search work</span>
             <input
@@ -197,14 +197,14 @@ function Select({
         onChange={(e) => onChange(e.target.value)}
         className={cn(
           "h-[clamp(38px,calc(0.5vw+36px),46px)] cursor-pointer appearance-none rounded-[6px] border pl-[clamp(12px,0.9vw,16px)] pr-9 text-base transition-colors",
-          value ? "border-ink bg-ink text-white" : "border-ink/10 bg-white text-ink hover:border-ink/40",
+          value ? "border-ink bg-ink text-on-ink" : "border-ink/10 bg-surface text-ink hover:border-ink/40",
         )}
       >
         <option value={ALL}>{label}</option>
         {children}
       </select>
       <ChevronDown
-        className={cn("pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2", value ? "text-white" : "text-ink")}
+        className={cn("pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2", value ? "text-on-ink" : "text-ink")}
       />
     </label>
   );
@@ -267,7 +267,7 @@ function DirectoryCard({ project }: { project: ProjectCard }) {
     ...(project.industry ? ([["Industry", project.industry]] as [string, React.ReactNode][]) : []),
   ];
   return (
-    <article data-reveal className="group relative flex h-full flex-col overflow-hidden rounded-card bg-white">
+    <article data-reveal className="group relative flex h-full flex-col overflow-hidden rounded-card bg-surface">
       <div className="relative aspect-[4/3] overflow-hidden bg-night">
         <Media
           image={project.cover}

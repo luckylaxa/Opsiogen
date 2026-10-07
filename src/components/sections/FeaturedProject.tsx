@@ -40,7 +40,7 @@ export function FeaturedProject({ project, priority = true }: { project?: Projec
           href={`/work/${project.slug}`}
           className={cn(
             buttonClass("outline-light", "md"),
-            "w-fit shrink-0 group-hover:border-page group-hover:bg-page group-hover:text-ink",
+            "w-fit shrink-0 group-hover:border-white group-hover:bg-white group-hover:text-coal",
             "after:absolute after:inset-0 after:content-['']",
           )}
         >
