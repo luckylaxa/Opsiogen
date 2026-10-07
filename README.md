@@ -70,6 +70,17 @@ Layout, colours, fonts and animations are fixed in the code, so edits can't brea
 
 The six starter projects are neutral placeholders: replace or delete them before launch.
 
+## Hosting now: Vercel (free plan)
+
+Until the Hostinger plan is bought, the site runs on the Vercel project **opsiogen** (team luckylaxas-projects), linked to this repo. Every push to `claude/admiring-einstein-4nf662` redeploys it.
+
+- The Sanity project, dataset, API version and enquiry inbox are already set in Vercel → opsiogen → Settings → Environment Variables.
+- Add `SANITY_API_WRITE_TOKEN` there (and `RESEND_API_KEY` / `RESEND_FROM_EMAIL` when you have them), then redeploy: Deployments → latest → ⋯ → Redeploy.
+- `NEXT_PUBLIC_SITE_URL` is optional on Vercel; the live address is picked up automatically.
+- The free Hobby plan is for non-commercial use, so treat it as a preview until the move.
+
+To move to Hostinger later, follow the next section, point the domain at Hostinger, then delete the Vercel project.
+
 ## Deploy on Hostinger
 
 The site runs as a Node.js web app (a Business or Cloud plan). It is a standard Next.js server app: `npm run build`, then `next start`, which listens on the port Hostinger gives it.
