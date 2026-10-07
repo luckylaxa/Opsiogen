@@ -1,73 +1,65 @@
 "use client";
 
 import { useEffect } from "react";
-import { usePathname } from "next/navigation";
-import { gsap, prefersReducedMotion, ScrollTrigger } from "@/lib/gsap";
+import { gsap, prefersReducedMotion } from "@/lib/gsap";
 
-const SELECTOR = "[data-reveal]:not([data-revealed])";
+const CARD = "[data-reveal]";
 
 /**
  * Fades media in as it scrolls into view, matching the reference: cards start
  * transparent and settle to full opacity in ~0.65s with a gentle ease-out.
- * Picks up cards added later (e.g. after Load more or a filter change).
+ *
+ * Uses IntersectionObserver, so it needs no stored scroll positions and keeps
+ * working across in-site page changes, Load more, filters and late-loading
+ * images. A MutationObserver picks up cards as they are added to the page.
  */
 export function Reveal() {
-  const pathname = usePathname();
-
   useEffect(() => {
-    const pending = () => Array.from(document.querySelectorAll<HTMLElement>(SELECTOR));
+    const show = (els: HTMLElement[]) => els.forEach((el) => (el.style.opacity = "1"));
 
-    if (prefersReducedMotion()) {
-      const showAll = () => pending().forEach((el) => {
-        el.setAttribute("data-revealed", "");
-        el.style.opacity = "1";
-      });
+    if (prefersReducedMotion() || typeof IntersectionObserver === "undefined") {
+      const showAll = () => show(Array.from(document.querySelectorAll<HTMLElement>(CARD)));
       showAll();
-      const observer = new MutationObserver(showAll);
-      observer.observe(document.body, { childList: true, subtree: true });
-      return () => observer.disconnect();
+      const mo = new MutationObserver(showAll);
+      mo.observe(document.body, { childList: true, subtree: true });
+      return () => mo.disconnect();
     }
 
-    const triggers: ScrollTrigger[] = [];
-    const batch = () => {
-      const els = pending();
-      if (!els.length) return false;
-      els.forEach((el) => el.setAttribute("data-revealed", ""));
-      triggers.push(
-        ...ScrollTrigger.batch(els, {
-          start: "top 94%",
-          once: true,
-          onEnter: (items) =>
-            gsap.to(items, { opacity: 1, duration: 0.65, ease: "power1.out", stagger: 0.08, overwrite: true }),
-        }),
-      );
-      return true;
+    const io = new IntersectionObserver(
+      (entries) => {
+        const entering = entries.filter((e) => e.isIntersecting).map((e) => e.target as HTMLElement);
+        if (!entering.length) return;
+        entering.forEach((el) => {
+          io.unobserve(el);
+          el.setAttribute("data-revealed", "");
+        });
+        gsap.to(entering, { opacity: 1, duration: 0.65, ease: "power1.out", stagger: 0.08, overwrite: true });
+      },
+      // Start just before the card's top edge reaches the bottom of the screen.
+      { rootMargin: "0px 0px -6% 0px" },
+    );
+
+    const watch = (root: ParentNode) => {
+      const els = root instanceof HTMLElement && root.matches(CARD) ? [root] : [];
+      els.push(...Array.from(root.querySelectorAll<HTMLElement>(CARD)));
+      els.filter((el) => !el.hasAttribute("data-revealed")).forEach((el) => io.observe(el));
     };
 
-    batch();
-
-    // React when cards that need revealing are added, or when cards are
-    // removed (e.g. by a filter) and the rest move up into view.
-    let frame = 0;
-    const isCard = (n: Node) => n instanceof HTMLElement && (n.matches("[data-reveal]") || n.querySelector("[data-reveal]"));
-    const observer = new MutationObserver((mutations) => {
-      const added = mutations.some((m) => Array.from(m.addedNodes).some(isCard));
-      const removed = mutations.some((m) => Array.from(m.removedNodes).some(isCard));
-      if (!added && !removed) return;
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        batch();
-        ScrollTrigger.refresh();
-      });
+    watch(document);
+    const mo = new MutationObserver((mutations) => {
+      for (const m of mutations) {
+        m.addedNodes.forEach((n) => {
+          if (n instanceof HTMLElement) watch(n);
+        });
+      }
     });
-    observer.observe(document.body, { childList: true, subtree: true });
+    mo.observe(document.body, { childList: true, subtree: true });
 
     return () => {
-      cancelAnimationFrame(frame);
-      observer.disconnect();
-      triggers.forEach((t) => t.kill());
+      mo.disconnect();
+      io.disconnect();
     };
-  }, [pathname]);
+  }, []);
 
   return null;
 }
