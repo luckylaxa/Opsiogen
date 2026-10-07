@@ -101,7 +101,7 @@ async function ServicesDirectory({ section, sticker }: { section: ServicesListSe
         ))}
       </ul>
 
-      <ServiceTable services={services} countFor={(slug) => workFor([slug]).length} />
+      <ServiceCards services={services} workFor={(slug) => workFor([slug])} />
     </div>
   );
 }
@@ -162,60 +162,60 @@ function GroupCard({ group, items, work }: { group: Group; items: Service[]; wor
   );
 }
 
-/** The reference's directory table: one row per service with a View button. */
-function ServiceTable({ services, countFor }: { services: Service[]; countFor: (slug: string) => number }) {
-  const cols = "md:grid-cols-[minmax(0,4.2fr)_minmax(0,1.6fr)_minmax(0,4.6fr)_minmax(0,1.1fr)_auto]";
+/**
+ * Every service as a card, like the reference's product cards: an image from
+ * the service's latest project, the group, the name and tagline, then a View
+ * link. A swipeable row on phones, a grid from tablet up.
+ */
+function ServiceCards({ services, workFor }: { services: Service[]; workFor: (slug: string) => ProjectCard[] }) {
   return (
-    <div className="mt-[clamp(40px,calc(2.4vw+30px),90px)] px-gutter">
-      <div aria-hidden="true" className={cn("hidden gap-x-6 px-[clamp(0px,1.8vw,35px)] pb-[clamp(16px,1.6vw,40px)] text-base text-mute md:grid", cols)}>
-        <span>Service</span>
-        <span>Group</span>
-        <span>In short</span>
-        <span>Work</span>
-        <span className="w-[clamp(72px,4.7vw,90px)]" />
+    <ul className="mt-[clamp(12px,calc(0.6vw+10px),25px)] flex snap-x snap-mandatory scroll-px-gutter gap-[clamp(12px,calc(0.6vw+10px),25px)] overflow-x-auto px-gutter pb-1 [scrollbar-width:none] sm:grid sm:snap-none sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3 xl:grid-cols-4">
+      {services.map((s) => {
+        const work = workFor(s.slug);
+        return (
+          <li key={s.slug} className="w-[82%] shrink-0 snap-start sm:w-auto">
+            <ServiceCard service={s} work={work} />
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+function ServiceCard({ service, work }: { service: Service; work: ProjectCard[] }) {
+  const cover = work[0]?.cover;
+  const pad = "px-[clamp(18px,calc(0.9vw+14px),36px)]";
+  return (
+    <Link href={`/services/${service.slug}`} data-reveal className="group flex h-full flex-col overflow-hidden rounded-card bg-white">
+      <div className="relative aspect-[16/10] overflow-hidden bg-coal">
+        {cover ? (
+          <Media
+            image={cover}
+            sizes="(min-width: 1280px) 23vw, (min-width: 1024px) 31vw, (min-width: 640px) 47vw, 82vw"
+            className="transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-[1.04]"
+          />
+        ) : (
+          <span aria-hidden="true" className="absolute inset-0 grid place-items-center text-[length:clamp(36px,3vw,56px)] font-semibold tracking-[-0.03em] text-white/85">
+            {initials(service.shortName)}
+          </span>
+        )}
       </div>
-      <div className="rule-dotted" />
-      <ul>
-        {services.map((s) => {
-          const count = countFor(s.slug);
-          return (
-            <li key={s.slug}>
-              <Link
-                href={`/services/${s.slug}`}
-                className={cn(
-                  "group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-6 gap-y-1 px-[clamp(0px,1.8vw,35px)] py-[clamp(18px,calc(1.6vw+12px),44px)]",
-                  cols,
-                )}
-              >
-                <span className="flex min-w-0 items-center gap-[clamp(10px,0.8vw,16px)]">
-                  <span
-                    aria-hidden="true"
-                    className="grid size-[clamp(34px,calc(0.4vw+32px),42px)] shrink-0 place-items-center rounded-full bg-coal text-[length:clamp(11px,0.7vw,13px)] font-semibold text-white"
-                  >
-                    {initials(s.shortName)}
-                  </span>
-                  <span className="truncate text-row font-medium underline decoration-ink/30 decoration-1 underline-offset-[0.25em] transition-[text-decoration-color] group-hover:decoration-ink">
-                    {s.name}
-                  </span>
-                </span>
-                <span className="col-start-1 text-base text-ink-2 md:col-start-auto md:text-row">{GROUP_LABELS[s.group]}</span>
-                <span className="col-start-1 text-base text-ink-2 md:col-start-auto">{s.tagline}</span>
-                <span className="hidden text-row tabular-nums md:block">{count}</span>
-                <span
-                  aria-hidden="true"
-                  className={cn(
-                    buttonClass("outline", "md"),
-                    "col-start-2 row-span-3 row-start-1 w-[clamp(72px,4.7vw,90px)] border-ink/25 px-0 group-hover:border-ink group-hover:bg-ink group-hover:text-white md:col-start-auto md:row-span-1 md:row-start-auto",
-                  )}
-                >
-                  View
-                </span>
-              </Link>
-              <div className="rule-dotted" />
-            </li>
-          );
-        })}
-      </ul>
-    </div>
+      <div className={cn(pad, "pb-[clamp(18px,1.4vw,28px)] pt-[clamp(18px,1.6vw,32px)]")}>
+        <p className="text-base text-mute">{GROUP_LABELS[service.group]}</p>
+        <h3 className="mt-1 text-title font-medium text-balance">{service.name}</h3>
+      </div>
+      <div className={cn(pad, "mt-auto flex items-end justify-between gap-4 border-t border-ink/10 py-[clamp(16px,1.4vw,28px)]")}>
+        <p className="text-base text-ink-2">{service.tagline}</p>
+        {work.length > 0 && (
+          <p className="shrink-0 text-small text-mute tabular-nums">
+            {work.length} {work.length === 1 ? "project" : "projects"}
+          </p>
+        )}
+      </div>
+      <div className={cn(pad, "flex items-center justify-between border-t border-ink/10 py-[clamp(16px,1.3vw,26px)]")}>
+        <span className="text-base font-medium">View service</span>
+        <ArrowRight className="size-[clamp(20px,1.3vw,26px)] transition-transform duration-300 group-hover:translate-x-1" />
+      </div>
+    </Link>
   );
 }
