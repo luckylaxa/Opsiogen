@@ -4,6 +4,7 @@ import "../globals.css";
 import { getSettings } from "@/lib/data";
 import { siteUrl } from "@/lib/utils";
 import { Header } from "@/components/site/Header";
+import { Ticker } from "@/components/site/Ticker";
 import { Footer } from "@/components/site/Footer";
 import { Dock } from "@/components/site/Dock";
 import { ScrollTop } from "@/components/site/ScrollTop";
@@ -57,6 +58,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
           >
             Skip to content
           </a>
+          <Ticker settings={settings} />
           <Header settings={settings} />
           <main id="main" tabIndex={-1} className="outline-none">
             {children}

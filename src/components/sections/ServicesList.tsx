@@ -1,16 +1,24 @@
 import Link from "next/link";
-import type { Service, ServicesListSection } from "@/lib/types";
-import { getServices } from "@/lib/data";
+import type { Service, ServiceGroup, ServicesListSection } from "@/lib/types";
+import { getServices, getSettings } from "@/lib/data";
 import { SectionHeading } from "@/components/ui/Headings";
-import { buttonClass } from "@/components/ui/Button";
-import { ArrowRight } from "@/components/ui/Icons";
+import { ButtonLink } from "@/components/ui/Button";
+import { ArrowUpRight } from "@/components/ui/Icons";
 import { cn, GROUP_LABELS } from "@/lib/utils";
 
-const GROUPS = ["build", "grow", "create"] as const;
+const GROUPS: ServiceGroup[] = ["build", "grow", "create"];
 
-/** Services as dotted-rule rows in three groups, like the reference directory table. */
+/**
+ * The services in their three groups, laid out like the reference's plan
+ * cards: two charcoal cards and a white one, each with a big count, a button
+ * and the group's services listed underneath (name and tagline, linked).
+ */
 export async function ServicesList({ section }: { section: ServicesListSection }) {
-  const services = await getServices();
+  const [services, settings] = await Promise.all([getServices(), getSettings()]);
+  const groups = GROUPS.map((group) => ({ group, items: services.filter((s) => s.group === group) })).filter(
+    (g) => g.items.length > 0,
+  );
+
   return (
     <div data-dock="/services">
       <SectionHeading
@@ -19,37 +27,85 @@ export async function ServicesList({ section }: { section: ServicesListSection }
         text={section.text}
         className="mb-[clamp(40px,calc(3.4vw+27px),105px)]"
       />
-      <div className="flex flex-col gap-[clamp(48px,calc(2.6vw+38px),90px)] px-gutter">
-        {GROUPS.map((group) => {
-          const items = services.filter((s) => s.group === group);
-          if (!items.length) return null;
-          return <ServiceGroup key={group} title={GROUP_LABELS[group]} items={items} />;
-        })}
+      <div className="grid gap-[clamp(12px,calc(0.5vw+10px),20px)] px-gutter lg:grid-cols-3">
+        {groups.map(({ group, items }, i) => (
+          <PlanCard
+            key={group}
+            group={group}
+            items={items}
+            dark={i < groups.length - 1}
+            button={settings.headerButton}
+            headingLevel={section.heading ? "h3" : "h2"}
+          />
+        ))}
       </div>
     </div>
   );
 }
 
-function ServiceGroup({ title, items }: { title: string; items: Service[] }) {
+function PlanCard({
+  group,
+  items,
+  dark,
+  button,
+  headingLevel: Heading,
+}: {
+  group: ServiceGroup;
+  items: Service[];
+  dark: boolean;
+  button: { label: string; href: string };
+  headingLevel: "h2" | "h3";
+}) {
+  const title = GROUP_LABELS[group];
   return (
-    <section aria-label={title}>
-      <h3 className="px-[clamp(0px,1.84vw,35px)] pb-[clamp(16px,calc(1.18vw+11.6px),40px)] text-base text-ink-2">{title}</h3>
-      <div className="rule-dotted" />
-      <ul>
+    <section
+      id={group}
+      aria-labelledby={`${group}-title`}
+      data-reveal
+      className={cn(
+        "flex scroll-mt-[calc(var(--header-h)+24px)] flex-col rounded-card p-[clamp(24px,calc(1.6vw+18px),56px)]",
+        dark ? "on-dark bg-coal text-white" : "bg-white text-ink",
+      )}
+    >
+      <Heading id={`${group}-title`} className="text-plan font-medium">
+        {title}
+      </Heading>
+
+      <p className="mt-[clamp(32px,calc(2.6vw+22px),72px)] flex items-baseline gap-[0.35em]">
+        <span className="text-number font-semibold tabular-nums">{String(items.length).padStart(2, "0")}</span>
+        <span className="text-[length:clamp(16px,calc(0.4vw+14.5px),22px)]">/ services</span>
+      </p>
+      <p className={cn("mt-3 text-small", dark ? "text-white/60" : "text-mute")}>
+        {items.map((s) => s.shortName).join(" · ")}
+      </p>
+
+      {button.href && (
+        <ButtonLink
+          href={button.href}
+          variant={dark ? "outline-light" : "outline"}
+          className="mt-[clamp(28px,calc(1.3vw+23px),48px)] w-fit min-w-[clamp(180px,calc(5vw+160px),240px)]"
+        >
+          {button.label}
+        </ButtonLink>
+      )}
+
+      <ul className="mt-[clamp(40px,calc(4vw+26px),110px)] flex flex-col">
         {items.map((s) => (
           <li key={s.slug}>
             <Link
               href={`/services/${s.slug}`}
-              className="group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-6 gap-y-1 px-[clamp(0px,1.84vw,35px)] py-[clamp(20px,calc(1.24vw+15.4px),44px)] md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)_auto]"
+              className={cn(
+                "group grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-x-3 border-t py-[clamp(14px,calc(0.4vw+12.5px),20px)]",
+                dark ? "border-white/12" : "border-ink/10",
+              )}
             >
-              <span className="text-row font-medium">{s.name}</span>
-              <span className="col-start-1 row-start-2 text-row text-ink-2 md:col-start-auto md:row-start-auto">{s.tagline}</span>
-              <span aria-hidden="true" className="hidden md:block">
-                <span className={cn(buttonClass("outline", "md"), "group-hover:bg-ink group-hover:text-white")}>View</span>
+              <span aria-hidden="true" className="mt-[0.62em] size-[5px] rounded-full bg-current opacity-70" />
+              <span>
+                <span className="block text-base font-medium">{s.name}</span>
+                <span className={cn("mt-0.5 block text-small", dark ? "text-white/55" : "text-mute")}>{s.tagline}</span>
               </span>
-              <ArrowRight className="col-start-2 row-span-2 row-start-1 size-6 transition-transform duration-300 group-hover:translate-x-1 md:hidden" />
+              <ArrowUpRight className="mt-[0.15em] size-5 opacity-40 transition-[opacity,translate] duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-100" />
             </Link>
-            <div className="rule-dotted" />
           </li>
         ))}
       </ul>

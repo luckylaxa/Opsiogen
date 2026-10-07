@@ -7,5 +7,5 @@ export function generateMetadata() {
 }
 
 export default function PrivacyPage() {
-  return <CmsPage slug="privacy" />;
+  return <CmsPage slug="privacy" layout={{ hero: "article", article: true }} />;
 }

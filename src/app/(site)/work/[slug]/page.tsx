@@ -6,8 +6,10 @@ import { buildMetadata } from "@/lib/metadata";
 import { cn, giantClass } from "@/lib/utils";
 import { CoverMedia } from "@/components/media/CoverMedia";
 import { Media } from "@/components/ui/Media";
-import { ArrowRight, ExternalLink } from "@/components/ui/Icons";
-import { buttonClass } from "@/components/ui/Button";
+import { ArrowRight } from "@/components/ui/Icons";
+import { Frame } from "@/components/ui/Frame";
+import { Label, SectionHeading } from "@/components/ui/Headings";
+import { Toolbar } from "@/components/ui/Toolbar";
 import { Block } from "@/components/sections/SectionRenderer";
 import { CallToAction } from "@/components/sections/CallToAction";
 
@@ -41,32 +43,20 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
   const next = projects.length > 1 ? projects[(index + 1) % projects.length] : null;
   const meta = [project.client, project.industry].filter(Boolean).join(" · ");
   const hasResult = Boolean(project.result?.number && project.result?.label);
+  const mark = `${settings.siteTitle.charAt(0)}.`;
 
   return (
     <>
-      {/* 1–2. Title and cover, in the grey band */}
+      {/* 1–2. Title, toolbar and framed cover, in the grey band (as the reference's website pages) */}
       <section data-band className="-mt-[var(--header-h)] bg-band pb-[clamp(40px,calc(2.3vw+31.4px),76px)] pt-[calc(var(--header-h)+clamp(24px,calc(2.6vw+14.2px),65px))]">
-        <div className="flex items-start justify-between px-gutter">
-          {project.year ? (
+        <div className="flex items-start px-gutter">
+          {project.year && (
             <dl className="flex w-[clamp(64px,calc(1.5vw+58px),87px)] flex-col items-center rounded-[6px] border border-ink/70 text-center">
               <dt className="w-full border-b border-ink/70 py-[clamp(3px,0.3vw,6px)] text-small">Year</dt>
               <dd className="py-[clamp(4px,0.4vw,8px)] text-[length:clamp(17px,calc(0.6vw+14.8px),26px)] font-medium tabular-nums">
                 {project.year}
               </dd>
             </dl>
-          ) : (
-            <span />
-          )}
-          {project.liveUrl && (
-            <a
-              href={project.liveUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group inline-flex items-center gap-2 text-base font-medium"
-            >
-              <span className="link-underline">Visit site</span>
-              <ExternalLink className="size-[1.3em] transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-            </a>
           )}
         </div>
 
@@ -80,59 +70,69 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
           >
             {project.name}
           </h1>
-          {project.services.length > 0 && (
-            <ul className="mt-[clamp(20px,calc(1.64vw+13.8px),45px)] flex flex-wrap justify-center gap-x-[0.9em] gap-y-2 text-title font-medium">
-              {project.services.map((s) => (
-                <li key={s.slug}>
-                  <Link href={`/services/${s.slug}`} className="link-underline">
-                    {s.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
         </div>
 
-        <div className="mx-edge mt-[clamp(48px,calc(2.88vw+37.2px),92px)] overflow-hidden rounded-card bg-night px-[clamp(12px,7.5%,142px)] py-[clamp(12px,7.5%,142px)]">
-          <div className="relative aspect-[4/3] overflow-hidden rounded-[4px] bg-[#1d2226] sm:aspect-video">
-            <CoverMedia image={project.cover} video={project.coverVideo} priority sizes="(min-width: 640px) 85vw, 100vw" />
-          </div>
+        <div className="mt-[clamp(24px,calc(1.3vw+19px),48px)] px-gutter">
+          <Toolbar
+            label="Services"
+            mark={mark}
+            items={project.services.map((s) => ({ label: s.name, href: `/services/${s.slug}` }))}
+            action={project.liveUrl ? { label: "Visit site", href: project.liveUrl } : null}
+          />
+        </div>
+
+        <div className="mt-[clamp(32px,calc(2vw+25px),72px)] px-gutter">
+          <Frame inset="lg" mediaClassName="aspect-[4/3] sm:aspect-video">
+            <CoverMedia image={project.cover} video={project.coverVideo} priority sizes="(min-width: 640px) 75vw, 100vw" />
+          </Frame>
         </div>
       </section>
 
       {/* 3. Summary */}
       <Block>
-        <p className="max-w-[30ch] px-gutter text-h2 font-medium text-balance">{project.summary}</p>
+        <div className="px-gutter">
+          <Label className="mb-[clamp(14px,calc(0.6vw+12px),24px)] text-small text-mute">Summary</Label>
+          <p className="max-w-[36ch] text-[length:clamp(24px,calc(1.15vw+19.7px),46px)] leading-[1.25] tracking-[-0.01em] text-ink-2 text-pretty">
+            {project.summary}
+          </p>
+        </div>
       </Block>
 
-      {/* 4. Result (optional) */}
+      {/* 4. Result (optional), set like the reference's score */}
       {hasResult && (
         <Block>
-          <div className="flex flex-col items-center px-gutter text-center">
-            <p className="text-giant font-semibold tabular-nums">{project.result!.number}</p>
-            <p className="mt-[clamp(16px,calc(1.24vw+11.4px),35px)] max-w-[30ch] text-lead">{project.result!.label}</p>
+          <div className="px-gutter">
+            <p className={cn(giantClass(project.result!.label!), "max-w-[16ch] font-semibold uppercase text-balance")}>
+              {project.result!.label}
+            </p>
+            <p className="mt-[clamp(8px,0.8vw,16px)] flex items-center gap-[0.25em] pl-[clamp(0px,26vw,520px)] text-giant font-semibold tabular-nums">
+              <ArrowRight className="size-[0.62em] shrink-0" strokeWidth={1.4} />
+              {project.result!.number}
+            </p>
           </div>
         </Block>
       )}
 
-      {/* 5. Gallery */}
+      {/* 5. Gallery: each image framed, full width or two side by side */}
       {project.gallery.length > 0 && (
         <Block>
-          <ul className="grid grid-cols-2 gap-gap px-gutter">
-            {project.gallery.map((img, i) => (
-              <li
-                key={img._key}
-                data-reveal
-                className={cn("overflow-hidden rounded-card bg-band", img.size === "half" ? "col-span-2 sm:col-span-1" : "col-span-2")}
-              >
-                <Media
-                  image={img}
-                  fill={false}
-                  sizes={img.size === "half" ? "(min-width: 640px) 48vw, 100vw" : "96vw"}
-                  priority={i === 0}
-                />
-              </li>
-            ))}
+          <SectionHeading label="Gallery" className="mb-[clamp(28px,calc(2vw+20px),64px)]" />
+          <ul className="grid grid-cols-2 gap-[clamp(10px,calc(0.6vw+8px),20px)] px-gutter">
+            {project.gallery.map((img, i) => {
+              const half = img.size === "half";
+              return (
+                <li key={img._key} data-reveal className={half ? "col-span-2 sm:col-span-1" : "col-span-2"}>
+                  <Frame inset={half ? "sm" : "md"}>
+                    <Media
+                      image={img}
+                      fill={false}
+                      sizes={half ? "(min-width: 640px) 38vw, 80vw" : "76vw"}
+                      priority={i === 0}
+                    />
+                  </Frame>
+                </li>
+              );
+            })}
           </ul>
         </Block>
       )}
@@ -140,17 +140,22 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
       {/* 6. Next project */}
       {next && (
         <Block>
-          <div className="flex flex-col items-center px-gutter text-center">
-            <p className="text-base">Next project</p>
-            <Link
-              href={`/work/${next.slug}`}
-              className="group mt-[clamp(20px,calc(2.29vw+11.4px),55px)] inline-flex max-w-full flex-col items-center"
-            >
-              <span className={cn(giantClass(next.name), "font-semibold uppercase text-balance transition-opacity duration-300 group-hover:opacity-60")}>
-                {next.name}
-              </span>
-              <span className={cn(buttonClass("outline", "md"), "mt-[clamp(24px,calc(1.7vw+17.6px),50px)] group-hover:bg-ink group-hover:text-white")}>
-                View project
+          <div className="grid items-end gap-y-[clamp(28px,2.4vw,48px)] gap-x-gap px-gutter md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+            <div>
+              <Label className="mb-[clamp(16px,calc(1.24vw+11.4px),35px)]">Next project</Label>
+              <p className="max-w-[13.5ch] text-h2 font-medium text-balance">{next.name}</p>
+              <p className="mt-3 text-base text-ink-2">{[next.client, next.industry].filter(Boolean).join(" · ")}</p>
+            </div>
+            <Link href={`/work/${next.slug}`} className="group block" aria-label={`Next project: ${next.name}`}>
+              <Frame inset="md" mediaClassName="aspect-video">
+                <Media
+                  image={next.cover}
+                  sizes="(min-width: 768px) 50vw, 90vw"
+                  className="transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-[1.03]"
+                />
+              </Frame>
+              <span className="mt-4 inline-flex items-center gap-2 text-base font-medium">
+                <span className="link-underline">View project</span>
                 <ArrowRight className="size-[1.1em] transition-transform duration-300 group-hover:translate-x-1" />
               </span>
             </Link>

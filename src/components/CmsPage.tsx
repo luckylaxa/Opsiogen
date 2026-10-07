@@ -2,13 +2,13 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getPage, getSettings } from "@/lib/data";
 import { buildMetadata } from "@/lib/metadata";
-import { SectionRenderer } from "@/components/sections/SectionRenderer";
+import { SectionRenderer, type PageLayout } from "@/components/sections/SectionRenderer";
 
 /** A page built from CMS sections (Home, Work, Services, About, Contact, Privacy and new pages). */
-export async function CmsPage({ slug, after }: { slug: string; after?: React.ReactNode }) {
+export async function CmsPage({ slug, after, layout }: { slug: string; after?: React.ReactNode; layout?: PageLayout }) {
   const page = await getPage(slug);
   if (!page) notFound();
-  return <SectionRenderer sections={page.sections} after={after} />;
+  return <SectionRenderer sections={page.sections} after={after} layout={layout} />;
 }
 
 export async function cmsMetadata(slug: string, path: string): Promise<Metadata> {

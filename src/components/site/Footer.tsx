@@ -65,6 +65,7 @@ export function Footer({ settings }: { settings: SiteSettings }) {
         </p>
         {settings.socialLinks.length > 0 && (
           <ul className="flex flex-wrap items-center gap-x-[clamp(16px,1.6vw,30px)] gap-y-2">
+            <li className="font-medium text-ink">Connect:</li>
             {settings.socialLinks.map((s) => (
               <li key={s._key ?? s.href}>
                 <a href={s.href} target="_blank" rel="noopener noreferrer" className="link-fade">

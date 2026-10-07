@@ -7,5 +7,5 @@ export function generateMetadata() {
 }
 
 export default function AboutPage() {
-  return <CmsPage slug="about" />;
+  return <CmsPage slug="about" layout={{ hero: "showcase" }} />;
 }
