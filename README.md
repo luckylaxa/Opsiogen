@@ -70,15 +70,40 @@ Layout, colours, fonts and animations are fixed in the code, so edits can't brea
 
 The six starter projects are neutral placeholders: replace or delete them before launch.
 
-## Deploy from GitHub
+## Deploy on Hostinger
 
-The site is a standard Next.js app (`npm run build`, then `npm start`).
+The site runs as a Node.js web app (a Business or Cloud plan). It is a standard Next.js server app: `npm run build`, then `next start`, which listens on the port Hostinger gives it.
 
-**Vercel** (use a Pro plan for a commercial site): import the GitHub repo, add the variables from `.env.local` under Settings → Environment Variables, deploy. Every push to the main branch redeploys.
+1. hPanel → **Websites** → **Add website** → **Node.js Apps**.
+2. Choose **Import Git repository**, connect GitHub and pick `luckylaxa/Opsiogen`, branch `claude/admiring-einstein-4nf662` (or `main` once that branch is merged).
+   No GitHub? Choose the ZIP upload instead and upload a ZIP of this folder **without** `node_modules`, `.next` and `.env.local`.
+3. Check the build settings Hostinger fills in:
 
-**Hostinger** (Business or Cloud plan with Node.js web apps): Websites → Add website → Node.js app → connect the GitHub repo. Set Node 20+, build command `npm run build`, start command `npm start`, add the environment variables, deploy.
+   | Setting | Value |
+   | --- | --- |
+   | Framework | Next.js |
+   | Node.js version | 22.x (20.x also works; 18.x does not) |
+   | Build command | `npm run build` |
+   | Output directory | `.next` |
 
-After the first deploy: set `NEXT_PUBLIC_SITE_URL` to the live address, add that address to Sanity CORS origins (with credentials), and point your domain at the host.
+4. **Environment variables**: add these before the first deploy. Values starting `NEXT_PUBLIC_` are baked in during the build, so if you change one later, redeploy.
+
+   | Variable | Value |
+   | --- | --- |
+   | `NEXT_PUBLIC_SITE_URL` | The live address, e.g. `https://www.opsiogen.com` (used for SEO links, the sitemap and the contact form's security check) |
+   | `NEXT_PUBLIC_SANITY_PROJECT_ID` | `79m429dl` |
+   | `NEXT_PUBLIC_SANITY_DATASET` | `production` |
+   | `NEXT_PUBLIC_SANITY_API_VERSION` | `2026-02-01` |
+   | `SANITY_API_WRITE_TOKEN` | Your Sanity Editor token (saves enquiries to the studio) |
+   | `RESEND_API_KEY` | From resend.com → API Keys (emails each enquiry) |
+   | `RESEND_FROM_EMAIL` | A sender on a domain verified in Resend |
+   | `ENQUIRY_TO_EMAIL` | `opsiogen@gmail.com` |
+
+   On the live site the contact form needs at least the Sanity token or the two Resend values; with neither it shows an error instead of pretending to send.
+5. **Deploy**. Every later push to the connected branch rebuilds and restarts the site automatically.
+6. Connect your domain to the app in hPanel, then in [Sanity → API → CORS origins](https://www.sanity.io/manage/project/79m429dl/api) add the live address with **Allow credentials** ticked, so `/studio` can sign in.
+
+Studio edits reach the live site within a minute; no redeploy is needed for content.
 
 ## Useful commands
 
