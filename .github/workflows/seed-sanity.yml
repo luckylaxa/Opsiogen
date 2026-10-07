@@ -1,0 +1,33 @@
+# Loads the starter content and placeholder images into Sanity.
+# Run it from GitHub → Actions → "Seed Sanity" → Run workflow.
+# Needs the repository secret SANITY_API_WRITE_TOKEN (Editor token).
+# Safe to run again: documents that already exist are left untouched.
+name: Seed Sanity
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SANITY_PROJECT_ID: 79m429dl
+      NEXT_PUBLIC_SANITY_DATASET: production
+      SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
+    steps:
+      - name: Check the token secret is set
+        run: |
+          if [ -z "$SANITY_API_WRITE_TOKEN" ]; then
+            echo "::error::Add the SANITY_API_WRITE_TOKEN repository secret (Settings → Secrets and variables → Actions)."
+            exit 1
+          fi
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run seed

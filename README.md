@@ -38,7 +38,11 @@ The site uses the Sanity project **Opsiogen Marketing Website** (`79m429dl`), da
 
 1. In [sanity.io/manage → project → Datasets](https://www.sanity.io/manage/project/79m429dl/datasets), check there is a dataset called `production` set to **Public**. Create it if it is missing.
 2. In **API → CORS origins**, add `http://localhost:3000` with **Allow credentials** ticked (and your live address once the site is deployed). The studio at `/studio` needs this to sign in.
-3. With `SANITY_API_WRITE_TOKEN` in `.env.local`, load the starter content and placeholder images: `npm run seed`. It never overwrites documents that already exist, so it is safe to run again.
+3. Load the starter content and placeholder images, either:
+   - on your computer, with `SANITY_API_WRITE_TOKEN` in `.env.local`: `npm run seed`, or
+   - on GitHub: add the token as the repository secret `SANITY_API_WRITE_TOKEN` (Settings → Secrets and variables → Actions), then Actions → **Seed Sanity** → **Run workflow**.
+
+   Either way it never overwrites documents that already exist, so it is safe to run again.
 4. Run `npm run dev`, open `http://localhost:3000/studio`, sign in and start editing.
 
 Until the seed has run, the site shows the starter content from `src/content/seed-data.ts`.
