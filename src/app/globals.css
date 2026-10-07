@@ -17,9 +17,6 @@
   --color-night: #121619;
   --color-coal: #222222;
   --color-dock: rgb(34 34 34 / 0.8);
-  --color-ticker: #ececec;
-  --color-sand: #f6efeb;
-  --color-faint: #bdbdbd;
 
   --font-sans: var(--font-inter-tight), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 
@@ -33,18 +30,6 @@
   --text-giant-l: clamp(36px, 6.1vw, 140px);
   --text-giant-l--line-height: 1.02;
   --text-giant-l--letter-spacing: -0.01em;
-  --text-display: clamp(36px, calc(2.9vw + 22px), 92px);
-  --text-display--line-height: 1.04;
-  --text-display--letter-spacing: -0.025em;
-  --text-statement: clamp(24px, calc(1.75vw + 17.4px), 58px);
-  --text-statement--line-height: 1.22;
-  --text-statement--letter-spacing: -0.01em;
-  --text-number: clamp(44px, calc(2.1vw + 33px), 84px);
-  --text-number--line-height: 0.95;
-  --text-number--letter-spacing: -0.03em;
-  --text-plan: clamp(24px, calc(0.85vw + 20.8px), 38px);
-  --text-plan--line-height: 1.12;
-  --text-plan--letter-spacing: -0.015em;
   --text-h2: clamp(32px, calc(1.505vw + 26.36px), 55px);
   --text-h2--line-height: 1.18;
   --text-h2--letter-spacing: -0.01em;
@@ -72,7 +57,6 @@
   --spacing-block: clamp(40px, calc(3.93vw + 25.3px), 100px);
 
   --radius-card: clamp(8px, calc(0.262vw + 7px), 12px);
-  --radius-tile: clamp(6px, calc(0.13vw + 5.5px), 8px);
   --radius-btn: 6px;
 
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
@@ -81,7 +65,6 @@
 @layer base {
   :root {
     --header-h: clamp(64px, calc(1.57vw + 58.1px), 88px);
-    --ticker-h: clamp(34px, calc(0.79vw + 31px), 48px);
   }
 
   html {
@@ -147,56 +130,6 @@
   }
 }
 
-/* Endless horizontal loops: the track holds two identical copies and slides by one. */
-@keyframes marquee {
-  to {
-    transform: translate3d(-50%, 0, 0);
-  }
-}
-.marquee {
-  display: flex;
-  width: max-content;
-  animation: marquee var(--marquee-duration, 40s) linear infinite;
-}
-.marquee-reverse {
-  animation-direction: reverse;
-}
-.marquee-hover:hover .marquee,
-.marquee-hover:focus-within .marquee {
-  animation-play-state: paused;
-}
-
-/* Collage columns in the call-to-action band drift slowly up or down. */
-@keyframes drift {
-  to {
-    transform: translate3d(0, -50%, 0);
-  }
-}
-.drift {
-  animation: drift var(--drift-duration, 36s) linear infinite;
-}
-.drift-reverse {
-  animation-direction: reverse;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-.spin-slow {
-  animation: spin 22s linear infinite;
-}
-
-/* Words fill from light grey to ink on scroll (see components/motion/RevealText.tsx). */
-.reveal-words[data-armed] [data-word] {
-  --fill: 0%;
-  color: transparent;
-  background-image: linear-gradient(to right, var(--color-ink) var(--fill), var(--color-faint) var(--fill));
-  -webkit-background-clip: text;
-  background-clip: text;
-}
-
 /* Media fades in as it enters the viewport (see components/motion/Reveal.tsx). */
 @media (prefers-reduced-motion: no-preference) {
   .js [data-reveal] {
@@ -213,10 +146,7 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  .dock-in,
-  .marquee,
-  .drift,
-  .spin-slow {
+  .dock-in {
     animation: none !important;
   }
 }
