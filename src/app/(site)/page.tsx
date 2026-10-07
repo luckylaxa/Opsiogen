@@ -7,5 +7,5 @@ export function generateMetadata() {
 }
 
 export default function HomePage() {
-  return <CmsPage slug="home" />;
+  return <CmsPage slug="home" layout={{ stickers: true, services: "directory", cta: "dual" }} />;
 }

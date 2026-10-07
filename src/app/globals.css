@@ -17,6 +17,8 @@
   --color-night: #121619;
   --color-coal: #222222;
   --color-dock: rgb(34 34 34 / 0.8);
+  --color-ticker: #ececec;
+  --color-sticker: #ffd84d;
 
   --font-sans: var(--font-inter-tight), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 
@@ -65,6 +67,7 @@
 @layer base {
   :root {
     --header-h: clamp(64px, calc(1.57vw + 58.1px), 88px);
+    --ticker-h: clamp(34px, calc(0.79vw + 31px), 48px);
   }
 
   html {
@@ -130,6 +133,22 @@
   }
 }
 
+/* Endless horizontal loop: the track holds two identical copies and slides by one. */
+@keyframes marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee var(--marquee-duration, 40s) linear infinite;
+}
+.marquee-hover:hover .marquee,
+.marquee-hover:focus-within .marquee {
+  animation-play-state: paused;
+}
+
 /* Media fades in as it enters the viewport (see components/motion/Reveal.tsx). */
 @media (prefers-reduced-motion: no-preference) {
   .js [data-reveal] {
@@ -146,7 +165,8 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  .dock-in {
+  .dock-in,
+  .marquee {
     animation: none !important;
   }
 }

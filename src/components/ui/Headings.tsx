@@ -1,4 +1,5 @@
 import { cn, giantClass } from "@/lib/utils";
+import { Sticker } from "./Sticker";
 
 /** Small label above a heading, e.g. “Latest”. */
 export function Label({ children, className }: { children: React.ReactNode; className?: string }) {
@@ -36,6 +37,7 @@ export function GiantHeading({
   text,
   as: Tag = "h2",
   labelStyle = "plain",
+  sticker,
   className,
   children,
 }: {
@@ -44,9 +46,25 @@ export function GiantHeading({
   text?: string | null;
   as?: "h1" | "h2" | "p";
   labelStyle?: "plain" | "pill";
+  /** Mark shown on a yellow sticker over the end of the title. */
+  sticker?: string;
   className?: string;
   children?: React.ReactNode;
 }) {
+  // Keep the sticker on the same line as the last word.
+  const words = heading.trim().split(/\s+/);
+  const last = words.pop();
+  const title = sticker ? (
+    <>
+      {words.length > 0 && `${words.join(" ")} `}
+      <span className="whitespace-nowrap">
+        {last}
+        <Sticker mark={sticker} />
+      </span>
+    </>
+  ) : (
+    heading
+  );
   return (
     <div className={cn("flex flex-col items-center px-gutter text-center", className)}>
       {label &&
@@ -57,7 +75,7 @@ export function GiantHeading({
         ) : (
           <Label className="mb-[clamp(20px,calc(2.29vw+11.4px),55px)]">{label}</Label>
         ))}
-      <Tag className={cn(giantClass(heading), "w-full font-semibold uppercase text-balance [overflow-wrap:anywhere]")}>{heading}</Tag>
+      <Tag className={cn(giantClass(heading), "w-full font-semibold uppercase text-balance [overflow-wrap:anywhere]")}>{title}</Tag>
       {text && (
         <p className="mt-[clamp(20px,calc(1.64vw+13.8px),45px)] max-w-[34ch] text-lead text-ink text-balance">{text}</p>
       )}

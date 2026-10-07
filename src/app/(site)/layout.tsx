@@ -1,9 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Inter_Tight } from "next/font/google";
 import "../globals.css";
-import { getSettings } from "@/lib/data";
+import { getProjects, getServices, getSettings } from "@/lib/data";
+import { buildMenuGroups, buildSearchItems } from "@/lib/search";
 import { siteUrl } from "@/lib/utils";
 import { Header } from "@/components/site/Header";
+import { Ticker } from "@/components/site/Ticker";
 import { Footer } from "@/components/site/Footer";
 import { Dock } from "@/components/site/Dock";
 import { ScrollTop } from "@/components/site/ScrollTop";
@@ -41,7 +43,9 @@ export const viewport: Viewport = {
 };
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const settings = await getSettings();
+  const [settings, projects, services] = await Promise.all([getSettings(), getProjects(), getServices()]);
+  const searchItems = buildSearchItems(projects, services);
+  const groups = buildMenuGroups(services);
   const mark = `${settings.siteTitle.charAt(0)}.`;
   return (
     <html lang="en" className={interTight.variable}>
@@ -57,7 +61,8 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
           >
             Skip to content
           </a>
-          <Header settings={settings} />
+          <Ticker settings={settings} />
+          <Header settings={settings} groups={groups} searchItems={searchItems} />
           <main id="main" tabIndex={-1} className="outline-none">
             {children}
           </main>
@@ -68,6 +73,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
             menu={settings.menu}
             button={settings.headerButton}
             wordmark={settings.siteTitle}
+            searchItems={searchItems}
           />
           <Reveal />
         </MenuProvider>

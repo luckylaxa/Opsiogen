@@ -10,6 +10,16 @@ export function giantClass(text: string) {
   return "text-giant-l";
 }
 
+/** Up to two initials, e.g. “Product Design” → “PD”, for round avatars. */
+export function initials(text: string) {
+  return text
+    .split(/[^A-Za-z0-9]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w.charAt(0).toUpperCase())
+    .join("");
+}
+
 export const GROUP_LABELS = { build: "Build", grow: "Grow", create: "Create" } as const;
 
 export function isExternal(href: string) {

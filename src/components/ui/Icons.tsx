@@ -32,3 +32,9 @@ export const ExternalLink = svg(
 );
 export const Check = svg(<path d="m5 12.5 4.5 4.5L19 7.5" />);
 export const ChevronDown = svg(<path d="m6 9 6 6 6-6" />);
+export const SearchIcon = svg(
+  <>
+    <circle cx="11" cy="11" r="6.5" />
+    <path d="m16 16 4 4" />
+  </>,
+);

@@ -6,7 +6,7 @@ import type { ProjectCard as Card } from "@/lib/types";
 import { Media } from "@/components/ui/Media";
 import { ArrowUpRight } from "@/components/ui/Icons";
 import { prefersReducedMotion } from "@/lib/gsap";
-import { cn } from "@/lib/utils";
+import { cn, initials } from "@/lib/utils";
 
 const SIZES = "(min-width: 1024px) 31vw, (min-width: 640px) 47vw, 100vw";
 
@@ -63,15 +63,22 @@ export function ProjectCard({ project, headingLevel = "h3" }: { project: Card; h
           </div>
         </div>
       </div>
-      <div className="mt-[clamp(14px,calc(0.79vw+11px),26px)] flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <Heading className="text-title">
-          <Link href={href} className="font-medium after:absolute after:inset-0 after:rounded-card focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-4 focus-visible:after:outline-ink">
+      <div className="mt-[clamp(14px,calc(0.79vw+11px),26px)] flex min-w-0 items-center gap-x-[0.45em] text-title">
+        <Heading className="min-w-0 truncate font-medium">
+          <Link href={href} className="after:absolute after:inset-0 after:rounded-card focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-4 focus-visible:after:outline-ink">
             {project.name}
           </Link>
-          <span className="mx-[0.45em] text-small text-mute">for</span>
-          <span className="text-ink-2">{project.client}</span>
         </Heading>
-        {tag && <p className="text-small text-mute">{project.services.map((s) => s.shortName).join(" · ")}</p>}
+        <span className="flex min-w-0 shrink-[3] items-center gap-[0.4em]">
+          <span className="text-small text-mute">for</span>
+          <span
+            aria-hidden="true"
+            className="grid size-[clamp(28px,calc(0.6vw+24px),40px)] shrink-0 place-items-center rounded-full bg-coal text-[length:clamp(10px,0.6vw,12px)] font-semibold text-white"
+          >
+            {initials(project.client)}
+          </span>
+          <span className="truncate text-ink-2">{project.client}</span>
+        </span>
       </div>
     </article>
   );

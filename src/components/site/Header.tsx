@@ -4,26 +4,34 @@ import { ButtonLink } from "@/components/ui/Button";
 import { MenuIcon } from "@/components/ui/Icons";
 import { Logo } from "./Logo";
 import { MenuButton } from "./MenuContext";
+import { NavMenu, type MenuGroup } from "./NavMenu";
+import { SiteSearch, type SearchItem } from "./SiteSearch";
 
-/** Top bar. Scrolls away with the page; the floating dock stays. */
-export function Header({ settings }: { settings: SiteSettings }) {
+/**
+ * Top bar from the reference: logo, menu (Services opens a drop-down), the
+ * search bar and the main button. Scrolls away with the page; the floating
+ * dock stays.
+ */
+export function Header({
+  settings,
+  groups,
+  searchItems,
+}: {
+  settings: SiteSettings;
+  groups: MenuGroup[];
+  searchItems: SearchItem[];
+}) {
   return (
     <header className="relative z-30 flex h-[var(--header-h)] items-center px-gutter">
       <Link href="/" className="link-fade shrink-0" aria-label={`${settings.siteTitle} home`}>
         <Logo logo={settings.logo} name={settings.siteTitle} />
       </Link>
-      <nav aria-label="Main" className="ml-[clamp(40px,4.2vw,80px)] hidden lg:block">
-        <ul className="flex items-center gap-[clamp(18px,1.3vw,25px)]">
-          {settings.menu.map((item) => (
-            <li key={item._key ?? item.href}>
-              <Link href={item.href} className="link-fade text-base">
-                {item.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
-      <div className="ml-auto flex items-center gap-2">
+      <NavMenu menu={settings.menu} groups={groups} />
+      <SiteSearch
+        items={searchItems}
+        className="mx-[clamp(20px,2.1vw,40px)] hidden flex-1 lg:block"
+      />
+      <div className="ml-auto flex items-center gap-2 lg:ml-0">
         <div className="hidden sm:block">
           <ButtonLink href={settings.headerButton.href}>{settings.headerButton.label}</ButtonLink>
         </div>

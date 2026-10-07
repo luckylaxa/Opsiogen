@@ -8,9 +8,20 @@ import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import { CloseIcon } from "@/components/ui/Icons";
 import { buttonClass } from "@/components/ui/Button";
 import { useMenu } from "./MenuContext";
+import { SiteSearch, type SearchItem } from "./SiteSearch";
 
 /** Full-screen menu for small screens. Opened from the header or the dock. */
-export function MenuOverlay({ menu, button, wordmark }: { menu: LinkItem[]; button: LinkItem; wordmark: React.ReactNode }) {
+export function MenuOverlay({
+  menu,
+  button,
+  wordmark,
+  searchItems,
+}: {
+  menu: LinkItem[];
+  button: LinkItem;
+  wordmark: React.ReactNode;
+  searchItems: SearchItem[];
+}) {
   const { open, closeMenu } = useMenu();
   const panel = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
@@ -106,7 +117,10 @@ export function MenuOverlay({ menu, button, wordmark }: { menu: LinkItem[]; butt
           <CloseIcon className="size-7" />
         </button>
       </div>
-      <nav aria-label="Menu" className="mt-[8vh] flex flex-1 flex-col">
+      <div data-menu-item className="relative z-10 text-ink">
+        <SiteSearch items={searchItems} />
+      </div>
+      <nav aria-label="Menu" className="mt-[6vh] flex flex-1 flex-col">
         <ul className="flex flex-col gap-1">
           {menu.map((item) => {
             const active = pathname === item.href || pathname.startsWith(`${item.href}/`);

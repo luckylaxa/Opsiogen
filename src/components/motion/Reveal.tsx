@@ -46,18 +46,18 @@ export function Reveal() {
 
     batch();
 
-    // Only react when nodes that need revealing are added.
+    // React when cards that need revealing are added, or when cards are
+    // removed (e.g. by a filter) and the rest move up into view.
     let frame = 0;
+    const isCard = (n: Node) => n instanceof HTMLElement && (n.matches("[data-reveal]") || n.querySelector("[data-reveal]"));
     const observer = new MutationObserver((mutations) => {
-      const added = mutations.some((m) =>
-        Array.from(m.addedNodes).some(
-          (n) => n instanceof HTMLElement && (n.matches(SELECTOR) || n.querySelector(SELECTOR)),
-        ),
-      );
-      if (!added) return;
+      const added = mutations.some((m) => Array.from(m.addedNodes).some(isCard));
+      const removed = mutations.some((m) => Array.from(m.removedNodes).some(isCard));
+      if (!added && !removed) return;
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
-        if (batch()) ScrollTrigger.refresh();
+        batch();
+        ScrollTrigger.refresh();
       });
     });
     observer.observe(document.body, { childList: true, subtree: true });

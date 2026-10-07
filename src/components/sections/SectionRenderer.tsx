@@ -12,13 +12,33 @@ export function Block({ children, className = "" }: { children: React.ReactNode;
   return <section className={`mt-section first:mt-0 [[data-band]+&]:mt-after-band ${className}`}>{children}</section>;
 }
 
+/** Per-page presentation choices; the content always comes from the CMS. */
+export type PageLayout = {
+  /** Yellow sticker on giant section titles. */
+  stickers?: boolean;
+  /** Services as plain rows, or as group cards plus a directory table. */
+  services?: "rows" | "directory";
+  /** One call-to-action card, or two side by side. */
+  cta?: "single" | "dual";
+};
+
 /**
  * Renders a page's CMS sections in order. A hero followed directly by a
  * featured project share one grey band, as in the reference.
  * `after` renders right after the first hero (used for the contact form).
  */
-export async function SectionRenderer({ sections, after }: { sections: Section[]; after?: React.ReactNode }) {
+export async function SectionRenderer({
+  sections,
+  after,
+  layout = {},
+}: {
+  sections: Section[];
+  after?: React.ReactNode;
+  layout?: PageLayout;
+}) {
   const settings = await getSettings();
+  const mark = `${settings.siteTitle.charAt(0)}.`;
+  const sticker = layout.stickers ? mark : undefined;
   const out: React.ReactNode[] = [];
   let afterPlaced = false;
 
@@ -59,14 +79,14 @@ export async function SectionRenderer({ sections, after }: { sections: Section[]
       case "projectGrid":
         out.push(
           <Block key={section._key}>
-            <ProjectGrid section={section} />
+            <ProjectGrid section={section} sticker={sticker} />
           </Block>,
         );
         break;
       case "servicesList":
         out.push(
           <Block key={section._key}>
-            <ServicesList section={section} />
+            <ServicesList section={section} variant={layout.services} sticker={sticker} />
           </Block>,
         );
         break;
@@ -87,7 +107,7 @@ export async function SectionRenderer({ sections, after }: { sections: Section[]
       case "callToAction":
         out.push(
           <Block key={section._key}>
-            <CallToAction cta={settings.cta} />
+            <CallToAction cta={settings.cta} variant={layout.cta} />
           </Block>,
         );
         break;
