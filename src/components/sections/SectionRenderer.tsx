@@ -16,8 +16,8 @@ export function Block({ children, className = "" }: { children: React.ReactNode;
 export type PageLayout = {
   /** Logo mark over the end of giant section titles. */
   stickers?: boolean;
-  /** Services as plain rows, or as group cards plus a directory table. */
-  services?: "rows" | "directory";
+  /** Services as plain rows, group cards then service cards, or each group's card beside its services. */
+  services?: "rows" | "directory" | "groups";
   /** One call-to-action card, or two side by side. */
   cta?: "single" | "dual";
 };

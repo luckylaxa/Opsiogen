@@ -11,8 +11,9 @@ const GROUPS = ["build", "grow", "create"] as const;
 
 /**
  * Services in their three groups. `rows`: dotted-rule rows per group.
- * `directory`: the reference's creators block, with a giant title, a dark
- * card per group and every service in a table with a View button.
+ * `directory`: a giant title, a dark card per group, then a card per service.
+ * `groups`: each group's dark card beside its own service cards (the
+ * Services page, where the group cards are the targets of /services#group).
  */
 export async function ServicesList({
   section,
@@ -20,10 +21,11 @@ export async function ServicesList({
   sticker,
 }: {
   section: ServicesListSection;
-  variant?: "rows" | "directory";
+  variant?: "rows" | "directory" | "groups";
   sticker?: boolean;
 }) {
   if (variant === "directory") return <ServicesDirectory section={section} sticker={sticker} />;
+  if (variant === "groups") return <ServicesGroups section={section} sticker={sticker} />;
   const services = await getServices();
   return (
     <div data-dock="/services">
@@ -71,52 +73,102 @@ function ServiceGroup({ title, items, level: Heading }: { title: string; items: 
   );
 }
 
-async function ServicesDirectory({ section, sticker }: { section: ServicesListSection; sticker?: boolean }) {
+const CARD_GAP = "gap-[clamp(12px,calc(0.6vw+10px),25px)]";
+
+/** Services, the projects tagged with them, and the non-empty groups. */
+async function loadGroups() {
   const [services, projects] = await Promise.all([getServices(), getProjects()]);
   const workFor = (slugs: string[]) => projects.filter((p) => p.services.some((s) => slugs.includes(s.slug)));
   const groups = GROUPS.map((group) => {
     const items = services.filter((s) => s.group === group);
     return { group, items, work: workFor(items.map((s) => s.slug)) };
   }).filter((g) => g.items.length > 0);
+  return { services, groups, workFor };
+}
 
+function ListHeading({ section, sticker }: { section: ServicesListSection; sticker?: boolean }) {
+  return section.heading ? (
+    <GiantHeading
+      label={section.label}
+      heading={section.heading}
+      text={section.text}
+      sticker={sticker}
+      className="mb-[clamp(48px,calc(3.4vw+35.2px),100px)]"
+    />
+  ) : (
+    <SectionHeading label={section.label} text={section.text} className="mb-[clamp(40px,calc(3.4vw+27px),105px)]" />
+  );
+}
+
+async function ServicesDirectory({ section, sticker }: { section: ServicesListSection; sticker?: boolean }) {
+  const { services, groups, workFor } = await loadGroups();
   return (
     <div data-dock="/services">
-      {section.heading ? (
-        <GiantHeading
-          label={section.label}
-          heading={section.heading}
-          text={section.text}
-          sticker={sticker}
-          className="mb-[clamp(48px,calc(3.4vw+35.2px),100px)]"
-        />
-      ) : (
-        <SectionHeading label={section.label} text={section.text} className="mb-[clamp(40px,calc(3.4vw+27px),105px)]" />
-      )}
+      <ListHeading section={section} sticker={sticker} />
 
-      <ul className="grid gap-[clamp(12px,calc(0.6vw+10px),25px)] px-gutter lg:grid-cols-3">
+      <ul className={cn("grid px-gutter lg:grid-cols-3", CARD_GAP)}>
         {groups.map((g) => (
           <li key={g.group}>
-            <GroupCard group={g.group} items={g.items} work={g.work} />
+            <GroupCard group={g.group} items={g.items} work={g.work} href={`/services#${g.group}`} level="h3" />
           </li>
         ))}
       </ul>
 
-      <ServiceCards services={services} workFor={(slug) => workFor([slug])} />
+      <ServiceCards
+        services={services}
+        workFor={(slug) => workFor([slug])}
+        className="mt-[clamp(12px,calc(0.6vw+10px),25px)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+      />
     </div>
   );
 }
 
-/** Dark profile card from the reference's creators block, one per group. */
-function GroupCard({ group, items, work }: { group: Group; items: Service[]; work: ProjectCard[] }) {
+/**
+ * One block per group: the group's dark card, then its service cards. From
+ * desktop up the dark card sits on the left at the full height of the
+ * service cards beside it.
+ */
+async function ServicesGroups({ section, sticker }: { section: ServicesListSection; sticker?: boolean }) {
+  const { groups, workFor } = await loadGroups();
+  return (
+    <div data-dock="/services">
+      <ListHeading section={section} sticker={sticker} />
+
+      <div className="flex flex-col gap-[clamp(48px,calc(2.6vw+38px),90px)] px-gutter">
+        {groups.map((g) => (
+          <section key={g.group} id={g.group} aria-label={GROUP_LABELS[g.group]} className={cn("grid scroll-mt-8 lg:grid-cols-3", CARD_GAP)}>
+            <GroupCard group={g.group} items={g.items} work={g.work} level={section.heading ? "h3" : "h2"} />
+            <ServiceCards
+              services={g.items}
+              workFor={(slug) => workFor([slug])}
+              className="-mx-gutter sm:mx-0 sm:grid-cols-2 sm:px-0 lg:col-span-2"
+            />
+          </section>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Dark profile card from the reference's creators block, one per group. A link when given `href`. */
+function GroupCard({
+  group,
+  items,
+  work,
+  href,
+  level: Heading,
+}: {
+  group: Group;
+  items: Service[];
+  work: ProjectCard[];
+  href?: string;
+  level: "h2" | "h3";
+}) {
   const title = GROUP_LABELS[group];
   const cover = work[0]?.cover;
   const dots = Math.min(Math.max(work.length, 1), 5);
-  return (
-    <Link
-      href={`/services#${group}`}
-      data-reveal
-      className="on-dark group relative flex h-full min-h-[clamp(400px,calc(13vw+240px),640px)] flex-col overflow-hidden rounded-card bg-coal p-[clamp(24px,calc(1.7vw+16px),57px)] text-white"
-    >
+  const body = (
+    <>
       <span
         aria-hidden="true"
         className="absolute left-[clamp(24px,calc(1.7vw+16px),57px)] top-[clamp(24px,calc(1.7vw+16px),57px)] grid size-[clamp(40px,calc(1.2vw+33px),64px)] place-items-center rounded-full bg-black/45 text-[length:clamp(15px,calc(0.4vw+13px),22px)] font-semibold"
@@ -143,7 +195,7 @@ function GroupCard({ group, items, work }: { group: Group; items: Service[]; wor
       <div className="mt-auto pt-10">
         <p className="text-base text-white/80">Services</p>
         <div className="mt-[clamp(6px,0.6vw,12px)] flex items-end justify-between gap-6">
-          <h3 className="text-[length:clamp(32px,calc(1.3vw+26px),52px)] leading-[1.05] font-semibold tracking-[-0.015em]">{title}</h3>
+          <Heading className="text-[length:clamp(32px,calc(1.3vw+26px),52px)] leading-[1.05] font-semibold tracking-[-0.015em]">{title}</Heading>
           <p className="flex min-w-[clamp(60px,4vw,77px)] flex-col items-center rounded-[6px] border border-white/30 px-3 py-[clamp(6px,0.5vw,10px)] text-center">
             <span className="text-small text-white/80">Total</span>
             <span className="text-[length:clamp(18px,calc(0.6vw+15px),28px)] leading-tight font-medium tabular-nums">
@@ -158,7 +210,18 @@ function GroupCard({ group, items, work }: { group: Group; items: Service[]; wor
           </p>
         </div>
       </div>
+    </>
+  );
+  const cls =
+    "on-dark group relative flex h-full min-h-[clamp(400px,calc(13vw+240px),640px)] flex-col overflow-hidden rounded-card bg-coal p-[clamp(24px,calc(1.7vw+16px),57px)] text-white";
+  return href ? (
+    <Link href={href} data-reveal className={cls}>
+      {body}
     </Link>
+  ) : (
+    <div data-reveal className={cls}>
+      {body}
+    </div>
   );
 }
 
@@ -167,9 +230,23 @@ function GroupCard({ group, items, work }: { group: Group; items: Service[]; wor
  * the service's latest project, the group, the name and tagline, then a View
  * link. A swipeable row on phones, a grid from tablet up.
  */
-function ServiceCards({ services, workFor }: { services: Service[]; workFor: (slug: string) => ProjectCard[] }) {
+function ServiceCards({
+  services,
+  workFor,
+  className,
+}: {
+  services: Service[];
+  workFor: (slug: string) => ProjectCard[];
+  className?: string;
+}) {
   return (
-    <ul className="mt-[clamp(12px,calc(0.6vw+10px),25px)] flex snap-x snap-mandatory scroll-px-gutter gap-[clamp(12px,calc(0.6vw+10px),25px)] overflow-x-auto px-gutter pb-1 [scrollbar-width:none] sm:grid sm:snap-none sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3 xl:grid-cols-4">
+    <ul
+      className={cn(
+        "flex snap-x snap-mandatory scroll-px-gutter overflow-x-auto px-gutter pb-1 [scrollbar-width:none] sm:grid sm:snap-none sm:overflow-visible",
+        CARD_GAP,
+        className,
+      )}
+    >
       {services.map((s) => {
         const work = workFor(s.slug);
         return (
