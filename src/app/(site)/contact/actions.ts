@@ -6,6 +6,7 @@ import { getWriteClient } from "@/sanity/lib/write-client";
 import { CONTACT_FORM } from "@/content/seed-data";
 import type { EnquiryState } from "./types";
 
+const DEFAULT_ENQUIRY_INBOX = "opsiogen@gmail.com";
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const PHONE = /^[+()\-.\s\d]{6,30}$/;
 
@@ -65,6 +66,9 @@ export async function submitEnquiry(_prev: EnquiryState, formData: FormData): Pr
   if (sanity) {
     try {
       await sanity.create({
+        // IDs containing a "." are private in Sanity: only signed-in editors
+        // and token holders can read them, even though the dataset is public.
+        _id: `enquiry.${crypto.randomUUID()}`,
         _type: "enquiry",
         name: values.name,
         email: values.email,
@@ -84,7 +88,7 @@ export async function submitEnquiry(_prev: EnquiryState, formData: FormData): Pr
   // 2. Email the company inbox.
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM_EMAIL;
-  const to = process.env.ENQUIRY_TO_EMAIL;
+  const to = process.env.ENQUIRY_TO_EMAIL || DEFAULT_ENQUIRY_INBOX;
   if (apiKey && from && to) {
     const rows: [string, string][] = [
       ["Name", values.name],

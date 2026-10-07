@@ -14,28 +14,34 @@ cp .env.example .env.local   # then fill in the values (see below)
 npm run dev                  # http://localhost:3000
 ```
 
-Without any keys the site still runs with the starter content, and contact-form submissions are printed in the terminal instead of being sent.
+Without a `.env.local` the site still runs with the starter content, and contact-form submissions are printed in the terminal instead of being sent.
 
 Production check: `npm run build && npm start`.
 
 ### Keys (`.env.local`)
 
-| Variable | Where to get it |
+`.env.example` already holds the Sanity project, dataset and enquiry inbox. Copy it to `.env.local` and add the three secrets:
+
+| Variable | Value / where to get it |
 | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | Your live address, e.g. `https://www.opsiogen.com` |
-| `NEXT_PUBLIC_SANITY_PROJECT_ID` | sanity.io/manage → your project |
-| `NEXT_PUBLIC_SANITY_DATASET` | Usually `production` |
-| `SANITY_API_WRITE_TOKEN` | sanity.io/manage → API → Tokens → add token with **Editor** permission |
+| `NEXT_PUBLIC_SANITY_PROJECT_ID` | `khi8jszl` (already filled in) |
+| `NEXT_PUBLIC_SANITY_DATASET` | `opsiogen` (already filled in) |
+| `SANITY_API_WRITE_TOKEN` | [sanity.io/manage → project → API → Tokens](https://www.sanity.io/manage/project/khi8jszl/api#tokens) → Add API token, permission **Editor** |
 | `RESEND_API_KEY` | resend.com → API Keys |
 | `RESEND_FROM_EMAIL` | A sender on a domain verified in Resend, e.g. `Opsiogen <hello@yourdomain.com>` |
-| `ENQUIRY_TO_EMAIL` | The inbox that receives enquiries (comma-separate for several) |
+| `ENQUIRY_TO_EMAIL` | `opsiogen@gmail.com` (already filled in; comma-separate for several) |
 
-### Connect Sanity (once)
+### Sanity setup
 
-1. Create a project at sanity.io and copy its project ID and an Editor token into `.env.local`.
-2. In sanity.io/manage → API → **CORS origins**, add `http://localhost:3000` and your live URL, each with **Allow credentials** ticked. The studio at `/studio` needs this to sign in.
-3. Load the starter content and placeholder images: `npm run seed`. It never overwrites documents that already exist, so it is safe to run again.
-4. Open `http://localhost:3000/studio`, sign in and start editing.
+The site uses its own `opsiogen` dataset inside the existing Sanity project `khi8jszl`. The project's original `production` dataset is untouched. `http://localhost:3000` is already allowed under CORS origins.
+
+1. Add `SANITY_API_WRITE_TOKEN` to `.env.local` (see above).
+2. Load the starter content and placeholder images: `npm run seed`. It never overwrites documents that already exist, so it is safe to run again.
+3. Run `npm run dev`, open `http://localhost:3000/studio`, sign in and start editing.
+4. When the site is live, add its address in sanity.io/manage → API → **CORS origins** with **Allow credentials** ticked, so the studio works there too.
+
+Contact-form enquiries are saved with private IDs, so only signed-in editors can read them even though the dataset is public.
 
 ## Edit content in /studio
 
