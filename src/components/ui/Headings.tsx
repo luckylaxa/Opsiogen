@@ -46,8 +46,8 @@ export function GiantHeading({
   text?: string | null;
   as?: "h1" | "h2" | "p";
   labelStyle?: "plain" | "pill";
-  /** Mark shown on a yellow sticker over the end of the title. */
-  sticker?: string;
+  /** Show the logo mark over the end of the title. */
+  sticker?: boolean;
   className?: string;
   children?: React.ReactNode;
 }) {
@@ -59,7 +59,7 @@ export function GiantHeading({
       {words.length > 0 && `${words.join(" ")} `}
       <span className="whitespace-nowrap">
         {last}
-        <Sticker mark={sticker} />
+        <Sticker />
       </span>
     </>
   ) : (

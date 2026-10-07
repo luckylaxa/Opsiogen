@@ -21,7 +21,7 @@ export async function ServicesList({
 }: {
   section: ServicesListSection;
   variant?: "rows" | "directory";
-  sticker?: string;
+  sticker?: boolean;
 }) {
   if (variant === "directory") return <ServicesDirectory section={section} sticker={sticker} />;
   const services = await getServices();
@@ -71,7 +71,7 @@ function ServiceGroup({ title, items, level: Heading }: { title: string; items: 
   );
 }
 
-async function ServicesDirectory({ section, sticker }: { section: ServicesListSection; sticker?: string }) {
+async function ServicesDirectory({ section, sticker }: { section: ServicesListSection; sticker?: boolean }) {
   const [services, projects] = await Promise.all([getServices(), getProjects()]);
   const workFor = (slugs: string[]) => projects.filter((p) => p.services.some((s) => slugs.includes(s.slug)));
   const groups = GROUPS.map((group) => {

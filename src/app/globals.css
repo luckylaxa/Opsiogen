@@ -149,6 +149,15 @@
   animation-play-state: paused;
 }
 
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spin-slow {
+  animation: spin 16s linear infinite;
+}
+
 /* Media fades in as it enters the viewport (see components/motion/Reveal.tsx). */
 @media (prefers-reduced-motion: no-preference) {
   .js [data-reveal] {
@@ -166,7 +175,8 @@
     scroll-behavior: auto !important;
   }
   .dock-in,
-  .marquee {
+  .marquee,
+  .spin-slow {
     animation: none !important;
   }
 }

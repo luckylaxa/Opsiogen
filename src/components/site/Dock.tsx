@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Mark } from "./Mark";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { LinkItem } from "@/lib/types";
@@ -12,7 +13,7 @@ import { MenuButton } from "./MenuContext";
  * call-to-action tile. The current page (or, on Home, the section in view) is
  * outlined. Slides up 0.25s after load (CSS, so it never flashes).
  */
-export function Dock({ menu, button, mark }: { menu: LinkItem[]; button: LinkItem; mark: string }) {
+export function Dock({ menu, button }: { menu: LinkItem[]; button: LinkItem }) {
   const pathname = usePathname();
   const [spyState, setSpyState] = useState<{ path: string; href: string | null }>({ path: "", href: null });
   const spy = spyState.path === pathname ? spyState.href : null;
@@ -47,7 +48,7 @@ export function Dock({ menu, button, mark }: { menu: LinkItem[]; button: LinkIte
           aria-label="Home"
           className="grid aspect-square w-[clamp(46px,calc(1.9vw+39px),75px)] place-items-center rounded-[clamp(7px,0.42vw,8px)] bg-coal text-[clamp(18px,calc(0.6vw+15.8px),27px)] font-semibold tracking-[-0.03em] text-white transition-colors duration-300 hover:bg-black"
         >
-          {mark}
+          <Mark className="size-[62%]" />
         </Link>
         <ul className="hidden items-center gap-[clamp(5px,0.42vw,8px)] rounded-[clamp(7px,0.42vw,8px)] bg-white/[0.13] p-[clamp(5px,0.42vw,8px)] md:flex">
           {menu.map((item) => {

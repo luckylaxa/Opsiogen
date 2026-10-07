@@ -14,7 +14,7 @@ export function Block({ children, className = "" }: { children: React.ReactNode;
 
 /** Per-page presentation choices; the content always comes from the CMS. */
 export type PageLayout = {
-  /** Yellow sticker on giant section titles. */
+  /** Logo mark over the end of giant section titles. */
   stickers?: boolean;
   /** Services as plain rows, or as group cards plus a directory table. */
   services?: "rows" | "directory";
@@ -37,8 +37,7 @@ export async function SectionRenderer({
   layout?: PageLayout;
 }) {
   const settings = await getSettings();
-  const mark = `${settings.siteTitle.charAt(0)}.`;
-  const sticker = layout.stickers ? mark : undefined;
+  const sticker = Boolean(layout.stickers);
   const out: React.ReactNode[] = [];
   let afterPlaced = false;
 

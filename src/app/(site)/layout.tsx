@@ -5,6 +5,7 @@ import { getProjects, getServices, getSettings } from "@/lib/data";
 import { buildMenuGroups, buildSearchItems } from "@/lib/search";
 import { siteUrl } from "@/lib/utils";
 import { Header } from "@/components/site/Header";
+import { Logo } from "@/components/site/Logo";
 import { Ticker } from "@/components/site/Ticker";
 import { Footer } from "@/components/site/Footer";
 import { Dock } from "@/components/site/Dock";
@@ -46,7 +47,6 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   const [settings, projects, services] = await Promise.all([getSettings(), getProjects(), getServices()]);
   const searchItems = buildSearchItems(projects, services);
   const groups = buildMenuGroups(services);
-  const mark = `${settings.siteTitle.charAt(0)}.`;
   return (
     <html lang="en" className={interTight.variable}>
       <head>
@@ -67,12 +67,12 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
             {children}
           </main>
           <Footer settings={settings} />
-          <Dock menu={settings.menu} button={settings.headerButton} mark={mark} />
+          <Dock menu={settings.menu} button={settings.headerButton} />
           <ScrollTop />
           <MenuOverlay
             menu={settings.menu}
             button={settings.headerButton}
-            wordmark={settings.siteTitle}
+            wordmark={<Logo logo={settings.logoOnDark ?? settings.logo} name={settings.siteTitle} />}
             searchItems={searchItems}
           />
           <Reveal />

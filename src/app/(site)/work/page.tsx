@@ -3,7 +3,7 @@ import { cmsMetadata } from "@/components/CmsPage";
 import { SectionRenderer } from "@/components/sections/SectionRenderer";
 import { GiantHeading } from "@/components/ui/Headings";
 import { Directory } from "@/components/work/Directory";
-import { getPage, getProjects, getServices, getSettings } from "@/lib/data";
+import { getPage, getProjects, getServices } from "@/lib/data";
 import type { HeroSection, ProjectGridSection } from "@/lib/types";
 
 export const revalidate = 60;
@@ -18,12 +18,7 @@ export function generateMetadata() {
  * any other sections (such as the call to action) follow below.
  */
 export default async function WorkPage() {
-  const [page, projects, services, settings] = await Promise.all([
-    getPage("work"),
-    getProjects(),
-    getServices(),
-    getSettings(),
-  ]);
+  const [page, projects, services] = await Promise.all([getPage("work"), getProjects(), getServices()]);
   if (!page) notFound();
 
   const hero = page.sections.find((s): s is HeroSection => s._type === "hero");
@@ -43,7 +38,7 @@ export default async function WorkPage() {
           label={hero?.label}
           heading={hero?.heading ?? page.title}
           text={hero?.text}
-          sticker={`${settings.siteTitle.charAt(0)}.`}
+          sticker
           className="pb-[clamp(48px,calc(3.4vw+35px),110px)] pt-[clamp(48px,calc(3.4vw+35px),110px)]"
         />
       </Directory>

@@ -5,7 +5,7 @@ import { ArrowLink } from "@/components/ui/ArrowLink";
 import { WorkGrid } from "@/components/work/WorkGrid";
 
 /** “Latest work” on Home and the filterable grid on Work. */
-export async function ProjectGrid({ section, sticker }: { section: ProjectGridSection; sticker?: string }) {
+export async function ProjectGrid({ section, sticker }: { section: ProjectGridSection; sticker?: boolean }) {
   const [projects, services] = await Promise.all([getProjects(), getServices()]);
   const limit = section.limit && section.limit > 0 ? section.limit : 6;
   const filters = section.showFilters
