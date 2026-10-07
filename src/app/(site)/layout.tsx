@@ -72,7 +72,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
           <MenuOverlay
             menu={settings.menu}
             button={settings.headerButton}
-            wordmark={<Logo logo={settings.logoOnDark ?? settings.logo} name={settings.siteTitle} />}
+            wordmark={<Logo logo={settings.logoOnDark ?? settings.logo} name={settings.siteTitle} variant="mark" />}
             searchItems={searchItems}
           />
           <Reveal />

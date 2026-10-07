@@ -56,7 +56,7 @@
   --spacing-gap: clamp(16px, calc(0.589vw + 13.8px), 25px);
   --spacing-section: clamp(96px, calc(12.37vw + 49.6px), 285px);
   --spacing-after-band: clamp(64px, calc(4.5vw + 47px), 133px);
-  --spacing-block: clamp(40px, calc(3.93vw + 25.3px), 100px);
+  --spacing-stack: clamp(40px, calc(3.93vw + 25.3px), 100px);
 
   --radius-card: clamp(8px, calc(0.262vw + 7px), 12px);
   --radius-btn: 6px;

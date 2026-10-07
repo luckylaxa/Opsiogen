@@ -28,7 +28,7 @@ export default async function ContactPage() {
     <CmsPage
       slug="contact"
       after={
-        <section aria-label="Enquiry form" className="mt-block px-gutter">
+        <section aria-label="Enquiry form" className="mt-stack px-gutter">
           <div className={details.length ? "grid gap-y-14 gap-x-gap lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)]" : "mx-auto max-w-[1100px]"}>
             {details.length > 0 && (
               <ul className="self-start">

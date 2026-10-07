@@ -10,7 +10,7 @@ export function Sticker({ className }: { className?: string }) {
   return (
     <span
       aria-hidden="true"
-      className={cn("relative -ml-[0.08em] inline-block size-[0.46em] translate-y-[0.08em] align-baseline", className)}
+      className={cn("relative -ml-[0.06em] inline-block size-[0.6em] translate-y-[0.1em] align-baseline", className)}
     >
       <Mark className="spin-slow size-full drop-shadow-[0_0.05em_0.12em_rgb(0_0_0/0.25)]" />
     </span>
