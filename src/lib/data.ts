@@ -76,22 +76,29 @@ export const getSettings = cache(async (): Promise<SiteSettings> => {
   };
 });
 
-export const getProjects = cache(async (): Promise<ProjectCard[]> => {
+/** Published CMS projects that have a cover image. */
+const getCmsProjects = cache(async (): Promise<ProjectCard[]> => {
   const data = await sanityFetch<ProjectCard[]>(PROJECTS_QUERY);
-  if (data === undefined) return PROJECTS.map(toCard);
-  return data.filter((p) => p.cover?.url);
+  return (data ?? []).filter((p) => p.cover?.url);
+});
+
+/** CMS projects, or the starter projects until the dataset has been seeded. */
+export const getProjects = cache(async (): Promise<ProjectCard[]> => {
+  const projects = await getCmsProjects();
+  return projects.length ? projects : PROJECTS.map(toCard);
 });
 
 export const getProject = cache(async (slug: string): Promise<Project | null> => {
+  if ((await getCmsProjects()).length === 0) return PROJECTS.find((p) => p.slug === slug) ?? null;
   const data = await sanityFetch<Project | null>(PROJECT_QUERY, { slug });
-  if (data === undefined) return PROJECTS.find((p) => p.slug === slug) ?? null;
   if (!data) return null;
   return { ...data, services: data.services ?? [], gallery: (data.gallery ?? []).filter((g) => g.url) };
 });
 
+/** CMS services, or the services from the brief until the dataset has been seeded. */
 export const getServices = cache(async (): Promise<Service[]> => {
   const data = await sanityFetch<Service[]>(SERVICES_QUERY);
-  return data ?? SERVICES;
+  return data?.length ? data : SERVICES;
 });
 
 export const getService = cache(async (slug: string): Promise<Service | null> => {
