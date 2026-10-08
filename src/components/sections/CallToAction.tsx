@@ -47,7 +47,7 @@ async function DualCallToAction({ cta }: { cta: SiteSettings["cta"] }) {
       : null;
 
   return (
-    <div className="grid gap-[clamp(12px,calc(0.6vw+10px),25px)] px-gutter md:grid-cols-2">
+    <div className="@container grid gap-gap px-gutter md:grid-cols-2">
       <CtaCard heading={cta.heading} button={cta.button} image={projects[0]?.cover} />
       {second && <CtaCard heading={second.heading} button={second.button} image={projects[1]?.cover ?? projects[0]?.cover} />}
     </div>
@@ -58,7 +58,7 @@ function CtaCard({ heading, button, image }: { heading: string; button: LinkItem
   return (
     <div
       data-reveal
-      className="on-dark relative flex min-h-[clamp(320px,calc(14vw+240px),600px)] flex-col overflow-hidden rounded-card bg-coal p-[clamp(24px,calc(1.6vw+18px),48px)] text-white"
+      className="on-dark relative flex min-h-[360px] flex-col overflow-hidden rounded-card bg-coal px-[clamp(24px,4.05vw,77px)] pb-[clamp(24px,4.05vw,77px)] pt-[clamp(28px,4.6vw,88px)] text-white md:min-h-[calc((100cqw-var(--spacing-gap))*0.371)]"
     >
       {image && (
         <div aria-hidden="true" className="absolute inset-0">
@@ -66,11 +66,11 @@ function CtaCard({ heading, button, image }: { heading: string; button: LinkItem
           <div className="absolute inset-0 bg-[linear-gradient(105deg,rgb(34_34_34/0.92)_0%,rgb(34_34_34/0.55)_55%,rgb(34_34_34/0.35)_100%)]" />
         </div>
       )}
-      <h2 className="relative max-w-[14ch] text-[length:clamp(30px,calc(1.15vw+25px),48px)] leading-[1.12] font-semibold tracking-[-0.015em] text-balance">
+      <h2 className="relative max-w-[14ch] text-[length:clamp(30px,2.9vw,55px)] leading-[1.2] font-semibold tracking-[-0.015em] text-balance">
         {heading}
       </h2>
       {button.href && button.label && (
-        <ButtonLink href={button.href} variant="outline-light" className="relative mt-[clamp(24px,calc(1.2vw+19px),44px)] w-fit">
+        <ButtonLink href={button.href} variant="outline-light" size="lg" className="relative mt-[clamp(24px,2.6vw,50px)] w-fit">
           {button.label}
         </ButtonLink>
       )}

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { ProjectCard, ServiceRef } from "@/lib/types";
+import { BigCard } from "@/components/ui/BigCard";
 import { Media } from "@/components/ui/Media";
 import { buttonClass } from "@/components/ui/Button";
 import { ChevronDown, SearchIcon } from "@/components/ui/Icons";
@@ -135,7 +136,7 @@ export function Directory({ projects, services, pageSize, children }: Props) {
       </div>
 
       {featured.length > 0 && (
-        <ul className="mb-[clamp(12px,calc(0.6vw+10px),25px)] hidden gap-[clamp(12px,calc(0.6vw+10px),25px)] px-gutter md:grid md:grid-cols-2">
+        <ul className="@container mb-gap hidden gap-gap px-gutter md:grid lg:grid-cols-2">
           {featured.map((p) => (
             <li key={p._id}>
               <FeaturedCard project={p} />
@@ -145,7 +146,7 @@ export function Directory({ projects, services, pageSize, children }: Props) {
       )}
 
       {shown.length > 0 ? (
-        <ul className="grid gap-[clamp(12px,calc(0.6vw+10px),25px)] px-gutter sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid gap-gap px-gutter sm:grid-cols-2 lg:grid-cols-3">
           {shown.map((p) => (
             <li key={p._id}>
               <DirectoryCard project={p} />
@@ -212,55 +213,26 @@ function Select({
 
 /** Dark card from the reference directory's featured row. */
 function FeaturedCard({ project }: { project: ProjectCard }) {
-  const dots = Math.min(Math.max(project.services.length, 1), 5);
   return (
-    <Link
+    <BigCard
       href={`/work/${project.slug}`}
-      data-reveal
-      className="on-dark group relative flex h-full min-h-[clamp(420px,calc(18vw+200px),700px)] flex-col overflow-hidden rounded-card bg-coal p-[clamp(24px,calc(1.7vw+16px),57px)] text-white"
-    >
-      <span
-        aria-hidden="true"
-        className="absolute left-[clamp(24px,calc(1.7vw+16px),57px)] top-[clamp(24px,calc(1.7vw+16px),57px)] grid size-[clamp(40px,calc(1.2vw+33px),64px)] place-items-center rounded-full bg-black/45 text-[length:clamp(13px,calc(0.4vw+11px),20px)] font-semibold"
-      >
-        {initials(project.client)}
-      </span>
-      <div className="ml-auto w-[min(64%,420px)] md:mr-[6%]">
-        <div className="relative aspect-[4/3] overflow-hidden rounded-[4px] bg-night">
-          <Media
-            image={project.cover}
-            sizes="(min-width: 768px) 28vw, 60vw"
-            className="transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-[1.04]"
-          />
-        </div>
-        <div aria-hidden="true" className="mt-[clamp(14px,1.2vw,22px)] flex justify-end gap-[clamp(6px,0.6vw,12px)]">
-          {Array.from({ length: dots }, (_, i) => (
-            <span key={i} className={cn("size-[6px] rounded-full", i === 0 ? "bg-white" : "bg-white/25")} />
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-auto pt-10">
-        {project.industry && <p className="text-base text-white/80">{project.industry}</p>}
-        <div className="mt-[clamp(6px,0.6vw,12px)] flex items-end justify-between gap-6">
-          <h2 className="text-[length:clamp(32px,calc(1.3vw+26px),52px)] leading-[1.05] font-semibold tracking-[-0.015em]">{project.name}</h2>
-          {project.year && (
-            <p className="flex min-w-[clamp(60px,4vw,77px)] shrink-0 flex-col items-center rounded-[6px] border border-white/30 px-3 py-[clamp(6px,0.5vw,10px)] text-center">
-              <span className="text-small text-white/80">Year</span>
-              <span className="text-[length:clamp(18px,calc(0.6vw+15px),28px)] leading-tight font-medium tabular-nums">{project.year}</span>
-            </p>
-          )}
-        </div>
-        <div className="mt-[clamp(28px,3vw,56px)] flex items-end justify-between gap-6 text-base">
-          <p className="min-w-0 truncate text-white/80">{project.client}</p>
-          <p className="shrink-0">{project.services.map((s) => s.shortName).join(" · ")}</p>
-        </div>
-      </div>
-    </Link>
+      badge={initials(project.client)}
+      image={project.cover}
+      dots={project.services.length}
+      label={project.industry}
+      title={project.name}
+      titleAs="h2"
+      stat={project.year ? { label: "Year", value: String(project.year) } : null}
+      footLeft={<span className="block truncate">{project.client}</span>}
+      footRight={project.services.map((s) => s.shortName).join(" · ")}
+    />
   );
 }
 
-/** Directory card: image, then the name and a small table of details. */
+/**
+ * Directory card: image, then the name and a small table of details, spaced
+ * like the reference (about 574 × 913 on a 1903px screen).
+ */
 function DirectoryCard({ project }: { project: ProjectCard }) {
   const rows: [string, React.ReactNode][] = [
     ["Client", project.client],
@@ -275,7 +247,7 @@ function DirectoryCard({ project }: { project: ProjectCard }) {
           className="transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-[1.03]"
         />
       </div>
-      <div className="flex flex-1 flex-col p-[clamp(18px,calc(1vw+14px),34px)]">
+      <div className="flex flex-1 flex-col px-[clamp(18px,2.2vw,42px)] pb-[clamp(22px,4.2vw,80px)] pt-[clamp(18px,3.05vw,58px)]">
         <h2 className="flex items-center gap-[clamp(10px,0.8vw,14px)] text-title font-medium">
           <span
             aria-hidden="true"
@@ -291,7 +263,7 @@ function DirectoryCard({ project }: { project: ProjectCard }) {
           </Link>
           {project.year && <span className="self-start text-[length:clamp(9px,0.5vw,10px)] uppercase tracking-[0.04em] text-mute">{project.year}</span>}
         </h2>
-        <dl className="mt-[clamp(18px,1.6vw,32px)] grid grid-cols-[minmax(0,2fr)_minmax(0,5fr)] gap-x-4 gap-y-[clamp(12px,1vw,20px)] text-small">
+        <dl className="mt-[clamp(20px,5vw,95px)] grid grid-cols-[minmax(0,2fr)_minmax(0,5fr)] gap-x-4 gap-y-[clamp(14px,3.63vw,69px)] text-small">
           {rows.map(([k, v]) => (
             <div key={k} className="contents">
               <dt className="font-medium">{k}</dt>

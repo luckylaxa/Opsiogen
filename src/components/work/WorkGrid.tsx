@@ -54,7 +54,7 @@ export function WorkGrid({ projects, filters, pageSize, headingLevel }: Props) {
       )}
 
       {shown.length > 0 ? (
-        <ul className="grid grid-cols-1 gap-x-gap gap-y-[clamp(40px,calc(1.57vw+34px),64px)] sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid grid-cols-1 gap-x-gap gap-y-[clamp(32px,2.47vw,47px)] sm:grid-cols-2 lg:grid-cols-3">
           {shown.map((project) => (
             <li key={project._id}>
               <ProjectCard project={project} headingLevel={headingLevel} />
