@@ -16,7 +16,7 @@ export function FeaturedProject({ project, priority = true }: { project?: Projec
   return (
     <article data-dock="/work" className="on-dark group relative mx-edge overflow-hidden rounded-card bg-night text-white">
       <div className="px-[clamp(12px,7.5%,142px)] pt-[clamp(12px,11.9%,223px)]">
-        <div className="relative aspect-[4/3] overflow-hidden rounded-[4px] bg-[#1d2226] sm:aspect-video">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-[4px] bg-night sm:aspect-video">
           <CoverMedia
             image={project.cover}
             video={project.coverVideo}

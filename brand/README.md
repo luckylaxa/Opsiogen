@@ -1,16 +1,35 @@
 # Brand
 
-- **Logo mark**: `opsiogen-mark-1024.png` is the master. The site uses a 512px copy (`src/assets/opsiogen-mark.png`) on its own in the header, phone menu and footer, on the floating menu tile, and as the slowly turning mark at the end of giant titles. Browser icons are `src/app/icon.png` and `src/app/apple-icon.png`. To replace it, swap these files at the same sizes. Uploading a logo in Studio → Site settings → Brand replaces the mark in the header, footer and menu.
-- **Colours**: a neutral palette taken from the design reference. To change it, edit the tokens at the top of `src/app/globals.css`.
-- **Light and dark theme**: visitors switch with the sun/moon button in the header (and in the phone menu). The site opens in the light theme and remembers a visitor’s choice on their device. Dark values live in the `[data-theme="dark"]` block in `src/app/globals.css`; dark cards, the dock and the menu look the same in both themes.
+The site follows the Opsiogen design system: its font, logo files and colours.
 
-| Token | Value | Used for |
-| --- | --- | --- |
-| `page` | `#f8f8f8` | Page background |
-| `band` | `#e9e9e9` | Hero band, light buttons |
-| `ink` | `#222222` | Text, dark buttons, cards |
-| `ink-2` | `#444444` | Secondary text |
-| `mute` | `#6f6f6f` | Small grey text |
-| `night` | `#121619` | Featured project and cover frames |
+## Logo
 
-Font: Inter Tight (Google Fonts), weights 400–600.
+`logo/` holds the design system's logo files exactly as supplied: the master vector, the full logo for light and dark backgrounds, one-colour versions, and the ribbon symbol (`opsiogen-symbol.png`) with its one-colour versions.
+
+- The site uses the symbol (`src/assets/opsiogen-mark.png`, a copy of `logo/opsiogen-symbol.png`) on its own in the header, phone menu and footer, on the floating menu tile, and at the end of giant titles.
+- Browser icons (`src/app/icon.png`, `src/app/apple-icon.png`) are made from the same symbol.
+- To show the full logo instead, upload `logo/opsiogen-logo-on-light.png` in Studio → Site settings → Brand → Logo, and `logo/opsiogen-logo-on-dark.png` as the logo for dark backgrounds. An uploaded logo replaces the symbol in the header, footer and menu.
+
+## Font
+
+Outfit (SIL Open Font License, licence in `src/fonts/OFL.txt`), self-hosted as one variable file, `src/fonts/Outfit-Variable.woff2`, covering weights 100–900. Giant titles use 700 with tight tracking; headings 500–600; body 400.
+
+## Colours
+
+Tokens live at the top of `src/app/globals.css`; dark values are in the `[data-theme="dark"]` block. Visitors switch theme with the sun/moon button in the header and phone menu, and the choice is remembered on their device.
+
+| Token | Light | Dark | Used for |
+| --- | --- | --- | --- |
+| `page` | `#F8F6F8` Paper | `#0A090D` Ink | Page background |
+| `band` | `#EDEAED` | `#121115` | Hero band, light buttons |
+| `field` | `#EDEAED` | `#1B1A1E` | Search and form fields |
+| `surface` | `#FFFFFF` | `#121115` | Light cards, menus |
+| `ink` | `#0A090D` | `#F8F6F8` | Text, dark buttons |
+| `ink-2` | `#403F44` | `#CCC9CE` | Secondary text |
+| `mute` | `#5B5A60` | `#A2A0A6` | Small grey text |
+| `coal` | `#0A090D` | `#1B1A1E` | Dark cards, menu, scroll button |
+| `night` | `#121115` | `#050407` | Featured project and cover frames |
+| `focus` | `#D41BE8` | `#EE61FF` | Focus ring |
+| `accent` | `#B800CA` | `#EE61FF` | Link hover |
+
+The brand gradient (`--gradient-brand`: `#00D2FF → #0A4BFF → #6A00F0 → #C800C8 → #FF1A8C`) is for type only: dark button labels turn into it on hover, and `.text-gradient` applies it to a display word. Never use it as a background, line or glow.

@@ -5,52 +5,57 @@
 
 /*
  * Opsiogen design tokens.
- * Measured from the design reference at a 1903px viewport and scaled fluidly
- * down to 375px. Layout, colours, fonts and motion stay fixed here; content
- * lives in the CMS.
+ * Colours, font, radius and focus come from the Opsiogen design system
+ * (Ink #0A090D, Paper #F8F6F8, violet-tinted neutrals, Outfit). Sizes and
+ * spacing were measured from the layout reference at a 1903px viewport and
+ * scale fluidly down to 375px. Content lives in the CMS.
  */
 @theme {
-  --color-page: #f8f8f8;
-  --color-band: #e9e9e9;
-  --color-field: #ebebeb;
-  --color-ink: #222222;
-  --color-ink-2: #444444;
-  --color-mute: #6f6f6f;
-  --color-line: #c9c9c9;
-  --color-night: #121619;
-  --color-coal: #222222;
-  --color-dock: rgb(34 34 34 / 0.8);
-  --color-ticker: #ececec;
-  --color-sticker: #ffd84d;
+  --color-page: #f8f6f8;
+  --color-band: #edeaed;
+  --color-field: #edeaed;
+  --color-ink: #0a090d;
+  --color-ink-2: #403f44;
+  --color-mute: #5b5a60;
+  --color-line: #dedbdf;
+  --color-night: #121115;
+  --color-coal: #0a090d;
+  --color-ticker: #edeaed;
   --color-surface: #ffffff;
-  --color-on-ink: #ffffff;
-  --color-ink-hover: #3a3a3a;
-  --color-rule: #a9a9a9;
-  --color-error: #b42318;
+  --color-on-ink: #f8f6f8;
+  --color-rule: #a2a0a6;
+  --color-error: #da002f;
+  --color-focus: #d41be8;
+  --color-accent: #b800ca;
+  --color-dock: #47464b;
+  --color-dock-inner: #3a393e;
+  --color-dock-logo: #1b1a1e;
+  --color-dock-text: #edeaed;
 
-  --font-sans: var(--font-inter-tight), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: var(--font-outfit), "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 
   /* Type scale (font-size / line-height / tracking) */
   --text-giant: clamp(44px, 8.83vw, 200px);
-  --text-giant--line-height: 1;
-  --text-giant--letter-spacing: -0.012em;
+  --text-giant--line-height: 0.92;
+  --text-giant--letter-spacing: -0.045em;
   --text-giant-m: clamp(40px, 7.4vw, 168px);
-  --text-giant-m--line-height: 1;
-  --text-giant-m--letter-spacing: -0.012em;
+  --text-giant-m--line-height: 0.92;
+  --text-giant-m--letter-spacing: -0.045em;
   --text-giant-l: clamp(36px, 6.1vw, 140px);
-  --text-giant-l--line-height: 1.02;
-  --text-giant-l--letter-spacing: -0.01em;
+  --text-giant-l--line-height: 0.95;
+  --text-giant-l--letter-spacing: -0.04em;
   --text-h2: clamp(32px, calc(1.505vw + 26.36px), 55px);
-  --text-h2--line-height: 1.18;
-  --text-h2--letter-spacing: -0.01em;
+  --text-h2--line-height: 1.08;
+  --text-h2--letter-spacing: -0.03em;
   --text-cta: clamp(32px, calc(1.9vw + 24.88px), 61px);
-  --text-cta--line-height: 1.07;
-  --text-cta--letter-spacing: -0.015em;
+  --text-cta--line-height: 1.04;
+  --text-cta--letter-spacing: -0.03em;
   --text-lead: clamp(18px, calc(0.589vw + 15.8px), 27px);
-  --text-lead--line-height: 1.34;
+  --text-lead--line-height: 1.38;
+  --text-lead--letter-spacing: -0.01em;
   --text-title: clamp(18px, calc(0.524vw + 16.04px), 26px);
   --text-title--line-height: 1.25;
-  --text-title--letter-spacing: -0.005em;
+  --text-title--letter-spacing: -0.01em;
   --text-row: clamp(17px, calc(0.393vw + 15.53px), 23px);
   --text-row--line-height: 1.3;
   --text-base: clamp(15px, calc(0.196vw + 14.26px), 18px);
@@ -66,54 +71,63 @@
   --spacing-after-band: clamp(64px, calc(4.5vw + 47px), 133px);
   --spacing-stack: clamp(40px, calc(3.93vw + 25.3px), 100px);
 
-  --radius-card: clamp(8px, calc(0.262vw + 7px), 12px);
-  --radius-btn: 6px;
+  --radius-card: 12px;
+  --radius-btn: 8px;
 
-  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @layer base {
   :root {
     --header-h: clamp(64px, calc(1.57vw + 58.1px), 88px);
     --ticker-h: clamp(34px, calc(0.79vw + 31px), 48px);
+    /* The logo ribbon spectrum. Type only (.text-gradient), never a fill. */
+    --gradient-brand: linear-gradient(120deg, #00d2ff 0%, #0a4bff 34%, #6a00f0 58%, #c800c8 80%, #ff1a8c 100%);
   }
 
   /*
-   * Dark theme: the same tokens with dark values. Dark cards (coal, night)
-   * stay as they are. `.theme-light` keeps an element light in both themes,
-   * e.g. light buttons and fields on dark cards and the menu.
+   * Dark theme: the design system's dark values. Dark cards lift to the
+   * elevated surface so they stay visible on the Ink page. `.theme-light`
+   * keeps an element light in both themes, e.g. light buttons and fields on
+   * dark cards and the menu.
    */
   [data-theme="dark"] {
-    --color-page: #101010;
-    --color-band: #1b1b1b;
-    --color-field: #222222;
-    --color-ink: #ededed;
-    --color-ink-2: #c2c2c2;
-    --color-mute: #929292;
-    --color-line: #3a3a3a;
-    --color-dock: rgb(46 46 46 / 0.85);
-    --color-ticker: #181818;
-    --color-surface: #1a1a1a;
-    --color-on-ink: #101010;
-    --color-ink-hover: #cfcfcf;
-    --color-rule: #4a4a4a;
-    --color-error: #f97066;
+    --color-page: #0a090d;
+    --color-band: #121115;
+    --color-field: #1b1a1e;
+    --color-ink: #f8f6f8;
+    --color-ink-2: #ccc9ce;
+    --color-mute: #a2a0a6;
+    --color-line: rgb(248 246 248 / 0.12);
+    --color-coal: #1b1a1e;
+    --color-night: #050407;
+    --color-ticker: #050407;
+    --color-surface: #121115;
+    --color-on-ink: #0a090d;
+    --color-rule: rgb(248 246 248 / 0.22);
+    --color-error: #ff7776;
+    --color-focus: #ee61ff;
+    --color-accent: #ee61ff;
+    --color-dock: #2a292d;
+    --color-dock-inner: #1b1a1e;
+    --color-dock-logo: #0a090d;
     color-scheme: dark;
   }
 
   .theme-light {
-    --color-page: #f8f8f8;
-    --color-band: #e9e9e9;
-    --color-field: #ebebeb;
-    --color-ink: #222222;
-    --color-ink-2: #444444;
-    --color-mute: #6f6f6f;
-    --color-line: #c9c9c9;
+    --color-page: #f8f6f8;
+    --color-band: #edeaed;
+    --color-field: #edeaed;
+    --color-ink: #0a090d;
+    --color-ink-2: #403f44;
+    --color-mute: #5b5a60;
+    --color-line: #dedbdf;
     --color-surface: #ffffff;
-    --color-on-ink: #ffffff;
-    --color-ink-hover: #3a3a3a;
-    --color-rule: #a9a9a9;
-    --color-error: #b42318;
+    --color-on-ink: #f8f6f8;
+    --color-rule: #a2a0a6;
+    --color-error: #da002f;
+    --color-focus: #d41be8;
+    --color-accent: #b800ca;
     color-scheme: light;
   }
 
@@ -134,18 +148,19 @@
   }
 
   ::selection {
-    background: var(--color-ink);
-    color: var(--color-page);
+    background: #d41be8;
+    color: #ffffff;
   }
 
+  /* Magenta focus ring with a 2px gap, as in the design system. */
   :focus-visible {
-    outline: 2px solid var(--focus-ring, var(--color-ink));
-    outline-offset: 3px;
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
     border-radius: 4px;
   }
 
   .on-dark {
-    --focus-ring: #ffffff;
+    --color-focus: #ee61ff;
   }
 
   button {
@@ -166,10 +181,10 @@
     text-decoration-line: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 0.28em;
-    transition: opacity 0.25s ease;
+    transition: color 0.18s cubic-bezier(0.2, 0, 0, 1);
   }
   .link-underline:hover {
-    opacity: 0.6;
+    color: var(--color-accent);
   }
 
   .link-fade {
@@ -177,6 +192,24 @@
   }
   .link-fade:hover {
     opacity: 0.6;
+  }
+
+  /* Outfit's word space is narrow under tight display tracking; open it up on giant titles. */
+  .text-giant,
+  .text-giant-m,
+  .text-giant-l {
+    word-spacing: 0.12em;
+  }
+
+  /* Brand gradient on type: display words, big numbers, button labels on hover. */
+  .text-gradient,
+  .btn-dark:hover .btn-label,
+  .btn-dark:focus-visible .btn-label {
+    background-image: var(--gradient-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
   }
 }
 
@@ -196,15 +229,6 @@
   animation-play-state: paused;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-.spin-slow {
-  animation: spin 16s linear infinite;
-}
-
 /* Media fades in as it enters the viewport (see components/motion/Reveal.tsx). */
 @media (prefers-reduced-motion: no-preference) {
   .js [data-reveal] {
@@ -222,8 +246,7 @@
     scroll-behavior: auto !important;
   }
   .dock-in,
-  .marquee,
-  .spin-slow {
+  .marquee {
     animation: none !important;
   }
 }

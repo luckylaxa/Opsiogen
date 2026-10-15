@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter_Tight } from "next/font/google";
+import localFont from "next/font/local";
 import "../globals.css";
 import { getProjects, getServices, getSettings } from "@/lib/data";
 import { buildMenuGroups, buildSearchItems } from "@/lib/search";
@@ -15,9 +15,11 @@ import { MenuProvider } from "@/components/site/MenuContext";
 import { MenuOverlay } from "@/components/site/MenuOverlay";
 import { Reveal } from "@/components/motion/Reveal";
 
-const interTight = Inter_Tight({
-  subsets: ["latin"],
-  variable: "--font-inter-tight",
+/** Outfit, the Opsiogen typeface (SIL OFL), self-hosted as one variable file covering weights 100–900. */
+const outfit = localFont({
+  src: "../../fonts/Outfit-Variable.woff2",
+  weight: "100 900",
+  variable: "--font-outfit",
   display: "swap",
 });
 
@@ -50,7 +52,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   const groups = buildMenuGroups(services);
   return (
     // The head scripts change <html> before React hydrates, hence suppressHydrationWarning.
-    <html lang="en" className={interTight.variable} suppressHydrationWarning>
+    <html lang="en" className={outfit.variable} suppressHydrationWarning>
       <head>
         {/* Lets CSS hide media that fades in on scroll, only when JS runs. */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />

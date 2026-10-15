@@ -131,7 +131,7 @@ export function ContactForm({ needs, sources, preselect }: Props) {
 
       <div className="flex items-end sm:col-span-2">
         <button type="submit" disabled={pending} className={cn(buttonClass("dark", "lg"), "disabled:cursor-wait disabled:opacity-60")}>
-          {pending ? "Sending…" : "Send"}
+          <span className="btn-label">{pending ? "Sending…" : "Send"}</span>
         </button>
       </div>
     </form>

@@ -75,7 +75,7 @@ export function GiantHeading({
         ) : (
           <Label className="mb-[clamp(20px,calc(2.29vw+11.4px),55px)]">{label}</Label>
         ))}
-      <Tag className={cn(giantClass(heading), "w-full font-semibold uppercase text-balance [overflow-wrap:anywhere]")}>{title}</Tag>
+      <Tag className={cn(giantClass(heading), "w-full font-bold uppercase text-balance [overflow-wrap:anywhere]")}>{title}</Tag>
       {text && (
         <p className="mt-[clamp(20px,calc(1.64vw+13.8px),45px)] max-w-[34ch] text-lead text-ink text-balance">{text}</p>
       )}

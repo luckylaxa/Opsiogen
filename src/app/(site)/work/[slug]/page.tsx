@@ -75,7 +75,7 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
           <h1
             className={cn(
               giantClass(project.name),
-              "mt-[clamp(20px,calc(2.29vw+11.4px),55px)] w-full font-semibold uppercase text-balance",
+              "mt-[clamp(20px,calc(2.29vw+11.4px),55px)] w-full font-bold uppercase text-balance",
             )}
           >
             {project.name}
@@ -94,7 +94,7 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
         </div>
 
         <div className="mx-edge mt-[clamp(48px,calc(2.88vw+37.2px),92px)] overflow-hidden rounded-card bg-night px-[clamp(12px,7.5%,142px)] py-[clamp(12px,7.5%,142px)]">
-          <div className="relative aspect-[4/3] overflow-hidden rounded-[4px] bg-[#1d2226] sm:aspect-video">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-[4px] bg-night sm:aspect-video">
             <CoverMedia image={project.cover} video={project.coverVideo} priority sizes="(min-width: 640px) 85vw, 100vw" />
           </div>
         </div>
@@ -146,7 +146,7 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
               href={`/work/${next.slug}`}
               className="group mt-[clamp(20px,calc(2.29vw+11.4px),55px)] inline-flex max-w-full flex-col items-center"
             >
-              <span className={cn(giantClass(next.name), "font-semibold uppercase text-balance transition-opacity duration-300 group-hover:opacity-60")}>
+              <span className={cn(giantClass(next.name), "font-bold uppercase text-balance transition-opacity duration-300 group-hover:opacity-60")}>
                 {next.name}
               </span>
               <span className={cn(buttonClass("outline", "md"), "mt-[clamp(24px,calc(1.7vw+17.6px),50px)] group-hover:bg-ink group-hover:text-on-ink")}>

@@ -8,7 +8,8 @@ const base =
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-btn)] border font-medium transition-[background-color,color,border-color] duration-300 ease-out";
 
 const variants: Record<Variant, string> = {
-  dark: "border-ink bg-ink text-on-ink hover:bg-ink-hover hover:border-ink-hover",
+  // Design system primary: the label turns into gradient type on hover (see .btn-dark in globals.css).
+  dark: "btn-dark border-ink bg-ink text-on-ink",
   outline: "border-ink bg-transparent text-ink hover:bg-ink hover:text-on-ink",
   "outline-light": "border-white/90 bg-transparent text-white hover:bg-white hover:text-coal hover:border-white",
   light: "theme-light border-band bg-band text-ink hover:bg-white hover:border-white",
@@ -33,16 +34,17 @@ type Props = {
 
 export function ButtonLink({ href, children, variant = "dark", size = "md", className }: Props) {
   const cls = buttonClass(variant, size, className);
+  const label = <span className="btn-label">{children}</span>;
   if (isExternal(href)) {
     return (
       <a href={href} className={cls} target="_blank" rel="noopener noreferrer">
-        {children}
+        {label}
       </a>
     );
   }
   return (
     <Link href={href} className={cls}>
-      {children}
+      {label}
     </Link>
   );
 }
