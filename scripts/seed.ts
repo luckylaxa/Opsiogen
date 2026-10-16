@@ -9,8 +9,9 @@
  * The default is safe to run more than once: it never overwrites edits made in
  * the studio. Documents that already exist keep their content; it only fills
  * in service fields that are still empty (Why it matters, Benefits, What we do,
- * Questions) and adds the How we work and Comparison sections to a page that
- * has none, just before its call to action.
+ * Questions and the page sections), gives What we do items their tile images,
+ * adds new questions, and adds the How we work and Comparison sections to a
+ * page that has none, just before its call to action.
  *
  * Overwrite brings existing documents in line with src/content/seed-data.ts:
  * it rewrites the services, the case studies and the Work and Services pages
@@ -49,7 +50,22 @@ const OVERWRITE_PAGES = ["page-work", "page-services"];
 /** File name of the first starter share image, replaced on overwrite. */
 const STARTER_SHARE_FILE = "share-default.jpg";
 /** Service fields added after the first seed; add mode fills them in where empty. */
-const SERVICE_FILL_IN = ["statement", "benefits", "offerings", "faqs"];
+const SERVICE_FILL_IN = [
+  "statement",
+  "benefits",
+  "offerings",
+  "faqs",
+  "hero",
+  "clientsLabel",
+  "why",
+  "stats",
+  "feature",
+  "offer",
+  "uses",
+  "steps",
+  "related",
+  "banner",
+];
 /** Section types added after the first seed; add mode adds them to pages that lack them. */
 const NEW_SECTION_TYPES = ["process", "comparison"];
 
@@ -107,12 +123,46 @@ function put(
   tx.delete(`drafts.${_id}`);
 }
 
+/** The full page layout's sections for a service, with their images uploaded. */
+async function servicePageFields(s: (typeof SERVICES)[number]) {
+  const withImage = async <T extends { image?: { url: string; alt: string } | null }>(obj: T | null | undefined) => {
+    if (!obj) return undefined;
+    const { image: img, ...rest } = obj;
+    return { ...rest, ...(img?.url ? { image: await image(img.url, img.alt) } : {}) };
+  };
+  const items = <T extends { _key?: string }>(type: string, list: T[] | undefined) =>
+    (list ?? []).map((it, i) => ({ _type: type, _key: it._key ?? `${type}${i + 1}`, ...it }));
+  const out: Record<string, unknown> = {
+    hero: await withImage(s.hero),
+    clientsLabel: s.clientsLabel ?? undefined,
+    why: await withImage(s.why),
+    stats: s.stats ? { ...s.stats, items: items("stat", s.stats.items) } : undefined,
+    feature: await withImage(s.feature),
+    offer: s.offer ?? undefined,
+    uses: s.uses ? { ...s.uses, items: items("use", s.uses.items) } : undefined,
+    steps: s.steps ? { ...s.steps, items: items("processStep", s.steps.items) } : undefined,
+    related: s.related ?? undefined,
+    banner: await withImage(s.banner),
+  };
+  return Object.fromEntries(Object.entries(out).filter(([, v]) => v !== undefined));
+}
+
 async function run() {
   console.log(OVERWRITE ? "Mode: overwrite starter content" : "Mode: add missing content only");
   const tx = client.transaction();
 
   console.log("Services");
+  const existingServices = await client.fetch<{ _id: string; offeringKeys: string[] | null; faqKeys: string[] | null }[]>(
+    `*[_type == "service" && _id in $ids]{ _id, "offeringKeys": offerings[]._key, "faqKeys": faqs[]._key }`,
+    { ids: SERVICES.map((s) => s._id) },
+  );
   for (const s of SERVICES) {
+    const offeringImages = new Map<string, Record<string, unknown>>();
+    for (const o of s.offerings) {
+      if (!o.image?.url || !o._key) continue;
+      offeringImages.set(o._key, { image: await image(o.image.url, o.image.alt), wide: Boolean(o.wide), dark: Boolean(o.dark) });
+    }
+    const pageFields = await servicePageFields(s);
     put(
       tx,
       {
@@ -129,12 +179,41 @@ async function run() {
         note: s.note ?? "",
         statement: s.statement ?? "",
         benefits: s.benefits.map((b) => ({ _type: "benefit", _key: b._key ?? key(b.title), title: b.title, text: b.text ?? "" })),
-        offerings: s.offerings.map((o) => ({ _type: "offering", _key: o._key ?? key(o.title), title: o.title, text: o.text ?? "" })),
+        offerings: s.offerings.map((o) => ({
+          _type: "offering",
+          _key: o._key ?? key(o.title),
+          title: o.title,
+          text: o.text ?? "",
+          ...(o._key ? offeringImages.get(o._key) : {}),
+        })),
         faqs: s.faqs.map((f) => ({ _type: "faq", _key: f._key ?? key(f.question), question: f.question, answer: f.answer })),
+        ...pageFields,
       },
       OVERWRITE,
       SERVICE_FILL_IN,
     );
+
+    // Add mode: give existing What we do items their tile image, and add new
+    // questions, without changing anything already there.
+    const existing = existingServices.find((e) => e._id === s._id);
+    if (OVERWRITE || !existing) continue;
+    for (const [k, fields] of offeringImages) {
+      if (!existing.offeringKeys?.includes(k)) continue;
+      tx.patch(s._id, (p) =>
+        p.setIfMissing(Object.fromEntries(Object.entries(fields).map(([f, v]) => [`offerings[_key == "${k}"].${f}`, v]))),
+      );
+    }
+    const newFaqs = s.faqs.filter((f) => f._key && !(existing.faqKeys ?? []).includes(f._key));
+    if (newFaqs.length) {
+      console.log(`  adding ${newFaqs.length} questions to ${s._id}`);
+      tx.patch(s._id, (p) =>
+        p.setIfMissing({ faqs: [] }).insert(
+          "after",
+          "faqs[-1]",
+          newFaqs.map((f) => ({ _type: "faq", _key: f._key, question: f.question, answer: f.answer })),
+        ),
+      );
+    }
   }
 
   console.log("Projects");

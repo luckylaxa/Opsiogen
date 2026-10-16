@@ -53,6 +53,8 @@ export const SETTINGS: SiteSettings = {
 };
 
 type Pair = [string, string];
+const img = (url: string, width: number, height: number, alt: string) => ({ url, width, height, alt });
+const WEB = "/services/ai-websites";
 const offerings = (items: Pair[]) => items.map(([title, text], i) => ({ _key: `o${i + 1}`, title, text }));
 const benefits = (items: Pair[]) => items.map(([title, text], i) => ({ _key: `b${i + 1}`, title, text }));
 const faqs = (items: Pair[]) => items.map(([question, answer], i) => ({ _key: `q${i + 1}`, question, answer }));
@@ -90,14 +92,49 @@ export const SERVICES: Service[] = [
       ["Easy to update", "An easy-to-use CMS, so your content never waits on developers."],
       ["Yours to keep", "You own the design, the code and the content."],
     ]),
-    offerings: offerings([
-      ["New websites", "Designed around your offer and built to turn visits into enquiries."],
-      ["Website revamps", "Outdated sites rebuilt to look current, load fast and work on every screen."],
-      ["Landing pages", "Focused pages for campaigns, launches and lead generation."],
-      ["SaaS and product sites", "Sites that explain your product clearly and lead to sign-ups and demos."],
-      ["Corporate and portfolio sites", "A clear, credible home for your business and your work."],
-      ["Easy-to-use CMS", "Change text, pages and images yourself, without waiting on developers."],
-    ]),
+    offerings: [
+      {
+        _key: "o1",
+        title: "New websites",
+        text: "Designed around your offer and built to turn visits into enquiries.",
+        image: img(`${WEB}/offer-new.jpg`, 820, 1300, "Laptop showing the Opsiogen home page in the dark theme"),
+      },
+      {
+        _key: "o2",
+        title: "Website revamps",
+        text: "Outdated sites rebuilt to look current, load fast and work on every screen.",
+        image: img(`${WEB}/offer-revamp.jpg`, 820, 1300, "An outdated web page behind its modern redesign"),
+        dark: true,
+      },
+      {
+        _key: "o3",
+        title: "Landing pages",
+        text: "Focused pages for campaigns, launches and lead generation.",
+        image: img(`${WEB}/offer-landing.jpg`, 1650, 1300, "Two phones showing a landing page and an enquiry form"),
+        dark: true,
+        wide: true,
+      },
+      {
+        _key: "o4",
+        title: "SaaS and product sites",
+        text: "Sites that explain your product clearly and lead to sign-ups and demos.",
+        image: img(`${WEB}/offer-saas.jpg`, 1650, 1300, "Laptop and phone showing a product page"),
+        wide: true,
+      },
+      {
+        _key: "o5",
+        title: "Corporate and portfolio sites",
+        text: "A clear, credible home for your business and your work.",
+        image: img(`${WEB}/offer-corporate.jpg`, 820, 1300, "A stack of company website pages"),
+        dark: true,
+      },
+      {
+        _key: "o6",
+        title: "Easy-to-use CMS",
+        text: "Change text, pages and images yourself, without waiting on developers.",
+        image: img(`${WEB}/offer-cms.jpg`, 820, 1300, "A simple content editor with a Publish button"),
+      },
+    ],
     faqs: faqs([
       [
         "How fast can my website go live?",
@@ -110,7 +147,84 @@ export const SERVICES: Service[] = [
       ["Can you revamp my current site?", "Yes. We redesign and rebuild outdated sites and keep the content that still works."],
       PRICING,
       OWNERSHIP,
+      ["Will my site work on phones?", "Yes. Every site is designed and tested for phones, tablets and desktops."],
+      ["Can you write the copy?", "Yes. We write clear, conversion-focused copy, or polish the copy you have."],
+      [
+        "What do you need from us to start?",
+        "Your goals, any content you already have and access to your domain. We guide you through the rest.",
+      ],
     ]),
+    hero: {
+      heading: "Websites that turn visitors into customers",
+      accent: "customers",
+      text: "We design and build fast, conversion-focused websites with an easy-to-use CMS. Built with AI, finished by designers and live in days, not months.",
+      image: img(`${WEB}/hero.png`, 1600, 1120, "Laptop and phone showing Opsiogen web pages"),
+    },
+    clientsLabel: "Websites we’ve built for",
+    why: {
+      label: "Why it matters",
+      heading: "Your website isn’t a brochure. It’s your best salesperson.",
+      accent: "salesperson",
+      lead: "Your website is often the first conversation a customer has with you. Too many businesses are stuck with sites that are slow, dated and hard to update.",
+      text: "A website that works takes more than a good look. It needs clear messages, pages built around enquiries, fast loading on every screen and a CMS you can use yourself. We bring it all together, built with AI and finished by designers.",
+      image: img(`${WEB}/why.jpg`, 1200, 1100, "Close-up of an enquiry form on screen"),
+    },
+    stats: {
+      label: "Why Opsiogen",
+      heading: "A website partner you can rely on",
+      accent: "partner",
+      items: [
+        { _key: "s1", value: "7 days", label: "to launch a basic website" },
+        { _key: "s2", value: "100%", label: "yours: the design, the code and the content" },
+        { _key: "s3", value: "1", label: "partner for strategy, design, build and support" },
+      ],
+    },
+    feature: {
+      label: "Opsiogen for websites",
+      heading: "Built with AI. Finished by designers.",
+      accent: "designers",
+      lead: "We bring strategy, UX, design, copy and build together, so your site goes from brief to launch in days, not months.",
+      text: "AI speeds up research, layouts and first drafts. Our designers make every decision count, from the message on your home page to the last button.\n\nYou get one partner for the whole site, and a CMS that lets you update it yourself.",
+      image: img(`${WEB}/feature.jpg`, 1200, 1200, "Laptop showing an Opsiogen service page"),
+    },
+    offer: {
+      label: "What we do",
+      heading: "Websites, ready to launch and convert",
+      accent: "convert",
+      text: "Whether you need a new site, a revamp or a single landing page, we design and build it to bring in enquiries.",
+    },
+    uses: {
+      label: "Every page you need",
+      heading: "One website, every page your business needs",
+      accent: "every page",
+      items: [
+        { _key: "u1", icon: "globe", title: "Company websites", text: "Clear, credible sites that explain what you do and win trust." },
+        { _key: "u2", icon: "target", title: "Campaign pages", text: "Landing pages for launches, ads and events, built to convert." },
+        { _key: "u3", icon: "layers", title: "Product and SaaS pages", text: "Feature, pricing and sign-up pages that lead to demos." },
+        { _key: "u4", icon: "file-text", title: "Blogs and resources", text: "Articles, guides and case studies you can publish yourself." },
+      ],
+    },
+    steps: {
+      label: "How we work",
+      heading: "Websites, without the waiting",
+      accent: "waiting",
+      text: "No long back-and-forth and no surprises: a clear plan, a fixed price and a site that’s yours to keep.",
+      items: [
+        { _key: "p1", title: "Brief and discovery", text: "We learn your business, audience and goals, and agree the scope." },
+        { _key: "p2", title: "Plan and structure", text: "A sitemap, page structure and a fixed price or monthly plan." },
+        { _key: "p3", title: "Design", text: "AI-assisted layouts, finished by our designers and reviewed with you." },
+        { _key: "p4", title: "Build and CMS", text: "A fast, responsive build on an easy-to-use CMS." },
+        { _key: "p5", title: "Test and launch", text: "Checked on every screen, then live. Basic websites launch in 7 days." },
+        { _key: "p6", title: "Support and improve", text: "Updates, fixes and improvements after launch." },
+      ],
+    },
+    related: { label: "Our work", heading: "Websites we’ve launched", accent: "launched" },
+    banner: {
+      heading: "Your next website could be live next week",
+      accent: "next week",
+      text: "Basic websites launch in 7 days. Tell us what you need and we’ll come back with a fixed price.",
+      image: img(`${WEB}/banner.jpg`, 2400, 1000, "A wall of Opsiogen web pages"),
+    },
   },
   {
     _id: "service-ai-product-design",

@@ -243,6 +243,32 @@
  * cards fade up 40px, headings rise from a mask, both on the expo-out curve
  * over 900ms, staggered by --reveal-delay.
  */
+/* The slow strip of what we do along the foot of a service hero. */
+.marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.marquee__track {
+  animation: marquee 70s linear infinite;
+}
+.marquee:hover .marquee__track {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    overflow-x: auto;
+    mask-image: none;
+  }
+  .marquee__track {
+    animation: none;
+  }
+}
+
 /* Accordion panels slide open where the browser can animate details. */
 .accordion {
   interpolate-size: allow-keywords;

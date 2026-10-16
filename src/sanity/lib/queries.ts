@@ -21,6 +21,7 @@ const PROJECT_CARD = `{
   industry,
   year,
   order,
+  summary,
   "services": services[]->${SERVICE_REF},
   "cover": cover${IMG},
   "coverVideo": coverVideo{ "url": asset->url, "mimeType": asset->mimeType }
@@ -109,8 +110,18 @@ const SERVICE = `{
   note,
   statement,
   "benefits": coalesce(benefits[]{ _key, title, text }, []),
-  "offerings": coalesce(offerings[]{ _key, title, text }, []),
+  "offerings": coalesce(offerings[]{ _key, title, text, wide, dark, "image": image${IMG} }, []),
   "faqs": coalesce(faqs[]{ _key, question, answer }, []),
+  hero{ heading, accent, text, "image": image${IMG} },
+  clientsLabel,
+  why{ label, heading, accent, lead, text, "image": image${IMG} },
+  stats{ label, heading, accent, "items": coalesce(items[]{ _key, value, label }, []) },
+  feature{ label, heading, accent, lead, text, "image": image${IMG} },
+  offer{ label, heading, accent, text },
+  uses{ label, heading, accent, "items": coalesce(items[]{ _key, icon, title, text }, []) },
+  steps{ label, heading, accent, text, "items": coalesce(items[]{ _key, title, text }, []) },
+  related{ label, heading, accent },
+  banner{ heading, accent, text, "image": image${IMG} },
   ${SEO}
 }`;
 

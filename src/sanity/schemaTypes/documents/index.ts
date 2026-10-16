@@ -5,6 +5,7 @@ import { DocumentIcon } from "@sanity/icons/Document";
 import { EnvelopeIcon } from "@sanity/icons/Envelope";
 import { SparklesIcon } from "@sanity/icons/Sparkles";
 import { altField, imageField } from "../objects/shared";
+import { offeringImageFields, servicePageFields } from "../objects/servicePage";
 
 const RESERVED_PAGE_SLUGS = ["studio", "api"];
 
@@ -112,6 +113,7 @@ export const service = defineType({
   icon: SparklesIcon,
   groups: [
     { name: "content", title: "Content", default: true },
+    { name: "page", title: "Page sections" },
     { name: "seo", title: "SEO" },
   ],
   orderings: [
@@ -213,8 +215,9 @@ export const service = defineType({
           fields: [
             defineField({ name: "title", type: "string", validation: (rule) => rule.required() }),
             defineField({ name: "text", type: "text", rows: 2, validation: (rule) => rule.max(160) }),
+            ...offeringImageFields,
           ],
-          preview: { select: { title: "title", subtitle: "text" } },
+          preview: { select: { title: "title", subtitle: "text", media: "image" } },
         }),
       ],
     }),
@@ -236,6 +239,7 @@ export const service = defineType({
         }),
       ],
     }),
+    ...servicePageFields,
     defineField({ name: "seo", type: "seo", group: "seo" }),
   ],
   preview: {

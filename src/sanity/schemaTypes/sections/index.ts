@@ -17,7 +17,7 @@ const label = defineField({
 });
 
 /** The heading word shown in the brand gradient (the design system's accent word). */
-const accent = defineField({
+export const accent = defineField({
   name: "accent",
   title: "Word in colour",
   type: "string",

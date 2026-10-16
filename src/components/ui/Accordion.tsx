@@ -7,18 +7,22 @@ export type AccordionItem = { key: string; title: string; content: React.ReactNo
  * The design system's editorial accordion: an index, a large title and a
  * plus that turns into a cross, between hairline rules; the open row's rule
  * turns ink. Built on details and summary, so it works without JavaScript.
- * Rows sharing a `name` open one at a time; the first starts open.
+ * Rows sharing a `name` open one at a time; the first starts open unless
+ * `openFirst` is false.
  */
 export function Accordion({
   items,
   name,
   numbered = true,
+  openFirst = true,
   titleAs: Title = "h3",
   className,
 }: {
   items: AccordionItem[];
   name: string;
   numbered?: boolean;
+  /** Start with the first row open. */
+  openFirst?: boolean;
   titleAs?: "h2" | "h3";
   className?: string;
 }) {
@@ -29,7 +33,7 @@ export function Accordion({
         <details
           key={item.key}
           name={name}
-          open={i === 0}
+          open={openFirst && i === 0}
           data-reveal
           className="accordion group/acc border-t border-line transition-[border-color] duration-300 open:border-ink"
         >

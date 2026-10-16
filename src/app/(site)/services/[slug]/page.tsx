@@ -14,6 +14,7 @@ import { Comparison } from "@/components/sections/Comparison";
 import { FeaturedProject } from "@/components/sections/FeaturedProject";
 import { Process } from "@/components/sections/Process";
 import { WorkGrid } from "@/components/work/WorkGrid";
+import { ServiceFullPage } from "@/components/services/ServiceFullPage";
 
 export const revalidate = 60;
 export const dynamicParams = true;
@@ -61,6 +62,9 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
   if (!service) notFound();
 
   const work = projects.filter((p) => p.services.some((s) => s.slug === service.slug));
+  if (service.hero?.heading) {
+    return <ServiceFullPage service={service} settings={settings} work={work} process={process} />;
+  }
   const clients = [...new Set(work.map((p) => p.client || p.name))];
   const offerings = service.offerings.length
     ? service.offerings
