@@ -21,7 +21,7 @@ export function Footer({ settings, services }: { settings: SiteSettings; service
   const groups = GROUPS.map((g) => ({ group: g, items: services.filter((s) => s.group === g) })).filter((g) => g.items.length);
 
   return (
-    <footer className="px-gutter pb-[calc(148px+env(safe-area-inset-bottom))] pt-section md:pb-[clamp(96px,calc(4.6vw+79px),150px)]">
+    <footer className="px-gutter pb-[calc(166px+env(safe-area-inset-bottom))] pt-section md:pb-[clamp(96px,calc(4.6vw+79px),150px)]">
       <div className="flex flex-col gap-[clamp(14px,1vw,20px)]">
         <Link href="/" className="w-fit transition-opacity hover:opacity-70" aria-label={`${settings.siteTitle} home`}>
           <Logo logo={settings.logo} name={settings.siteTitle} />

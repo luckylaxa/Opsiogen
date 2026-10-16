@@ -26,7 +26,7 @@ const tabClass =
  * system's square corners, the same height as the back-to-top square beside
  * it, holding the symbol (home), the page you are on with a line that fills
  * as you scroll, the Menu button and the main button; on Home the page name
- * follows the section in view. On phones: a full-width tab bar like an app's,
+ * follows the section in view. On phones: a floating tab bar like an app’s,
  * with Home, the first two pages, the main button in the middle and Menu.
  * Both rise in 0.25s after load (CSS, so they never flash).
  */
@@ -103,48 +103,50 @@ export function Dock({ menu, button }: { menu: LinkItem[]; button: LinkItem }) {
 
   return (
     <>
-      {/* Phones: app-style tab bar */}
-      <nav
-        aria-label="Quick links"
-        className="on-dark dock-in fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#0a090d] pb-[env(safe-area-inset-bottom)] text-white md:hidden"
-      >
-        <span
-          ref={tabProgress}
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-white/70"
-        />
-        <ul className="flex h-[68px] items-stretch px-1.5">
-          <li className="flex flex-1">
-            <Link
-              href="/"
-              aria-current={pathname === "/" ? "page" : undefined}
-              className={cn(tabClass, pathname === "/" ? "text-white" : "text-white/55 hover:text-white")}
-            >
-              <Mark className="size-6" />
-              <span className="grad-hover">Home</span>
-            </Link>
-          </li>
-          {tabs[0] && tab(tabs[0])}
-          <li className="flex flex-[1.3] p-2">
-            <Link
-              href={button.href}
-              className="btn theme-light flex w-full items-center justify-center rounded-[8px] bg-[#f8f6f8] px-2 text-center text-[13px] leading-[1.15] font-semibold text-balance text-[#0a090d] transition-colors duration-300 hover:bg-white"
-            >
-              <span className="btn-label">{button.label}</span>
-            </Link>
-          </li>
-          {tabs[1] && tab(tabs[1])}
-          <li className="flex flex-1">
-            <MenuButton className={cn(tabClass, "text-white/55 hover:text-white")}>
-              <span aria-hidden="true" className="flex size-6 flex-col items-center justify-center gap-[6px]">
-                <span className="h-[1.5px] w-5 bg-current" />
-                <span className="h-[1.5px] w-5 bg-current transition-[width] duration-300 group-hover:w-3" />
-              </span>
-              <span className="grad-hover">Menu</span>
-            </MenuButton>
-          </li>
-        </ul>
-      </nav>
+      {/* Phones: app-style tab bar, floating */}
+      <div className="pointer-events-none fixed inset-x-0 bottom-[calc(12px+env(safe-area-inset-bottom))] z-40 px-3 md:hidden">
+        <nav
+          aria-label="Quick links"
+          className="on-dark dock-in pointer-events-auto relative overflow-hidden rounded-[8px] border border-white/10 bg-[rgb(10_9_13/0.9)] text-white shadow-[0_18px_50px_-16px_rgb(0_0_0/0.6)] backdrop-blur-xl"
+        >
+          <ul className="flex h-[68px] items-stretch px-1">
+            <li className="flex flex-1">
+              <Link
+                href="/"
+                aria-current={pathname === "/" ? "page" : undefined}
+                className={cn(tabClass, pathname === "/" ? "text-white" : "text-white/55 hover:text-white")}
+              >
+                <Mark className="size-6" />
+                <span className="grad-hover">Home</span>
+              </Link>
+            </li>
+            {tabs[0] && tab(tabs[0])}
+            <li className="flex flex-[1.3] px-1 py-2">
+              <Link
+                href={button.href}
+                className="btn theme-light flex w-full items-center justify-center rounded-[5px] bg-[#f8f6f8] px-2 text-center text-[13px] leading-[1.15] font-semibold text-balance text-[#0a090d] transition-colors duration-300 hover:bg-white"
+              >
+                <span className="btn-label">{button.label}</span>
+              </Link>
+            </li>
+            {tabs[1] && tab(tabs[1])}
+            <li className="flex flex-1">
+              <MenuButton className={cn(tabClass, "text-white/55 hover:text-white")}>
+                <span aria-hidden="true" className="flex size-6 flex-col items-center justify-center gap-[6px]">
+                  <span className="h-[1.5px] w-5 bg-current" />
+                  <span className="h-[1.5px] w-5 bg-current transition-[width] duration-300 group-hover:w-3" />
+                </span>
+                <span className="grad-hover">Menu</span>
+              </MenuButton>
+            </li>
+          </ul>
+          <span
+            ref={tabProgress}
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-3 bottom-0 h-px origin-left scale-x-0 bg-white/60"
+          />
+        </nav>
+      </div>
 
       {/* Tablets and up: floating square bar */}
       <div className="pointer-events-none fixed inset-x-0 bottom-[clamp(12px,calc(1.7vw+5.6px),38px)] z-40 hidden justify-center px-3 md:flex">
