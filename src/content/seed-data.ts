@@ -65,6 +65,20 @@ const WEB = "/services/ai-websites";
 const offerings = (items: Pair[]) => items.map(([title, text], i) => ({ _key: `o${i + 1}`, title, text }));
 const benefits = (items: Pair[]) => items.map(([title, text], i) => ({ _key: `b${i + 1}`, title, text }));
 const faqs = (items: Pair[]) => items.map(([question, answer], i) => ({ _key: `q${i + 1}`, question, answer }));
+/** What we do cards, each with its image from public/services/<slug>. */
+const cards = (slug: string, items: [title: string, text: string, file: string, alt: string][]) =>
+  items.map(([title, text, file, alt], i) => ({
+    _key: `o${i + 1}`,
+    title,
+    text,
+    image: img(`/services/${slug}/${file}`, 1600, 1200, alt),
+  }));
+const heroImage = (slug: string, alt: string) => ({ image: img(`/services/${slug}/hero.png`, 1600, 1120, alt) });
+const statItems = (items: Pair[]) => ({
+  label: "In numbers",
+  items: items.map(([value, label], i) => ({ _key: `s${i + 1}`, value, label })),
+});
+const stepItems = (items: Pair[]) => items.map(([title, text], i) => ({ _key: `p${i + 1}`, title, text }));
 
 const OWNERSHIP: Pair = ["Who owns the work?", "You do. You own everything we build."];
 const PRICING: Pair = [
@@ -198,10 +212,10 @@ export const SERVICES: Service[] = [
     description:
       "We design SaaS, enterprise and mobile products that are simple to use and quick to adopt. AI speeds up research, flows and screens, and our designers make every decision count. Design systems keep your product consistent as it grows from MVP to enterprise.",
     included: [
+      "Product design",
       "UX audits",
-      "Product redesigns",
-      "New product UX/UI",
-      "Mobile app design",
+      "Redesign and iteration",
+      "Prototypes and validation",
       "Design systems",
       "Developer-ready handoff",
     ],
@@ -213,13 +227,13 @@ export const SERVICES: Service[] = [
       ["Ready to build", "Annotated screens, specs and components your developers can use straight away."],
       ["Designer-led AI", "AI speeds up research, flows and screens. Our designers make every decision count."],
     ]),
-    offerings: offerings([
-      ["UX audits", "We review your product, find where people get stuck and rank the fixes."],
-      ["Product redesigns", "Complex products made simpler to use and quicker to adopt."],
-      ["New product UX/UI", "From user flows and wireframes to polished, tested screens."],
-      ["Mobile app design", "App experiences designed for phones and tablets."],
-      ["Design systems", "Reusable components and clear rules that keep your product consistent as it grows."],
-      ["Developer-ready handoff", "Specs, assets and annotated screens your developers can build from."],
+    offerings: cards("ai-product-design", [
+      ["Product design", "New SaaS, web and mobile products, from flows to polished screens.", "tile-product.jpg", "A product dashboard on a laptop and an app on a phone"],
+      ["UX audits", "We find where people get stuck and rank the fixes.", "tile-audit.jpg", "A product screen marked with numbered issues and a list of fixes"],
+      ["Redesign and iteration", "Live products made simpler, one release at a time.", "tile-redesign.jpg", "A cluttered old screen beside its clean redesign"],
+      ["Prototypes and validation", "Clickable prototypes to test ideas before you build.", "tile-prototype.jpg", "Three app screens linked as a clickable prototype"],
+      ["Design systems", "Components, colours and rules that keep every screen consistent.", "tile-system.jpg", "A design system sheet with colours, type, buttons and inputs"],
+      ["Developer-ready handoff", "Specs, assets and annotated screens your developers can build from.", "tile-handoff.jpg", "An app screen with measurements beside its specs"],
     ]),
     faqs: faqs([
       ["Do you work on existing products?", "Yes. We audit and redesign live products as well as design new ones."],
@@ -232,7 +246,40 @@ export const SERVICES: Service[] = [
         "AI speeds up research, flows and screens. Our designers make every decision count.",
       ],
       OWNERSHIP,
+      ["Do you design mobile apps?", "Yes. We design apps for phones and tablets, as well as web products."],
+      [
+        "Can you work with our developers?",
+        "Yes. We hand over specs, assets and annotated screens, and stay on hand while they build.",
+      ],
+      [
+        "We already have a design system. Can you improve it?",
+        "Yes. We audit what you have, fill the gaps and document it so your team can keep it up to date.",
+      ],
+      PRICING,
     ]),
+    hero: heroImage("ai-product-design", "A product dashboard, an app and a design system sheet"),
+    clientsLabel: "Products we’ve designed for",
+    why: { label: "Why it matters", heading: "People don’t read manuals. Your product has to make sense.", accent: "sense" },
+    stats: statItems([
+      ["1", "design system, from MVP to enterprise"],
+      ["3", "screen sizes in every design: phone, tablet and desktop"],
+      ["100%", "yours to keep"],
+    ]),
+    offer: { label: "What we do", heading: "Products that feel simple.", accent: "simple" },
+    steps: {
+      label: "How we work",
+      heading: "From discovery to handoff.",
+      accent: "handoff",
+      items: stepItems([
+        ["Discovery", "We learn your product, your users and your goals."],
+        ["Audit and ideas", "We map the journey, find the gaps and explore options."],
+        ["Design", "Flows and screens, sped up with AI and finished by our designers."],
+        ["Test", "Prototypes in front of real users before anything is built."],
+        ["System and handoff", "Components, specs and documentation for your developers."],
+        ["Improve", "We keep refining as your product grows."],
+      ]),
+    },
+    related: { label: "Selected work", heading: "Products we’ve designed.", accent: "designed" },
   },
   {
     _id: "service-ai-mvps-business-apps",
@@ -260,13 +307,13 @@ export const SERVICES: Service[] = [
       ["Built to grow", "A first version that can grow into a full product."],
       ["Yours to keep", "You own everything we build."],
     ]),
-    offerings: offerings([
-      ["MVPs and prototypes", "A working first version to test with users and investors."],
-      ["AI-powered features", "Smart search, chat, summaries and forms built into your product."],
-      ["Customer and partner portals", "One place for customers and partners to log in, track and get things done."],
-      ["Dashboards", "Live views of the numbers that matter, in one place."],
-      ["Booking and intake systems", "Online booking and intake that feed straight into your workflow."],
-      ["Internal tools and trackers", "Simple tools that replace spreadsheets and manual work."],
+    offerings: cards("ai-mvps-business-apps", [
+      ["MVPs and prototypes", "A working first version to test with users and investors.", "tile-mvp.jpg", "A first app version on a phone beside a launch checklist"],
+      ["AI-powered features", "Smart search, chat, summaries and forms built into your product.", "tile-ai.jpg", "A search screen with an answer written by AI"],
+      ["Customer and partner portals", "One place for customers and partners to log in, track and get things done.", "tile-portal.jpg", "A customer portal listing orders on a laptop"],
+      ["Dashboards", "Live views of the numbers that matter, in one place.", "tile-dashboard.jpg", "A live dashboard with charts and team status"],
+      ["Booking and intake systems", "Online booking and intake that feed straight into your workflow.", "tile-booking.jpg", "A booking calendar and a phone showing time slots"],
+      ["Internal tools and trackers", "Simple tools that replace spreadsheets and manual work.", "tile-internal.jpg", "A request board with cards in columns"],
     ]),
     faqs: faqs([
       [
@@ -276,7 +323,39 @@ export const SERVICES: Service[] = [
       ["Can the MVP grow into a full product?", "Yes. We build the first version so it can grow with your users and your business."],
       ["Do we need our own developers?", "No. We design, build and launch, then support the product after launch."],
       OWNERSHIP,
+      [
+        "What can you build?",
+        "MVPs, customer portals, dashboards, booking systems, internal tools, and AI features inside your product.",
+      ],
+      [
+        "Can you add AI to software we already have?",
+        "Yes. We add features such as smart search, chat and summaries to products you already use.",
+      ],
+      PRICING,
     ]),
+    hero: heroImage("ai-mvps-business-apps", "A customer portal on a laptop and a booking app on a phone"),
+    clientsLabel: "Built for",
+    why: { label: "Why it matters", heading: "The fastest way to test an idea is to put it in people’s hands.", accent: "hands" },
+    stats: statItems([
+      ["Weeks", "from idea to working product"],
+      ["0", "developers needed on your side"],
+      ["100%", "yours to keep"],
+    ]),
+    offer: { label: "What we build", heading: "Working software, in weeks.", accent: "weeks" },
+    steps: {
+      label: "How we work",
+      heading: "From idea to launch.",
+      accent: "launch",
+      items: stepItems([
+        ["Idea and scope", "We agree what the first version must prove, and what can wait."],
+        ["Design", "Flows and screens you can click through before we build."],
+        ["Build with AI", "AI speeds up the build. Our team reviews and tests every release."],
+        ["Test with users", "Real feedback early, while changes are quick to make."],
+        ["Launch", "Live and ready for your first users."],
+        ["Grow", "We add features as your users and your business grow."],
+      ]),
+    },
+    related: { label: "Selected work", heading: "Products we’ve built.", accent: "built" },
   },
   {
     _id: "service-ai-automation",
@@ -294,8 +373,7 @@ export const SERVICES: Service[] = [
       "Internal dashboard automation",
       "Document and data extraction",
       "AI chatbots and voice assistants",
-      "Report and proposal generation",
-      "Approval workflows",
+      "Reports, proposals and approvals",
       "Monthly care plan",
     ],
     statement:
@@ -306,14 +384,13 @@ export const SERVICES: Service[] = [
       ["Fewer mistakes", "Automated steps follow the same rules every time."],
       ["Looked after", "A monthly care plan keeps every automation running and improving."],
     ]),
-    offerings: offerings([
-      ["Process audit", "We map how work gets done and find the tasks worth automating first."],
-      ["Lead and enquiry automation", "Every enquiry captured, sorted and followed up without manual work."],
-      ["Internal dashboard automation", "Dashboards and reports that update themselves from the tools you use."],
-      ["Document and data extraction", "Data pulled from forms, invoices and PDFs into your systems."],
-      ["AI chatbots and voice assistants", "Assistants that answer questions and handle routine requests by chat or voice."],
-      ["Reports, proposals and approvals", "Documents generated and approvals routed automatically."],
-      ["Monthly care plan", "We monitor, fix and improve your automations every month."],
+    offerings: cards("ai-automation", [
+      ["Process audit", "We map how work gets done and find the tasks worth automating first.", "tile-audit.jpg", "A process map with steps marked to automate"],
+      ["Lead and enquiry automation", "Every enquiry captured, sorted and followed up without manual work.", "tile-leads.jpg", "A website enquiry sorted by AI and answered with call times"],
+      ["Internal dashboards", "Dashboards and reports that update themselves from the tools you use.", "tile-dashboards.jpg", "A weekly report dashboard that updates itself"],
+      ["Document and data extraction", "Data pulled from forms, invoices and PDFs into your systems.", "tile-documents.jpg", "An invoice beside the details pulled from it"],
+      ["AI chatbots and voice assistants", "Assistants that answer questions and handle routine requests by chat or voice.", "tile-assistants.jpg", "A chat assistant on a phone and a voice assistant on a call"],
+      ["Reports, proposals and approvals", "Documents drafted and approvals routed automatically.", "tile-approvals.jpg", "A proposal drafted by AI waiting for approval"],
     ]),
     faqs: faqs([
       [
@@ -326,7 +403,40 @@ export const SERVICES: Service[] = [
       ],
       ["What happens after launch?", "The monthly care plan keeps your automations running and improving."],
       OWNERSHIP,
+      ["Do we need technical staff?", "No. We build, run and look after the automations. Your team just uses them."],
+      [
+        "Can you build an AI voice assistant?",
+        "Yes. We build assistants that answer calls and questions, and hand over to your team when needed.",
+      ],
+      [
+        "How do we know what to automate first?",
+        "The process audit ranks tasks by time saved and effort, so you start where it pays back fastest.",
+      ],
+      PRICING,
     ]),
+    hero: heroImage("ai-automation", "An automated enquiry flow on a laptop and an AI assistant on a phone"),
+    clientsLabel: "Automations built for",
+    why: { label: "Why it matters", heading: "Your team wasn’t hired to copy and paste.", accent: "copy and paste" },
+    stats: statItems([
+      ["24/7", "automations at work, day and night"],
+      ["0", "copy and paste between your tools"],
+      ["1", "monthly care plan that keeps it all running"],
+    ]),
+    offer: { label: "What we automate", heading: "Hand the busywork to AI.", accent: "AI" },
+    steps: {
+      label: "How we work",
+      heading: "From audit to autopilot.",
+      accent: "autopilot",
+      items: stepItems([
+        ["Process audit", "We map how work gets done and find what to automate first."],
+        ["Plan", "A clear plan for each automation, agreed with you."],
+        ["Build and connect", "Automations and AI assistants, connected to the tools you use."],
+        ["Test", "We test with real data before anything goes live."],
+        ["Launch", "Live, with a short handover for your team."],
+        ["Care plan", "We monitor, fix and improve every month."],
+      ]),
+    },
+    related: { label: "Selected work", heading: "Automations we’ve built.", accent: "built" },
   },
   {
     _id: "service-ai-social-media-marketing",
@@ -335,16 +445,16 @@ export const SERVICES: Service[] = [
     shortName: "Social Media",
     group: "grow",
     order: 5,
-    tagline: "Always-on content that keeps your brand visible.",
+    tagline: "Scroll-stopping content, made fast and on brand.",
     description:
       "We plan, create and publish your social content every month: posts, reels, AI video and captions in your brand voice. You get consistent output, faster turnaround and a clear monthly report.",
     included: [
       "Content calendar",
-      "Post and carousel design",
-      "Reels and AI video",
-      "Captions",
-      "Scheduling and publishing",
-      "Performance reporting",
+      "Posts and carousels",
+      "Reels and short video",
+      "Paid social creative",
+      "Campaign concepts",
+      "Publishing and reporting",
     ],
     statement:
       "Social works when you show up consistently. We keep your brand visible every week, without adding work to your day.",
@@ -354,13 +464,13 @@ export const SERVICES: Service[] = [
       ["Faster with AI", "AI speeds up ideas, visuals and video, so turnaround is quick."],
       ["Clear reporting", "A monthly report on what worked and what comes next."],
     ]),
-    offerings: offerings([
-      ["Content calendar", "A monthly plan built around your goals, launches and events."],
-      ["Posts and carousels", "On-brand designs for every channel, made fast with AI."],
-      ["Reels and AI video", "Short videos that keep your brand in the feed."],
-      ["Captions", "Copy in your brand voice, written for each channel."],
-      ["Scheduling and publishing", "We publish to your calendar, so you don’t have to."],
-      ["Performance reporting", "A clear monthly report on what worked and what’s next."],
+    offerings: cards("ai-social-media-marketing", [
+      ["Content calendar", "A monthly plan built around your goals, launches and events.", "tile-calendar.jpg", "A monthly content calendar with planned posts"],
+      ["Posts and carousels", "On-brand designs and captions for every channel, made fast with AI.", "tile-posts.jpg", "Three social posts from one carousel"],
+      ["Reels and short video", "Short, vertical video that keeps your brand in the feed.", "tile-reels.jpg", "Two phones playing short vertical videos"],
+      ["Paid social creative", "Ad designs and variations, made to test and improve.", "tile-paid.jpg", "Four ad variations, one marked as the winner"],
+      ["Campaign concepts", "One big idea for a launch or season, ready for every format.", "tile-campaign.jpg", "One campaign idea as a poster, a story and posts"],
+      ["Publishing and reporting", "We publish to your calendar and report on what worked.", "tile-reporting.jpg", "A monthly social report with a chart and next steps"],
     ]),
     faqs: faqs([
       ["How much content do we get?", "It depends on your plan. We agree the monthly output with you before we start."],
@@ -369,7 +479,38 @@ export const SERVICES: Service[] = [
         "Yes. We work from your brand voice and guidelines, and you approve the calendar before anything goes live.",
       ],
       ["Do you publish for us?", "Yes. We schedule and publish your content, then report on performance every month."],
+      [
+        "Do you make paid social ads?",
+        "Yes. We design ads and variations for testing. Our Digital Marketing service can run the campaigns too.",
+      ],
+      ["Which channels do you cover?", "All the main social channels. Every post is sized and written for the channel it runs on."],
+      ["Can you make video without a shoot?", "Yes. Many reels are made with motion graphics and AI, with no filming needed."],
+      PRICING,
+      OWNERSHIP,
     ]),
+    hero: heroImage("ai-social-media-marketing", "Three phones showing social posts and a short video"),
+    clientsLabel: "Social content for",
+    why: { label: "Why it matters", heading: "Social rewards the brands that show up.", accent: "show up" },
+    stats: statItems([
+      ["30", "days of content, planned ahead"],
+      ["1", "clear report every month"],
+      ["100%", "in your brand voice"],
+    ]),
+    offer: { label: "What we create", heading: "Content made for the feed.", accent: "feed" },
+    steps: {
+      label: "How we work",
+      heading: "From plan to post.",
+      accent: "post",
+      items: stepItems([
+        ["Brief", "Your goals, your audience and your brand voice."],
+        ["Calendar", "A monthly plan you approve before anything is made."],
+        ["Create", "Posts, carousels and video, sped up with AI and finished by our designers."],
+        ["Review", "You approve everything before it goes live."],
+        ["Publish", "Scheduled and published for you."],
+        ["Report", "A clear monthly report and what comes next."],
+      ]),
+    },
+    related: { label: "Selected work", heading: "Brands we keep visible.", accent: "visible" },
   },
   {
     _id: "service-digital-marketing",
@@ -422,10 +563,10 @@ export const SERVICES: Service[] = [
     included: [
       "Ad creatives",
       "Presentations and pitch decks",
-      "Brand assets",
+      "Brand assets and templates",
       "Motion graphics",
       "AI imagery and video",
-      "Email and landing page design",
+      "Email and landing pages",
     ],
     statement:
       "Creative needs don’t wait for a hiring plan. Send requests any time and get on-brand work back fast.",
@@ -435,13 +576,13 @@ export const SERVICES: Service[] = [
       ["Fast turnaround", "AI speeds up production. Designers keep the quality high."],
       ["No hiring", "Dedicated creative support without adding headcount."],
     ]),
-    offerings: offerings([
-      ["Ad creatives", "Static and animated ads sized for every channel."],
-      ["Presentations and pitch decks", "Decks that make your story clear and convincing."],
-      ["Brand assets", "Templates, icons, illustrations and everyday brand materials."],
-      ["Motion graphics", "Animated graphics for social, ads and product stories."],
-      ["AI imagery and video", "Original visuals made with AI and finished by designers."],
-      ["Email and landing page design", "Designs for campaigns, newsletters and launches."],
+    offerings: cards("ai-creative-subscription", [
+      ["Ad creatives", "Static and animated ads sized for every channel.", "tile-ads.jpg", "One ad in six sizes"],
+      ["Presentations and pitch decks", "Decks that make your story clear and convincing.", "tile-decks.jpg", "Three presentation slides"],
+      ["Brand assets and templates", "Templates, icons, illustrations and everyday brand materials.", "tile-assets.jpg", "An icon set, a report template and a social template"],
+      ["Motion graphics", "Animated graphics for social, ads and product stories.", "tile-motion.jpg", "Animation frames, an easing curve and a timeline"],
+      ["AI imagery and video", "Original visuals made with AI and finished by designers.", "tile-ai.jpg", "A grid of AI-made visuals with one chosen as final"],
+      ["Email and landing pages", "Designs for campaigns, newsletters, launches and reports.", "tile-email.jpg", "An email design beside a landing page"],
     ]),
     faqs: faqs([
       [
@@ -453,7 +594,39 @@ export const SERVICES: Service[] = [
         "You get dedicated creative support without hiring, or briefing a new agency for every project.",
       ],
       OWNERSHIP,
+      [
+        "What can we ask for?",
+        "Ads, decks, brand assets, motion, AI visuals, email and landing pages. If it’s creative, ask.",
+      ],
+      [
+        "How fast is turnaround?",
+        "Fast. Smaller requests come back quickest, and bigger projects get a clear timeline before we start.",
+      ],
+      ["Will the work match our brand?", "Yes. We work from your guidelines and templates, so everything looks like you."],
+      PRICING,
     ]),
+    hero: heroImage("ai-creative-subscription", "A presentation slide, a poster, ads, a social post and a story"),
+    clientsLabel: "Creative for",
+    why: { label: "Why it matters", heading: "Say yes to every project, without adding headcount.", accent: "headcount" },
+    stats: statItems([
+      ["1", "flat monthly fee"],
+      ["24/7", "to send requests"],
+      ["0", "hires needed"],
+    ]),
+    offer: { label: "What you get", heading: "Every kind of creative, one plan.", accent: "one plan" },
+    steps: {
+      label: "How we work",
+      heading: "Request, review, done.",
+      accent: "done",
+      items: stepItems([
+        ["Onboard", "We learn your brand, your goals and how you work."],
+        ["Request", "Send briefs any time, in one place."],
+        ["Create", "AI speeds up production. Designers keep the quality high."],
+        ["Review", "Share feedback and we refine until it’s right."],
+        ["Deliver", "Final files, in every size you need."],
+      ]),
+    },
+    related: { label: "Selected work", heading: "Creative we’ve delivered.", accent: "delivered" },
   },
   {
     _id: "service-ai-print-collateral",
@@ -462,18 +635,16 @@ export const SERVICES: Service[] = [
     shortName: "Print",
     group: "create",
     order: 8,
-    tagline: "Print-ready design, delivered faster.",
+    tagline: "Print, packaging and merch, ready for production.",
     description:
-      "We design brochures, catalogues, packaging, merchandise and event collateral with AI speed and designer precision. Every file is checked and delivered ready for print.",
+      "We design brochures, posters, stationery, packaging, merchandise and event collateral with AI speed and designer precision. Every file is checked and delivered ready for print.",
     included: [
-      "Brochures",
-      "Catalogues",
-      "Flyers",
-      "Posters",
+      "Brochures and catalogues",
+      "Posters, flyers and print ads",
+      "Stationery",
       "Packaging and labels",
       "Merchandise and apparel",
-      "Stationery",
-      "Expo booths and banners",
+      "Event collateral and booths",
     ],
     statement:
       "Print still makes the first impression at events, on shelves and in people’s hands. We design it fast and get every file print-ready.",
@@ -483,19 +654,51 @@ export const SERVICES: Service[] = [
       ["One brand everywhere", "Brochures, packaging and booths that look like they belong together."],
       ["Yours to keep", "You own every design and source file."],
     ]),
-    offerings: offerings([
-      ["Brochures and catalogues", "Clear layouts that present your products and services well."],
-      ["Flyers and posters", "Bold print for events, promotions and launches."],
-      ["Packaging and labels", "Packaging that stands out on the shelf and meets print specs."],
-      ["Merchandise and apparel", "Branded merchandise, uniforms and giveaways."],
-      ["Stationery", "Business cards, letterheads and everyday brand print."],
-      ["Expo booths and banners", "Large-format graphics for exhibitions and events."],
+    offerings: cards("ai-print-collateral", [
+      ["Brochures and catalogues", "Clear layouts that present your products and services well.", "tile-brochures.jpg", "A company brochure, open and closed"],
+      ["Posters, flyers and print ads", "Bold print for launches, promotions and outdoor.", "tile-posters.jpg", "Three framed posters on a wall"],
+      ["Stationery", "Business cards, letterheads and everyday brand print.", "tile-stationery.jpg", "A letterhead, an envelope and business cards"],
+      ["Packaging and labels", "Packaging that stands out on the shelf and meets print specs.", "tile-packaging.jpg", "Three branded boxes in different sizes"],
+      ["Merchandise and apparel", "Branded merch, uniforms, gifts and kits people keep.", "tile-merch.jpg", "A branded tote bag, T-shirt and mug"],
+      ["Event collateral and booths", "Booths, banners and handouts for exhibitions and events.", "tile-events.jpg", "An exhibition booth with a back wall, counter and banners"],
     ]),
     faqs: faqs([
       ["Are the files ready for print?", "Yes. Every file is checked and delivered ready for print."],
       ["Do you design for exhibitions?", "Yes. We design expo booths, banners and event collateral."],
       OWNERSHIP,
+      ["Do you design packaging?", "Yes. Boxes, bags, labels and inserts, designed to your printer’s specs."],
+      [
+        "Can you design merchandise and apparel?",
+        "Yes. T-shirts, caps, mugs, notebooks, gift kits and more, all on brand.",
+      ],
+      [
+        "Can you adapt one design to many sizes?",
+        "Yes. AI speeds up resizing and variations, and our designers check every version.",
+      ],
+      PRICING,
     ]),
+    hero: heroImage("ai-print-collateral", "A brochure, business cards, a box and a mug"),
+    clientsLabel: "Print and collateral for",
+    why: { label: "Why it matters", heading: "Every brochure, box and giveaway is a chance to be remembered.", accent: "remembered" },
+    stats: statItems([
+      ["100%", "print-ready files, checked before delivery"],
+      ["1", "look across print, packaging and merch"],
+      ["5", "steps from brief to final files"],
+    ]),
+    offer: { label: "What we do", heading: "Design you can hold.", accent: "hold" },
+    steps: {
+      label: "How we work",
+      heading: "From brief to print-ready.",
+      accent: "print-ready",
+      items: stepItems([
+        ["Brief", "Your goal, formats, sizes and deadlines."],
+        ["Plan", "Timeline and print specs agreed up front."],
+        ["First draft", "Concepts sped up with AI and finished by our designers."],
+        ["Revisions", "You review and we refine until it’s right."],
+        ["Print-ready files", "Checked and delivered ready for your printer."],
+      ]),
+    },
+    related: { label: "Selected work", heading: "Print we’ve designed.", accent: "designed" },
   },
   {
     _id: "service-ai-brand",
@@ -506,8 +709,9 @@ export const SERVICES: Service[] = [
     order: 9,
     tagline: "A clear, consistent brand, built faster.",
     description:
-      "We create and refresh brands: logo, colours, type and guidelines, plus the templates your business uses every day. AI speeds up exploration, and our designers make sure every choice fits.",
+      "We create and refresh brands: strategy, logo, colours, type and guidelines, plus the templates your business uses every day. AI speeds up exploration, and our designers make sure every choice fits.",
     included: [
+      "Brand strategy and messaging",
       "Logo and visual identity",
       "Brand guidelines",
       "Brand refresh",
@@ -522,12 +726,13 @@ export const SERVICES: Service[] = [
       ["Ready to use", "Templates and assets your business can use straight away."],
       ["Faster with AI", "AI speeds up exploration, so you see more options sooner."],
     ]),
-    offerings: offerings([
-      ["Logo and visual identity", "A distinctive logo, colours and type that fit your business."],
-      ["Brand guidelines", "Clear rules, so everyone uses your brand the same way."],
-      ["Brand refresh", "A modern update that keeps what people already recognise."],
-      ["Brand assets and templates", "Ready-to-use templates for decks, social posts and documents."],
-      ["Brand rollout", "Your new brand applied across website, social and print."],
+    offerings: cards("ai-brand-services", [
+      ["Brand strategy and messaging", "Who you are, who you serve and how you sound.", "tile-strategy.jpg", "Three cards: who we are, who we serve and how we sound"],
+      ["Logo and visual identity", "A distinctive logo, colours and type that fit your business.", "tile-identity.jpg", "The logo and symbol on dark, light and gradient tiles"],
+      ["Brand guidelines", "Clear rules, so everyone uses your brand the same way.", "tile-guidelines.jpg", "Brand guidelines open at the logo and colour pages"],
+      ["Brand refresh", "A modern update that keeps what people already recognise.", "tile-refresh.jpg", "An old logo beside its modern refresh"],
+      ["Brand assets and templates", "Ready-to-use templates for decks, social posts and documents.", "tile-assets.jpg", "Slide, report and social post templates"],
+      ["Brand rollout", "Your new brand applied across website, social and print.", "tile-rollout.jpg", "The brand on a poster, a phone, a tote bag and a business card"],
     ]),
     faqs: faqs([
       ["Can you refresh our existing brand?", "Yes. We modernise what you have and keep the parts people recognise."],
@@ -536,7 +741,39 @@ export const SERVICES: Service[] = [
         "Logo files, colours, type, brand guidelines and the templates you need, ready to use.",
       ],
       OWNERSHIP,
+      [
+        "How do you use AI in branding?",
+        "AI speeds up exploration, so you see more directions sooner. Our designers make every final choice.",
+      ],
+      ["Can you help with messaging?", "Yes. We define how you describe what you do, and the voice that goes with it."],
+      [
+        "Will the brand work on our website and social?",
+        "Yes. We roll it out across website, social, print and templates, so it looks the same everywhere.",
+      ],
+      PRICING,
     ]),
+    hero: heroImage("ai-brand-services", "Brand guidelines, a type page, an app icon and a business card"),
+    clientsLabel: "Brands we’ve worked on",
+    why: { label: "Why it matters", heading: "Consistent brands are easier to trust.", accent: "trust" },
+    stats: statItems([
+      ["1", "brand system for every touchpoint"],
+      ["100%", "yours, with every source file"],
+      ["5", "steps from kickoff to rollout"],
+    ]),
+    offer: { label: "What we do", heading: "From strategy to systems.", accent: "systems" },
+    steps: {
+      label: "How we work",
+      heading: "From kickoff to rollout.",
+      accent: "rollout",
+      items: stepItems([
+        ["Kickoff", "Your story, your market, your audience and your goals."],
+        ["Strategy", "Positioning and messaging that set you apart."],
+        ["Exploration", "AI speeds up exploration, so you see more directions sooner."],
+        ["Identity and guidelines", "Logo, colours, type and rules, refined with you."],
+        ["Rollout", "Templates and assets applied across every touchpoint."],
+      ]),
+    },
+    related: { label: "Selected work", heading: "Brands we’ve built.", accent: "built" },
   },
   {
     _id: "service-ai-video",
@@ -554,6 +791,7 @@ export const SERVICES: Service[] = [
       "Video ads",
       "Motion graphics and animation",
       "AI video",
+      "Concepts and scripts",
     ],
     statement:
       "Video explains in seconds what pages of text can’t. We produce it fast, on brand and ready for every channel.",
@@ -563,18 +801,48 @@ export const SERVICES: Service[] = [
       ["Fast turnaround", "AI speeds up scripts, visuals and edits."],
       ["On brand", "Designers check every frame against your brand."],
     ]),
-    offerings: offerings([
-      ["Explainer and product videos", "Short videos that show what you do and why it matters."],
-      ["Social video and reels", "Vertical, fast-paced video made for social channels."],
-      ["Video ads", "Ads cut to the length and format of every placement."],
-      ["Motion graphics and animation", "Animated stories, titles and data that make ideas easy to follow."],
-      ["AI video", "Visuals, voiceovers and scenes made with AI and finished by designers."],
+    offerings: cards("ai-video-production", [
+      ["Explainer and product videos", "Short videos that show what you do and why it matters.", "tile-explainer.jpg", "A video player paused on a title card"],
+      ["Social video and reels", "Vertical, fast-paced video made for social channels.", "tile-social.jpg", "Three phones playing vertical videos"],
+      ["Video ads", "Ads cut to the length and format of every placement.", "tile-ads.jpg", "One ad cut in wide, square and vertical formats"],
+      ["Motion graphics and animation", "Animated stories, titles and data that make ideas easy to follow.", "tile-motion.jpg", "Frames of an animated chart with its easing curve"],
+      ["AI video", "Visuals, voiceovers and scenes made with AI and finished by designers.", "tile-ai.jpg", "Four AI-made takes from one prompt, one selected"],
+      ["Concepts and scripts", "Ideas, scripts and storyboards, before a single frame is made.", "tile-concepts.jpg", "A storyboard beside a script"],
     ]),
     faqs: faqs([
       ["Do we need to film anything?", "Not always. Many videos are made with motion graphics and AI, with no shoot needed."],
       ["Which formats do you deliver?", "Every size you need, wide, square and vertical, ready to publish."],
       OWNERSHIP,
+      ["Can you write the script?", "Yes. We write scripts and storyboards, or polish the ones you have."],
+      ["Do you add voiceovers and music?", "Yes. Voiceovers, music and subtitles are part of the edit."],
+      [
+        "How do you use AI in video?",
+        "AI speeds up scripts, visuals and edits. Our designers check every frame against your brand.",
+      ],
+      PRICING,
     ]),
+    hero: heroImage("ai-video-production", "A video editor on a laptop and a vertical video on a phone"),
+    clientsLabel: "Video for",
+    why: { label: "Why it matters", heading: "Video says in seconds what a page of text can’t.", accent: "seconds" },
+    stats: statItems([
+      ["3", "formats from every project: wide, square and vertical"],
+      ["1", "team from script to final cut"],
+      ["100%", "yours to keep"],
+    ]),
+    offer: { label: "What we make", heading: "Video for every screen.", accent: "every screen" },
+    steps: {
+      label: "How we work",
+      heading: "From script to final cut.",
+      accent: "final cut",
+      items: stepItems([
+        ["Brief", "Your message, your audience and where the video will run."],
+        ["Concept and script", "Ideas, scripts and storyboards for you to approve."],
+        ["Production", "Motion, AI and footage, made to the storyboard."],
+        ["Edit and review", "You review the cut and we refine until it’s right."],
+        ["Every format", "Wide, square and vertical versions, ready to publish."],
+      ]),
+    },
+    related: { label: "Selected work", heading: "Videos we’ve made.", accent: "made" },
   },
 ];
 

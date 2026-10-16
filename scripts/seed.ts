@@ -11,8 +11,10 @@
  * in service fields that are still empty (Why it matters, Benefits, What we do,
  * Questions and the page sections), gives What we do items their card images,
  * adds new questions, updates starter text that changed (only where it is
- * still the old text), and adds the How we work and Comparison sections to a
- * page that has none, just before its call to action.
+ * still the old text), rewrites service cards and lists that were redone
+ * (only where Studio still holds the earlier seeded version), and adds the
+ * How we work and Comparison sections to a page that has none, just before
+ * its call to action.
  *
  * Overwrite brings existing documents in line with src/content/seed-data.ts:
  * it rewrites the services, the case studies and the Work and Services pages
@@ -21,6 +23,7 @@
  * projects and their images. Home, About, Contact, Privacy and everything else
  * in Site settings are left alone.
  */
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import nextEnv from "@next/env";
@@ -171,6 +174,38 @@ const TEXT_UPDATES: { id: string; get: string; path: string; from: string; to: s
   { id: "service-ai-websites", get: "related.heading", path: "related.heading", from: "Websites we’ve launched", to: "Websites we’ve launched." },
 ];
 
+/**
+ * Service fields rewritten after an earlier seed, with a fingerprint of the
+ * version that seed wrote. Add mode replaces a field only while Studio still
+ * holds that version, so anything edited in Studio is kept.
+ */
+type RewriteField = "tagline" | "description" | "included" | "offerings";
+const REWRITTEN: Record<string, Partial<Record<RewriteField, string>>> = {
+  "service-ai-product-design": { included: "b400bb4a38e5b0b7", offerings: "c088904223263f40" },
+  "service-ai-automation": { included: "27700bfa288ea7d3", offerings: "82442cf5d696bff6" },
+  "service-ai-social-media-marketing": {
+    tagline: "314bf62988787f84",
+    included: "08b753003511e640",
+    offerings: "1dd5365ec32d7d4c",
+  },
+  "service-ai-creative-subscription": { included: "42725ef958bcbc3a", offerings: "82566a6df8643dff" },
+  "service-ai-print-collateral": {
+    tagline: "166e86095cb3753a",
+    description: "44a5e339fac6a818",
+    included: "7bd83304a281fb0b",
+    offerings: "008dad8b2914b28a",
+  },
+  "service-ai-brand": { description: "e38268610e6c70ba", included: "dc1e7e763bac3569", offerings: "cc3622af55b24d92" },
+  "service-ai-video": { included: "ea21e8287a13a897", offerings: "8af1ee88e3036c3e" },
+};
+const fingerprint = (field: RewriteField, value: unknown) => {
+  const plain =
+    field === "offerings"
+      ? ((value as { title?: string | null; text?: string | null }[] | null) ?? []).map((o) => [o.title ?? "", o.text ?? ""])
+      : (value ?? null);
+  return createHash("sha1").update(JSON.stringify(plain)).digest("hex").slice(0, 16);
+};
+
 /** Card images rendered for an earlier version of the page; add mode swaps them for the current ones. */
 const OLD_CARD_IMAGE = /^offer-(new|revamp|landing|saas|corporate|cms)\.jpg$/;
 
@@ -180,9 +215,16 @@ async function run() {
 
   console.log("Services");
   const existingServices = await client.fetch<
-    { _id: string; offerings: { _key: string; file?: string | null }[] | null; faqKeys: string[] | null }[]
+    {
+      _id: string;
+      tagline: string | null;
+      description: string | null;
+      included: string[] | null;
+      offerings: { _key: string; title?: string | null; text?: string | null; file?: string | null }[] | null;
+      faqKeys: string[] | null;
+    }[]
   >(
-    `*[_type == "service" && _id in $ids]{ _id, "offerings": offerings[]{ _key, "file": image.asset->originalFilename }, "faqKeys": faqs[]._key }`,
+    `*[_type == "service" && _id in $ids]{ _id, tagline, description, included, "offerings": offerings[]{ _key, title, text, "file": image.asset->originalFilename }, "faqKeys": faqs[]._key }`,
     { ids: SERVICES.map((s) => s._id) },
   );
   for (const s of SERVICES) {
@@ -226,6 +268,32 @@ async function run() {
     // questions, without changing anything already there.
     const existing = existingServices.find((e) => e._id === s._id);
     if (OVERWRITE || !existing) continue;
+    const rewrite = REWRITTEN[s._id];
+    if (rewrite) {
+      const next: Record<RewriteField, unknown> = {
+        tagline: s.tagline,
+        description: s.description,
+        included: s.included,
+        offerings: s.offerings.map((o) => ({
+          _type: "offering",
+          _key: o._key ?? key(o.title),
+          title: o.title,
+          text: o.text ?? "",
+          ...(o._key ? offeringImages.get(o._key) : {}),
+        })),
+      };
+      const set: Record<string, unknown> = {};
+      for (const [field, was] of Object.entries(rewrite) as [RewriteField, string][]) {
+        if (fingerprint(field, existing[field]) === was) set[field] = next[field];
+        else console.log(`  kept ${s._id} ${field}: edited in Studio`);
+      }
+      if (Object.keys(set).length) {
+        console.log(`  updating ${s._id}: ${Object.keys(set).join(", ")}`);
+        tx.patch(s._id, (p) => p.set(set));
+      }
+      // Cards that were kept as edited keep their own images too.
+      if (!("offerings" in set)) offeringImages.clear();
+    }
     for (const [k, fields] of offeringImages) {
       const current = existing.offerings?.find((o) => o._key === k);
       if (!current) continue;
