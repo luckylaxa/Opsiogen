@@ -152,7 +152,7 @@ export function ProjectDetail({
         </div>
         {hero && (
           <figure className="mx-edge mt-[clamp(40px,calc(2.88vw+29.2px),92px)] overflow-hidden rounded-card bg-night">
-            <div className="relative aspect-[4/3] sm:aspect-[16/10]">
+            <div className="relative aspect-[3/2] sm:aspect-video">
               <CoverMedia
                 image={hero}
                 video={project.coverVideo}
@@ -191,22 +191,26 @@ export function ProjectDetail({
         </section>
       )}
 
-      {/* 4. The rest of the work, as big image cards */}
+      {/* 4. The rest of the work, as big image cards almost edge to edge:
+             squares one per row on phones and two per row from tablets up,
+             wide images across the full width. */}
       {rest.length > 0 && (
         <section className="mt-section">
           <h3 className="sr-only">More from {project.name}</h3>
-          <ul className="grid grid-cols-2 gap-gap px-gutter">
+          <ul className="grid grid-cols-2 gap-edge px-edge">
             {rest.map((img) => (
               <li key={img._key} data-reveal className={img.size === "half" ? "col-span-2 md:col-span-1" : "col-span-2"}>
-                <figure>
-                  <div className="overflow-hidden rounded-card bg-night">
-                    <Media
-                      image={img}
-                      fill={false}
-                      sizes={img.size === "half" ? "(min-width: 768px) 50vw, 100vw" : "(min-width: 1440px) 1440px, 100vw"}
-                    />
-                  </div>
-                  {img.caption && <figcaption className="mt-3 text-small text-mute">{img.caption}</figcaption>}
+                <figure className="relative overflow-hidden rounded-card bg-night">
+                  <Media
+                    image={img}
+                    fill={false}
+                    sizes={img.size === "half" ? "(min-width: 768px) 50vw, 100vw" : "100vw"}
+                  />
+                  {img.caption && (
+                    <figcaption className="on-dark absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-[clamp(16px,2.4vw,46px)] pt-16 pb-[clamp(16px,2.4vw,40px)] text-base text-white">
+                      {img.caption}
+                    </figcaption>
+                  )}
                 </figure>
               </li>
             ))}

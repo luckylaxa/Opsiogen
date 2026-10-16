@@ -900,14 +900,12 @@ type ProjectInput = {
   liveUrl?: string;
 };
 
-/** The case-study details: a line, where and when, real results, and the work images (public/work/<slug>/1.jpg …). */
+/** The case-study details: a line, where and when, and real results. */
 type CaseDetails = {
   tagline: string;
   location: string;
   year: string;
   stats: Pair[];
-  /** Alt text for each gallery image, in order. */
-  gallery: string[];
 };
 
 /** A case study with its generated title-card cover (public/covers) and card mockup (public/cards). */
@@ -938,20 +936,65 @@ function makeProject(order: number, p: ProjectInput): Project {
     story: [],
     result: null,
     liveUrl: p.liveUrl ?? null,
-    gallery: (d?.gallery ?? []).map((alt, i, all) => ({
-      ...img(`/work/${p.slug}/${i + 1}.jpg`, 1600, 1000, alt),
-      _key: `shot${i + 1}`,
-      size: gallerySize(i, all.length),
-    })),
+    gallery: mockups(p.name, p.slug, Boolean(d)),
   };
 }
 
-/** The first image full width, then pairs side by side; an odd one out at the end goes full width. */
-function gallerySize(i: number, count: number): "full" | "half" {
-  if (i === 0) return "full";
-  const lone = i === count - 1 && (count - 1) % 2 === 1;
-  return lone ? "full" : "half";
+/** What each mockup shows, for its alt text. */
+const MOCKUP_ALT: Record<string, string> = {
+  hero: "on a laptop",
+  heroPhone: "on a laptop and a phone",
+  heroPhones: "on five phones",
+  laptopAngle: "on a laptop, seen at an angle",
+  detail: "close up in a browser",
+  tablet: "on a tablet",
+  stack: "as three stacked screens",
+  phoneTilt: "on a phone",
+  phones: "on three phones",
+  phoneStack: "as three stacked phone screens",
+  closer: "in a browser",
+  closerPhones: "on two phones",
+};
+
+/**
+ * Eight work mockups per project (public/work/<slug>/m1.jpg … m8.jpg): a wide
+ * one, six squares in pairs, and a wide one to close. Case studies with
+ * screens show them; the rest are placeholders with neutral screens, to
+ * replace with the real work.
+ */
+function mockups(name: string, slug: string, real: boolean) {
+  return (MOCKUPS[slug] ?? []).map((kind, i, all) => {
+    const wide = i === 0 || i === all.length - 1;
+    const alt = `${real ? name : `Placeholder mockup of ${name}`} ${MOCKUP_ALT[kind] ?? "on screen"}`;
+    return {
+      ...img(`/work/${slug}/m${i + 1}.jpg`, wide ? 2400 : 1400, wide ? 1350 : 1400, alt),
+      _key: `m${i + 1}`,
+      size: wide ? ("full" as const) : ("half" as const),
+    };
+  });
 }
+
+/** The composition of each project's mockups, in order (see mockups()). */
+const MOCKUPS: Record<string, string[]> = {
+  "surgo-health": ["hero", "laptopAngle", "tablet", "detail", "stack", "tablet", "detail", "closer"],
+  "rohde-schwarz": ["heroPhone", "phoneTilt", "tablet", "detail", "phones", "stack", "laptopAngle", "closer"],
+  bigtapp: ["heroPhone", "tablet", "detail", "phones", "stack", "laptopAngle", "phoneTilt", "closer"],
+  "care-connect": ["hero", "laptopAngle", "tablet", "detail", "stack", "tablet", "detail", "closer"],
+  sandlogic: ["heroPhone", "phones", "stack", "laptopAngle", "phoneTilt", "tablet", "detail", "closer"],
+  "appdev-health": ["heroPhone", "stack", "laptopAngle", "phoneTilt", "tablet", "detail", "phones", "closer"],
+  "engel-volkers": ["hero", "laptopAngle", "tablet", "detail", "stack", "tablet", "detail", "closer"],
+  amphenol: ["heroPhone", "phoneTilt", "tablet", "detail", "phones", "stack", "laptopAngle", "closer"],
+  "sifio-health": ["heroPhone", "tablet", "detail", "phones", "stack", "laptopAngle", "phoneTilt", "closer"],
+  norsecom: ["heroPhone", "detail", "phones", "stack", "laptopAngle", "phoneTilt", "tablet", "closer"],
+  rxlive: ["hero", "laptopAngle", "tablet", "detail", "stack", "tablet", "detail", "closer"],
+  "afthab-tours": ["heroPhone", "stack", "laptopAngle", "phoneTilt", "tablet", "detail", "phones", "closer"],
+  "cabot-solutions": ["heroPhone", "laptopAngle", "phoneTilt", "tablet", "detail", "phones", "stack", "closer"],
+  meetingful: ["hero", "laptopAngle", "tablet", "detail", "stack", "tablet", "detail", "closer"],
+  elcoteq: ["heroPhone", "tablet", "detail", "phones", "stack", "laptopAngle", "phoneTilt", "closer"],
+  "oh-my-glam": ["heroPhones", "phoneTilt", "phones", "phoneStack", "phoneTilt", "phones", "phoneTilt", "closerPhones"],
+  "carlton-noble": ["hero", "laptopAngle", "tablet", "detail", "stack", "tablet", "detail", "closer"],
+  "ciber-digita": ["heroPhone", "stack", "laptopAngle", "phoneTilt", "tablet", "detail", "phones", "closer"],
+};
 
 /** Case-study details from the client case studies; projects not listed show their card image and cover. */
 const CASE_DETAILS: Record<string, CaseDetails> = {
@@ -962,11 +1005,6 @@ const CASE_DETAILS: Record<string, CaseDetails> = {
     stats: [
       ["15+", "Healthcare clients"],
       ["4+", "Major partnerships"],
-    ],
-    gallery: [
-      "Surgo Health index explorer with a county map of the United States",
-      "Surgo Health dashboard with a state map of the United States",
-      "Surgo Health map view with filters for health measures",
     ],
   },
   "care-connect": {
@@ -979,13 +1017,6 @@ const CASE_DETAILS: Record<string, CaseDetails> = {
       ["75%", "Efficiency boost"],
       ["50+", "Healthcare partners"],
     ],
-    gallery: [
-      "Care Connect referrals board",
-      "Care Connect patient referral review",
-      "Care Connect referral details with scores and notes",
-      "Care Connect team messages beside a referral",
-      "Care Connect referral planning screen",
-    ],
   },
   meetingful: {
     tagline: "Smarter meetings, from plan to follow-up.",
@@ -996,12 +1027,6 @@ const CASE_DETAILS: Record<string, CaseDetails> = {
       ["3X", "Faster decisions"],
       ["50%", "Less follow-up effort"],
       ["35%", "Better task accountability"],
-    ],
-    gallery: [
-      "Meetingful sign-in screen",
-      "Meetingful list of all meetings",
-      "Meetingful meeting highlights on a timeline",
-      "Meetingful AI answering a question about a meeting",
     ],
   },
   rxlive: {
@@ -1014,13 +1039,6 @@ const CASE_DETAILS: Record<string, CaseDetails> = {
       ["150+", "Healthcare partners"],
       ["35%", "Better medication adherence"],
     ],
-    gallery: [
-      "Rxlive patient list with status tags",
-      "Rxlive medications table",
-      "Rxlive patient record with tabs",
-      "Rxlive action needed for a pharmacist consultation",
-      "Rxlive patient search results",
-    ],
   },
   "oh-my-glam": {
     tagline: "Beauty services, booked in a few taps.",
@@ -1031,12 +1049,6 @@ const CASE_DETAILS: Record<string, CaseDetails> = {
       ["35%", "More sales conversion"],
       ["30%", "Better customer retention"],
       ["40%", "More repeat bookings"],
-    ],
-    gallery: [
-      "Oh My Glam sign-in, home and product screens",
-      "Oh My Glam product, try-on and shopping bag screens",
-      "Oh My Glam payment, orders and gift screens",
-      "Oh My Glam offers, address and order confirmation screens",
     ],
   },
   "carlton-noble": {
@@ -1049,24 +1061,12 @@ const CASE_DETAILS: Record<string, CaseDetails> = {
       ["100%", "Consistent content experience"],
       ["2X", "Qualified traffic"],
     ],
-    gallery: [
-      "Carlton Noble website hero",
-      "Carlton Noble journal of travel and events",
-      "Carlton Noble brand activation page",
-      "Carlton Noble about page",
-    ],
   },
   "engel-volkers": {
     tagline: "Luxury real estate, with a look of its own.",
     location: "Germany",
     year: "2024",
     stats: [["45%", "Higher brand recognition"]],
-    gallery: [
-      "Engel & Völkers page with an illustrated house",
-      "Engel & Völkers search for local experts",
-      "Engel & Völkers contact form with an illustration",
-      "Engel & Völkers page with photos and an illustration",
-    ],
   },
 };
 

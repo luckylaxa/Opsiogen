@@ -244,6 +244,8 @@ const OLD_SUMMARY: Record<string, string> = {
   "project-carlton-noble": "666aad01ca2c3bdc",
   "project-engel-volkers": "624cd6050552087f",
 };
+/** Gallery files from the first case-study seed (1.jpg …), replaced by the mockups (m1.jpg …) while Studio still holds them. */
+const OLD_GALLERY_FILE = /^\d+\.jpg$/;
 const hash = (value: unknown) => createHash("sha1").update(JSON.stringify(value ?? null)).digest("hex").slice(0, 16);
 
 /** Card images rendered for an earlier version of the page; add mode swaps them for the current ones. */
@@ -359,8 +361,8 @@ async function run() {
   }
 
   console.log("Projects");
-  const existingProjects = await client.fetch<{ _id: string; summary: string | null; shots: number | null }[]>(
-    `*[_type == "project" && _id in $ids]{ _id, summary, "shots": count(gallery) }`,
+  const existingProjects = await client.fetch<{ _id: string; summary: string | null; files: (string | null)[] | null }[]>(
+    `*[_type == "project" && _id in $ids]{ _id, summary, "files": gallery[].asset->originalFilename }`,
     { ids: PROJECTS.map((p) => p._id) },
   );
   for (const p of PROJECTS) {
@@ -401,12 +403,13 @@ async function run() {
       ["cardImage", "industry", "year", "location", "tagline", "stats"],
     );
 
-    // Add mode: give case studies their work images and new summary, without
-    // touching a gallery or summary already edited in Studio.
+    // Add mode: give projects their work mockups and case studies their new
+    // summary, without touching a gallery or summary already edited in Studio.
     const existing = existingProjects.find((e) => e._id === p._id);
     if (OVERWRITE || !existing) continue;
     const set: Record<string, unknown> = {};
-    if (gallery.length && !existing.shots) set.gallery = gallery;
+    const files = existing.files ?? [];
+    if (gallery.length && files.every((f) => f && OLD_GALLERY_FILE.test(f))) set.gallery = gallery;
     if (existing.summary !== p.summary && hash(existing.summary) === OLD_SUMMARY[p._id]) set.summary = p.summary;
     if (Object.keys(set).length) {
       console.log(`  updating ${p._id}: ${Object.keys(set).join(", ")}`);
