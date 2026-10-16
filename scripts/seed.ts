@@ -68,7 +68,7 @@ const SERVICE_FILL_IN = [
   "related",
 ];
 /** Section types added after the first seed; add mode adds them to pages that lack them. */
-const NEW_SECTION_TYPES = ["process", "comparison"];
+const NEW_SECTION_TYPES = ["process", "comparison", "showreel"];
 
 const client: SanityClient = createClient({ projectId, dataset, token, apiVersion: "2026-02-01", useCdn: false });
 const PUBLIC_DIR = path.join(process.cwd(), "public");
@@ -122,6 +122,25 @@ function put(
   void _type;
   tx.patch(_id, (p) => p.set(fields));
   tx.delete(`drafts.${_id}`);
+}
+
+/** A page section as stored in Sanity, with any video and poster uploaded. */
+async function sectionDoc(section: (typeof PAGES)[number]["sections"][number]) {
+  const out: Record<string, unknown> = { ...section };
+  delete out.project;
+  if ("button" in out && out.button) out.button = link(out.button as { label: string; href: string });
+  if ("link" in out && out.link) out.link = link(out.link as { label: string; href: string });
+  if (section._type === "callToAction") out.shared = true;
+  if (section._type === "process") out.steps = section.steps.map((st) => ({ _type: "step", ...st }));
+  if (section._type === "comparison") out.rows = section.rows.map((r) => ({ _type: "comparisonRow", ...r }));
+  if (section._type === "showreel") {
+    const file = async (url?: string) =>
+      url ? { _type: "file", asset: { _type: "reference", _ref: await upload("file", url) } } : undefined;
+    out.video = await file(section.video?.url);
+    out.videoWebm = await file(section.videoWebm?.url);
+    out.poster = section.poster?.url ? await image(section.poster.url, section.poster.alt ?? "") : undefined;
+  }
+  return out;
 }
 
 /** The full page's sections for a service, with the hero image uploaded. */
@@ -370,33 +389,20 @@ async function run() {
         _type: "page",
         title: page.title,
         slug: slug(page.slug),
-        sections: page.sections.map((section) => {
-          const out: Record<string, unknown> = { ...section };
-          delete out.project;
-          if ("button" in out && out.button) out.button = link(out.button as { label: string; href: string });
-          if ("link" in out && out.link) out.link = link(out.link as { label: string; href: string });
-          if (section._type === "callToAction") out.shared = true;
-          if (section._type === "process") out.steps = section.steps.map((st) => ({ _type: "step", ...st }));
-          if (section._type === "comparison") out.rows = section.rows.map((r) => ({ _type: "comparisonRow", ...r }));
-          return out;
-        }),
+        sections: await Promise.all(page.sections.map(sectionDoc)),
       },
       OVERWRITE && OVERWRITE_PAGES.includes(page._id),
     );
 
     // Add mode: give an existing page the section types added since the first
-    // seed (How we work, Comparison) if it has none, just before its call to action.
+    // seed (How we work, Comparison, Video card) if it has none, just before
+    // its call to action.
     const existing = existingPages.find((p) => p._id === page._id);
     if (OVERWRITE || !existing) continue;
     const types = existing.types ?? [];
     const toAdd = page.sections.filter((sec) => NEW_SECTION_TYPES.includes(sec._type) && !types.includes(sec._type));
     if (!toAdd.length) continue;
-    const items = toAdd.map((sec) => {
-      const out: Record<string, unknown> = { ...sec };
-      if (sec._type === "process") out.steps = sec.steps.map((st) => ({ _type: "step", ...st }));
-      if (sec._type === "comparison") out.rows = sec.rows.map((r) => ({ _type: "comparisonRow", ...r }));
-      return out;
-    });
+    const items = await Promise.all(toAdd.map(sectionDoc));
     console.log(`  adding ${toAdd.map((s) => s._type).join(", ")} to ${page._id}`);
     tx.patch(page._id, (p) =>
       types.includes("callToAction")

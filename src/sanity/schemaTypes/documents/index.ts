@@ -412,6 +412,7 @@ export const page = defineType({
         defineArrayMember({ type: "hero" }),
         defineArrayMember({ type: "featuredProject" }),
         defineArrayMember({ type: "projectGrid" }),
+        defineArrayMember({ type: "showreel" }),
         defineArrayMember({ type: "servicesList" }),
         defineArrayMember({ type: "shortText" }),
         defineArrayMember({ type: "promiseList" }),

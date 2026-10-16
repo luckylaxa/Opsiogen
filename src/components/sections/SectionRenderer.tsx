@@ -8,6 +8,7 @@ import { PromiseList, ShortText } from "./TextSections";
 import { Process } from "./Process";
 import { Comparison } from "./Comparison";
 import { CallToAction } from "./CallToAction";
+import { Showreel } from "./Showreel";
 
 /** Spacing wrapper between page sections. */
 export function Block({ children, className = "" }: { children: React.ReactNode; className?: string }) {
@@ -113,6 +114,13 @@ export async function SectionRenderer({
         out.push(
           <Block key={section._key}>
             <Comparison section={section} />
+          </Block>,
+        );
+        break;
+      case "showreel":
+        out.push(
+          <Block key={section._key}>
+            <Showreel section={section} />
           </Block>,
         );
         break;

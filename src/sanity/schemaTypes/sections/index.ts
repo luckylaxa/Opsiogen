@@ -1,7 +1,9 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { imageField } from "../objects/shared";
 import { BlockContentIcon } from "@sanity/icons/BlockContent";
 import { BoltIcon } from "@sanity/icons/Bolt";
 import { OlistIcon } from "@sanity/icons/Olist";
+import { PlayIcon } from "@sanity/icons/Play";
 import { SplitHorizontalIcon } from "@sanity/icons/SplitHorizontal";
 import { CaseIcon } from "@sanity/icons/Case";
 import { RocketIcon } from "@sanity/icons/Rocket";
@@ -297,6 +299,41 @@ export const comparisonSection = defineType({
   },
 });
 
+export const showreelSection = defineType({
+  name: "showreel",
+  title: "Video card",
+  type: "object",
+  icon: PlayIcon,
+  description: "A big video card that plays on its own, muted. On Work it sits between the title and the projects.",
+  fields: [
+    label,
+    defineField({ name: "heading", type: "string", description: "One short line shown on the card." }),
+    defineField({
+      name: "video",
+      type: "file",
+      options: { accept: "video/mp4,video/webm" },
+      description:
+        "MP4 loop, no sound, under 10 MB, 16:9. Phones show it 4:3, so keep words and faces in the middle.",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "videoWebm",
+      title: "Video, WebM copy (optional)",
+      type: "file",
+      options: { accept: "video/webm" },
+      description: "The same video as WebM, for the few browsers that can’t play MP4.",
+    }),
+    {
+      ...imageField("poster", "Poster image", true),
+      description: "Shown while the video loads, and instead of it for visitors who prefer less motion. 16:9.",
+    },
+  ],
+  preview: {
+    select: { title: "heading", media: "poster" },
+    prepare: ({ title, media }) => ({ title: title || "Video card", subtitle: "Video card", media: media ?? PlayIcon }),
+  },
+});
+
 export const callToActionSection = defineType({
   name: "callToAction",
   title: "Call to action",
@@ -324,5 +361,6 @@ export const sectionTypes = [
   promiseListSection,
   processSection,
   comparisonSection,
+  showreelSection,
   callToActionSection,
 ];

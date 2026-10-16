@@ -165,6 +165,17 @@ export type ComparisonSection = {
   rows: { _key?: string; label: string; cells: string[] }[];
 };
 
+export type ShowreelSection = {
+  _type: "showreel";
+  _key: string;
+  label?: string | null;
+  heading?: string | null;
+  video?: Video | null;
+  /** The same video as WebM, used where MP4 can't play. */
+  videoWebm?: Video | null;
+  poster?: Img | null;
+};
+
 export type CallToActionSection = { _type: "callToAction"; _key: string };
 
 export type Section =
@@ -176,6 +187,7 @@ export type Section =
   | PromiseListSection
   | ProcessSection
   | ComparisonSection
+  | ShowreelSection
   | CallToActionSection;
 
 export type Page = {

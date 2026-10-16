@@ -52,6 +52,11 @@ export const PAGE_QUERY = defineQuery(`*[_type == "page" && slug.current == $slu
     ...,
     _type == "hero" => { button{ label, href } },
     _type == "projectGrid" => { link{ label, href } },
+    _type == "showreel" => {
+      "video": video{ "url": asset->url, "mimeType": asset->mimeType },
+      "videoWebm": videoWebm{ "url": asset->url, "mimeType": asset->mimeType },
+      "poster": poster${IMG}
+    },
     _type == "featuredProject" => {
       "project": coalesce(
         project->${PROJECT_CARD},

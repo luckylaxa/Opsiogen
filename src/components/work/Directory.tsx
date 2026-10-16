@@ -13,16 +13,19 @@ type Props = {
   pageSize: number;
   /** The page title, rendered between the filter bar and the results. */
   children: React.ReactNode;
+  /** Shown between the title and the results (the video card), hidden while filtering. */
+  feature?: React.ReactNode;
 };
 
 const ALL = "";
 
 /**
  * The Work page laid out like the reference's directory: a filter bar
- * (service, industry, year and a search box), the giant title, a results
- * line, then every project as a big dark card, two per row, and Load more.
+ * (service, industry, year and a search box), the giant title, the video
+ * card, a results line, then every project as a big dark card, two per row,
+ * and Load more.
  */
-export function Directory({ projects, services, pageSize, children }: Props) {
+export function Directory({ projects, services, pageSize, children, feature }: Props) {
   const [service, setService] = useState(ALL);
   const [industry, setIndustry] = useState(ALL);
   const [year, setYear] = useState(ALL);
@@ -115,6 +118,8 @@ export function Directory({ projects, services, pageSize, children }: Props) {
       </div>
 
       {children}
+
+      {!filtering && feature}
 
       <div className="mb-[clamp(20px,1.6vw,32px)] flex items-center justify-between gap-4 px-gutter text-base">
         <p role="status" aria-live="polite">
