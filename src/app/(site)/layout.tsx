@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import "../globals.css";
 import { getProjects, getServices, getSettings } from "@/lib/data";
 import { buildMenuGroups, buildSearchItems } from "@/lib/search";
-import { THEME_BAR, THEME_SCRIPT } from "@/lib/theme";
+import { DEFAULT_THEME, PRELOADER_SCRIPT, THEME_BAR, THEME_SCRIPT } from "@/lib/theme";
 import { siteUrl } from "@/lib/utils";
 import { Header } from "@/components/site/Header";
 import { Logo } from "@/components/site/Logo";
@@ -14,6 +14,8 @@ import { MenuProvider } from "@/components/site/MenuContext";
 import { MenuOverlay } from "@/components/site/MenuOverlay";
 import { Reveal } from "@/components/motion/Reveal";
 import { Cursor } from "@/components/motion/Cursor";
+import { BrandGradientDefs } from "@/components/site/SocialLinks";
+import { Preloader } from "@/components/motion/Preloader";
 
 /** Outfit, the Opsiogen typeface (SIL OFL), self-hosted as one variable file covering weights 100–900. */
 const outfit = localFont({
@@ -43,7 +45,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
-  themeColor: THEME_BAR.light,
+  themeColor: THEME_BAR[DEFAULT_THEME],
 };
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
@@ -52,14 +54,21 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   const groups = buildMenuGroups(services);
   return (
     // The head scripts change <html> before React hydrates, hence suppressHydrationWarning.
-    <html lang="en" className={outfit.variable} suppressHydrationWarning>
+    <html lang="en" data-theme={DEFAULT_THEME} className={outfit.variable} suppressHydrationWarning>
       <head>
         {/* Lets CSS hide media that fades in on scroll, only when JS runs. */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
-        {/* Applies a saved dark theme before the first paint. */}
+        {/* Applies the theme (dark unless the visitor chose light) before the first paint. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+        {/* Decides whether the first-visit preloader shows. */}
+        <script dangerouslySetInnerHTML={{ __html: PRELOADER_SCRIPT }} />
+        <noscript>
+          <style>{".preloader{display:none}"}</style>
+        </noscript>
       </head>
       <body>
+        <BrandGradientDefs />
+        <Preloader />
         <MenuProvider>
           <a
             href="#main"
@@ -79,6 +88,9 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
             button={settings.headerButton}
             wordmark={<Logo logo={settings.logoOnDark ?? settings.logo} name={settings.siteTitle} tone="dark" />}
             searchItems={searchItems}
+            groups={groups}
+            email={settings.email}
+            socialLinks={settings.socialLinks}
           />
           <Reveal />
           <Cursor />

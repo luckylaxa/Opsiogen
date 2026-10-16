@@ -42,11 +42,11 @@ export function WorkGrid({ projects, filters, pageSize, headingLevel }: Props) {
                 aria-pressed={on}
                 onClick={() => choose(f.slug)}
                 className={cn(
-                  "h-[clamp(38px,calc(0.72vw+35.3px),49px)] rounded-[7px] border px-[clamp(14px,calc(0.33vw+12.8px),19px)] text-base transition-[background-color,border-color,color] duration-300",
+                  "group h-[clamp(38px,calc(0.72vw+35.3px),49px)] rounded-[7px] border px-[clamp(14px,calc(0.33vw+12.8px),19px)] text-base transition-[background-color,border-color,color] duration-300",
                   on ? "border-ink bg-ink text-on-ink" : "border-ink/15 bg-transparent text-ink hover:border-ink/60",
                 )}
               >
-                {f.shortName}
+                <span className={on ? undefined : "grad-hover"}>{f.shortName}</span>
               </button>
             );
           })}
@@ -70,7 +70,7 @@ export function WorkGrid({ projects, filters, pageSize, headingLevel }: Props) {
       {filters && filtered.length > visible && (
         <div className="mt-[clamp(48px,calc(3.14vw+36.2px),96px)] flex justify-center">
           <button type="button" onClick={() => setVisible((v) => v + pageSize)} className={buttonClass("outline", "md")}>
-            Load more
+            <span className="btn-label">Load more</span>
           </button>
         </div>
       )}

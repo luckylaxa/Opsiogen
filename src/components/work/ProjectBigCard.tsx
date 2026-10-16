@@ -17,7 +17,7 @@ export function ProjectBigCard({ project, titleAs = "h3" }: { project: ProjectCa
       titleAs={titleAs}
       stat={project.year ? { label: "Year", value: String(project.year) } : null}
       footLeft={project.services.map((s) => s.shortName).join(" · ")}
-      footRight={<span className="underline underline-offset-[0.28em]">View project</span>}
+      footRight={<span className="grad-hover underline underline-offset-[0.28em]">View project</span>}
     />
   );
 }

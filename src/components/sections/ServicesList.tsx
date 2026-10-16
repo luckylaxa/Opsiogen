@@ -59,7 +59,9 @@ function ServiceGroup({ title, items, level: Heading }: { title: string; items: 
               <span className="text-row font-medium">{s.name}</span>
               <span className="col-start-1 row-start-2 text-row text-ink-2 md:col-start-auto md:row-start-auto">{s.tagline}</span>
               <span aria-hidden="true" className="hidden md:block">
-                <span className={cn(buttonClass("outline", "md"), "group-hover:bg-ink group-hover:text-on-ink")}>View</span>
+                <span className={cn(buttonClass("outline", "md"), "group-hover:bg-ink group-hover:text-on-ink")}>
+                  <span className="btn-label">View</span>
+                </span>
               </span>
               <ArrowRight className="col-start-2 row-span-2 row-start-1 size-6 transition-transform duration-300 group-hover:translate-x-1 md:hidden" />
             </Link>
@@ -177,7 +179,7 @@ function ServiceCards({
               footLeft={s.tagline}
               footRight={
                 <span className="inline-flex items-center gap-2">
-                  View service
+                  <span className="grad-hover">View service</span>
                   <ArrowRight className="size-[clamp(18px,1.15vw,22px)] transition-transform duration-300 group-hover:translate-x-1" />
                 </span>
               }

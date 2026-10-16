@@ -150,7 +150,7 @@ export function Directory({ projects, services, pageSize, children }: Props) {
       {filtered.length > visible && (
         <div className="mt-[clamp(48px,calc(3.14vw+36.2px),96px)] flex justify-center">
           <button type="button" onClick={() => setVisible((v) => v + pageSize)} className={buttonClass("outline", "md")}>
-            Load more
+            <span className="btn-label">Load more</span>
           </button>
         </div>
       )}

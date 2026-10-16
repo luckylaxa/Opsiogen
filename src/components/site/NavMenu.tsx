@@ -15,7 +15,7 @@ export type MenuGroup = {
 
 /**
  * Main navigation. The Services item opens a drop-down panel listing every
- * service by group, like the reference's Explore menu. It opens on hover or
+ * service by group. It opens on hover or
  * click, and closes on Escape, on leaving it, or after choosing a link.
  */
 export function NavMenu({ menu, groups }: { menu: LinkItem[]; groups: MenuGroup[] }) {
@@ -108,7 +108,7 @@ function ServicesItem({ item, groups }: { item: LinkItem; groups: MenuGroup[] })
                 {g.services.map((s) => (
                   <li key={s.href}>
                     <Link href={s.href} className="group block rounded-[8px] px-2 py-2.5 -mx-2 hover:bg-band focus-visible:bg-band">
-                      <span className="block text-base font-medium">{s.name}</span>
+                      <span className="grad-hover text-base font-medium">{s.name}</span>
                       <span className="block text-small text-mute">{s.tagline}</span>
                     </Link>
                   </li>

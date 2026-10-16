@@ -25,7 +25,14 @@ export const SETTINGS: SiteSettings = {
   email: null,
   phone: null,
   location: null,
-  socialLinks: [],
+  // Placeholders until the real profiles are added in Studio → Site settings → Social links.
+  socialLinks: [
+    { _key: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/" },
+    { _key: "instagram", label: "Instagram", href: "https://www.instagram.com/" },
+    { _key: "facebook", label: "Facebook", href: "https://www.facebook.com/" },
+    { _key: "x", label: "X", href: "https://x.com/" },
+    { _key: "youtube", label: "YouTube", href: "https://www.youtube.com/" },
+  ],
   menu: [
     { _key: "work", label: "Work", href: "/work" },
     { _key: "services", label: "Services", href: "/services" },

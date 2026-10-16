@@ -4,12 +4,12 @@ import { cn, isExternal } from "@/lib/utils";
 type Variant = "dark" | "outline" | "outline-light" | "light";
 type Size = "md" | "lg";
 
+// `btn` turns the label (`.btn-label`) into the brand gradient on hover; see globals.css.
 const base =
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-btn)] border font-medium transition-[background-color,color,border-color,scale] duration-300 ease-out active:scale-[0.97]";
+  "btn inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-btn)] border font-medium transition-[background-color,color,border-color,scale] duration-300 ease-out active:scale-[0.97]";
 
 const variants: Record<Variant, string> = {
-  // Design system primary: the label turns into gradient type on hover (see .btn-dark in globals.css).
-  dark: "btn-dark border-ink bg-ink text-on-ink",
+  dark: "border-ink bg-ink text-on-ink",
   outline: "border-ink bg-transparent text-ink hover:bg-ink hover:text-on-ink",
   "outline-light": "border-white/90 bg-transparent text-white hover:bg-white hover:text-coal hover:border-white",
   light: "theme-light border-band bg-band text-ink hover:bg-white hover:border-white",

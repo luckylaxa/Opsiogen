@@ -194,7 +194,7 @@ export function SiteSearch({
                       setOpen(false);
                       setQuery("");
                     }}
-                    className={cn("flex items-center gap-3 rounded-[8px] px-3 py-2", on && "bg-band")}
+                    className={cn("group flex items-center gap-3 rounded-[8px] px-3 py-2", on && "bg-band")}
                   >
                     {item.image ? (
                       <span aria-hidden="true" className="relative h-[38px] w-[50px] shrink-0 overflow-hidden rounded-[4px] bg-night">
@@ -206,7 +206,7 @@ export function SiteSearch({
                       </span>
                     )}
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-base font-medium">{item.title}</span>
+                      <span className="block truncate text-base font-medium"><span className="grad-hover">{item.title}</span></span>
                       <span className="block truncate text-small text-mute">{item.subtitle}</span>
                     </span>
                     <ArrowRight className={cn("size-4 shrink-0 transition-opacity", on ? "opacity-100" : "opacity-0")} />

@@ -44,7 +44,7 @@ export function FeaturedProject({ project, priority = true }: { project?: Projec
             "after:absolute after:inset-0 after:content-['']",
           )}
         >
-          View project
+          <span className="btn-label">View project</span>
           <ArrowUpRight className="size-[1.1em]" />
         </Link>
       </div>

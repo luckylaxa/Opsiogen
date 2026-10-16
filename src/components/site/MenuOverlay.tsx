@@ -8,20 +8,33 @@ import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import { CloseIcon } from "@/components/ui/Icons";
 import { buttonClass } from "@/components/ui/Button";
 import { useMenu } from "./MenuContext";
+import type { MenuGroup } from "./NavMenu";
 import { SiteSearch, type SearchItem } from "./SiteSearch";
+import { SocialLinks } from "./SocialLinks";
 import { ThemeToggle } from "./ThemeToggle";
 
-/** Full-screen menu for small screens. Opened from the header or the dock. */
+/**
+ * The full-screen menu from the design system, opened from the floating menu
+ * (and the header on phones): always dark, with oversized numbered page links
+ * that rise in turn, and on wide screens the services, search and contact
+ * beside them. Wipes down to open and up to close.
+ */
 export function MenuOverlay({
   menu,
   button,
   wordmark,
   searchItems,
+  groups,
+  email,
+  socialLinks,
 }: {
   menu: LinkItem[];
   button: LinkItem;
   wordmark: React.ReactNode;
   searchItems: SearchItem[];
+  groups: MenuGroup[];
+  email?: string | null;
+  socialLinks: LinkItem[];
 }) {
   const { open, closeMenu } = useMenu();
   const panel = useRef<HTMLDivElement>(null);
@@ -101,52 +114,90 @@ export function MenuOverlay({
       role="dialog"
       aria-modal="true"
       aria-label="Menu"
-      className="on-dark invisible fixed inset-0 z-50 flex flex-col bg-coal px-gutter pb-10 text-white"
+      className="on-dark invisible fixed inset-0 z-50 flex flex-col overflow-y-auto bg-[#0a090d] px-gutter pb-[clamp(24px,2.4vw,44px)] text-white"
       style={{ clipPath: "inset(0 0 100% 0)" }}
     >
-      <div className="flex h-[clamp(64px,4.6vw,88px)] items-center justify-between">
-        <Link href="/" className="text-[26px] font-semibold tracking-[-0.02em]" onClick={closeMenu}>
+      <div className="flex h-[clamp(64px,4.6vw,88px)] shrink-0 items-center justify-between">
+        <Link href="/" className="link-fade" onClick={closeMenu} aria-label="Home">
           {wordmark}
         </Link>
-        <div className="-mr-2 flex items-center gap-1">
+        <div className="flex items-center gap-2">
           <ThemeToggle className="text-white hover:bg-white/10" />
           <button
             type="button"
             data-menu-close
             onClick={closeMenu}
-            className="grid size-11 place-items-center rounded-[var(--radius-btn)] text-white"
+            className="grid size-11 place-items-center rounded-[var(--radius-btn)] border border-white/25 text-white transition-colors duration-300 hover:border-white/60"
             aria-label="Close menu"
           >
-            <CloseIcon className="size-7" />
+            <CloseIcon className="size-5" />
           </button>
         </div>
       </div>
-      <div data-menu-item className="theme-light relative z-10 text-ink">
-        <SiteSearch items={searchItems} />
-      </div>
-      <nav aria-label="Menu" className="mt-[6vh] flex flex-1 flex-col">
-        <ul className="flex flex-col gap-1">
-          {menu.map((item) => {
-            const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
-            return (
-              <li key={item._key ?? item.href} data-menu-item>
-                <Link
-                  href={item.href}
-                  aria-current={active ? "page" : undefined}
-                  className="block py-1 text-[clamp(44px,12vw,96px)] font-semibold uppercase leading-[1.02] tracking-[-0.015em] transition-opacity hover:opacity-60 aria-[current=page]:opacity-50"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-        <div data-menu-item className="mt-auto pt-10">
-          <Link href={button.href} className={buttonClass("light", "lg")}>
-            {button.label}
-          </Link>
+
+      <div className="mt-[clamp(24px,4vh,64px)] grid flex-1 gap-y-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-x-[clamp(40px,5vw,110px)]">
+        <nav aria-label="Menu" className="flex flex-col justify-end">
+          <ul className="border-b border-white/10">
+            {menu.map((item, i) => {
+              const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+              return (
+                <li key={item._key ?? item.href} className="border-t border-white/10">
+                  <Link
+                    href={item.href}
+                    aria-current={active ? "page" : undefined}
+                    className="group flex items-baseline gap-[clamp(14px,1.4vw,28px)] overflow-hidden py-[clamp(6px,0.8vw,14px)]"
+                  >
+                    <span className="w-[2ch] shrink-0 text-small tracking-[0.08em] text-white/45 tabular-nums">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span
+                      data-menu-item
+                      className="grad-hover text-[length:clamp(44px,calc(5.2vw+24px),124px)] leading-[0.95] font-semibold tracking-[-0.045em] group-aria-[current=page]:text-white/55"
+                    >
+                      {item.label}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+
+        <div className="flex flex-col gap-10 lg:justify-end">
+          <div data-menu-item className="theme-light relative z-10 text-ink">
+            <SiteSearch items={searchItems} />
+          </div>
+          {groups.length > 0 && (
+            <div data-menu-item className="hidden grid-cols-3 gap-x-6 sm:grid">
+              {groups.map((g) => (
+                <div key={g.group}>
+                  <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.18em] text-white/45">{g.label}</p>
+                  <ul className="flex flex-col gap-2">
+                    {g.services.map((sv) => (
+                      <li key={sv.href}>
+                        <Link href={sv.href} className="link-accent text-small text-white/80">
+                          {sv.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          )}
+          <div data-menu-item className="flex flex-col gap-5">
+            {email && (
+              <a href={`mailto:${email}`} className="link-accent w-fit text-base text-white/80">
+                {email}
+              </a>
+            )}
+            <SocialLinks items={socialLinks} onDark />
+            <Link href={button.href} className={buttonClass("light", "lg", "w-fit")}>
+              <span className="btn-label">{button.label}</span>
+            </Link>
+          </div>
         </div>
-      </nav>
+      </div>
     </div>
   );
 }

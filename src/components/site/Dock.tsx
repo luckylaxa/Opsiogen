@@ -1,23 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { Mark } from "./Mark";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { LinkItem } from "@/lib/types";
-import { cn } from "@/lib/utils";
+import { Mark } from "./Mark";
 import { MenuButton } from "./MenuContext";
 
 /**
- * Floating bottom dock from the reference: logo tile, page links and a light
- * call-to-action tile. The current page (or, on Home, the section in view) is
- * outlined. Slides up 0.25s after load (CSS, so it never flashes).
+ * Opsiogen's floating menu: one dark capsule with the symbol (home), the page
+ * you are on with a line that fills as you scroll, the Menu button (opens the
+ * full-screen menu) and the main button. On Home the page name follows the
+ * section in view. Rises in 0.25s after load (CSS, so it never flashes).
  */
 export function Dock({ menu, button }: { menu: LinkItem[]; button: LinkItem }) {
   const pathname = usePathname();
+  const progress = useRef<HTMLSpanElement>(null);
   const [spyState, setSpyState] = useState<{ path: string; href: string | null }>({ path: "", href: null });
   const spy = spyState.path === pathname ? spyState.href : null;
 
+  // Section in view (Home marks its sections with data-dock).
   useEffect(() => {
     const sections = Array.from(document.querySelectorAll<HTMLElement>("[data-dock]"));
     if (!sections.length) return;
@@ -34,50 +36,74 @@ export function Dock({ menu, button }: { menu: LinkItem[]; button: LinkItem }) {
     return () => io.disconnect();
   }, [pathname]);
 
-  const isActive = (href: string) =>
-    spy ? spy === href : href !== "/" && (pathname === href || pathname.startsWith(`${href}/`));
+  // Reading progress, written straight to the line so scrolling never re-renders.
+  useEffect(() => {
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const k = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      if (progress.current) progress.current.style.transform = `scaleX(${k})`;
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [pathname]);
+
+  const match = (href: string) => href !== "/" && (pathname === href || pathname.startsWith(`${href}/`));
+  const current = menu.find((m) => (spy ? m.href === spy : match(m.href)));
+  // Home counts as the first page.
+  const index = current ? menu.indexOf(current) + 2 : 1;
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-[clamp(12px,calc(1.7vw+5.6px),38px)] z-40 flex justify-center px-3">
+    <div className="pointer-events-none fixed inset-x-0 bottom-[clamp(12px,calc(1.2vw+7px),28px)] z-40 flex justify-center px-3">
       <nav
         aria-label="Quick links"
-        className="dock-in pointer-events-auto flex items-stretch gap-[clamp(5px,0.42vw,8px)] rounded-[clamp(12px,0.84vw,16px)] bg-dock p-[clamp(5px,0.37vw,7px)] text-[length:clamp(14px,calc(0.196vw+13.26px),17px)] shadow-[0_10px_40px_-12px_rgb(0_0_0/0.35)] backdrop-blur-md"
+        className="on-dark dock-in pointer-events-auto relative flex items-center gap-1 overflow-hidden rounded-full border border-white/10 bg-[rgb(10_9_13/0.88)] p-1.5 text-white shadow-[0_18px_50px_-16px_rgb(0_0_0/0.6)] backdrop-blur-xl"
       >
         <Link
           href="/"
           aria-label="Home"
-          className="grid aspect-square w-[clamp(46px,calc(1.9vw+39px),75px)] place-items-center rounded-[clamp(7px,0.42vw,10px)] bg-dock-logo text-[clamp(18px,calc(0.6vw+15.8px),27px)] font-semibold tracking-[-0.03em] text-white transition-colors duration-300 hover:bg-black"
+          className="grid size-[clamp(44px,calc(0.5vw+40px),52px)] shrink-0 place-items-center rounded-full bg-white/[0.06] transition-colors duration-300 hover:bg-white/[0.14]"
         >
-          <Mark className="size-[62%]" />
+          <Mark className="size-[58%]" />
         </Link>
-        <ul className="hidden items-center gap-[clamp(5px,0.42vw,8px)] rounded-[clamp(7px,0.42vw,10px)] bg-dock-inner p-[clamp(5px,0.42vw,8px)] md:flex">
-          {menu.map((item) => {
-            const active = isActive(item.href);
-            return (
-              <li key={item._key ?? item.href} className="h-full">
-                <Link
-                  href={item.href}
-                  aria-current={active && !spy ? "page" : undefined}
-                  className={cn(
-                    "flex h-full min-h-[clamp(36px,calc(1.57vw+30.1px),60px)] items-center rounded-[clamp(7px,0.53vw,10px)] border px-[clamp(12px,0.84vw,16px)] text-dock-text transition-[border-color,color,background-color] duration-300",
-                    active ? "border-white/75 text-white" : "border-white/[0.12] hover:border-white/40 hover:text-white",
-                  )}
-                >
-                  {item.label}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-        <MenuButton className="flex items-center rounded-[clamp(7px,0.53vw,10px)] border border-white/[0.12] px-4 text-dock-text transition-colors hover:border-white/40 md:hidden">
-          Menu
+
+        <p className="hidden min-w-[8.5rem] flex-col px-3 leading-tight sm:flex">
+          <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-white/45 tabular-nums">
+            {String(index).padStart(2, "0")} / {String(menu.length + 1).padStart(2, "0")}
+          </span>
+          <span className="text-[length:clamp(14px,calc(0.2vw+13px),17px)] font-medium">{current?.label ?? "Home"}</span>
+        </p>
+
+        <MenuButton className="group flex h-[clamp(44px,calc(0.5vw+40px),52px)] items-center gap-2.5 rounded-full px-4 text-[length:clamp(14px,calc(0.2vw+13px),17px)] transition-colors duration-300 hover:bg-white/[0.08]">
+          <span aria-hidden="true" className="flex w-4 flex-col gap-[5px]">
+            <span className="h-px w-full bg-current transition-transform duration-300 group-hover:translate-x-0.5" />
+            <span className="h-px w-2/3 bg-current transition-[width] duration-300 group-hover:w-full" />
+          </span>
+          <span className="grad-hover">Menu</span>
         </MenuButton>
+
         <Link
           href={button.href}
-          className="theme-light flex items-center rounded-[clamp(7px,0.42vw,8px)] bg-band px-[clamp(14px,calc(0.6vw+11.8px),23px)] font-medium text-ink transition-colors duration-300 hover:bg-white"
+          className="btn theme-light flex h-[clamp(44px,calc(0.5vw+40px),52px)] items-center rounded-full bg-[#f8f6f8] px-[clamp(16px,calc(0.6vw+13px),24px)] text-[length:clamp(14px,calc(0.2vw+13px),17px)] font-medium text-[#0a090d] transition-colors duration-300 hover:bg-white"
         >
-          {button.label}
+          <span className="btn-label">{button.label}</span>
         </Link>
+
+        <span
+          ref={progress}
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-6 bottom-0 h-px origin-left scale-x-0 bg-white/60"
+        />
       </nav>
     </div>
   );

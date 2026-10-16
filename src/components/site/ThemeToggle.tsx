@@ -2,7 +2,7 @@
 
 import { useEffect, useSyncExternalStore } from "react";
 import { MoonIcon, SunIcon } from "@/components/ui/Icons";
-import { THEME_BAR, THEME_KEY, type Theme } from "@/lib/theme";
+import { DEFAULT_THEME, THEME_BAR, THEME_KEY, type Theme } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
 const subscribe = (onChange: () => void) => {
@@ -10,14 +10,14 @@ const subscribe = (onChange: () => void) => {
   observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
   return () => observer.disconnect();
 };
-const current = (): Theme => (document.documentElement.dataset.theme === "dark" ? "dark" : "light");
+const current = (): Theme => (document.documentElement.dataset.theme === "light" ? "light" : "dark");
 
 /**
  * Switches between the light and dark theme and remembers the choice. The
  * icon is picked in CSS, so it is right from the first paint.
  */
 export function ThemeToggle({ className }: { className?: string }) {
-  const theme = useSyncExternalStore(subscribe, current, () => "light" as Theme);
+  const theme = useSyncExternalStore(subscribe, current, () => DEFAULT_THEME);
   const dark = theme === "dark";
 
   useEffect(() => {

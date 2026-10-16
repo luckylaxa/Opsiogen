@@ -62,7 +62,7 @@ export const getSettings = cache(async (): Promise<SiteSettings> => {
   return {
     ...SETTINGS,
     ...s,
-    socialLinks: s.socialLinks ?? [],
+    socialLinks: s.socialLinks ?? SETTINGS.socialLinks,
     menu: s.menu ?? SETTINGS.menu,
     headerButton: { ...SETTINGS.headerButton, ...present(s.headerButton) },
     cta: {

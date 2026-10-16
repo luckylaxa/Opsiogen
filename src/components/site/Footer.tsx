@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { LinkItem, ServiceRef, SiteSettings } from "@/lib/types";
 import { GROUP_LABELS } from "@/lib/utils";
 import { Logo } from "./Logo";
+import { SocialLinks } from "./SocialLinks";
 
 const GROUPS = ["build", "grow", "create"] as const;
 const linkClass = "link-accent text-base font-medium";
@@ -9,8 +10,7 @@ const linkClass = "link-accent text-base font-medium";
 /**
  * Quiet editorial footer from the design system and the reference: the full
  * logo and line, link columns (the menu, then every service by group), a
- * dotted rule, then the legal line and “Connect:” with the social links
- * from Site settings.
+ * dotted rule, then the legal line and the social icons from Site settings.
  */
 export function Footer({ settings, services }: { settings: SiteSettings; services: ServiceRef[] }) {
   const year = 2026;
@@ -57,17 +57,9 @@ export function Footer({ settings, services }: { settings: SiteSettings; service
           </Link>
         </p>
         {settings.socialLinks.length > 0 && (
-          <div className="flex flex-wrap items-center gap-x-[clamp(16px,1.6vw,30px)] gap-y-2">
-            <span className="font-semibold text-ink">Connect:</span>
-            <ul className="contents">
-              {settings.socialLinks.map((s) => (
-                <li key={s._key ?? s.href}>
-                  <a href={s.href} target="_blank" rel="noopener noreferrer" className="link-accent">
-                    {s.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <span className="font-semibold text-ink">Connect</span>
+            <SocialLinks items={settings.socialLinks} />
           </div>
         )}
       </div>

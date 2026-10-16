@@ -183,21 +183,13 @@
     text-underline-offset: 0.28em;
     transition: color 0.18s cubic-bezier(0.2, 0, 0, 1);
   }
-  .link-underline:hover {
-    color: var(--color-accent);
-  }
+
 
   .link-fade {
     transition: opacity 0.25s ease;
   }
 
-  /* Text links (design system): the colour shifts to the accent on hover. */
-  .link-accent {
-    transition: color 0.18s cubic-bezier(0.2, 0, 0, 1);
-  }
-  .link-accent:hover {
-    color: var(--color-accent);
-  }
+
   .link-fade:hover {
     opacity: 0.6;
   }
@@ -220,15 +212,50 @@
     display: block;
   }
 
-  /* Brand gradient on type: display words, big numbers, button labels on hover. */
-  .text-gradient,
-  .btn-dark:hover .btn-label,
-  .btn-dark:focus-visible .btn-label {
+  /* Brand gradient on type: display words and big numbers. */
+  .text-gradient {
     background-image: var(--gradient-brand);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     -webkit-text-fill-color: transparent;
+  }
+
+  /*
+   * Hover colour (design system): links, menu items and every button label
+   * turn into the brand gradient. Only the letters change, so underlines and
+   * icons keep their colour.
+   */
+  .link-accent,
+  .link-underline,
+  .grad-hover,
+  .btn-label {
+    padding-inline: 0.06em;
+    margin-inline: -0.06em;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+  .link-accent:hover,
+  .link-accent:focus-visible,
+  .link-underline:hover,
+  .link-underline:focus-visible,
+  .group:hover .grad-hover,
+  .group:focus-visible .grad-hover,
+  .grad-hover:hover,
+  .btn:hover .btn-label,
+  .btn:focus-visible .btn-label,
+  .group:hover .btn .btn-label,
+  .group:focus-visible .btn .btn-label {
+    background-image: var(--gradient-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Icon links (social): the line drawing takes the gradient on hover. */
+  .icon-grad:hover svg,
+  .icon-grad:focus-visible svg {
+    stroke: url(#brand-gradient);
   }
   /* Tight tracking pushes the last letter past the word's box, where the
      gradient isn't painted; widen the painted area without moving the text. */
@@ -301,7 +328,7 @@
   }
 }
 
-/* Dock entrance from the reference: rises ~40px and fades in 0.25s after load. */
+/* Floating menu entrance: rises ~40px and fades in 0.25s after load. */
 @keyframes dock-in {
   from {
     transform: translateY(40px);
@@ -310,6 +337,103 @@
 }
 .dock-in {
   animation: dock-in 0.45s cubic-bezier(0.215, 0.61, 0.355, 1) 0.25s both;
+}
+
+/* While the first-visit preloader shows, the page's own entrance waits. */
+.preloading h1 .reveal-mask > span,
+.preloading .dock-in {
+  animation-play-state: paused;
+}
+
+/*
+ * First-load preloader (design system; components/motion/Preloader.tsx):
+ * pulsing symbol in an orbiting hairline arc, a big gradient counter and a
+ * progress line on ink, then the panel wipes up.
+ */
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  background: #0a090d;
+  color: #f8f6f8;
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 0.9s cubic-bezier(0.76, 0, 0.24, 1);
+  /* Never left covering the page if scripts fail part-way. */
+  animation: preloader-failsafe 0s linear 6s forwards;
+}
+.preloader[data-done] {
+  clip-path: inset(0 0 100% 0);
+}
+.no-preloader .preloader {
+  display: none;
+}
+@keyframes preloader-failsafe {
+  to {
+    visibility: hidden;
+  }
+}
+.preloader__mark {
+  position: relative;
+  width: clamp(84px, 7vw, 120px);
+  aspect-ratio: 1;
+}
+.preloader__arc {
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  border: 1.5px solid rgb(248 246 248 / 0.12);
+  border-top-color: #f8f6f8;
+  animation: preloader-spin 1.1s linear infinite;
+}
+.preloader__symbol {
+  animation: preloader-pulse 1.6s cubic-bezier(0.76, 0, 0.24, 1) infinite;
+}
+.preloader__name {
+  position: absolute;
+  left: var(--spacing-gutter);
+  bottom: 32px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #a2a0a6;
+}
+.preloader__count {
+  position: absolute;
+  right: var(--spacing-gutter);
+  bottom: 20px;
+  font-size: clamp(48px, 8vw, 120px);
+  line-height: 0.85;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+}
+.preloader__pct {
+  font-size: 0.35em;
+}
+.preloader__bar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  background: #f8f6f8;
+  transition: width 120ms linear;
+}
+@keyframes preloader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes preloader-pulse {
+  0%,
+  100% {
+    transform: scale(0.94);
+  }
+  50% {
+    transform: scale(1);
+  }
 }
 
 /*

@@ -87,7 +87,7 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
             <ButtonLink href={`/contact?service=${encodeURIComponent(service.slug)}`}>{settings.headerButton.label}</ButtonLink>
             {work.length > 0 && (
               <Link href="#work" className={buttonClass("outline", "md")}>
-                See the work
+                <span className="btn-label">See the work</span>
               </Link>
             )}
           </div>

@@ -92,11 +92,11 @@ export function ContactForm({ needs, sources, preselect }: Props) {
         <legend className="mb-[clamp(10px,0.6vw,14px)] text-base text-ink-2">What do you need?</legend>
         <div className="flex flex-wrap gap-[clamp(6px,0.42vw,8px)]">
           {needs.map((n) => (
-            <label key={n.value} className="relative cursor-pointer">
+            <label key={n.value} className="group relative cursor-pointer">
               <input type="checkbox" name="needs" value={n.value} defaultChecked={checked(n.value)} className="peer sr-only" />
               <span className="flex h-[clamp(40px,calc(0.72vw+37.3px),49px)] items-center gap-2 rounded-[7px] border border-ink/15 px-[clamp(14px,calc(0.33vw+12.8px),19px)] text-base transition-[background-color,border-color,color] duration-200 hover:border-ink/60 peer-checked:border-ink peer-checked:bg-ink peer-checked:text-on-ink peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink [&>svg]:hidden peer-checked:[&>svg]:block">
                 <Check className="size-4" strokeWidth={2} />
-                {n.label}
+                <span className="grad-hover">{n.label}</span>
               </span>
             </label>
           ))}
