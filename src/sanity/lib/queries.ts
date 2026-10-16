@@ -85,8 +85,12 @@ export const PROJECT_QUERY = defineQuery(`*[_type == "project" && slug.current =
   order,
   "services": services[]->${SERVICE_REF},
   "cover": cover${IMG},
+  "cardImage": cardImage${IMG},
   "coverVideo": coverVideo{ "url": asset->url, "mimeType": asset->mimeType },
   summary,
+  tagline,
+  location,
+  "stats": coalesce(stats[]{ _key, value, label }, []),
   "story": coalesce(story[]{ _key, title, text }, []),
   result,
   liveUrl,
@@ -98,6 +102,7 @@ export const PROJECT_QUERY = defineQuery(`*[_type == "project" && slug.current =
     "height": asset->metadata.dimensions.height,
     "lqip": asset->metadata.lqip,
     alt,
+    caption,
     "hotspot": hotspot{x, y}
   },
   ${SEO}

@@ -97,6 +97,7 @@ export const getProject = cache(async (slug: string): Promise<Project | null> =>
   return {
     ...data,
     services: data.services ?? [],
+    stats: data.stats ?? [],
     story: data.story ?? [],
     gallery: (data.gallery ?? []).filter((g) => g.url),
   };

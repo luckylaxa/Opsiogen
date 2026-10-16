@@ -63,12 +63,14 @@ Layout, colours, fonts and animations are fixed in the code, so edits can't brea
 ## Add a project
 
 1. Studio → **Projects** → **+**.
-2. Fill in name (the slug fills itself), client, industry, year, services, a two-to-three-line summary and an order number (lower shows first).
-3. Media tab: a cover image (4:3 or wider), a **card image** (a 1600 × 1200 mockup of the work that fills the big project card; keep the lower third quiet, the title sits there) and, optionally, a short muted MP4 loop. The cover is the video's poster. Then four to eight gallery images, each set to **Full width** or **Half** (two halves sit side by side). Every image needs alt text.
-4. Optional: a result (number + label, only if it is real), a live site link and **Story** blocks (e.g. The challenge, What we did, What changed) shown under the summary.
-5. **Publish**. It shows on Home, Work, the project page and each tagged service page. To feature it on Home, pick it in Site settings → Home.
+2. Fill in name (the slug fills itself), client, industry, location, year, services, a one-line **tagline**, a two-to-three-line summary and an order number (lower shows first).
+3. Media tab: a cover image (4:3 or wider), a **card image** (a 1600 × 1200 mockup of the work that fills the big project card; keep the lower third quiet, the title sits there) and, optionally, a short muted MP4 loop. The cover is the video's poster. Then four to eight **gallery** images of the work (16:10 at 1600 × 1000 works well), each set to **Full width** or **Half** (two halves sit side by side), with an optional caption. The first gallery image is the big image under the name. Every image needs alt text.
+4. Optional: up to four **Results** (number + label, only if they are real) and a live site link.
+5. **Publish**. It shows on Home, Work and each tagged service page.
 
-The starter case studies come from the content document. Their covers in `public/covers` are generated title cards in the design-system style, and their card images in `public/cards` show each case-study page on a laptop and a phone: swap in real mockups of the work, and add the year, story and gallery, as you get them.
+A project link inside the site opens the case study as a full-screen pop-up over the current page, with previous and next buttons (or the arrow keys) and Close (or Escape, or Back) to return. Its address is the project's own, so it can be shared; opening that address shows the same case study as a full page. Case studies stay short: the name and tagline, the work, a few facts beside the summary, results, then the next two projects. A project without gallery images shows its card image and cover instead.
+
+The starter case studies come from the content document. Their covers in `public/covers` are generated title cards in the design-system style, and their card images in `public/cards` show each case-study page on a laptop and a phone: swap in real mockups of the work as you get them. Surgo Health, Care Connect, Meetingful, Rxlive, Oh My Glam, Carlton Noble and Engel & Völkers also have their tagline, location, year, results and gallery from the client case studies; their gallery images in `public/work/<slug>/` were made from small screenshots, so replace them with full-size originals in Studio → Projects → Media → Gallery.
 
 ## Hosting now: Vercel (free plan)
 

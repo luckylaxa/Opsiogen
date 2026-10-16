@@ -6,13 +6,17 @@ import { cn } from "@/lib/utils";
 type Props = {
   /** Makes the whole card a link. */
   href?: string;
+  /** Replace the current history entry instead of adding one. */
+  replace?: boolean;
+  /** Scroll to the top of the new page (off for links that open the project pop-up). */
+  scroll?: boolean;
   /** Initials in the round badge, top left. */
   badge: string;
   /** Fills the whole card, under the badge and the text. */
   image?: Img | null;
   label?: string | null;
   title: string;
-  titleAs?: "h2" | "h3";
+  titleAs?: "h2" | "h3" | "h4";
   /** The small boxed figure beside the title, e.g. Year 2026. */
   stat?: { label: string; value: string } | null;
   footLeft?: React.ReactNode;
@@ -33,6 +37,8 @@ type Props = {
  */
 export function BigCard({
   href,
+  replace = false,
+  scroll = true,
   badge,
   image,
   label,
@@ -96,7 +102,7 @@ export function BigCard({
     className,
   );
   return href ? (
-    <Link href={href} data-reveal data-cursor={cursor} className={cls}>
+    <Link href={href} replace={replace} scroll={scroll} data-reveal data-cursor={cursor} className={cls}>
       {body}
     </Link>
   ) : (

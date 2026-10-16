@@ -230,6 +230,22 @@ const fingerprint = (field: RewriteField, value: unknown) => {
   return createHash("sha1").update(JSON.stringify(plain)).digest("hex").slice(0, 16);
 };
 
+/**
+ * Project summaries rewritten for the case-study pages, with a fingerprint of
+ * the summary the earlier seed wrote. Add mode replaces a summary only while
+ * Studio still holds that version.
+ */
+const OLD_SUMMARY: Record<string, string> = {
+  "project-surgo-health": "5ec3eb80fed5063a",
+  "project-care-connect": "4a4f9b2fe4f3c4f2",
+  "project-meetingful": "84e0f09a30e0ca6c",
+  "project-rxlive": "9086de16afb3fce9",
+  "project-oh-my-glam": "794e711ba0283e71",
+  "project-carlton-noble": "666aad01ca2c3bdc",
+  "project-engel-volkers": "624cd6050552087f",
+};
+const hash = (value: unknown) => createHash("sha1").update(JSON.stringify(value ?? null)).digest("hex").slice(0, 16);
+
 /** Card images rendered for an earlier version of the page; add mode swaps them for the current ones. */
 const OLD_CARD_IMAGE = /^offer-(new|revamp|landing|saas|corporate|cms)\.jpg$/;
 
@@ -343,6 +359,10 @@ async function run() {
   }
 
   console.log("Projects");
+  const existingProjects = await client.fetch<{ _id: string; summary: string | null; shots: number | null }[]>(
+    `*[_type == "project" && _id in $ids]{ _id, summary, "shots": count(gallery) }`,
+    { ids: PROJECTS.map((p) => p._id) },
+  );
   for (const p of PROJECTS) {
     const cover = await image(p.cover.url, p.cover.alt);
     const cardImage = p.cardImage?.url ? await image(p.cardImage.url, p.cardImage.alt) : undefined;
@@ -361,8 +381,11 @@ async function run() {
         client: p.client,
         ...(p.industry ? { industry: p.industry } : {}),
         ...(p.year ? { year: p.year } : {}),
+        ...(p.location ? { location: p.location } : {}),
         order: p.order,
         summary: p.summary,
+        ...(p.tagline ? { tagline: p.tagline } : {}),
+        ...(p.stats.length ? { stats: p.stats.map((st) => ({ _type: "projectStat", ...st })) } : {}),
         ...(p.liveUrl ? { liveUrl: p.liveUrl } : {}),
         services: p.services.map((s) => ({
           _type: "reference",
@@ -375,8 +398,20 @@ async function run() {
         gallery,
       },
       OVERWRITE,
-      ["cardImage"],
+      ["cardImage", "industry", "year", "location", "tagline", "stats"],
     );
+
+    // Add mode: give case studies their work images and new summary, without
+    // touching a gallery or summary already edited in Studio.
+    const existing = existingProjects.find((e) => e._id === p._id);
+    if (OVERWRITE || !existing) continue;
+    const set: Record<string, unknown> = {};
+    if (gallery.length && !existing.shots) set.gallery = gallery;
+    if (existing.summary !== p.summary && hash(existing.summary) === OLD_SUMMARY[p._id]) set.summary = p.summary;
+    if (Object.keys(set).length) {
+      console.log(`  updating ${p._id}: ${Object.keys(set).join(", ")}`);
+      tx.patch(p._id, (patch) => patch.set(set));
+    }
   }
 
   console.log("Pages");

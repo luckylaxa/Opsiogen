@@ -275,6 +275,7 @@ export const project = defineType({
     }),
     defineField({ name: "client", type: "string", group: "content", validation: (rule) => rule.required() }),
     defineField({ name: "industry", type: "string", group: "content" }),
+    defineField({ name: "location", type: "string", group: "content", description: "Where the client is, e.g. Canada." }),
     defineField({ name: "year", type: "string", group: "content", validation: (rule) => rule.regex(/^\d{4}$/, { name: "year" }) }),
     defineField({
       name: "services",
@@ -292,11 +293,37 @@ export const project = defineType({
       validation: (rule) => rule.required().max(400),
     }),
     defineField({
+      name: "tagline",
+      type: "string",
+      group: "content",
+      description: "One short line under the project name, e.g. Healthcare analytics, made clear.",
+      validation: (rule) => rule.max(80),
+    }),
+    defineField({
+      name: "stats",
+      title: "Results (optional)",
+      type: "array",
+      group: "content",
+      description: "Up to four real results, e.g. 75% / Efficiency boost. Shown as big numbers.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "projectStat",
+          fields: [
+            defineField({ name: "value", type: "string", validation: (rule) => rule.required().max(8) }),
+            defineField({ name: "label", type: "string", validation: (rule) => rule.required().max(48) }),
+          ],
+          preview: { select: { title: "value", subtitle: "label" } },
+        }),
+      ],
+      validation: (rule) => rule.max(4),
+    }),
+    defineField({
       name: "result",
-      title: "Result (optional)",
+      title: "Single result (optional)",
       type: "object",
       group: "content",
-      description: "Only add a real result, e.g. 3× / more enquiries.",
+      description: "Shown only when Results is empty. Only add a real result, e.g. 3× / more enquiries.",
       options: { collapsible: true, collapsed: true },
       fields: [
         defineField({ name: "number", type: "string" }),
@@ -308,7 +335,7 @@ export const project = defineType({
       title: "Story (optional)",
       type: "array",
       group: "content",
-      description: "Short blocks such as The challenge, What we did and What changed. Shown under the summary.",
+      description: "Short blocks such as The challenge, What we did and What changed. Kept for reference; not shown, so case studies stay short.",
       of: [
         defineArrayMember({
           type: "object",
@@ -348,13 +375,14 @@ export const project = defineType({
       name: "gallery",
       type: "array",
       group: "media",
-      description: "Four to eight images. Full width or side by side.",
+      description: "The work, as mockups. Four to eight images, 16:10 at 1600 × 1000 works well. Full width or side by side.",
       of: [
         defineArrayMember({
           type: "image",
           options: { hotspot: true },
           fields: [
             altField,
+            defineField({ name: "caption", type: "string", description: "Optional, shown under the image.", validation: (rule) => rule.max(80) }),
             defineField({
               name: "size",
               type: "string",

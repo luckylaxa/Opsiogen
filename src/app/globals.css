@@ -328,6 +328,45 @@
   }
 }
 
+/* Project pop-up: opens upwards like the menu, eases away on close, and
+   fades each project in when stepping through them. */
+@keyframes project-open {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes project-close {
+  to {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+}
+@keyframes project-swap {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+.project-modal {
+  animation: project-open 0.6s cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+.project-modal.is-closing {
+  animation: project-close 0.35s cubic-bezier(0.32, 0, 0.67, 0) both;
+}
+.project-swap {
+  animation: project-swap 0.6s var(--ease-out-soft) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .project-modal,
+  .project-modal.is-closing,
+  .project-swap {
+    animation: none;
+  }
+}
+
 /* Floating menu entrance: rises ~40px and fades in 0.25s after load. */
 @keyframes dock-in {
   from {

@@ -79,12 +79,17 @@ export type ProjectCard = {
   summary?: string | null;
 };
 
-export type GalleryItem = Img & { _key: string; size: "full" | "half" };
+export type GalleryItem = Img & { _key: string; size: "full" | "half"; caption?: string | null };
+
+export type ProjectStat = { _key?: string; value: string; label: string };
 
 export type StoryBlock = { _key?: string; title: string; text: string };
 
 export type Project = ProjectCard & {
   summary: string;
+  tagline?: string | null;
+  location?: string | null;
+  stats: ProjectStat[];
   story: StoryBlock[];
   result?: { number?: string | null; label?: string | null } | null;
   gallery: GalleryItem[];

@@ -48,7 +48,8 @@ export const viewport: Viewport = {
   themeColor: THEME_BAR[DEFAULT_THEME],
 };
 
-export default async function SiteLayout({ children }: { children: React.ReactNode }) {
+/** `modal` is the @modal slot: a project opened from a link shows there, full screen, over the page. */
+export default async function SiteLayout({ children, modal }: LayoutProps<"/">) {
   const [settings, projects, services] = await Promise.all([getSettings(), getProjects(), getServices()]);
   const searchItems = buildSearchItems(projects, services);
   const groups = buildMenuGroups(services);
@@ -80,6 +81,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
           <main id="main" tabIndex={-1} className="outline-none">
             {children}
           </main>
+          {modal}
           <Footer settings={settings} services={services} />
           <Dock menu={settings.menu} button={settings.headerButton} />
           <ScrollTop />

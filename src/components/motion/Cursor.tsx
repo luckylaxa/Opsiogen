@@ -75,6 +75,17 @@ export function Cursor() {
       if (node.dataset.state !== state) node.dataset.state = state;
       if (!raf) raf = requestAnimationFrame(loop);
     };
+    // Content can change under a still pointer (scrolling, the project
+    // pop-up opening): look again at what is under it.
+    let pending = 0;
+    const refresh = () => {
+      if (!shown || pending) return;
+      pending = requestAnimationFrame(() => {
+        pending = 0;
+        const state = stateFor(document.elementFromPoint(tx, ty));
+        if (node.dataset.state !== state) node.dataset.state = state;
+      });
+    };
     const leave = (e: MouseEvent) => {
       if (!e.relatedTarget) {
         shown = false;
@@ -85,13 +96,18 @@ export function Cursor() {
     const up = () => node.removeAttribute("data-pressed");
 
     window.addEventListener("pointermove", move, { passive: true });
+    document.addEventListener("scroll", refresh, { capture: true, passive: true });
+    window.addEventListener("cursor:refresh", refresh);
     document.addEventListener("mouseout", leave);
     window.addEventListener("pointerdown", down);
     window.addEventListener("pointerup", up);
     return () => {
       cancelAnimationFrame(raf);
+      cancelAnimationFrame(pending);
       root.classList.remove("has-cursor");
       window.removeEventListener("pointermove", move);
+      document.removeEventListener("scroll", refresh, { capture: true });
+      window.removeEventListener("cursor:refresh", refresh);
       document.removeEventListener("mouseout", leave);
       window.removeEventListener("pointerdown", down);
       window.removeEventListener("pointerup", up);

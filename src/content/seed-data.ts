@@ -900,16 +900,27 @@ type ProjectInput = {
   liveUrl?: string;
 };
 
+/** The case-study details: a line, where and when, real results, and the work images (public/work/<slug>/1.jpg …). */
+type CaseDetails = {
+  tagline: string;
+  location: string;
+  year: string;
+  stats: Pair[];
+  /** Alt text for each gallery image, in order. */
+  gallery: string[];
+};
+
 /** A case study with its generated title-card cover (public/covers) and card mockup (public/cards). */
 function makeProject(order: number, p: ProjectInput): Project {
   const services = p.services.map(ref);
+  const d = CASE_DETAILS[p.slug];
   return {
     _id: `project-${p.slug}`,
     name: p.name,
     slug: p.slug,
     client: p.name,
     industry: p.industry ?? null,
-    year: null,
+    year: d?.year ?? null,
     services,
     cover: {
       url: `/covers/${p.slug}.jpg`,
@@ -921,12 +932,143 @@ function makeProject(order: number, p: ProjectInput): Project {
     coverVideo: null,
     order,
     summary: p.summary,
+    tagline: d?.tagline ?? null,
+    location: d?.location ?? null,
+    stats: (d?.stats ?? []).map(([value, label], i) => ({ _key: `r${i + 1}`, value, label })),
     story: [],
     result: null,
     liveUrl: p.liveUrl ?? null,
-    gallery: [],
+    gallery: (d?.gallery ?? []).map((alt, i, all) => ({
+      ...img(`/work/${p.slug}/${i + 1}.jpg`, 1600, 1000, alt),
+      _key: `shot${i + 1}`,
+      size: gallerySize(i, all.length),
+    })),
   };
 }
+
+/** The first image full width, then pairs side by side; an odd one out at the end goes full width. */
+function gallerySize(i: number, count: number): "full" | "half" {
+  if (i === 0) return "full";
+  const lone = i === count - 1 && (count - 1) % 2 === 1;
+  return lone ? "full" : "half";
+}
+
+/** Case-study details from the client case studies; projects not listed show their card image and cover. */
+const CASE_DETAILS: Record<string, CaseDetails> = {
+  "surgo-health": {
+    tagline: "Healthcare analytics, made clear.",
+    location: "Canada",
+    year: "2022",
+    stats: [
+      ["15+", "Healthcare clients"],
+      ["4+", "Major partnerships"],
+    ],
+    gallery: [
+      "Surgo Health index explorer with a county map of the United States",
+      "Surgo Health dashboard with a state map of the United States",
+      "Surgo Health map view with filters for health measures",
+    ],
+  },
+  "care-connect": {
+    tagline: "Faster referrals for post-acute care.",
+    location: "Canada",
+    year: "2021",
+    stats: [
+      ["300+", "Referrals processed"],
+      ["1500+", "Active users"],
+      ["75%", "Efficiency boost"],
+      ["50+", "Healthcare partners"],
+    ],
+    gallery: [
+      "Care Connect referrals board",
+      "Care Connect patient referral review",
+      "Care Connect referral details with scores and notes",
+      "Care Connect team messages beside a referral",
+      "Care Connect referral planning screen",
+    ],
+  },
+  meetingful: {
+    tagline: "Smarter meetings, from plan to follow-up.",
+    location: "Canada",
+    year: "2024",
+    stats: [
+      ["40%", "Better meeting output"],
+      ["3X", "Faster decisions"],
+      ["50%", "Less follow-up effort"],
+      ["35%", "Better task accountability"],
+    ],
+    gallery: [
+      "Meetingful sign-in screen",
+      "Meetingful list of all meetings",
+      "Meetingful meeting highlights on a timeline",
+      "Meetingful AI answering a question about a meeting",
+    ],
+  },
+  rxlive: {
+    tagline: "Healthcare data, turned into decisions.",
+    location: "United States",
+    year: "2022",
+    stats: [
+      ["25%", "Drop in admissions"],
+      ["5X", "Return on healthcare spend"],
+      ["150+", "Healthcare partners"],
+      ["35%", "Better medication adherence"],
+    ],
+    gallery: [
+      "Rxlive patient list with status tags",
+      "Rxlive medications table",
+      "Rxlive patient record with tabs",
+      "Rxlive action needed for a pharmacist consultation",
+      "Rxlive patient search results",
+    ],
+  },
+  "oh-my-glam": {
+    tagline: "Beauty services, booked in a few taps.",
+    location: "China",
+    year: "2017",
+    stats: [
+      ["2X", "Faster booking"],
+      ["35%", "More sales conversion"],
+      ["30%", "Better customer retention"],
+      ["40%", "More repeat bookings"],
+    ],
+    gallery: [
+      "Oh My Glam sign-in, home and product screens",
+      "Oh My Glam product, try-on and shopping bag screens",
+      "Oh My Glam payment, orders and gift screens",
+      "Oh My Glam offers, address and order confirmation screens",
+    ],
+  },
+  "carlton-noble": {
+    tagline: "A digital experience for modern luxury.",
+    location: "Canada",
+    year: "2025",
+    stats: [
+      ["65%", "Higher conversion rate"],
+      ["55%", "Lower bounce rate"],
+      ["100%", "Consistent content experience"],
+      ["2X", "Qualified traffic"],
+    ],
+    gallery: [
+      "Carlton Noble website hero",
+      "Carlton Noble journal of travel and events",
+      "Carlton Noble brand activation page",
+      "Carlton Noble about page",
+    ],
+  },
+  "engel-volkers": {
+    tagline: "Luxury real estate, with a look of its own.",
+    location: "Germany",
+    year: "2024",
+    stats: [["45%", "Higher brand recognition"]],
+    gallery: [
+      "Engel & Völkers page with an illustrated house",
+      "Engel & Völkers search for local experts",
+      "Engel & Völkers contact form with an illustration",
+      "Engel & Völkers page with photos and an illustration",
+    ],
+  },
+};
 
 /**
  * Client work from the content document. Summaries only state what the
@@ -940,7 +1082,7 @@ const CASE_STUDIES: ProjectInput[] = [
     industry: "Healthcare",
     services: ["ai-product-design", "ai-websites"],
     summary:
-      "Surgo Health uses behavioural science and AI to understand health behaviour. We designed its insight dashboards, a survey app and its marketing website.",
+      "Surgo Health grew from a consultancy into a SaaS product that helps healthcare teams decide with data. We designed its insight dashboards, a survey app and its website.",
     liveUrl: "https://www.surgohealth.com/",
   },
   {
@@ -963,8 +1105,10 @@ const CASE_STUDIES: ProjectInput[] = [
   {
     name: "Care Connect",
     slug: "care-connect",
+    industry: "Healthcare",
     services: ["ai-product-design", "ai-mvps-business-apps"],
-    summary: "Product design and app development for Care Connect, from the first flows to a working product.",
+    summary:
+      "Care Connect manages referrals in post-acute care. We designed one web and mobile platform where providers, administrators and staff share real-time data, insights and secure messages.",
   },
   {
     name: "SandLogic",
@@ -987,7 +1131,8 @@ const CASE_STUDIES: ProjectInput[] = [
     slug: "engel-volkers",
     industry: "Real estate",
     services: ["ai-websites"],
-    summary: "Website design and build for Engel & Völkers in real estate.",
+    summary:
+      "In luxury real estate, a strong identity builds trust with high-value buyers. We created a refined branding and illustration system for Engel & Völkers, used across its website and marketing.",
   },
   {
     name: "Amphenol",
@@ -1015,8 +1160,10 @@ const CASE_STUDIES: ProjectInput[] = [
   {
     name: "Rxlive",
     slug: "rxlive",
+    industry: "Healthcare",
     services: ["ai-product-design"],
-    summary: "Product design for Rxlive, from user flows to final screens.",
+    summary:
+      "Rxlive brings scattered medical, pharmacy and patient data into one platform. We designed a clear web app that helps care teams spot trends and make informed decisions.",
   },
   {
     name: "Afthab Tours",
@@ -1037,8 +1184,10 @@ const CASE_STUDIES: ProjectInput[] = [
   {
     name: "Meetingful",
     slug: "meetingful",
+    industry: "Collaboration software",
     services: ["ai-product-design"],
-    summary: "Product design for Meetingful, from user flows to developer-ready screens.",
+    summary:
+      "Meetingful AI helps teams plan, run and follow up on meetings. We designed the web app, from meeting highlights and takeaways to an AI assistant that answers questions about any meeting.",
   },
   {
     name: "Elcoteq",
@@ -1051,14 +1200,18 @@ const CASE_STUDIES: ProjectInput[] = [
   {
     name: "Oh My Glam",
     slug: "oh-my-glam",
+    industry: "Beauty",
     services: ["ai-product-design"],
-    summary: "Product design for the Oh My Glam app, from user flows to final screens.",
+    summary:
+      "Oh My Glam helps people discover, book and manage beauty appointments. We designed the mobile app, from browsing services and products to booking and checkout.",
   },
   {
     name: "Carlton Noble",
     slug: "carlton-noble",
+    industry: "Luxury lifestyle",
     services: ["ai-websites"],
-    summary: "Website design and build for Carlton Noble.",
+    summary:
+      "Carlton Noble is a luxury lifestyle brand for curated travel, bespoke events and high-end hospitality. We designed a website as refined as the experiences it offers.",
   },
   {
     name: "Ciber Digita",
