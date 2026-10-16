@@ -1,10 +1,31 @@
 import Image from "next/image";
+import onLight from "@/assets/opsiogen-logo-on-light.png";
+import onDark from "@/assets/opsiogen-logo-on-dark.png";
 import type { Img } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { Mark } from "./Mark";
 
-/** CMS logo when uploaded, otherwise the logo mark on its own, with the name for screen readers. */
-export function Logo({ logo, name, className }: { logo?: Img | null; name: string; className?: string }) {
+/** Logo height, from the design system's header (22px), scaled for the larger screens here. */
+const SIZE = "h-[clamp(20px,calc(0.42vw+17px),26px)] w-auto";
+
+/**
+ * The design system's full logo (wordmark with the ribbon O), exactly as
+ * supplied: the light-background version in the light theme and the
+ * dark-background one in the dark theme, or always the dark-background one
+ * with `tone="dark"`. A logo uploaded in the CMS replaces it.
+ */
+export function Logo({
+  logo,
+  name,
+  tone = "auto",
+  priority,
+  className,
+}: {
+  logo?: Img | null;
+  name: string;
+  tone?: "auto" | "dark";
+  priority?: boolean;
+  className?: string;
+}) {
   if (logo?.url) {
     const height = 28;
     const width = Math.round((logo.width / logo.height) * height) || 120;
@@ -14,15 +35,26 @@ export function Logo({ logo, name, className }: { logo?: Img | null; name: strin
         alt={logo.alt || name}
         width={width}
         height={height}
-        priority
+        priority={priority}
         unoptimized={logo.url.endsWith(".svg")}
-        className={cn("h-[clamp(22px,1.47vw,28px)] w-auto", className)}
+        className={cn(SIZE, className)}
       />
     );
   }
+  const sizes = "(min-width: 1024px) 160px, 130px";
   return (
     <span className={cn("flex", className)}>
-      <Mark priority className="size-[clamp(40px,calc(1.05vw+36px),56px)]" />
+      {tone === "auto" && (
+        <Image src={onLight} alt="" aria-hidden="true" sizes={sizes} priority={priority} className={cn(SIZE, "dark:hidden")} />
+      )}
+      <Image
+        src={onDark}
+        alt=""
+        aria-hidden="true"
+        sizes={sizes}
+        priority={priority}
+        className={cn(SIZE, tone === "auto" && "hidden dark:block")}
+      />
       <span className="sr-only">{name}</span>
     </span>
   );

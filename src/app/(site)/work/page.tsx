@@ -39,13 +39,12 @@ export default async function WorkPage() {
           heading={hero?.heading ?? page.title}
           accent={hero?.accent}
           text={hero?.text}
-          sticker
           className="pb-[clamp(48px,calc(3.4vw+35px),110px)] pt-[clamp(48px,calc(3.4vw+35px),110px)]"
         />
       </Directory>
       {rest.length > 0 && (
         <div className="mt-section">
-          <SectionRenderer sections={rest} layout={{ stickers: true, cta: "dual" }} />
+          <SectionRenderer sections={rest} layout={{ cta: "dual" }} />
         </div>
       )}
     </>

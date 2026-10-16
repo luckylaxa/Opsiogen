@@ -1,24 +1,26 @@
 "use client";
 
 import { useEffect } from "react";
-import { gsap, prefersReducedMotion } from "@/lib/gsap";
+import { prefersReducedMotion } from "@/lib/gsap";
 
-const CARD = "[data-reveal]";
+const TARGETS = "[data-reveal], [data-reveal-mask]";
 
 /**
- * Fades media in as it scrolls into view, matching the reference: cards start
- * transparent and settle to full opacity in ~0.65s with a gentle ease-out.
+ * Scroll reveals from the design system: cards fade up and headings rise
+ * from a mask as they enter the viewport. This only marks elements as
+ * revealed and staggers each batch by 70ms; the motion itself is CSS
+ * (globals.css), so it costs nothing per frame.
  *
  * Uses IntersectionObserver, so it needs no stored scroll positions and keeps
  * working across in-site page changes, Load more, filters and late-loading
- * images. A MutationObserver picks up cards as they are added to the page.
+ * images. A MutationObserver picks up elements as they are added.
  */
 export function Reveal() {
   useEffect(() => {
-    const show = (els: HTMLElement[]) => els.forEach((el) => (el.style.opacity = "1"));
+    const reveal = (el: HTMLElement) => el.setAttribute("data-revealed", "");
 
     if (prefersReducedMotion() || typeof IntersectionObserver === "undefined") {
-      const showAll = () => show(Array.from(document.querySelectorAll<HTMLElement>(CARD)));
+      const showAll = () => document.querySelectorAll<HTMLElement>(TARGETS).forEach(reveal);
       showAll();
       const mo = new MutationObserver(showAll);
       mo.observe(document.body, { childList: true, subtree: true });
@@ -27,21 +29,22 @@ export function Reveal() {
 
     const io = new IntersectionObserver(
       (entries) => {
-        const entering = entries.filter((e) => e.isIntersecting).map((e) => e.target as HTMLElement);
-        if (!entering.length) return;
-        entering.forEach((el) => {
-          io.unobserve(el);
-          el.setAttribute("data-revealed", "");
-        });
-        gsap.to(entering, { opacity: 1, duration: 0.65, ease: "power1.out", stagger: 0.08, overwrite: true });
+        entries
+          .filter((e) => e.isIntersecting)
+          .forEach((e, i) => {
+            const el = e.target as HTMLElement;
+            io.unobserve(el);
+            el.style.setProperty("--reveal-delay", `${Math.min(i, 5) * 70}ms`);
+            reveal(el);
+          });
       },
-      // Start just before the card's top edge reaches the bottom of the screen.
+      // Start just before the element's top edge reaches the bottom of the screen.
       { rootMargin: "0px 0px -6% 0px" },
     );
 
     const watch = (root: ParentNode) => {
-      const els = root instanceof HTMLElement && root.matches(CARD) ? [root] : [];
-      els.push(...Array.from(root.querySelectorAll<HTMLElement>(CARD)));
+      const els = root instanceof HTMLElement && root.matches(TARGETS) ? [root] : [];
+      els.push(...Array.from(root.querySelectorAll<HTMLElement>(TARGETS)));
       els.filter((el) => !el.hasAttribute("data-revealed")).forEach((el) => io.observe(el));
     };
 

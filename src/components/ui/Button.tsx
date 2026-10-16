@@ -5,7 +5,7 @@ type Variant = "dark" | "outline" | "outline-light" | "light";
 type Size = "md" | "lg";
 
 const base =
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-btn)] border font-medium transition-[background-color,color,border-color] duration-300 ease-out";
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-btn)] border font-medium transition-[background-color,color,border-color,scale] duration-300 ease-out active:scale-[0.97]";
 
 const variants: Record<Variant, string> = {
   // Design system primary: the label turns into gradient type on hover (see .btn-dark in globals.css).

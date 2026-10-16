@@ -130,7 +130,7 @@ export function SiteSearch({
 
   return (
     <div ref={root} className={cn("relative", className)} onBlur={(e) => !root.current?.contains(e.relatedTarget) && setOpen(false)}>
-      <div className="flex h-[clamp(42px,calc(0.65vw+39.5px),52px)] items-center gap-3 rounded-[var(--radius-btn)] bg-field px-[clamp(12px,0.9vw,18px)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ink">
+      <div className="flex h-[clamp(42px,calc(0.65vw+39.5px),52px)] items-center gap-3 rounded-[var(--radius-btn)] border border-line bg-search px-[clamp(12px,0.9vw,18px)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ink">
         <SearchIcon className="size-[1.15em] shrink-0 text-ink-2" />
         <input
           ref={input}

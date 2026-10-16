@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import type { ProjectCard as Card, ServiceRef } from "@/lib/types";
 import { buttonClass } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
-import { ProjectCard } from "./ProjectCard";
+import { ProjectBigCard } from "./ProjectBigCard";
 
 type Props = {
   projects: Card[];
@@ -54,10 +54,10 @@ export function WorkGrid({ projects, filters, pageSize, headingLevel }: Props) {
       )}
 
       {shown.length > 0 ? (
-        <ul className="grid grid-cols-1 gap-x-gap gap-y-[clamp(32px,2.47vw,47px)] sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="@container grid gap-gap lg:grid-cols-2">
           {shown.map((project) => (
             <li key={project._id}>
-              <ProjectCard project={project} headingLevel={headingLevel} />
+              <ProjectBigCard project={project} titleAs={headingLevel} />
             </li>
           ))}
         </ul>

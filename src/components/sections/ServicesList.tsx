@@ -18,14 +18,12 @@ const GROUPS = ["build", "grow", "create"] as const;
 export async function ServicesList({
   section,
   variant = "rows",
-  sticker,
 }: {
   section: ServicesListSection;
   variant?: "rows" | "directory" | "groups";
-  sticker?: boolean;
 }) {
-  if (variant === "directory") return <ServicesDirectory section={section} sticker={sticker} />;
-  if (variant === "groups") return <ServicesGroups section={section} sticker={sticker} />;
+  if (variant === "directory") return <ServicesDirectory section={section} />;
+  if (variant === "groups") return <ServicesGroups section={section} />;
   const services = await getServices();
   return (
     <div data-dock="/services">
@@ -80,14 +78,13 @@ async function loadServices() {
   return { services, workFor };
 }
 
-function ListHeading({ section, sticker }: { section: ServicesListSection; sticker?: boolean }) {
+function ListHeading({ section }: { section: ServicesListSection }) {
   return section.heading ? (
     <GiantHeading
       label={section.label}
       heading={section.heading}
       accent={section.accent}
       text={section.text}
-      sticker={sticker}
       className="mb-[clamp(48px,calc(3.4vw+35.2px),100px)]"
     />
   ) : (
@@ -95,23 +92,23 @@ function ListHeading({ section, sticker }: { section: ServicesListSection; stick
   );
 }
 
-async function ServicesDirectory({ section, sticker }: { section: ServicesListSection; sticker?: boolean }) {
+async function ServicesDirectory({ section }: { section: ServicesListSection }) {
   const { services, workFor } = await loadServices();
   const ordered = GROUPS.flatMap((g) => services.filter((s) => s.group === g));
   return (
     <div data-dock="/services">
-      <ListHeading section={section} sticker={sticker} />
+      <ListHeading section={section} />
       <ServiceCards services={ordered} workFor={workFor} />
     </div>
   );
 }
 
-async function ServicesGroups({ section, sticker }: { section: ServicesListSection; sticker?: boolean }) {
+async function ServicesGroups({ section }: { section: ServicesListSection }) {
   const { services, workFor } = await loadServices();
   const titleLevel = section.heading ? "h3" : "h2";
   return (
     <div data-dock="/services">
-      <ListHeading section={section} sticker={sticker} />
+      <ListHeading section={section} />
       <div className="flex flex-col gap-[clamp(64px,calc(4.2vw+48px),130px)]">
         {GROUPS.map((group) => {
           const items = services.filter((s) => s.group === group);

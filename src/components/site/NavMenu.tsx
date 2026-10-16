@@ -27,7 +27,7 @@ export function NavMenu({ menu, groups }: { menu: LinkItem[]; groups: MenuGroup[
             {item.href === "/services" && groups.length > 0 ? (
               <ServicesItem item={item} groups={groups} />
             ) : (
-              <Link href={item.href} className="link-fade text-base">
+              <Link href={item.href} className="link-accent text-base">
                 {item.label}
               </Link>
             )}
@@ -89,7 +89,7 @@ function ServicesItem({ item, groups }: { item: LinkItem; groups: MenuGroup[] })
         aria-expanded={open}
         aria-controls={`${id}-panel`}
         onClick={() => setOpen((o) => !o)}
-        className="link-fade inline-flex items-center gap-1 text-base"
+        className="link-accent inline-flex items-center gap-1 text-base"
       >
         {item.label}
         <ChevronDown className={cn("size-4 transition-transform duration-300", open && "rotate-180")} />

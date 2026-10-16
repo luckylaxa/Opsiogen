@@ -14,13 +14,13 @@
   --color-page: #f8f6f8;
   --color-band: #edeaed;
   --color-field: #edeaed;
+  --color-search: #ffffff;
   --color-ink: #0a090d;
   --color-ink-2: #403f44;
   --color-mute: #5b5a60;
   --color-line: #dedbdf;
   --color-night: #121115;
   --color-coal: #0a090d;
-  --color-ticker: #edeaed;
   --color-surface: #ffffff;
   --color-on-ink: #f8f6f8;
   --color-rule: #a2a0a6;
@@ -80,7 +80,6 @@
 @layer base {
   :root {
     --header-h: clamp(64px, calc(1.57vw + 58.1px), 88px);
-    --ticker-h: clamp(34px, calc(0.79vw + 31px), 48px);
     /* The logo ribbon spectrum. Type only (.text-gradient), never a fill. */
     --gradient-brand: linear-gradient(120deg, #00d2ff 0%, #0a4bff 34%, #6a00f0 58%, #c800c8 80%, #ff1a8c 100%);
   }
@@ -95,13 +94,13 @@
     --color-page: #0a090d;
     --color-band: #121115;
     --color-field: #1b1a1e;
+    --color-search: #1b1a1e;
     --color-ink: #f8f6f8;
     --color-ink-2: #ccc9ce;
     --color-mute: #a2a0a6;
     --color-line: rgb(248 246 248 / 0.12);
     --color-coal: #1b1a1e;
     --color-night: #050407;
-    --color-ticker: #050407;
     --color-surface: #121115;
     --color-on-ink: #0a090d;
     --color-rule: rgb(248 246 248 / 0.22);
@@ -118,6 +117,7 @@
     --color-page: #f8f6f8;
     --color-band: #edeaed;
     --color-field: #edeaed;
+    --color-search: #ffffff;
     --color-ink: #0a090d;
     --color-ink-2: #403f44;
     --color-mute: #5b5a60;
@@ -190,6 +190,14 @@
   .link-fade {
     transition: opacity 0.25s ease;
   }
+
+  /* Text links (design system): the colour shifts to the accent on hover. */
+  .link-accent {
+    transition: color 0.18s cubic-bezier(0.2, 0, 0, 1);
+  }
+  .link-accent:hover {
+    color: var(--color-accent);
+  }
   .link-fade:hover {
     opacity: 0.6;
   }
@@ -199,6 +207,17 @@
   .text-giant-m,
   .text-giant-l {
     word-spacing: 0.12em;
+  }
+
+  /* Line-mask reveal (design system): text rises from behind a mask. */
+  .reveal-mask {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.12em;
+    margin-bottom: -0.12em;
+  }
+  .reveal-mask > span {
+    display: block;
   }
 
   /* Brand gradient on type: display words, big numbers, button labels on hover. */
@@ -211,28 +230,45 @@
     color: transparent;
     -webkit-text-fill-color: transparent;
   }
-}
-
-/* Endless horizontal loop: the track holds two identical copies and slides by one. */
-@keyframes marquee {
-  to {
-    transform: translate3d(-50%, 0, 0);
+  /* Tight tracking pushes the last letter past the word's box, where the
+     gradient isn't painted; widen the painted area without moving the text. */
+  .text-gradient {
+    padding-inline: 0.1em;
+    margin-inline: -0.1em;
   }
 }
-.marquee {
-  display: flex;
-  width: max-content;
-  animation: marquee var(--marquee-duration, 40s) linear infinite;
-}
-.marquee-hover:hover .marquee,
-.marquee-hover:focus-within .marquee {
-  animation-play-state: paused;
-}
 
-/* Media fades in as it enters the viewport (see components/motion/Reveal.tsx). */
+/*
+ * Scroll reveals from the design system (see components/motion/Reveal.tsx):
+ * cards fade up 40px, headings rise from a mask, both on the expo-out curve
+ * over 900ms, staggered by --reveal-delay.
+ */
 @media (prefers-reduced-motion: no-preference) {
   .js [data-reveal] {
     opacity: 0;
+    transform: translateY(40px);
+    transition:
+      opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms),
+      transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms);
+  }
+  .js [data-reveal-mask]:not(h1 *) > span {
+    transform: translateY(105%);
+    transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms);
+  }
+  .js [data-reveal][data-revealed],
+  .js [data-reveal-mask][data-revealed] > span {
+    opacity: 1;
+    transform: none;
+  }
+  /* Page titles rise on load without waiting for scripts. */
+  h1 .reveal-mask > span {
+    animation: mask-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+  }
+}
+
+@keyframes mask-rise {
+  from {
+    transform: translateY(105%);
   }
 }
 
@@ -245,8 +281,7 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  .dock-in,
-  .marquee {
+  .dock-in {
     animation: none !important;
   }
 }
@@ -261,3 +296,78 @@
 .dock-in {
   animation: dock-in 0.45s cubic-bezier(0.215, 0.61, 0.355, 1) 0.25s both;
 }
+
+/*
+ * Custom cursor (design system; see components/motion/Cursor.tsx). The dot
+ * and ring invert what is under them; the View disc is solid.
+ */
+html.has-cursor,
+html.has-cursor * {
+  cursor: none !important;
+}
+.cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 900;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  transition: opacity 0.18s ease;
+}
+.cursor[data-hidden] {
+  opacity: 0;
+}
+.cursor[data-state="view"] {
+  mix-blend-mode: normal;
+}
+.cursor__dot {
+  --s: 10px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: var(--s);
+  height: var(--h, var(--s));
+  margin: calc(var(--h, var(--s)) / -2) 0 0 calc(var(--s) / -2);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: #ffffff;
+  transition:
+    width 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+    margin 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    scale 0.18s ease;
+}
+.cursor[data-pressed] .cursor__dot {
+  scale: 0.85;
+}
+.cursor[data-state="link"] .cursor__dot {
+  --s: 56px;
+  background: transparent;
+  border-color: #ffffff;
+}
+.cursor[data-state="view"] .cursor__dot {
+  --s: 104px;
+  background: #f8f6f8;
+  box-shadow: 0 0 0 1px rgb(10 9 13 / 0.12);
+}
+.cursor[data-state="text"] .cursor__dot {
+  --s: 3px;
+  --h: 28px;
+  border-radius: 2px;
+}
+.cursor__label {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: #0a090d;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+.cursor[data-state="view"] .cursor__label {
+  opacity: 1;
+}
+

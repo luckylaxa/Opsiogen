@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getProject, getProjects, getSettings } from "@/lib/data";
 import { buildMetadata } from "@/lib/metadata";
-import { AccentText } from "@/components/ui/Headings";
+import { AccentText, MaskReveal } from "@/components/ui/Headings";
 import { cn, giantClass } from "@/lib/utils";
 import { CoverMedia } from "@/components/media/CoverMedia";
 import { Media } from "@/components/ui/Media";
@@ -79,7 +79,9 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
               "mt-[clamp(20px,calc(2.29vw+11.4px),55px)] w-full font-bold uppercase text-balance",
             )}
           >
-            <AccentText text={project.name} />
+            <MaskReveal>
+              <AccentText text={project.name} />
+            </MaskReveal>
           </h1>
           {project.services.length > 0 && (
             <ul className="mt-[clamp(20px,calc(1.64vw+13.8px),45px)] flex flex-wrap justify-center gap-x-[0.9em] gap-y-2 text-title font-medium">

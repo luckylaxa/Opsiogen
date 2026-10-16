@@ -7,13 +7,13 @@ import { THEME_BAR, THEME_SCRIPT } from "@/lib/theme";
 import { siteUrl } from "@/lib/utils";
 import { Header } from "@/components/site/Header";
 import { Logo } from "@/components/site/Logo";
-import { Ticker } from "@/components/site/Ticker";
 import { Footer } from "@/components/site/Footer";
 import { Dock } from "@/components/site/Dock";
 import { ScrollTop } from "@/components/site/ScrollTop";
 import { MenuProvider } from "@/components/site/MenuContext";
 import { MenuOverlay } from "@/components/site/MenuOverlay";
 import { Reveal } from "@/components/motion/Reveal";
+import { Cursor } from "@/components/motion/Cursor";
 
 /** Outfit, the Opsiogen typeface (SIL OFL), self-hosted as one variable file covering weights 100–900. */
 const outfit = localFont({
@@ -67,21 +67,21 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
           >
             Skip to content
           </a>
-          <Ticker settings={settings} />
           <Header settings={settings} groups={groups} searchItems={searchItems} />
           <main id="main" tabIndex={-1} className="outline-none">
             {children}
           </main>
-          <Footer settings={settings} />
+          <Footer settings={settings} services={services} />
           <Dock menu={settings.menu} button={settings.headerButton} />
           <ScrollTop />
           <MenuOverlay
             menu={settings.menu}
             button={settings.headerButton}
-            wordmark={<Logo logo={settings.logoOnDark ?? settings.logo} name={settings.siteTitle} />}
+            wordmark={<Logo logo={settings.logoOnDark ?? settings.logo} name={settings.siteTitle} tone="dark" />}
             searchItems={searchItems}
           />
           <Reveal />
+          <Cursor />
         </MenuProvider>
       </body>
     </html>

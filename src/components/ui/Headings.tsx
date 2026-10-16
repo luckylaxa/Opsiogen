@@ -1,5 +1,4 @@
 import { cn, giantClass } from "@/lib/utils";
-import { Sticker } from "./Sticker";
 
 /** Small label above a heading, e.g. “Latest”. */
 export function Label({ children, className }: { children: React.ReactNode; className?: string }) {
@@ -48,46 +47,31 @@ export function accentRange(words: string[], accent?: string | null): [number, n
 
 /**
  * Display text with one accent word (or short phrase) in the brand gradient,
- * as the design system sets its headlines: “We remove the DRAG.”. With
- * `sticker`, the logo symbol stays on the line of the last word.
+ * as the design system sets its headlines: “We remove the DRAG.”.
  */
-export function AccentText({ text, accent, sticker }: { text: string; accent?: string | null; sticker?: boolean }) {
+export function AccentText({ text, accent }: { text: string; accent?: string | null }) {
   const words = text.trim().split(/\s+/);
   const [start, end] = accentRange(words, accent);
-  const join = (ws: string[]) => ws.join(" ");
-  const before = words.slice(0, start);
-  const after = words.slice(end + 1);
-  const accented = <span className="text-gradient">{join(words.slice(start, end + 1))}</span>;
-
-  if (!sticker) {
-    return (
-      <>
-        {before.length > 0 && `${join(before)} `}
-        {accented}
-        {after.length > 0 && ` ${join(after)}`}
-      </>
-    );
-  }
-  // Keep the sticker on the same line as the last word.
-  const last = after.pop();
+  const before = words.slice(0, start).join(" ");
+  const after = words.slice(end + 1).join(" ");
   return (
     <>
-      {before.length > 0 && `${join(before)} `}
-      {last === undefined ? (
-        <span className="whitespace-nowrap">
-          {accented}
-          <Sticker />
-        </span>
-      ) : (
-        <>
-          {accented} {after.length > 0 && `${join(after)} `}
-          <span className="whitespace-nowrap">
-            {last}
-            <Sticker />
-          </span>
-        </>
-      )}
+      {before && `${before} `}
+      <span className="text-gradient">{words.slice(start, end + 1).join(" ")}</span>
+      {after && ` ${after}`}
     </>
+  );
+}
+
+/**
+ * The design system's line-mask reveal: the text rises into view from behind
+ * a mask as it scrolls in (see Reveal.tsx and globals.css).
+ */
+export function MaskReveal({ children }: { children: React.ReactNode }) {
+  return (
+    <span data-reveal-mask className="reveal-mask">
+      <span>{children}</span>
+    </span>
   );
 }
 
@@ -99,7 +83,6 @@ export function GiantHeading({
   text,
   as: Tag = "h2",
   labelStyle = "plain",
-  sticker,
   className,
   children,
 }: {
@@ -110,12 +93,14 @@ export function GiantHeading({
   text?: string | null;
   as?: "h1" | "h2" | "p";
   labelStyle?: "plain" | "pill";
-  /** Show the logo mark over the end of the title. */
-  sticker?: boolean;
   className?: string;
   children?: React.ReactNode;
 }) {
-  const title = <AccentText text={heading} accent={accent} sticker={sticker} />;
+  const title = (
+    <MaskReveal>
+      <AccentText text={heading} accent={accent} />
+    </MaskReveal>
+  );
   return (
     <div className={cn("flex flex-col items-center px-gutter text-center", className)}>
       {label &&

@@ -14,8 +14,6 @@ export function Block({ children, className = "" }: { children: React.ReactNode;
 
 /** Per-page presentation choices; the content always comes from the CMS. */
 export type PageLayout = {
-  /** Logo mark over the end of giant section titles. */
-  stickers?: boolean;
   /** Services as plain rows, group cards then service cards, or each group's card beside its services. */
   services?: "rows" | "directory" | "groups";
   /** One call-to-action card, or two side by side. */
@@ -37,7 +35,6 @@ export async function SectionRenderer({
   layout?: PageLayout;
 }) {
   const settings = await getSettings();
-  const sticker = Boolean(layout.stickers);
   const out: React.ReactNode[] = [];
   let afterPlaced = false;
 
@@ -78,14 +75,14 @@ export async function SectionRenderer({
       case "projectGrid":
         out.push(
           <Block key={section._key}>
-            <ProjectGrid section={section} sticker={sticker} />
+            <ProjectGrid section={section} />
           </Block>,
         );
         break;
       case "servicesList":
         out.push(
           <Block key={section._key}>
-            <ServicesList section={section} variant={layout.services} sticker={sticker} />
+            <ServicesList section={section} variant={layout.services} />
           </Block>,
         );
         break;

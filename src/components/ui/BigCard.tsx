@@ -19,6 +19,8 @@ type Props = {
   footLeft?: React.ReactNode;
   footRight?: React.ReactNode;
   imageSizes?: string;
+  /** Cursor over the card: the View disc for work, the ring for everything else. */
+  cursor?: "view" | "link";
   className?: string;
 };
 
@@ -42,6 +44,7 @@ export function BigCard({
   footLeft,
   footRight,
   imageSizes = "(min-width: 1024px) 18vw, 56vw",
+  cursor = "link",
   className,
 }: Props) {
   const count = Math.min(Math.max(dots, 1), 5);
@@ -100,7 +103,7 @@ export function BigCard({
     className,
   );
   return href ? (
-    <Link href={href} data-reveal className={cls}>
+    <Link href={href} data-reveal data-cursor={cursor} className={cls}>
       {body}
     </Link>
   ) : (

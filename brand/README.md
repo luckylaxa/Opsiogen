@@ -6,13 +6,17 @@ The site follows the Opsiogen design system: its font, logo files and colours.
 
 `logo/` holds the design system's logo files exactly as supplied: the master vector, the full logo for light and dark backgrounds, one-colour versions, and the ribbon symbol (`opsiogen-symbol.png`) with its one-colour versions.
 
-- The site uses the symbol (`src/assets/opsiogen-mark.png`, a copy of `logo/opsiogen-symbol.png`) on its own in the header, phone menu and footer, on the floating menu tile, and at the end of giant titles.
-- Browser icons (`src/app/icon.png`, `src/app/apple-icon.png`) are made from the same symbol.
-- To show the full logo instead, upload `logo/opsiogen-logo-on-light.png` in Studio → Site settings → Brand → Logo, and `logo/opsiogen-logo-on-dark.png` as the logo for dark backgrounds. An uploaded logo replaces the symbol in the header, footer and menu.
+- The header, footer and phone menu show the full logo: `src/assets/opsiogen-logo-on-light.png` in the light theme and `src/assets/opsiogen-logo-on-dark.png` in the dark theme (copies of the files in `logo/`).
+- The floating menu tile uses the symbol (`src/assets/opsiogen-mark.png`, a copy of `logo/opsiogen-symbol.png`), and the browser icons (`src/app/icon.png`, `src/app/apple-icon.png`) are made from it.
+- A logo uploaded in Studio → Site settings → Brand replaces the full logo in the header, footer and menu.
 
 ## Font
 
 Outfit (SIL Open Font License, licence in `src/fonts/OFL.txt`), self-hosted as one variable file, `src/fonts/Outfit-Variable.woff2`, covering weights 100–900. Giant titles use 700 with tight tracking; headings 500–600; body 400.
+
+## Motion
+
+From the design system: a custom cursor (a dot that becomes a ring over links and a “View” disc over work), headings that rise from a mask, cards that fade up as they scroll in, and buttons that press in slightly. All of it switches off for touch screens and for visitors who ask for reduced motion.
 
 ## Colours
 
