@@ -345,6 +345,7 @@ async function run() {
   console.log("Projects");
   for (const p of PROJECTS) {
     const cover = await image(p.cover.url, p.cover.alt);
+    const cardImage = p.cardImage?.url ? await image(p.cardImage.url, p.cardImage.alt) : undefined;
     const coverVideo = p.coverVideo
       ? { _type: "file", asset: { _type: "reference", _ref: await upload("file", p.coverVideo.url) } }
       : undefined;
@@ -369,10 +370,12 @@ async function run() {
           _ref: SERVICES.find((x) => x.slug === s.slug)!._id,
         })),
         cover,
+        ...(cardImage ? { cardImage } : {}),
         ...(coverVideo ? { coverVideo } : {}),
         gallery,
       },
       OVERWRITE,
+      ["cardImage"],
     );
   }
 

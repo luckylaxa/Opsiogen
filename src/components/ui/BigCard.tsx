@@ -8,11 +8,8 @@ type Props = {
   href?: string;
   /** Initials in the round badge, top left. */
   badge: string;
+  /** Fills the whole card, under the badge and the text. */
   image?: Img | null;
-  /** Number of dots under the image (1–5). */
-  dots?: number;
-  /** Which dot is filled, from 0. */
-  activeDot?: number;
   label?: string | null;
   title: string;
   titleAs?: "h2" | "h3";
@@ -27,59 +24,51 @@ type Props = {
 };
 
 /**
- * The reference's big dark card (its directory “creator” card): a badge, an
- * image set right of centre with dots below it, then a label, a large title
- * with a boxed figure and a footer line. Measured at 873 × 693 on a 1903px
- * screen; two per row from desktop up, one per row below. The list holding
- * the cards must be an `@container`: from desktop up a card is at least
- * 693/873 of its width tall, and grows if its content needs more.
+ * The big dark card: the image fills the whole card, with a badge top left
+ * and, over a shade at the bottom, a label, a large title with a boxed
+ * figure and a footer line. Measured at 873 × 693 on a 1903px screen; two
+ * per row from desktop up, one per row below. The list holding the cards
+ * must be an `@container`: from desktop up a card is at least 693/873 of its
+ * width tall, and grows if its content needs more.
  */
 export function BigCard({
   href,
   badge,
   image,
-  dots = 1,
-  activeDot = 0,
   label,
   title,
   titleAs: Title = "h3",
   stat,
   footLeft,
   footRight,
-  imageSizes = "(min-width: 1024px) 18vw, 56vw",
+  imageSizes = "(min-width: 1024px) 50vw, 100vw",
   cursor = "link",
   className,
 }: Props) {
-  const count = Math.min(Math.max(dots, 1), 5);
-  const active = Math.min(Math.max(activeDot, 0), count - 1);
   const body = (
     <>
-      <div className="flex items-start justify-between gap-4">
-        <span
-          aria-hidden="true"
-          className="grid size-[clamp(40px,3.42vw,65px)] shrink-0 place-items-center rounded-full bg-black/45 text-[length:clamp(13px,1.05vw,20px)] font-semibold"
-        >
-          {badge}
-        </span>
-        {image && (
-          <div className="w-[56%] lg:mr-[14.1%] lg:w-[45.8%]">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[clamp(4px,0.42vw,8px)] bg-night">
-              <Media
-                image={image}
-                sizes={imageSizes}
-                className="transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-[1.04]"
-              />
-            </div>
-          </div>
-        )}
-      </div>
-      <div aria-hidden="true" className="mt-[clamp(14px,2.1vw,40px)] flex justify-end gap-[clamp(8px,0.79vw,15px)]">
-        {Array.from({ length: count }, (_, i) => (
-          <span key={i} className={cn("size-[clamp(6px,0.53vw,10px)] rounded-full", i === active ? "bg-white" : "bg-white/20")} />
-        ))}
-      </div>
+      {image && (
+        <>
+          <Media
+            image={image}
+            sizes={imageSizes}
+            className="transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-[1.04]"
+          />
+          {/* Shade so the badge and the text stay readable on any image. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgb(0_0_0/0.3)_0%,rgb(0_0_0/0)_22%,rgb(0_0_0/0)_36%,rgb(0_0_0/0.6)_62%,rgb(0_0_0/0.9)_100%)]"
+          />
+        </>
+      )}
+      <span
+        aria-hidden="true"
+        className="relative grid size-[clamp(40px,3.42vw,65px)] shrink-0 place-items-center rounded-full bg-black/45 text-[length:clamp(13px,1.05vw,20px)] font-semibold backdrop-blur-sm"
+      >
+        {badge}
+      </span>
 
-      <div className="mt-auto pt-4">
+      <div className="relative mt-auto pt-4">
         {label && <p className="text-base text-white/85">{label}</p>}
         <div className="mt-[clamp(8px,1.2vw,22px)] flex items-end justify-between gap-6">
           <Title className="min-w-0 text-[length:clamp(30px,3.15vw,60px)] leading-none font-semibold tracking-[-0.02em] text-balance">

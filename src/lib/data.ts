@@ -43,6 +43,7 @@ const toCard = (p: Project): ProjectCard => ({
   year: p.year,
   services: p.services,
   cover: p.cover,
+  cardImage: p.cardImage,
   coverVideo: p.coverVideo,
   order: p.order,
   summary: p.summary,

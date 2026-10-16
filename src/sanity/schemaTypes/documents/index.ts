@@ -329,7 +329,13 @@ export const project = defineType({
       description: "Lower numbers show first on Home and Work.",
       validation: (rule) => rule.required().integer(),
     }),
-    { ...imageField("cover", "Cover image", true), group: "media", description: "Used on cards and as the video poster. 4:3 or wider." },
+    { ...imageField("cover", "Cover image", true), group: "media", description: "Used on the project page and as the video poster. 4:3 or wider." },
+    {
+      ...imageField("cardImage", "Card image"),
+      group: "media",
+      description:
+        "A mockup of the work (devices, print, packaging) that fills the big project card. 4:3, 1600 × 1200; keep the lower third quiet, the title sits there. Uses the cover when empty.",
+    },
     defineField({
       name: "coverVideo",
       title: "Cover video (optional)",

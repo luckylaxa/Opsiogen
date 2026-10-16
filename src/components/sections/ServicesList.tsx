@@ -170,8 +170,7 @@ function ServiceCards({
             <BigCard
               href={`/services/${s.slug}`}
               badge={initials(s.shortName)}
-              image={covers.get(s.slug)?.cover}
-              dots={work.length}
+              image={s.hero?.image ?? covers.get(s.slug)?.cover}
               label={GROUP_LABELS[s.group]}
               title={s.name}
               titleAs={titleAs}

@@ -72,6 +72,8 @@ export type ProjectCard = {
   year?: string | null;
   services: ServiceRef[];
   cover: Img;
+  /** A mockup that fills the big project card; the cover is used when there is none. */
+  cardImage?: Img | null;
   coverVideo?: Video | null;
   order: number;
   summary?: string | null;

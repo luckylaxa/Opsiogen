@@ -64,11 +64,11 @@ Layout, colours, fonts and animations are fixed in the code, so edits can't brea
 
 1. Studio → **Projects** → **+**.
 2. Fill in name (the slug fills itself), client, industry, year, services, a two-to-three-line summary and an order number (lower shows first).
-3. Media tab: a cover image (4:3 or wider) and, optionally, a short muted MP4 loop. The image is the video's poster. Then four to eight gallery images, each set to **Full width** or **Half** (two halves sit side by side). Every image needs alt text.
+3. Media tab: a cover image (4:3 or wider), a **card image** (a 1600 × 1200 mockup of the work that fills the big project card; keep the lower third quiet, the title sits there) and, optionally, a short muted MP4 loop. The cover is the video's poster. Then four to eight gallery images, each set to **Full width** or **Half** (two halves sit side by side). Every image needs alt text.
 4. Optional: a result (number + label, only if it is real), a live site link and **Story** blocks (e.g. The challenge, What we did, What changed) shown under the summary.
 5. **Publish**. It shows on Home, Work, the project page and each tagged service page. To feature it on Home, pick it in Site settings → Home.
 
-The starter case studies come from the content document. Their covers in `public/covers` are generated title cards in the design-system style: swap in real screenshots, and add the year, story and gallery, as you get them.
+The starter case studies come from the content document. Their covers in `public/covers` are generated title cards in the design-system style, and their card images in `public/cards` show each case-study page on a laptop and a phone: swap in real mockups of the work, and add the year, story and gallery, as you get them.
 
 ## Hosting now: Vercel (free plan)
 

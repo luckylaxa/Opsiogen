@@ -900,7 +900,7 @@ type ProjectInput = {
   liveUrl?: string;
 };
 
-/** A case study with its generated title-card cover from public/covers. */
+/** A case study with its generated title-card cover (public/covers) and card mockup (public/cards). */
 function makeProject(order: number, p: ProjectInput): Project {
   const services = p.services.map(ref);
   return {
@@ -917,6 +917,7 @@ function makeProject(order: number, p: ProjectInput): Project {
       height: 1200,
       alt: `${p.name}: ${services.map((s) => s.name).join(", ")}`,
     },
+    cardImage: img(`/cards/${p.slug}.jpg`, 1600, 1200, `The ${p.name} case study on a laptop and a phone`),
     coverVideo: null,
     order,
     summary: p.summary,

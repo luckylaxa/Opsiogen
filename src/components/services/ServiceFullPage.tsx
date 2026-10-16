@@ -130,12 +130,9 @@ export function ServiceFullPage({ service, settings, work, process }: Props) {
                 <BigCard
                   badge={pad(i + 1)}
                   image={o.image}
-                  dots={cards.length}
-                  activeDot={i}
                   label={service.shortName}
                   title={o.title}
                   footLeft={o.text}
-                  imageSizes="(min-width: 1024px) 22vw, 56vw"
                 />
               </li>
             ))}

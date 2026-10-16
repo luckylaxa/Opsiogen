@@ -24,6 +24,7 @@ const PROJECT_CARD = `{
   summary,
   "services": services[]->${SERVICE_REF},
   "cover": cover${IMG},
+  "cardImage": cardImage${IMG},
   "coverVideo": coverVideo{ "url": asset->url, "mimeType": asset->mimeType }
 }`;
 
