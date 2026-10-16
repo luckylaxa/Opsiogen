@@ -129,7 +129,7 @@ export function Directory({ projects, services, pageSize, children }: Props) {
       </div>
 
       {shown.length > 0 ? (
-        <ul className="@container grid gap-gap px-gutter lg:grid-cols-2">
+        <ul className="@container grid grid-cols-1 gap-gap px-gutter lg:grid-cols-2">
           {shown.map((p) => (
             <li key={p._id}>
               <ProjectBigCard project={p} titleAs="h2" />

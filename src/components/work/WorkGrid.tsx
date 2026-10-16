@@ -54,7 +54,7 @@ export function WorkGrid({ projects, filters, pageSize, headingLevel }: Props) {
       )}
 
       {shown.length > 0 ? (
-        <ul className="@container grid gap-gap lg:grid-cols-2">
+        <ul className="@container grid grid-cols-1 gap-gap lg:grid-cols-2">
           {shown.map((project) => (
             <li key={project._id}>
               <ProjectBigCard project={project} titleAs={headingLevel} />

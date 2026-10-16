@@ -1,11 +1,20 @@
 /**
  * Load the starter content into Sanity.
  *
- *   npm run seed
+ *   npm run seed                         add what is missing, change nothing else
+ *   SEED_MODE=overwrite npm run seed     also replace the starter content
  *
  * Needs NEXT_PUBLIC_SANITY_PROJECT_ID and SANITY_API_WRITE_TOKEN in .env.local.
- * Safe to run more than once: documents that already exist are left as they are,
- * so it never overwrites edits made in the studio.
+ *
+ * The default is safe to run more than once: documents that already exist are
+ * left as they are, so it never overwrites edits made in the studio.
+ *
+ * Overwrite brings existing documents in line with src/content/seed-data.ts:
+ * it rewrites the services, the case studies and the Work and Services pages
+ * (their SEO settings are kept), points the Home feature at the new featured
+ * project, swaps the starter share image, and removes the first placeholder
+ * projects and their images. Home, About, Contact, Privacy and everything else
+ * in Site settings are left alone.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -15,6 +24,7 @@ import {
   FEATURED_PROJECT_SLUG,
   PAGES,
   PROJECTS,
+  RETIRED_PROJECT_IDS,
   SERVICES,
   SETTINGS,
 } from "../src/content/seed-data";
@@ -29,6 +39,12 @@ if (!projectId || !token) {
   console.error("Set NEXT_PUBLIC_SANITY_PROJECT_ID and SANITY_API_WRITE_TOKEN in .env.local first.");
   process.exit(1);
 }
+
+const OVERWRITE = process.env.SEED_MODE === "overwrite";
+/** Pages whose starter content changed; overwrite replaces only these. */
+const OVERWRITE_PAGES = ["page-work", "page-services"];
+/** File name of the first starter share image, replaced on overwrite. */
+const STARTER_SHARE_FILE = "share-default.jpg";
 
 const client: SanityClient = createClient({ projectId, dataset, token, apiVersion: "2026-02-01", useCdn: false });
 const PUBLIC_DIR = path.join(process.cwd(), "public");
@@ -59,24 +75,45 @@ const key = (s: string) => s.replace(/[^a-zA-Z0-9]/g, "").slice(0, 12) || Math.r
 const slug = (current: string) => ({ _type: "slug", current });
 const link = (l: { label: string; href: string }, k?: string) => ({ _type: "link", ...(k ? { _key: k } : {}), label: l.label, href: l.href });
 
+/**
+ * Create the document if it is missing. With overwrite, also set its content
+ * fields (fields not listed, such as SEO, are kept) and drop any unpublished
+ * draft so the studio shows the new version.
+ */
+function put(tx: ReturnType<SanityClient["transaction"]>, doc: { _id: string; _type: string } & Record<string, unknown>, replace: boolean) {
+  tx.createIfNotExists(doc);
+  if (!replace) return;
+  const { _id, _type, ...fields } = doc;
+  void _type;
+  tx.patch(_id, (p) => p.set(fields));
+  tx.delete(`drafts.${_id}`);
+}
+
 async function run() {
+  console.log(OVERWRITE ? "Mode: overwrite starter content" : "Mode: add missing content only");
   const tx = client.transaction();
 
   console.log("Services");
   for (const s of SERVICES) {
-    tx.createIfNotExists({
-      _id: s._id,
-      _type: "service",
-      name: s.name,
-      slug: slug(s.slug),
-      group: s.group,
-      shortName: s.shortName,
-      order: s.order,
-      tagline: s.tagline,
-      description: s.description,
-      included: s.included,
-      ...(s.note ? { note: s.note } : {}),
-    });
+    put(
+      tx,
+      {
+        _id: s._id,
+        _type: "service",
+        name: s.name,
+        slug: slug(s.slug),
+        group: s.group,
+        shortName: s.shortName,
+        order: s.order,
+        tagline: s.tagline,
+        description: s.description,
+        included: s.included,
+        note: s.note ?? "",
+        offerings: s.offerings.map((o) => ({ _type: "offering", _key: o._key ?? key(o.title), title: o.title, text: o.text ?? "" })),
+        faqs: s.faqs.map((f) => ({ _type: "faq", _key: f._key ?? key(f.question), question: f.question, answer: f.answer })),
+      },
+      OVERWRITE,
+    );
   }
 
   console.log("Projects");
@@ -87,47 +124,58 @@ async function run() {
       : undefined;
     const gallery = [];
     for (const g of p.gallery) gallery.push({ _key: g._key, ...(await image(g.url, g.alt, { size: g.size })) });
-    tx.createIfNotExists({
-      _id: p._id,
-      _type: "project",
-      name: p.name,
-      slug: slug(p.slug),
-      client: p.client,
-      industry: p.industry,
-      year: p.year,
-      order: p.order,
-      summary: p.summary,
-      services: p.services.map((s) => ({
-        _type: "reference",
-        _key: key(s.slug),
-        _ref: SERVICES.find((x) => x.slug === s.slug)!._id,
-      })),
-      cover,
-      ...(coverVideo ? { coverVideo } : {}),
-      gallery,
-    });
+    put(
+      tx,
+      {
+        _id: p._id,
+        _type: "project",
+        name: p.name,
+        slug: slug(p.slug),
+        client: p.client,
+        ...(p.industry ? { industry: p.industry } : {}),
+        ...(p.year ? { year: p.year } : {}),
+        order: p.order,
+        summary: p.summary,
+        ...(p.liveUrl ? { liveUrl: p.liveUrl } : {}),
+        services: p.services.map((s) => ({
+          _type: "reference",
+          _key: key(s.slug),
+          _ref: SERVICES.find((x) => x.slug === s.slug)!._id,
+        })),
+        cover,
+        ...(coverVideo ? { coverVideo } : {}),
+        gallery,
+      },
+      OVERWRITE,
+    );
   }
 
   console.log("Pages");
   for (const page of PAGES) {
-    tx.createIfNotExists({
-      _id: page._id,
-      _type: "page",
-      title: page.title,
-      slug: slug(page.slug),
-      sections: page.sections.map((section) => {
-        const out: Record<string, unknown> = { ...section };
-        delete out.project;
-        if ("button" in out && out.button) out.button = link(out.button as { label: string; href: string });
-        if ("link" in out && out.link) out.link = link(out.link as { label: string; href: string });
-        if (section._type === "callToAction") out.shared = true;
-        return out;
-      }),
-    });
+    put(
+      tx,
+      {
+        _id: page._id,
+        _type: "page",
+        title: page.title,
+        slug: slug(page.slug),
+        sections: page.sections.map((section) => {
+          const out: Record<string, unknown> = { ...section };
+          delete out.project;
+          if ("button" in out && out.button) out.button = link(out.button as { label: string; href: string });
+          if ("link" in out && out.link) out.link = link(out.link as { label: string; href: string });
+          if (section._type === "callToAction") out.shared = true;
+          if (section._type === "process") out.steps = section.steps.map((st) => ({ _type: "step", ...st }));
+          return out;
+        }),
+      },
+      OVERWRITE && OVERWRITE_PAGES.includes(page._id),
+    );
   }
 
   console.log("Site settings");
   const featured = PROJECTS.find((p) => p.slug === FEATURED_PROJECT_SLUG)!;
+  const shareImage = await image(SETTINGS.seo.image!.url, SETTINGS.seo.image!.alt);
   tx.createIfNotExists({
     _id: "siteSettings",
     _type: "siteSettings",
@@ -142,12 +190,56 @@ async function run() {
     seo: {
       title: SETTINGS.seo.title,
       description: SETTINGS.seo.description,
-      image: await image(SETTINGS.seo.image!.url, SETTINGS.seo.image!.alt),
+      image: shareImage,
     },
   });
 
-  await tx.commit({ visibility: "async" });
+  if (OVERWRITE) {
+    const current = await client.fetch<{ shareFile?: string } | null>(
+      `*[_id == "siteSettings"][0]{ "shareFile": seo.image.asset->originalFilename }`,
+    );
+    const settingsPatch: Record<string, unknown> = { featuredProject: { _type: "reference", _ref: featured._id } };
+    if (!current?.shareFile || current.shareFile === STARTER_SHARE_FILE) settingsPatch["seo.image"] = shareImage;
+    tx.patch("siteSettings", (p) => p.set(settingsPatch));
+
+    console.log("Removing the first placeholder projects");
+    // Anything still pointing at a placeholder (other than the setting patched
+    // above) keeps it, so the transaction can't fail on a reference.
+    const retired = await client.fetch<{ _id: string; links: number }[]>(
+      `*[_id in $ids]{ _id, "links": count(*[references(^._id) && _id != "siteSettings"]) }`,
+      { ids: RETIRED_PROJECT_IDS },
+    );
+    for (const { _id, links } of retired) {
+      if (links > 0) {
+        console.warn(`  kept ${_id}: another document still links to it`);
+        continue;
+      }
+      tx.delete(_id);
+      tx.delete(`drafts.${_id}`);
+    }
+  }
+
+  await tx.commit({ visibility: "sync" });
+
+  if (OVERWRITE) await removeStarterAssets();
   console.log("Done. Open /studio to edit the content.");
+}
+
+/** Delete the first placeholder images and video once nothing uses them. */
+async function removeStarterAssets() {
+  const starter = /^(website-revamp|product-redesign|booking-portal|lead-automation|social-campaign|product-catalogue)-(cover|\d)\.(jpg|mp4)$|^share-default\.jpg$/;
+  const assets = await client.fetch<{ _id: string; originalFilename?: string; refs: number }[]>(
+    `*[_type in ["sanity.imageAsset", "sanity.fileAsset"]]{ _id, originalFilename, "refs": count(*[references(^._id)]) }`,
+  );
+  for (const a of assets) {
+    if (!a.originalFilename || !starter.test(a.originalFilename) || a.refs > 0) continue;
+    try {
+      await client.delete(a._id);
+      console.log(`  removed ${a.originalFilename}`);
+    } catch (err) {
+      console.warn(`  kept ${a.originalFilename}: ${(err as Error).message}`);
+    }
+  }
 }
 
 run().catch((err) => {

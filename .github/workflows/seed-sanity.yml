@@ -1,11 +1,20 @@
-# Loads the starter content and placeholder images into Sanity.
+# Loads the starter content and images into Sanity.
 # Run it from GitHub → Actions → "Seed Sanity" → Run workflow.
 # Needs the repository secret SANITY_API_WRITE_TOKEN (Editor token).
-# Safe to run again: documents that already exist are left untouched.
+#   add       (default) only creates what is missing; studio edits are kept.
+#   overwrite replaces the starter services, case studies and the Work and
+#             Services pages with the content in src/content/seed-data.ts
+#             (see scripts/seed.ts for exactly what changes).
 name: Seed Sanity
 
 on:
   workflow_dispatch:
+    inputs:
+      mode:
+        description: "add = only add what is missing · overwrite = replace the starter content"
+        type: choice
+        options: [add, overwrite]
+        default: add
 
 permissions:
   contents: read
@@ -17,6 +26,7 @@ jobs:
       NEXT_PUBLIC_SANITY_PROJECT_ID: 79m429dl
       NEXT_PUBLIC_SANITY_DATASET: production
       SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
+      SEED_MODE: ${{ inputs.mode }}
     steps:
       - name: Check the token secret is set
         run: |

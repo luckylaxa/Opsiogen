@@ -19,7 +19,7 @@ import {
   SERVICES,
   SETTINGS,
 } from "@/content/seed-data";
-import type { Page, Project, ProjectCard, Service, SiteSettings } from "./types";
+import type { Page, ProcessSection, Project, ProjectCard, Service, SiteSettings } from "./types";
 
 /**
  * Fetch published content. Results are cached and refreshed every
@@ -92,7 +92,12 @@ export const getProject = cache(async (slug: string): Promise<Project | null> =>
   if ((await getCmsProjects()).length === 0) return PROJECTS.find((p) => p.slug === slug) ?? null;
   const data = await sanityFetch<Project | null>(PROJECT_QUERY, { slug });
   if (!data) return null;
-  return { ...data, services: data.services ?? [], gallery: (data.gallery ?? []).filter((g) => g.url) };
+  return {
+    ...data,
+    services: data.services ?? [],
+    story: data.story ?? [],
+    gallery: (data.gallery ?? []).filter((g) => g.url),
+  };
 });
 
 /** CMS services, or the services from the brief until the dataset has been seeded. */
@@ -125,6 +130,13 @@ export const getPage = cache(async (slug: string): Promise<Page | null> => {
   const data = await sanityFetch<Page | null>(PAGE_QUERY, { slug });
   if (data) return { ...data, sections: data.sections ?? [] };
   return fallbackPage(slug);
+});
+
+/** The “How we work” steps on the Services page, which every service page shows too. */
+export const getProcess = cache(async (): Promise<ProcessSection | null> => {
+  const page = await getPage("services");
+  const section = page?.sections.find((s): s is ProcessSection => s._type === "process");
+  return section?.steps?.length ? section : null;
 });
 
 export const getPageSlugs = cache(async (): Promise<string[]> => {

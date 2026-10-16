@@ -1,12 +1,14 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getProjects, getService, getServices, getSettings } from "@/lib/data";
+import { getProcess, getProjects, getService, getServices, getSettings } from "@/lib/data";
 import { buildMetadata } from "@/lib/metadata";
 import { GROUP_LABELS } from "@/lib/utils";
-import { GiantHeading, Label } from "@/components/ui/Headings";
+import { GiantHeading } from "@/components/ui/Headings";
 import { ButtonLink } from "@/components/ui/Button";
+import { Accordion } from "@/components/ui/Accordion";
 import { Block } from "@/components/sections/SectionRenderer";
 import { CallToAction } from "@/components/sections/CallToAction";
+import { Process } from "@/components/sections/Process";
 import { WorkGrid } from "@/components/work/WorkGrid";
 
 export const revalidate = 60;
@@ -30,11 +32,24 @@ export async function generateMetadata({ params }: PageProps<"/services/[slug]">
   });
 }
 
+/** Section title for the left column of a 4/8 split, or above a full-width block. */
+function SectionTitle({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <h2 className={`text-h2 font-medium text-balance ${className}`}>{children}</h2>;
+}
+
 export default async function ServicePage({ params }: PageProps<"/services/[slug]">) {
   const { slug } = await params;
-  const [service, projects, settings] = await Promise.all([getService(slug), getProjects(), getSettings()]);
+  const [service, projects, settings, process] = await Promise.all([
+    getService(slug),
+    getProjects(),
+    getSettings(),
+    getProcess(),
+  ]);
   if (!service) notFound();
   const work = projects.filter((p) => p.services.some((s) => s.slug === service.slug));
+  const offerings = service.offerings.length
+    ? service.offerings
+    : service.included.map((title) => ({ _key: title, title, text: null }));
 
   return (
     <>
@@ -52,21 +67,22 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
         </GiantHeading>
       </section>
 
-      {/* 2. What's included */}
-      {service.included.length > 0 && (
+      {/* 2. What we do: numbered offerings between hairlines */}
+      {offerings.length > 0 && (
         <Block>
-          <div className="px-gutter">
-            <Label className="mb-[clamp(20px,calc(1.3vw+15px),40px)]">What’s included</Label>
-            <ul className="flex flex-wrap gap-[clamp(8px,0.52vw,10px)]">
-              {service.included.map((item) => (
-                <li
-                  key={item}
-                  className="rounded-[7px] border border-ink/20 px-[clamp(14px,calc(0.6vw+11.8px),23px)] py-[clamp(8px,calc(0.33vw+6.8px),13px)] text-row"
-                >
-                  {item}
+          <div className="grid gap-y-[clamp(32px,2.6vw,56px)] px-gutter lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-x-gap">
+            <SectionTitle>What we do</SectionTitle>
+            <ol className="grid gap-x-gap gap-y-[clamp(28px,2.4vw,52px)] sm:grid-cols-2">
+              {offerings.map((o, i) => (
+                <li key={o._key ?? o.title} data-reveal className="border-t border-ink pt-[clamp(14px,1vw,20px)]">
+                  <span className="text-small text-mute tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+                  <h3 className="mt-[clamp(14px,1.6vw,30px)] text-[length:clamp(22px,calc(0.84vw+18.8px),34px)] leading-[1.15] font-medium tracking-[-0.015em] text-balance">
+                    {o.title}
+                  </h3>
+                  {o.text && <p className="mt-[clamp(8px,0.6vw,12px)] max-w-[36ch] text-base text-ink-2 text-pretty">{o.text}</p>}
                 </li>
               ))}
-            </ul>
+            </ol>
           </div>
         </Block>
       )}
@@ -74,14 +90,33 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
       {/* 3. Work for this service (hidden until there is some) */}
       {work.length > 0 && (
         <Block>
-          <div className="mb-[clamp(32px,calc(2.6vw+22px),80px)] px-gutter">
-            <Label>Work</Label>
-          </div>
-          <WorkGrid projects={work} pageSize={work.length} headingLevel="h2" />
+          <SectionTitle className="mb-[clamp(32px,calc(2.6vw+22px),80px)] px-gutter">Work</SectionTitle>
+          <WorkGrid projects={work} pageSize={work.length} headingLevel="h3" />
         </Block>
       )}
 
-      {/* 4. Call to action */}
+      {/* 4. How we work: the steps from the Services page */}
+      {process && (
+        <Block>
+          <Process section={process} />
+        </Block>
+      )}
+
+      {/* 5. Questions */}
+      {service.faqs.length > 0 && (
+        <Block>
+          <div className="grid gap-y-[clamp(28px,2.4vw,48px)] px-gutter lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-x-gap">
+            <SectionTitle>Questions</SectionTitle>
+            <Accordion
+              name="questions"
+              numbered={false}
+              items={service.faqs.map((f, i) => ({ key: f._key ?? String(i), title: f.question, content: f.answer }))}
+            />
+          </div>
+        </Block>
+      )}
+
+      {/* 6. Call to action */}
       <Block>
         <CallToAction cta={settings.cta} />
       </Block>

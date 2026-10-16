@@ -80,6 +80,7 @@ export const PROJECT_QUERY = defineQuery(`*[_type == "project" && slug.current =
   "cover": cover${IMG},
   "coverVideo": coverVideo{ "url": asset->url, "mimeType": asset->mimeType },
   summary,
+  "story": coalesce(story[]{ _key, title, text }, []),
   result,
   liveUrl,
   "gallery": gallery[]{
@@ -106,6 +107,8 @@ const SERVICE = `{
   description,
   "included": coalesce(included, []),
   note,
+  "offerings": coalesce(offerings[]{ _key, title, text }, []),
+  "faqs": coalesce(faqs[]{ _key, question, answer }, []),
   ${SEO}
 }`;
 

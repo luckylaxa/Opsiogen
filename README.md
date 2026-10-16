@@ -38,11 +38,11 @@ The site uses the Sanity project **Opsiogen Marketing Website** (`79m429dl`), da
 
 1. In [sanity.io/manage → project → Datasets](https://www.sanity.io/manage/project/79m429dl/datasets), check there is a dataset called `production` set to **Public**. Create it if it is missing.
 2. In **API → CORS origins**, add `http://localhost:3000` with **Allow credentials** ticked (and your live address once the site is deployed). The studio at `/studio` needs this to sign in.
-3. Load the starter content and placeholder images, either:
+3. Load the starter content and images, either:
    - on your computer, with `SANITY_API_WRITE_TOKEN` in `.env.local`: `npm run seed`, or
    - on GitHub: add the token as the repository secret `SANITY_API_WRITE_TOKEN` (Settings → Secrets and variables → Actions), then Actions → **Seed Sanity** → **Run workflow**.
 
-   Either way it never overwrites documents that already exist, so it is safe to run again.
+   By default it never overwrites documents that already exist, so it is safe to run again. To replace the starter services, case studies and the Work and Services pages with the current `src/content/seed-data.ts`, run it with `SEED_MODE=overwrite` (on GitHub, pick **overwrite** when you run the workflow). Home, About, Contact, Privacy and Site settings stay as they are, apart from the featured project and the starter share image.
 4. Run `npm run dev`, open `http://localhost:3000/studio`, sign in and start editing.
 
 Until the seed has run, the site shows the starter content from `src/content/seed-data.ts`.
@@ -54,8 +54,8 @@ Contact-form enquiries are saved with private IDs, so only signed-in editors can
 Go to `yourdomain.com/studio`, make the change and click **Publish**. The live site updates within about a minute.
 
 - **Site settings**: logo, footer line, menu links, header button, email, phone, location, social links, the shared call to action, the featured project on Home, the message shown after the contact form, and default SEO and share image.
-- **Pages**: Home, Work, Services, About, Contact, Privacy Policy. Each page is a list of sections (Hero, Featured project, Project grid, Services list, Short text, Promise list, Call to action) that you can add, remove and drag to reorder. To make a new page, create a Page, give it a slug and publish; it appears at `/your-slug`.
-- **Projects** and **Services**: see below.
+- **Pages**: Home, Work, Services, About, Contact, Privacy Policy. Each page is a list of sections (Hero, Featured project, Project grid, Services list, Short text, Promise list, How we work, Call to action) that you can add, remove and drag to reorder. To make a new page, create a Page, give it a slug and publish; it appears at `/your-slug`.
+- **Projects** and **Services**: see below. A service page shows the service’s **What we do** list (or **What’s included** when that is empty), its projects, the **How we work** steps from the Services page and the service’s **Questions**.
 - **Enquiries**: every contact-form submission, read-only.
 
 Layout, colours, fonts and animations are fixed in the code, so edits can't break the design.
@@ -65,10 +65,10 @@ Layout, colours, fonts and animations are fixed in the code, so edits can't brea
 1. Studio → **Projects** → **+**.
 2. Fill in name (the slug fills itself), client, industry, year, services, a two-to-three-line summary and an order number (lower shows first).
 3. Media tab: a cover image (4:3 or wider) and, optionally, a short muted MP4 loop. The image is the video's poster. Then four to eight gallery images, each set to **Full width** or **Half** (two halves sit side by side). Every image needs alt text.
-4. Optional: a result (number + label, only if it is real) and a live site link.
+4. Optional: a result (number + label, only if it is real), a live site link and **Story** blocks (e.g. The challenge, What we did, What changed) shown under the summary.
 5. **Publish**. It shows on Home, Work, the project page and each tagged service page. To feature it on Home, pick it in Site settings → Home.
 
-The six starter projects are neutral placeholders: replace or delete them before launch.
+The starter case studies come from the content document. Their covers in `public/covers` are generated title cards in the design-system style: swap in real screenshots, and add the year, story and gallery, as you get them.
 
 ## Hosting now: Vercel (free plan)
 
@@ -122,9 +122,8 @@ Studio edits reach the live site within a minute; no redeploy is needed for cont
 | --- | --- |
 | `npm run dev` | Local development server |
 | `npm run build` / `npm start` | Production build and server |
-| `npm run seed` | Load the starter content into Sanity |
+| `npm run seed` | Load the starter content into Sanity (`SEED_MODE=overwrite npm run seed` replaces it) |
 | `npm run lint` / `npm run typecheck` | Code checks |
-| `npm run placeholders` | Regenerate the neutral placeholder images (needs Python with Pillow, and ffmpeg) |
 
 ## Where things live
 

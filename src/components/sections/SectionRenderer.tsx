@@ -5,6 +5,7 @@ import { FeaturedProject } from "./FeaturedProject";
 import { ProjectGrid } from "./ProjectGrid";
 import { ServicesList } from "./ServicesList";
 import { PromiseList, ShortText } from "./TextSections";
+import { Process } from "./Process";
 import { CallToAction } from "./CallToAction";
 
 /** Spacing wrapper between page sections. */
@@ -97,6 +98,13 @@ export async function SectionRenderer({
         out.push(
           <Block key={section._key}>
             <PromiseList section={section} />
+          </Block>,
+        );
+        break;
+      case "process":
+        out.push(
+          <Block key={section._key}>
+            <Process section={section} />
           </Block>,
         );
         break;

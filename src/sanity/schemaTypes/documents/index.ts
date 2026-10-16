@@ -172,6 +172,42 @@ export const service = defineType({
       group: "content",
       description: "Optional short note shown on the service page.",
     }),
+    defineField({
+      name: "offerings",
+      title: "What we do",
+      type: "array",
+      group: "content",
+      description: "Shown as a numbered list on the service page. Leave empty to show “What’s included” instead.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "offering",
+          fields: [
+            defineField({ name: "title", type: "string", validation: (rule) => rule.required() }),
+            defineField({ name: "text", type: "text", rows: 2, validation: (rule) => rule.max(160) }),
+          ],
+          preview: { select: { title: "title", subtitle: "text" } },
+        }),
+      ],
+    }),
+    defineField({
+      name: "faqs",
+      title: "Questions",
+      type: "array",
+      group: "content",
+      description: "Common questions about this service, shown near the end of its page.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "faq",
+          fields: [
+            defineField({ name: "question", type: "string", validation: (rule) => rule.required() }),
+            defineField({ name: "answer", type: "text", rows: 3, validation: (rule) => rule.required() }),
+          ],
+          preview: { select: { title: "question", subtitle: "answer" } },
+        }),
+      ],
+    }),
     defineField({ name: "seo", type: "seo", group: "seo" }),
   ],
   preview: {
@@ -233,6 +269,24 @@ export const project = defineType({
       fields: [
         defineField({ name: "number", type: "string" }),
         defineField({ name: "label", type: "string" }),
+      ],
+    }),
+    defineField({
+      name: "story",
+      title: "Story (optional)",
+      type: "array",
+      group: "content",
+      description: "Short blocks such as The challenge, What we did and What changed. Shown under the summary.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "storyBlock",
+          fields: [
+            defineField({ name: "title", type: "string", validation: (rule) => rule.required() }),
+            defineField({ name: "text", type: "text", rows: 3, validation: (rule) => rule.required().max(400) }),
+          ],
+          preview: { select: { title: "title", subtitle: "text" } },
+        }),
       ],
     }),
     defineField({ name: "liveUrl", title: "Live site link (optional)", type: "url", group: "content" }),
@@ -329,6 +383,7 @@ export const page = defineType({
         defineArrayMember({ type: "servicesList" }),
         defineArrayMember({ type: "shortText" }),
         defineArrayMember({ type: "promiseList" }),
+        defineArrayMember({ type: "process" }),
         defineArrayMember({ type: "callToAction" }),
       ],
     }),

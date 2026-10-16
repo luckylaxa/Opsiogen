@@ -130,6 +130,24 @@ async function ServicesGroups({ section }: { section: ServicesListSection }) {
   );
 }
 
+/**
+ * One project cover per service card, different from card to card where the
+ * work allows: services with the fewest projects choose first.
+ */
+function pickCovers(services: Service[], workFor: (slug: string) => ProjectCard[]) {
+  const picked = new Map<string, ProjectCard>();
+  const used = new Set<string>();
+  const byChoice = [...services].sort((a, b) => workFor(a.slug).length - workFor(b.slug).length);
+  for (const s of byChoice) {
+    const work = workFor(s.slug);
+    const project = work.find((p) => !used.has(p.slug)) ?? work[0];
+    if (!project) continue;
+    picked.set(s.slug, project);
+    used.add(project.slug);
+  }
+  return picked;
+}
+
 /** Every service as a big dark card, two per row from desktop up. */
 function ServiceCards({
   services,
@@ -140,8 +158,9 @@ function ServiceCards({
   workFor: (slug: string) => ProjectCard[];
   titleAs?: "h2" | "h3";
 }) {
+  const covers = pickCovers(services, workFor);
   return (
-    <ul className="@container grid gap-gap px-gutter lg:grid-cols-2">
+    <ul className="@container grid grid-cols-1 gap-gap px-gutter lg:grid-cols-2">
       {services.map((s) => {
         const work = workFor(s.slug);
         return (
@@ -149,7 +168,7 @@ function ServiceCards({
             <BigCard
               href={`/services/${s.slug}`}
               badge={initials(s.shortName)}
-              image={work[0]?.cover}
+              image={covers.get(s.slug)?.cover}
               dots={work.length}
               label={GROUP_LABELS[s.group]}
               title={s.name}

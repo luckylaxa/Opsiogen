@@ -8,8 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
-    "seed": "sanity exec scripts/seed.ts",
-    "placeholders": "python3 scripts/generate-placeholders.py"
+    "seed": "sanity exec scripts/seed.ts"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

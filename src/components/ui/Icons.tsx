@@ -30,6 +30,7 @@ export const ExternalLink = svg(
     <path d="M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4" />
   </>,
 );
+export const Plus = svg(<path d="M12 5v14M5 12h14" />);
 export const Check = svg(<path d="m5 12.5 4.5 4.5L19 7.5" />);
 export const ChevronDown = svg(<path d="m6 9 6 6 6-6" />);
 export const SearchIcon = svg(

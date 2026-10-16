@@ -33,7 +33,7 @@ export function FeaturedProject({ project, priority = true }: { project?: Projec
             {project.name}
           </h2>
           <p className="mt-1 text-base text-white/60">
-            {[project.client, project.industry, project.year].filter(Boolean).join(" · ")}
+            {[project.client !== project.name && project.client, project.industry, project.year].filter(Boolean).join(" · ")}
           </p>
         </div>
         <Link

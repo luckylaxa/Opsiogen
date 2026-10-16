@@ -1,6 +1,7 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
 import { BlockContentIcon } from "@sanity/icons/BlockContent";
 import { BoltIcon } from "@sanity/icons/Bolt";
+import { OlistIcon } from "@sanity/icons/Olist";
 import { CaseIcon } from "@sanity/icons/Case";
 import { RocketIcon } from "@sanity/icons/Rocket";
 import { StarIcon } from "@sanity/icons/Star";
@@ -206,6 +207,42 @@ export const promiseListSection = defineType({
   },
 });
 
+export const processSection = defineType({
+  name: "process",
+  title: "How we work",
+  type: "object",
+  icon: OlistIcon,
+  description: "Numbered steps that open one at a time. The steps on the Services page also show on every service page.",
+  fields: [
+    label,
+    defineField({ name: "heading", type: "string", validation: (rule) => rule.required() }),
+    accent,
+    defineField({
+      name: "steps",
+      type: "array",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "step",
+          fields: [
+            defineField({ name: "title", type: "string", validation: (rule) => rule.required() }),
+            defineField({ name: "text", type: "text", rows: 2, validation: (rule) => rule.required().max(240) }),
+          ],
+          preview: { select: { title: "title", subtitle: "text" } },
+        }),
+      ],
+      validation: (rule) => rule.required().min(1),
+    }),
+  ],
+  preview: {
+    select: { title: "heading", steps: "steps" },
+    prepare: ({ title, steps }) => ({
+      title: title || "How we work",
+      subtitle: `How we work · ${Array.isArray(steps) ? steps.length : 0} steps`,
+    }),
+  },
+});
+
 export const callToActionSection = defineType({
   name: "callToAction",
   title: "Call to action",
@@ -231,5 +268,6 @@ export const sectionTypes = [
   servicesListSection,
   shortTextSection,
   promiseListSection,
+  processSection,
   callToActionSection,
 ];

@@ -30,6 +30,10 @@ export type ServiceRef = {
   group: ServiceGroup;
 };
 
+export type Offering = { _key?: string; title: string; text?: string | null };
+
+export type Faq = { _key?: string; question: string; answer: string };
+
 export type Service = ServiceRef & {
   _id: string;
   order: number;
@@ -37,6 +41,8 @@ export type Service = ServiceRef & {
   description: string;
   included: string[];
   note?: string | null;
+  offerings: Offering[];
+  faqs: Faq[];
   seo?: Seo | null;
 };
 
@@ -55,8 +61,11 @@ export type ProjectCard = {
 
 export type GalleryItem = Img & { _key: string; size: "full" | "half" };
 
+export type StoryBlock = { _key?: string; title: string; text: string };
+
 export type Project = ProjectCard & {
   summary: string;
+  story: StoryBlock[];
   result?: { number?: string | null; label?: string | null } | null;
   gallery: GalleryItem[];
   liveUrl?: string | null;
@@ -117,6 +126,17 @@ export type PromiseListSection = {
   layout?: "cards" | "rows" | null;
 };
 
+export type ProcessStep = { _key?: string; title: string; text: string };
+
+export type ProcessSection = {
+  _type: "process";
+  _key: string;
+  label?: string | null;
+  heading: string;
+  accent?: string | null;
+  steps: ProcessStep[];
+};
+
 export type CallToActionSection = { _type: "callToAction"; _key: string };
 
 export type Section =
@@ -126,6 +146,7 @@ export type Section =
   | ServicesListSection
   | ShortTextSection
   | PromiseListSection
+  | ProcessSection
   | CallToActionSection;
 
 export type Page = {
