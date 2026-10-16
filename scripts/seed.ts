@@ -244,8 +244,12 @@ const OLD_SUMMARY: Record<string, string> = {
   "project-carlton-noble": "666aad01ca2c3bdc",
   "project-engel-volkers": "624cd6050552087f",
 };
-/** Gallery files from the first case-study seed (1.jpg …), replaced by the mockups (m1.jpg …) while Studio still holds them. */
-const OLD_GALLERY_FILE = /^\d+\.jpg$/;
+/**
+ * Gallery files from earlier seeds (1.jpg …, then m1.jpg …), replaced by the
+ * shared sample mockups (sample-hero.jpg, sample-1.jpg …) while Studio still
+ * holds them.
+ */
+const OLD_GALLERY_FILE = /^m?\d+\.jpg$/;
 const hash = (value: unknown) => createHash("sha1").update(JSON.stringify(value ?? null)).digest("hex").slice(0, 16);
 
 /** Card images rendered for an earlier version of the page; add mode swaps them for the current ones. */

@@ -152,7 +152,7 @@ export function ProjectDetail({
         </div>
         {hero && (
           <figure className="mx-edge mt-[clamp(40px,calc(2.88vw+29.2px),92px)] overflow-hidden rounded-card bg-night">
-            <div className="relative aspect-[3/2] sm:aspect-video">
+            <div className="relative aspect-square sm:aspect-video">
               <CoverMedia
                 image={hero}
                 video={project.coverVideo}
@@ -192,8 +192,8 @@ export function ProjectDetail({
       )}
 
       {/* 4. The rest of the work, as big image cards almost edge to edge:
-             squares one per row on phones and two per row from tablets up,
-             wide images across the full width. */}
+             one per row on phones, two per row from tablets up (wide images
+             across the full width). */}
       {rest.length > 0 && (
         <section className="mt-section">
           <h3 className="sr-only">More from {project.name}</h3>

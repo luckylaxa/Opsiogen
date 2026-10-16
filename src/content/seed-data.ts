@@ -936,65 +936,33 @@ function makeProject(order: number, p: ProjectInput): Project {
     story: [],
     result: null,
     liveUrl: p.liveUrl ?? null,
-    gallery: mockups(p.name, p.slug, Boolean(d)),
+    gallery: SAMPLE_GALLERY,
   };
 }
 
-/** What each mockup shows, for its alt text. */
-const MOCKUP_ALT: Record<string, string> = {
-  hero: "on a laptop",
-  heroPhone: "on a laptop and a phone",
-  heroPhones: "on five phones",
-  laptopAngle: "on a laptop, seen at an angle",
-  detail: "close up in a browser",
-  tablet: "on a tablet",
-  stack: "as three stacked screens",
-  phoneTilt: "on a phone",
-  phones: "on three phones",
-  phoneStack: "as three stacked phone screens",
-  closer: "in a browser",
-  closerPhones: "on two phones",
-};
-
 /**
- * Eight work mockups per project (public/work/<slug>/m1.jpg … m8.jpg): a wide
- * one, six squares in pairs, and a wide one to close. Case studies with
- * screens show them; the rest are placeholders with neutral screens, to
- * replace with the real work.
+ * Sample mockups shared by every project until its real work is added
+ * (public/work/samples): a wide image under the name, then eight squares,
+ * two by two. Neutral screens: no names, no copy.
  */
-function mockups(name: string, slug: string, real: boolean) {
-  return (MOCKUPS[slug] ?? []).map((kind, i, all) => {
-    const wide = i === 0 || i === all.length - 1;
-    const alt = `${real ? name : `Placeholder mockup of ${name}`} ${MOCKUP_ALT[kind] ?? "on screen"}`;
-    return {
-      ...img(`/work/${slug}/m${i + 1}.jpg`, wide ? 2400 : 1400, wide ? 1350 : 1400, alt),
-      _key: `m${i + 1}`,
-      size: wide ? ("full" as const) : ("half" as const),
-    };
-  });
-}
-
-/** The composition of each project's mockups, in order (see mockups()). */
-const MOCKUPS: Record<string, string[]> = {
-  "surgo-health": ["hero", "laptopAngle", "tablet", "detail", "stack", "tablet", "detail", "closer"],
-  "rohde-schwarz": ["heroPhone", "phoneTilt", "tablet", "detail", "phones", "stack", "laptopAngle", "closer"],
-  bigtapp: ["heroPhone", "tablet", "detail", "phones", "stack", "laptopAngle", "phoneTilt", "closer"],
-  "care-connect": ["hero", "laptopAngle", "tablet", "detail", "stack", "tablet", "detail", "closer"],
-  sandlogic: ["heroPhone", "phones", "stack", "laptopAngle", "phoneTilt", "tablet", "detail", "closer"],
-  "appdev-health": ["heroPhone", "stack", "laptopAngle", "phoneTilt", "tablet", "detail", "phones", "closer"],
-  "engel-volkers": ["hero", "laptopAngle", "tablet", "detail", "stack", "tablet", "detail", "closer"],
-  amphenol: ["heroPhone", "phoneTilt", "tablet", "detail", "phones", "stack", "laptopAngle", "closer"],
-  "sifio-health": ["heroPhone", "tablet", "detail", "phones", "stack", "laptopAngle", "phoneTilt", "closer"],
-  norsecom: ["heroPhone", "detail", "phones", "stack", "laptopAngle", "phoneTilt", "tablet", "closer"],
-  rxlive: ["hero", "laptopAngle", "tablet", "detail", "stack", "tablet", "detail", "closer"],
-  "afthab-tours": ["heroPhone", "stack", "laptopAngle", "phoneTilt", "tablet", "detail", "phones", "closer"],
-  "cabot-solutions": ["heroPhone", "laptopAngle", "phoneTilt", "tablet", "detail", "phones", "stack", "closer"],
-  meetingful: ["hero", "laptopAngle", "tablet", "detail", "stack", "tablet", "detail", "closer"],
-  elcoteq: ["heroPhone", "tablet", "detail", "phones", "stack", "laptopAngle", "phoneTilt", "closer"],
-  "oh-my-glam": ["heroPhones", "phoneTilt", "phones", "phoneStack", "phoneTilt", "phones", "phoneTilt", "closerPhones"],
-  "carlton-noble": ["hero", "laptopAngle", "tablet", "detail", "stack", "tablet", "detail", "closer"],
-  "ciber-digita": ["heroPhone", "stack", "laptopAngle", "phoneTilt", "tablet", "detail", "phones", "closer"],
-};
+const SAMPLE_GALLERY = [
+  ["hero", "A sample website on a laptop and a phone"],
+  ["1", "A sample app screen on a phone"],
+  ["2", "A sample dashboard on a laptop, seen at an angle"],
+  ["3", "A sample web page on a tablet"],
+  ["4", "Sample app screens on three phones"],
+  ["5", "A close-up of a sample web page"],
+  ["6", "Sample web pages, stacked"],
+  ["7", "Sample app screens, stacked"],
+  ["8", "A sample website in a browser"],
+].map(([n, alt]) => {
+  const wide = n === "hero";
+  return {
+    ...img(`/work/samples/sample-${n}.jpg`, wide ? 2400 : 1400, wide ? 1350 : 1400, alt),
+    _key: `sample-${n}`,
+    size: wide ? ("full" as const) : ("half" as const),
+  };
+});
 
 /** Case-study details from the client case studies; projects not listed show their card image and cover. */
 const CASE_DETAILS: Record<string, CaseDetails> = {

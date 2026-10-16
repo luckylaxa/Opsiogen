@@ -376,7 +376,7 @@ export const project = defineType({
       type: "array",
       group: "media",
       description:
-        "The work, as big mockup cards. Six to ten images: the first shows under the name. Wide images (16:9, 2400 × 1350) set to Full width; squares (1400 × 1400) set to Half sit two by two.",
+        "The work, as big mockup cards. Six to ten images. The first shows under the name: wide (16:9, 2400 × 1350), cropped square on phones, so keep the work in the middle. The rest: squares (1400 × 1400) set to Half, two per row.",
       of: [
         defineArrayMember({
           type: "image",
