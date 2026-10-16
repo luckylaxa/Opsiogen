@@ -62,7 +62,6 @@ export const SETTINGS: SiteSettings = {
 type Pair = [string, string];
 const img = (url: string, width: number, height: number, alt: string) => ({ url, width, height, alt });
 const WEB = "/services/ai-websites";
-const offerings = (items: Pair[]) => items.map(([title, text], i) => ({ _key: `o${i + 1}`, title, text }));
 const benefits = (items: Pair[]) => items.map(([title, text], i) => ({ _key: `b${i + 1}`, title, text }));
 const faqs = (items: Pair[]) => items.map(([question, answer], i) => ({ _key: `q${i + 1}`, question, answer }));
 /** What we do cards, each with its image from public/services/<slug>. */
@@ -521,12 +520,14 @@ export const SERVICES: Service[] = [
     order: 6,
     tagline: "Campaigns built for leads and sales.",
     description:
-      "We run paid campaigns and search visibility aimed at what matters: enquiries, leads and return on ad spend.",
+      "We plan and run paid social, search ads, SEO and email aimed at what matters: enquiries, leads and return on ad spend. Every campaign is tracked from the first click to the enquiry.",
     // The brief lists ad platforms by name; the copy rules exclude platform names.
     included: [
-      "Paid social and search ads",
-      "Lead generation campaigns",
+      "Paid social ads",
+      "Search ads",
       "SEO",
+      "Lead generation campaigns",
+      "Email and retargeting",
       "Analytics and reporting",
     ],
     statement:
@@ -537,18 +538,56 @@ export const SERVICES: Service[] = [
       ["Measured properly", "Clear tracking from the first click to the enquiry."],
       ["Always improving", "We test, learn and move budget to what works."],
     ]),
-    offerings: offerings([
-      ["Paid social ads", "Campaigns aimed at the people most likely to buy."],
-      ["Search ads", "Be found when customers search for what you offer."],
-      ["Lead generation campaigns", "Campaigns and landing pages built to bring in enquiries."],
-      ["SEO", "Better search visibility through content, structure and technical fixes."],
-      ["Analytics and reporting", "Clear tracking of leads, sales and return on ad spend."],
+    offerings: cards("digital-marketing", [
+      ["Paid social ads", "Campaigns aimed at the people most likely to buy.", "tile-social.jpg", "A sponsored post on a phone beside its audience settings"],
+      ["Search ads", "Be found at the moment customers search for what you offer.", "tile-search.jpg", "A search results page with a sponsored result on top"],
+      ["SEO", "Better search visibility through content, structure and technical fixes.", "tile-seo.jpg", "Organic visits rising, a site health score and keyword positions"],
+      ["Lead generation campaigns", "Campaigns and landing pages built to bring in enquiries.", "tile-leads.jpg", "A landing page with an enquiry form and new lead alerts"],
+      ["Email and retargeting", "Follow-ups that bring people back when they’re ready to buy.", "tile-email.jpg", "A campaign email beside a retargeting ad"],
+      ["Analytics and reporting", "Clear tracking of leads, sales and return on ad spend.", "tile-analytics.jpg", "A campaign dashboard from first click to enquiry"],
     ]),
     faqs: faqs([
       ["What do you measure?", "What matters to your business: enquiries, leads and return on ad spend."],
       ["Can you take over our current campaigns?", "Yes. We review what’s running, keep what works and fix what doesn’t."],
       PRICING,
+      ["Do you run the campaigns for us?", "Yes. We plan, launch and manage your campaigns, and keep improving them."],
+      [
+        "How soon will we see results?",
+        "Paid campaigns bring traffic as soon as they go live. SEO builds over months. We agree goals and reporting before we start.",
+      ],
+      [
+        "Do you write the ads and build the landing pages?",
+        "Yes. We write and design the ads, and build landing pages made to turn clicks into enquiries.",
+      ],
+      [
+        "Which channels do you use?",
+        "The search and social channels where your customers are, chosen with you for your goals and budget.",
+      ],
+      ["Who owns the ad accounts and data?", "You do. Your accounts, analytics and data stay yours."],
     ]),
+    hero: heroImage("digital-marketing", "A campaign dashboard on a laptop, a sponsored post on a phone and new lead alerts"),
+    clientsLabel: "Campaigns for",
+    why: { label: "Why it matters", heading: "Clicks don’t pay the bills. Enquiries do.", accent: "Enquiries do" },
+    stats: statItems([
+      ["1", "dashboard, from first click to enquiry"],
+      ["0", "vanity metrics. Just leads and sales"],
+      ["100%", "your accounts and your data"],
+    ]),
+    offer: { label: "What we do", heading: "Campaigns that bring in leads.", accent: "leads" },
+    steps: {
+      label: "How we work",
+      heading: "From audit to growth.",
+      accent: "growth",
+      items: stepItems([
+        ["Audit", "We review your current ads, search visibility and tracking."],
+        ["Plan", "Goals, audiences, channels and budget, agreed with you."],
+        ["Create", "Ads, copy and landing pages, made fast with AI and finished by our team."],
+        ["Launch", "Campaigns live, tracked from the first click to the enquiry."],
+        ["Optimise", "We test, learn and move budget to what works."],
+        ["Report", "A clear monthly report on leads, sales and return on ad spend."],
+      ]),
+    },
+    related: { label: "Selected work", heading: "Campaigns we’ve run.", accent: "run" },
   },
   {
     _id: "service-ai-creative-subscription",

@@ -188,6 +188,11 @@ const REWRITTEN: Record<string, Partial<Record<RewriteField, string>>> = {
     included: "08b753003511e640",
     offerings: "1dd5365ec32d7d4c",
   },
+  "service-digital-marketing": {
+    description: "908cd8dfb3957f07",
+    included: "a6d6c74d0dcda38f",
+    offerings: "2fb6bd7f965c9af0",
+  },
   "service-ai-creative-subscription": { included: "42725ef958bcbc3a", offerings: "82566a6df8643dff" },
   "service-ai-print-collateral": {
     tagline: "166e86095cb3753a",
