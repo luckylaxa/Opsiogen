@@ -19,7 +19,7 @@ import {
   SERVICES,
   SETTINGS,
 } from "@/content/seed-data";
-import type { Page, ProcessSection, Project, ProjectCard, Service, SiteSettings } from "./types";
+import type { ComparisonSection, Page, ProcessSection, Project, ProjectCard, Service, SiteSettings } from "./types";
 
 /**
  * Fetch published content. Results are cached and refreshed every
@@ -137,6 +137,13 @@ export const getProcess = cache(async (): Promise<ProcessSection | null> => {
   const page = await getPage("services");
   const section = page?.sections.find((s): s is ProcessSection => s._type === "process");
   return section?.steps?.length ? section : null;
+});
+
+/** The comparison table on the Services page, which every service page shows too. */
+export const getComparison = cache(async (): Promise<ComparisonSection | null> => {
+  const page = await getPage("services");
+  const section = page?.sections.find((s): s is ComparisonSection => s._type === "comparison");
+  return section?.rows?.length && section.columns?.length ? section : null;
 });
 
 export const getPageSlugs = cache(async (): Promise<string[]> => {

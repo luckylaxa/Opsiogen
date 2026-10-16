@@ -6,8 +6,11 @@
  *
  * Needs NEXT_PUBLIC_SANITY_PROJECT_ID and SANITY_API_WRITE_TOKEN in .env.local.
  *
- * The default is safe to run more than once: documents that already exist are
- * left as they are, so it never overwrites edits made in the studio.
+ * The default is safe to run more than once: it never overwrites edits made in
+ * the studio. Documents that already exist keep their content; it only fills
+ * in service fields that are still empty (Why it matters, Benefits, What we do,
+ * Questions) and adds the How we work and Comparison sections to a page that
+ * has none, just before its call to action.
  *
  * Overwrite brings existing documents in line with src/content/seed-data.ts:
  * it rewrites the services, the case studies and the Work and Services pages
@@ -45,6 +48,10 @@ const OVERWRITE = process.env.SEED_MODE === "overwrite";
 const OVERWRITE_PAGES = ["page-work", "page-services"];
 /** File name of the first starter share image, replaced on overwrite. */
 const STARTER_SHARE_FILE = "share-default.jpg";
+/** Service fields added after the first seed; add mode fills them in where empty. */
+const SERVICE_FILL_IN = ["statement", "benefits", "offerings", "faqs"];
+/** Section types added after the first seed; add mode adds them to pages that lack them. */
+const NEW_SECTION_TYPES = ["process", "comparison"];
 
 const client: SanityClient = createClient({ projectId, dataset, token, apiVersion: "2026-02-01", useCdn: false });
 const PUBLIC_DIR = path.join(process.cwd(), "public");
@@ -80,9 +87,20 @@ const link = (l: { label: string; href: string }, k?: string) => ({ _type: "link
  * fields (fields not listed, such as SEO, are kept) and drop any unpublished
  * draft so the studio shows the new version.
  */
-function put(tx: ReturnType<SanityClient["transaction"]>, doc: { _id: string; _type: string } & Record<string, unknown>, replace: boolean) {
+function put(
+  tx: ReturnType<SanityClient["transaction"]>,
+  doc: { _id: string; _type: string } & Record<string, unknown>,
+  replace: boolean,
+  fillIn: string[] = [],
+) {
   tx.createIfNotExists(doc);
-  if (!replace) return;
+  if (!replace) {
+    // Fields added to the content model since the first seed: fill them in
+    // where they are still empty, without touching anything already edited.
+    const missing = Object.fromEntries(fillIn.filter((f) => doc[f] !== undefined).map((f) => [f, doc[f]]));
+    if (Object.keys(missing).length) tx.patch(doc._id, (p) => p.setIfMissing(missing));
+    return;
+  }
   const { _id, _type, ...fields } = doc;
   void _type;
   tx.patch(_id, (p) => p.set(fields));
@@ -109,10 +127,13 @@ async function run() {
         description: s.description,
         included: s.included,
         note: s.note ?? "",
+        statement: s.statement ?? "",
+        benefits: s.benefits.map((b) => ({ _type: "benefit", _key: b._key ?? key(b.title), title: b.title, text: b.text ?? "" })),
         offerings: s.offerings.map((o) => ({ _type: "offering", _key: o._key ?? key(o.title), title: o.title, text: o.text ?? "" })),
         faqs: s.faqs.map((f) => ({ _type: "faq", _key: f._key ?? key(f.question), question: f.question, answer: f.answer })),
       },
       OVERWRITE,
+      SERVICE_FILL_IN,
     );
   }
 
@@ -151,6 +172,10 @@ async function run() {
   }
 
   console.log("Pages");
+  const existingPages = await client.fetch<{ _id: string; types: string[] | null }[]>(
+    `*[_type == "page" && _id in $ids]{ _id, "types": sections[]._type }`,
+    { ids: PAGES.map((p) => p._id) },
+  );
   for (const page of PAGES) {
     put(
       tx,
@@ -166,10 +191,31 @@ async function run() {
           if ("link" in out && out.link) out.link = link(out.link as { label: string; href: string });
           if (section._type === "callToAction") out.shared = true;
           if (section._type === "process") out.steps = section.steps.map((st) => ({ _type: "step", ...st }));
+          if (section._type === "comparison") out.rows = section.rows.map((r) => ({ _type: "comparisonRow", ...r }));
           return out;
         }),
       },
       OVERWRITE && OVERWRITE_PAGES.includes(page._id),
+    );
+
+    // Add mode: give an existing page the section types added since the first
+    // seed (How we work, Comparison) if it has none, just before its call to action.
+    const existing = existingPages.find((p) => p._id === page._id);
+    if (OVERWRITE || !existing) continue;
+    const types = existing.types ?? [];
+    const toAdd = page.sections.filter((sec) => NEW_SECTION_TYPES.includes(sec._type) && !types.includes(sec._type));
+    if (!toAdd.length) continue;
+    const items = toAdd.map((sec) => {
+      const out: Record<string, unknown> = { ...sec };
+      if (sec._type === "process") out.steps = sec.steps.map((st) => ({ _type: "step", ...st }));
+      if (sec._type === "comparison") out.rows = sec.rows.map((r) => ({ _type: "comparisonRow", ...r }));
+      return out;
+    });
+    console.log(`  adding ${toAdd.map((s) => s._type).join(", ")} to ${page._id}`);
+    tx.patch(page._id, (p) =>
+      types.includes("callToAction")
+        ? p.insert("before", 'sections[_type == "callToAction"]', items)
+        : p.setIfMissing({ sections: [] }).insert("after", "sections[-1]", items),
     );
   }
 

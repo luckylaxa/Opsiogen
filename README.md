@@ -42,7 +42,7 @@ The site uses the Sanity project **Opsiogen Marketing Website** (`79m429dl`), da
    - on your computer, with `SANITY_API_WRITE_TOKEN` in `.env.local`: `npm run seed`, or
    - on GitHub: add the token as the repository secret `SANITY_API_WRITE_TOKEN` (Settings → Secrets and variables → Actions), then Actions → **Seed Sanity** → **Run workflow**.
 
-   By default it never overwrites documents that already exist, so it is safe to run again. To replace the starter services, case studies and the Work and Services pages with the current `src/content/seed-data.ts`, run it with `SEED_MODE=overwrite` (on GitHub, pick **overwrite** when you run the workflow). Home, About, Contact, Privacy and Site settings stay as they are, apart from the featured project and the starter share image.
+   By default it never overwrites edits: existing documents keep their content, and it only fills in new service fields that are still empty and adds the How we work and Comparison sections to a page that has none. To replace the starter services, case studies and the Work and Services pages with the current `src/content/seed-data.ts`, run it with `SEED_MODE=overwrite` (on GitHub, pick **overwrite** when you run the workflow). Home, About, Contact, Privacy and Site settings stay as they are, apart from the featured project and the starter share image.
 4. Run `npm run dev`, open `http://localhost:3000/studio`, sign in and start editing.
 
 Until the seed has run, the site shows the starter content from `src/content/seed-data.ts`.
@@ -54,8 +54,8 @@ Contact-form enquiries are saved with private IDs, so only signed-in editors can
 Go to `yourdomain.com/studio`, make the change and click **Publish**. The live site updates within about a minute.
 
 - **Site settings**: logo, footer line, menu links, header button, email, phone, location, social links, the shared call to action, the featured project on Home, the message shown after the contact form, and default SEO and share image.
-- **Pages**: Home, Work, Services, About, Contact, Privacy Policy. Each page is a list of sections (Hero, Featured project, Project grid, Services list, Short text, Promise list, How we work, Call to action) that you can add, remove and drag to reorder. To make a new page, create a Page, give it a slug and publish; it appears at `/your-slug`.
-- **Projects** and **Services**: see below. A service page shows the service’s **What we do** list (or **What’s included** when that is empty), its projects, the **How we work** steps from the Services page and the service’s **Questions**.
+- **Pages**: Home, Work, Services, About, Contact, Privacy Policy. Each page is a list of sections (Hero, Featured project, Project grid, Services list, Short text, Promise list, How we work, Comparison, Call to action) that you can add, remove and drag to reorder. To make a new page, create a Page, give it a slug and publish; it appears at `/your-slug`.
+- **Projects** and **Services**: see below. A service page shows, in order: the hero with the service’s first project, its clients, **Why it matters** and **Benefits**, **What we do** (or **What’s included** when that is empty), its projects, the **How we work** steps and the **Comparison** table from the Services page, the service’s **Questions**, the other services in its group and the call to action.
 - **Enquiries**: every contact-form submission, read-only.
 
 Layout, colours, fonts and animations are fixed in the code, so edits can't break the design.

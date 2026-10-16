@@ -107,6 +107,8 @@ const SERVICE = `{
   description,
   "included": coalesce(included, []),
   note,
+  statement,
+  "benefits": coalesce(benefits[]{ _key, title, text }, []),
   "offerings": coalesce(offerings[]{ _key, title, text }, []),
   "faqs": coalesce(faqs[]{ _key, question, answer }, []),
   ${SEO}

@@ -34,6 +34,8 @@ export type Offering = { _key?: string; title: string; text?: string | null };
 
 export type Faq = { _key?: string; question: string; answer: string };
 
+export type Benefit = { _key?: string; title: string; text?: string | null };
+
 export type Service = ServiceRef & {
   _id: string;
   order: number;
@@ -41,6 +43,8 @@ export type Service = ServiceRef & {
   description: string;
   included: string[];
   note?: string | null;
+  statement?: string | null;
+  benefits: Benefit[];
   offerings: Offering[];
   faqs: Faq[];
   seo?: Seo | null;
@@ -137,6 +141,16 @@ export type ProcessSection = {
   steps: ProcessStep[];
 };
 
+export type ComparisonSection = {
+  _type: "comparison";
+  _key: string;
+  label?: string | null;
+  heading: string;
+  accent?: string | null;
+  columns: string[];
+  rows: { _key?: string; label: string; cells: string[] }[];
+};
+
 export type CallToActionSection = { _type: "callToAction"; _key: string };
 
 export type Section =
@@ -147,6 +161,7 @@ export type Section =
   | ShortTextSection
   | PromiseListSection
   | ProcessSection
+  | ComparisonSection
   | CallToActionSection;
 
 export type Page = {

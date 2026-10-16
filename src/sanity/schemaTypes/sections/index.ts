@@ -2,6 +2,7 @@ import { defineArrayMember, defineField, defineType } from "sanity";
 import { BlockContentIcon } from "@sanity/icons/BlockContent";
 import { BoltIcon } from "@sanity/icons/Bolt";
 import { OlistIcon } from "@sanity/icons/Olist";
+import { SplitHorizontalIcon } from "@sanity/icons/SplitHorizontal";
 import { CaseIcon } from "@sanity/icons/Case";
 import { RocketIcon } from "@sanity/icons/Rocket";
 import { StarIcon } from "@sanity/icons/Star";
@@ -243,6 +244,59 @@ export const processSection = defineType({
   },
 });
 
+export const comparisonSection = defineType({
+  name: "comparison",
+  title: "Comparison",
+  type: "object",
+  icon: SplitHorizontalIcon,
+  description: "A table comparing Opsiogen with the alternatives. The one on the Services page also shows on every service page.",
+  fields: [
+    label,
+    defineField({ name: "heading", type: "string", validation: (rule) => rule.required() }),
+    accent,
+    defineField({
+      name: "columns",
+      title: "Column titles",
+      type: "array",
+      of: [defineArrayMember({ type: "string" })],
+      description: "Opsiogen first; it is the highlighted column. Two to four columns.",
+      validation: (rule) => rule.required().min(2).max(4),
+    }),
+    defineField({
+      name: "rows",
+      type: "array",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "comparisonRow",
+          fields: [
+            defineField({ name: "label", type: "string", validation: (rule) => rule.required() }),
+            defineField({
+              name: "cells",
+              type: "array",
+              of: [defineArrayMember({ type: "string" })],
+              description: "One entry per column, in the same order.",
+              validation: (rule) => rule.required().min(2).max(4),
+            }),
+          ],
+          preview: {
+            select: { title: "label", cells: "cells" },
+            prepare: ({ title, cells }) => ({ title, subtitle: Array.isArray(cells) ? cells.join(" · ") : "" }),
+          },
+        }),
+      ],
+      validation: (rule) => rule.required().min(1),
+    }),
+  ],
+  preview: {
+    select: { title: "heading", rows: "rows" },
+    prepare: ({ title, rows }) => ({
+      title: title || "Comparison",
+      subtitle: `Comparison · ${Array.isArray(rows) ? rows.length : 0} rows`,
+    }),
+  },
+});
+
 export const callToActionSection = defineType({
   name: "callToAction",
   title: "Call to action",
@@ -269,5 +323,6 @@ export const sectionTypes = [
   shortTextSection,
   promiseListSection,
   processSection,
+  comparisonSection,
   callToActionSection,
 ];

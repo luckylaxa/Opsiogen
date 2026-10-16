@@ -54,6 +54,7 @@ export const SETTINGS: SiteSettings = {
 
 type Pair = [string, string];
 const offerings = (items: Pair[]) => items.map(([title, text], i) => ({ _key: `o${i + 1}`, title, text }));
+const benefits = (items: Pair[]) => items.map(([title, text], i) => ({ _key: `b${i + 1}`, title, text }));
 const faqs = (items: Pair[]) => items.map(([question, answer], i) => ({ _key: `q${i + 1}`, question, answer }));
 
 const OWNERSHIP: Pair = ["Who owns the work?", "You do. You own everything we build."];
@@ -81,6 +82,14 @@ export const SERVICES: Service[] = [
       "Corporate and portfolio sites",
     ],
     note: "The 7-day timeline applies to basic websites.",
+    statement:
+      "Your website is often the first conversation a customer has with you. We make it fast, clear and built to turn visits into enquiries.",
+    benefits: benefits([
+      ["Live in days", "Basic websites launch in 7 days. Bigger builds follow a timeline we agree up front."],
+      ["Built to convert", "Clear messages and calls to action, with every page designed around enquiries."],
+      ["Easy to update", "An easy-to-use CMS, so your content never waits on developers."],
+      ["Yours to keep", "You own the design, the code and the content."],
+    ]),
     offerings: offerings([
       ["New websites", "Designed around your offer and built to turn visits into enquiries."],
       ["Website revamps", "Outdated sites rebuilt to look current, load fast and work on every screen."],
@@ -121,6 +130,14 @@ export const SERVICES: Service[] = [
       "Design systems",
       "Developer-ready handoff",
     ],
+    statement:
+      "Good products feel simple. We design SaaS, enterprise and mobile products that people understand quickly and keep using.",
+    benefits: benefits([
+      ["Faster adoption", "Clear flows and familiar patterns help people get value sooner."],
+      ["Scales with you", "A design system keeps every new screen consistent, from MVP to enterprise."],
+      ["Ready to build", "Annotated screens, specs and components your developers can use straight away."],
+      ["Designer-led AI", "AI speeds up research, flows and screens. Our designers make every decision count."],
+    ]),
     offerings: offerings([
       ["UX audits", "We review your product, find where people get stuck and rank the fixes."],
       ["Product redesigns", "Complex products made simpler to use and quicker to adopt."],
@@ -160,6 +177,14 @@ export const SERVICES: Service[] = [
       "Booking and intake systems",
       "Internal tools and trackers",
     ],
+    statement:
+      "The fastest way to test an idea is a working product in front of real users. We build it with AI in weeks, not months.",
+    benefits: benefits([
+      ["Weeks, not months", "A focused first version, scoped to what you need to learn."],
+      ["AI built in", "Smart search, chat and summaries that make the product useful from launch."],
+      ["Built to grow", "A first version that can grow into a full product."],
+      ["Yours to keep", "You own everything we build."],
+    ]),
     offerings: offerings([
       ["MVPs and prototypes", "A working first version to test with users and investors."],
       ["AI-powered features", "Smart search, chat, summaries and forms built into your product."],
@@ -198,6 +223,14 @@ export const SERVICES: Service[] = [
       "Approval workflows",
       "Monthly care plan",
     ],
+    statement:
+      "Every hour spent copying data, chasing approvals or building reports is an hour not spent on customers. We hand that work to AI.",
+    benefits: benefits([
+      ["Hours back", "Repetitive tasks run on their own, so your people focus on the work that matters."],
+      ["Connected tools", "The tools you already use, connected so data moves without copy and paste."],
+      ["Fewer mistakes", "Automated steps follow the same rules every time."],
+      ["Looked after", "A monthly care plan keeps every automation running and improving."],
+    ]),
     offerings: offerings([
       ["Process audit", "We map how work gets done and find the tasks worth automating first."],
       ["Lead and enquiry automation", "Every enquiry captured, sorted and followed up without manual work."],
@@ -238,6 +271,14 @@ export const SERVICES: Service[] = [
       "Scheduling and publishing",
       "Performance reporting",
     ],
+    statement:
+      "Social works when you show up consistently. We keep your brand visible every week, without adding work to your day.",
+    benefits: benefits([
+      ["Always on", "A full monthly calendar, planned ahead and published for you."],
+      ["On brand", "Every post follows your look and your voice."],
+      ["Faster with AI", "AI speeds up ideas, visuals and video, so turnaround is quick."],
+      ["Clear reporting", "A monthly report on what worked and what comes next."],
+    ]),
     offerings: offerings([
       ["Content calendar", "A monthly plan built around your goals, launches and events."],
       ["Posts and carousels", "On-brand designs for every channel, made fast with AI."],
@@ -272,6 +313,14 @@ export const SERVICES: Service[] = [
       "SEO",
       "Analytics and reporting",
     ],
+    statement:
+      "Clicks and likes don’t pay the bills. We run campaigns aimed at what does: enquiries, leads and return on ad spend.",
+    benefits: benefits([
+      ["Built for leads", "Every campaign is planned around enquiries and sales."],
+      ["Paid and organic", "Ads, search and SEO working together."],
+      ["Measured properly", "Clear tracking from the first click to the enquiry."],
+      ["Always improving", "We test, learn and move budget to what works."],
+    ]),
     offerings: offerings([
       ["Paid social ads", "Campaigns aimed at the people most likely to buy."],
       ["Search ads", "Be found when customers search for what you offer."],
@@ -303,6 +352,14 @@ export const SERVICES: Service[] = [
       "AI imagery and video",
       "Email and landing page design",
     ],
+    statement:
+      "Creative needs don’t wait for a hiring plan. Send requests any time and get on-brand work back fast.",
+    benefits: benefits([
+      ["One monthly fee", "A predictable cost for all your creative requests."],
+      ["Ask any time", "One place to send briefs, whenever you need them."],
+      ["Fast turnaround", "AI speeds up production. Designers keep the quality high."],
+      ["No hiring", "Dedicated creative support without adding headcount."],
+    ]),
     offerings: offerings([
       ["Ad creatives", "Static and animated ads sized for every channel."],
       ["Presentations and pitch decks", "Decks that make your story clear and convincing."],
@@ -343,6 +400,14 @@ export const SERVICES: Service[] = [
       "Stationery",
       "Expo booths and banners",
     ],
+    statement:
+      "Print still makes the first impression at events, on shelves and in people’s hands. We design it fast and get every file print-ready.",
+    benefits: benefits([
+      ["Print-ready", "Every file is checked and delivered ready for print."],
+      ["Faster with AI", "AI speeds up layouts and variations. Designers finish every detail."],
+      ["One brand everywhere", "Brochures, packaging and booths that look like they belong together."],
+      ["Yours to keep", "You own every design and source file."],
+    ]),
     offerings: offerings([
       ["Brochures and catalogues", "Clear layouts that present your products and services well."],
       ["Flyers and posters", "Bold print for events, promotions and launches."],
@@ -374,6 +439,14 @@ export const SERVICES: Service[] = [
       "Brand assets and templates",
       "Brand rollout",
     ],
+    statement:
+      "A brand is more than a logo. It is how people recognise you everywhere. We build brands that stay consistent as you grow.",
+    benefits: benefits([
+      ["Distinctive", "A look that sets you apart in your market."],
+      ["Consistent", "Clear guidelines, so every touchpoint looks like you."],
+      ["Ready to use", "Templates and assets your business can use straight away."],
+      ["Faster with AI", "AI speeds up exploration, so you see more options sooner."],
+    ]),
     offerings: offerings([
       ["Logo and visual identity", "A distinctive logo, colours and type that fit your business."],
       ["Brand guidelines", "Clear rules, so everyone uses your brand the same way."],
@@ -407,6 +480,14 @@ export const SERVICES: Service[] = [
       "Motion graphics and animation",
       "AI video",
     ],
+    statement:
+      "Video explains in seconds what pages of text can’t. We produce it fast, on brand and ready for every channel.",
+    benefits: benefits([
+      ["Every format", "Wide, square and vertical versions from one project."],
+      ["Often no shoot", "Motion graphics and AI mean many videos need no filming."],
+      ["Fast turnaround", "AI speeds up scripts, visuals and edits."],
+      ["On brand", "Designers check every frame against your brand."],
+    ]),
     offerings: offerings([
       ["Explainer and product videos", "Short videos that show what you do and why it matters."],
       ["Social video and reels", "Vertical, fast-paced video made for social channels."],
@@ -706,6 +787,33 @@ export const PAGES: Page[] = [
             _key: "s4",
             title: "Launch & support",
             text: "We launch, hand over everything you own and stay on to support and improve it.",
+          },
+        ],
+      },
+      {
+        _type: "comparison",
+        _key: "comparison",
+        label: "Why Opsiogen",
+        heading: "The faster way to get it done.",
+        accent: "faster",
+        columns: ["Opsiogen", "Hiring in-house", "Traditional agency"],
+        rows: [
+          { _key: "r1", label: "Speed", cells: ["Days, not months", "Months to hire and settle in", "Months, project by project"] },
+          {
+            _key: "r2",
+            label: "Skills",
+            cells: ["Every digital need, one partner", "Only the skills you hire", "A new agency for each need"],
+          },
+          {
+            _key: "r3",
+            label: "Cost",
+            cells: ["A fixed price or one monthly plan", "Salaries and overheads", "Quoted project by project"],
+          },
+          { _key: "r4", label: "AI", cells: ["Used at every stage", "Depends on the hire", "Varies"] },
+          {
+            _key: "r5",
+            label: "Ownership",
+            cells: ["You own everything we build", "You own it", "Depends on the contract"],
           },
         ],
       },

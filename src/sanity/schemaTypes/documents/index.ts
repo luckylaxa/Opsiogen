@@ -173,6 +173,34 @@ export const service = defineType({
       description: "Optional short note shown on the service page.",
     }),
     defineField({
+      name: "statement",
+      title: "Why it matters",
+      type: "text",
+      rows: 3,
+      group: "content",
+      description: "One or two sentences on the problem this service solves, shown large on the service page.",
+      validation: (rule) => rule.max(220),
+    }),
+    defineField({
+      name: "benefits",
+      title: "Benefits",
+      type: "array",
+      group: "content",
+      description: "Up to four short benefits, shown as cards under “Why it matters”.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "benefit",
+          fields: [
+            defineField({ name: "title", type: "string", validation: (rule) => rule.required().max(32) }),
+            defineField({ name: "text", type: "text", rows: 2, validation: (rule) => rule.max(140) }),
+          ],
+          preview: { select: { title: "title", subtitle: "text" } },
+        }),
+      ],
+      validation: (rule) => rule.max(4),
+    }),
+    defineField({
       name: "offerings",
       title: "What we do",
       type: "array",
@@ -384,6 +412,7 @@ export const page = defineType({
         defineArrayMember({ type: "shortText" }),
         defineArrayMember({ type: "promiseList" }),
         defineArrayMember({ type: "process" }),
+        defineArrayMember({ type: "comparison" }),
         defineArrayMember({ type: "callToAction" }),
       ],
     }),
