@@ -16,7 +16,7 @@ export function Hero({ section, children }: { section: HeroSection; children?: R
         children ? "pb-[clamp(40px,calc(2.3vw+31.4px),76px)]" : "pb-[clamp(72px,calc(5.24vw+52.3px),132px)]",
       )}
     >
-      <GiantHeading as="h1" label={section.label} labelStyle="pill" heading={section.heading} text={section.text}>
+      <GiantHeading as="h1" label={section.label} labelStyle="pill" heading={section.heading} accent={section.accent} text={section.text}>
         {section.button?.href && section.button.label && (
           <ButtonLink href={section.button.href} className="mt-[clamp(28px,calc(1.7vw+21.6px),54px)]">
             {section.button.label}

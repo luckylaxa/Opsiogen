@@ -68,6 +68,7 @@ export type HeroSection = {
   _key: string;
   label?: string | null;
   heading: string;
+  accent?: string | null;
   text?: string | null;
   button?: LinkItem | null;
 };
@@ -83,6 +84,7 @@ export type ProjectGridSection = {
   _key: string;
   label?: string | null;
   heading?: string | null;
+  accent?: string | null;
   text?: string | null;
   limit?: number | null;
   showFilters?: boolean | null;
@@ -94,6 +96,7 @@ export type ServicesListSection = {
   _key: string;
   label?: string | null;
   heading?: string | null;
+  accent?: string | null;
   text?: string | null;
 };
 

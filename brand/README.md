@@ -33,3 +33,5 @@ Tokens live at the top of `src/app/globals.css`; dark values are in the `[data-t
 | `accent` | `#B800CA` | `#EE61FF` | Link hover |
 
 The brand gradient (`--gradient-brand`: `#00D2FF → #0A4BFF → #6A00F0 → #C800C8 → #FF1A8C`) is for type only: dark button labels turn into it on hover, and `.text-gradient` applies it to a display word. Never use it as a background, line or glow.
+
+**Accent word.** Every giant title shows one word in the gradient, as in the design system (“We remove the DRAG.”). It is the last word by default; to pick another, fill in **Word in colour** on the Hero, Project grid or Services list section in Studio. Keep it to one gradient word per screen.

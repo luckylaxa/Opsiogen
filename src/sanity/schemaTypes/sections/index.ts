@@ -14,6 +14,22 @@ const label = defineField({
   description: "Optional short label shown above the heading.",
 });
 
+/** The heading word shown in the brand gradient (the design system's accent word). */
+const accent = defineField({
+  name: "accent",
+  title: "Word in colour",
+  type: "string",
+  description:
+    "One word (or two) from the heading to show in the brand gradient, e.g. “hiring”. Leave empty to colour the last word.",
+  validation: (rule) =>
+    rule.custom((value, context) => {
+      if (!value) return true;
+      const heading = (context.parent as { heading?: string } | undefined)?.heading ?? "";
+      const norm = (s: string) => s.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, "").replace(/\s+/g, " ").trim();
+      return ` ${norm(heading)} `.includes(` ${norm(value)} `) || "Use a word that appears in the heading.";
+    }),
+});
+
 export const heroSection = defineType({
   name: "hero",
   title: "Hero",
@@ -26,6 +42,7 @@ export const heroSection = defineType({
       type: "string",
       validation: (rule) => rule.required(),
     }),
+    accent,
     defineField({ name: "text", type: "text", rows: 3 }),
     defineField({ name: "button", type: "link" }),
   ],
@@ -67,6 +84,7 @@ export const projectGridSection = defineType({
   fields: [
     label,
     defineField({ name: "heading", type: "string" }),
+    accent,
     defineField({ name: "text", type: "text", rows: 2 }),
     defineField({
       name: "limit",
@@ -102,6 +120,7 @@ export const servicesListSection = defineType({
   fields: [
     label,
     defineField({ name: "heading", type: "string" }),
+    accent,
     defineField({ name: "text", type: "text", rows: 2 }),
   ],
   preview: {

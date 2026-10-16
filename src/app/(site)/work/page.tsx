@@ -37,6 +37,7 @@ export default async function WorkPage() {
           as="h1"
           label={hero?.label}
           heading={hero?.heading ?? page.title}
+          accent={hero?.accent}
           text={hero?.text}
           sticker
           className="pb-[clamp(48px,calc(3.4vw+35px),110px)] pt-[clamp(48px,calc(3.4vw+35px),110px)]"

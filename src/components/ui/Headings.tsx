@@ -30,10 +30,72 @@ export function SectionHeading({
   );
 }
 
+/**
+ * Index range of the words to show in the brand gradient: the given accent
+ * word or phrase (matched ignoring case and punctuation, last occurrence),
+ * or the last word when there is none or it isn't in the text.
+ */
+export function accentRange(words: string[], accent?: string | null): [number, number] {
+  const norm = (w: string) => w.toLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
+  const target = (accent ?? "").trim().split(/\s+/).map(norm).filter(Boolean);
+  if (target.length) {
+    for (let i = words.length - target.length; i >= 0; i--) {
+      if (target.every((t, j) => norm(words[i + j]) === t)) return [i, i + target.length - 1];
+    }
+  }
+  return [words.length - 1, words.length - 1];
+}
+
+/**
+ * Display text with one accent word (or short phrase) in the brand gradient,
+ * as the design system sets its headlines: “We remove the DRAG.”. With
+ * `sticker`, the logo symbol stays on the line of the last word.
+ */
+export function AccentText({ text, accent, sticker }: { text: string; accent?: string | null; sticker?: boolean }) {
+  const words = text.trim().split(/\s+/);
+  const [start, end] = accentRange(words, accent);
+  const join = (ws: string[]) => ws.join(" ");
+  const before = words.slice(0, start);
+  const after = words.slice(end + 1);
+  const accented = <span className="text-gradient">{join(words.slice(start, end + 1))}</span>;
+
+  if (!sticker) {
+    return (
+      <>
+        {before.length > 0 && `${join(before)} `}
+        {accented}
+        {after.length > 0 && ` ${join(after)}`}
+      </>
+    );
+  }
+  // Keep the sticker on the same line as the last word.
+  const last = after.pop();
+  return (
+    <>
+      {before.length > 0 && `${join(before)} `}
+      {last === undefined ? (
+        <span className="whitespace-nowrap">
+          {accented}
+          <Sticker />
+        </span>
+      ) : (
+        <>
+          {accented} {after.length > 0 && `${join(after)} `}
+          <span className="whitespace-nowrap">
+            {last}
+            <Sticker />
+          </span>
+        </>
+      )}
+    </>
+  );
+}
+
 /** Centered giant uppercase heading used by heroes and the big section titles. */
 export function GiantHeading({
   label,
   heading,
+  accent,
   text,
   as: Tag = "h2",
   labelStyle = "plain",
@@ -43,6 +105,8 @@ export function GiantHeading({
 }: {
   label?: string | null;
   heading: string;
+  /** Word or short phrase shown in the brand gradient; defaults to the last word. */
+  accent?: string | null;
   text?: string | null;
   as?: "h1" | "h2" | "p";
   labelStyle?: "plain" | "pill";
@@ -51,20 +115,7 @@ export function GiantHeading({
   className?: string;
   children?: React.ReactNode;
 }) {
-  // Keep the sticker on the same line as the last word.
-  const words = heading.trim().split(/\s+/);
-  const last = words.pop();
-  const title = sticker ? (
-    <>
-      {words.length > 0 && `${words.join(" ")} `}
-      <span className="whitespace-nowrap">
-        {last}
-        <Sticker />
-      </span>
-    </>
-  ) : (
-    heading
-  );
+  const title = <AccentText text={heading} accent={accent} sticker={sticker} />;
   return (
     <div className={cn("flex flex-col items-center px-gutter text-center", className)}>
       {label &&

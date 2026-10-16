@@ -85,6 +85,7 @@ function ListHeading({ section, sticker }: { section: ServicesListSection; stick
     <GiantHeading
       label={section.label}
       heading={section.heading}
+      accent={section.accent}
       text={section.text}
       sticker={sticker}
       className="mb-[clamp(48px,calc(3.4vw+35.2px),100px)]"
