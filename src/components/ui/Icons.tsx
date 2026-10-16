@@ -31,6 +31,32 @@ export const ExternalLink = svg(
   </>,
 );
 export const Plus = svg(<path d="M12 5v14M5 12h14" />);
+export const GridIcon = svg(
+  <>
+    <rect x="4" y="4" width="7" height="7" rx="1" />
+    <rect x="13" y="4" width="7" height="7" rx="1" />
+    <rect x="4" y="13" width="7" height="7" rx="1" />
+    <rect x="13" y="13" width="7" height="7" rx="1" />
+  </>,
+);
+export const LayersIcon = svg(
+  <>
+    <path d="m12 3.5 8.5 4.5-8.5 4.5L3.5 8z" />
+    <path d="m3.5 12 8.5 4.5 8.5-4.5M3.5 16l8.5 4.5 8.5-4.5" />
+  </>,
+);
+export const InfoIcon = svg(
+  <>
+    <rect x="3.5" y="3.5" width="17" height="17" rx="2" />
+    <path d="M12 11v5.5M12 7.5v.01" />
+  </>,
+);
+export const MailIcon = svg(
+  <>
+    <rect x="3" y="5" width="18" height="14" rx="2" />
+    <path d="m3.5 7 8.5 6 8.5-6" />
+  </>,
+);
 export const Check = svg(<path d="m5 12.5 4.5 4.5L19 7.5" />);
 export const ChevronDown = svg(<path d="m6 9 6 6 6-6" />);
 export const SearchIcon = svg(
