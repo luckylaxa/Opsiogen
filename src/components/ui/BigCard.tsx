@@ -11,6 +11,8 @@ type Props = {
   image?: Img | null;
   /** Number of dots under the image (1–5). */
   dots?: number;
+  /** Which dot is filled, from 0. */
+  activeDot?: number;
   label?: string | null;
   title: string;
   titleAs?: "h2" | "h3";
@@ -37,6 +39,7 @@ export function BigCard({
   badge,
   image,
   dots = 1,
+  activeDot = 0,
   label,
   title,
   titleAs: Title = "h3",
@@ -48,6 +51,7 @@ export function BigCard({
   className,
 }: Props) {
   const count = Math.min(Math.max(dots, 1), 5);
+  const active = Math.min(Math.max(activeDot, 0), count - 1);
   const body = (
     <>
       <div className="flex items-start justify-between gap-4">
@@ -71,7 +75,7 @@ export function BigCard({
       </div>
       <div aria-hidden="true" className="mt-[clamp(14px,2.1vw,40px)] flex justify-end gap-[clamp(8px,0.79vw,15px)]">
         {Array.from({ length: count }, (_, i) => (
-          <span key={i} className={cn("size-[clamp(6px,0.53vw,10px)] rounded-full", i === 0 ? "bg-white" : "bg-white/20")} />
+          <span key={i} className={cn("size-[clamp(6px,0.53vw,10px)] rounded-full", i === active ? "bg-white" : "bg-white/20")} />
         ))}
       </div>
 

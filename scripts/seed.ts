@@ -9,8 +9,9 @@
  * The default is safe to run more than once: it never overwrites edits made in
  * the studio. Documents that already exist keep their content; it only fills
  * in service fields that are still empty (Why it matters, Benefits, What we do,
- * Questions and the page sections), gives What we do items their tile images,
- * adds new questions, and adds the How we work and Comparison sections to a
+ * Questions and the page sections), gives What we do items their card images,
+ * adds new questions, updates starter text that changed (only where it is
+ * still the old text), and adds the How we work and Comparison sections to a
  * page that has none, just before its call to action.
  *
  * Overwrite brings existing documents in line with src/content/seed-data.ts:
@@ -59,12 +60,9 @@ const SERVICE_FILL_IN = [
   "clientsLabel",
   "why",
   "stats",
-  "feature",
   "offer",
-  "uses",
   "steps",
   "related",
-  "banner",
 ];
 /** Section types added after the first seed; add mode adds them to pages that lack them. */
 const NEW_SECTION_TYPES = ["process", "comparison"];
@@ -123,44 +121,75 @@ function put(
   tx.delete(`drafts.${_id}`);
 }
 
-/** The full page layout's sections for a service, with their images uploaded. */
+/** The full page's sections for a service, with the hero image uploaded. */
 async function servicePageFields(s: (typeof SERVICES)[number]) {
-  const withImage = async <T extends { image?: { url: string; alt: string } | null }>(obj: T | null | undefined) => {
-    if (!obj) return undefined;
-    const { image: img, ...rest } = obj;
-    return { ...rest, ...(img?.url ? { image: await image(img.url, img.alt) } : {}) };
-  };
   const items = <T extends { _key?: string }>(type: string, list: T[] | undefined) =>
     (list ?? []).map((it, i) => ({ _type: type, _key: it._key ?? `${type}${i + 1}`, ...it }));
+  const heroImage = s.hero?.image;
   const out: Record<string, unknown> = {
-    hero: await withImage(s.hero),
+    hero: heroImage?.url ? { image: await image(heroImage.url, heroImage.alt) } : undefined,
     clientsLabel: s.clientsLabel ?? undefined,
-    why: await withImage(s.why),
+    why: s.why ?? undefined,
     stats: s.stats ? { ...s.stats, items: items("stat", s.stats.items) } : undefined,
-    feature: await withImage(s.feature),
     offer: s.offer ?? undefined,
-    uses: s.uses ? { ...s.uses, items: items("use", s.uses.items) } : undefined,
     steps: s.steps ? { ...s.steps, items: items("processStep", s.steps.items) } : undefined,
     related: s.related ?? undefined,
-    banner: await withImage(s.banner),
   };
   return Object.fromEntries(Object.entries(out).filter(([, v]) => v !== undefined));
 }
+
+/**
+ * Starter text that changed after an earlier seed. Add mode replaces each one
+ * only while Studio still holds the old text, so edits are never overwritten.
+ */
+const TEXT_UPDATES: { id: string; get: string; path: string; from: string; to: string }[] = [
+  { id: "service-ai-websites", get: "stats.label", path: "stats.label", from: "Why Opsiogen", to: "In numbers" },
+  {
+    id: "service-ai-websites",
+    get: 'stats.items[_key == "s2"][0].label',
+    path: 'stats.items[_key == "s2"].label',
+    from: "yours: the design, the code and the content",
+    to: "yours to keep",
+  },
+  {
+    id: "service-ai-websites",
+    get: 'stats.items[_key == "s3"][0].label',
+    path: 'stats.items[_key == "s3"].label',
+    from: "partner for strategy, design, build and support",
+    to: "partner for design, build and support",
+  },
+  {
+    id: "service-ai-websites",
+    get: "offer.heading",
+    path: "offer.heading",
+    from: "Websites, ready to launch and convert",
+    to: "Websites, ready to convert.",
+  },
+  { id: "service-ai-websites", get: "steps.heading", path: "steps.heading", from: "Websites, without the waiting", to: "From brief to live." },
+  { id: "service-ai-websites", get: "steps.accent", path: "steps.accent", from: "waiting", to: "live" },
+  { id: "service-ai-websites", get: "related.label", path: "related.label", from: "Our work", to: "Selected work" },
+  { id: "service-ai-websites", get: "related.heading", path: "related.heading", from: "Websites we’ve launched", to: "Websites we’ve launched." },
+];
+
+/** Card images rendered for an earlier version of the page; add mode swaps them for the current ones. */
+const OLD_CARD_IMAGE = /^offer-(new|revamp|landing|saas|corporate|cms)\.jpg$/;
 
 async function run() {
   console.log(OVERWRITE ? "Mode: overwrite starter content" : "Mode: add missing content only");
   const tx = client.transaction();
 
   console.log("Services");
-  const existingServices = await client.fetch<{ _id: string; offeringKeys: string[] | null; faqKeys: string[] | null }[]>(
-    `*[_type == "service" && _id in $ids]{ _id, "offeringKeys": offerings[]._key, "faqKeys": faqs[]._key }`,
+  const existingServices = await client.fetch<
+    { _id: string; offerings: { _key: string; file?: string | null }[] | null; faqKeys: string[] | null }[]
+  >(
+    `*[_type == "service" && _id in $ids]{ _id, "offerings": offerings[]{ _key, "file": image.asset->originalFilename }, "faqKeys": faqs[]._key }`,
     { ids: SERVICES.map((s) => s._id) },
   );
   for (const s of SERVICES) {
     const offeringImages = new Map<string, Record<string, unknown>>();
     for (const o of s.offerings) {
       if (!o.image?.url || !o._key) continue;
-      offeringImages.set(o._key, { image: await image(o.image.url, o.image.alt), wide: Boolean(o.wide), dark: Boolean(o.dark) });
+      offeringImages.set(o._key, { image: await image(o.image.url, o.image.alt) });
     }
     const pageFields = await servicePageFields(s);
     put(
@@ -198,10 +227,11 @@ async function run() {
     const existing = existingServices.find((e) => e._id === s._id);
     if (OVERWRITE || !existing) continue;
     for (const [k, fields] of offeringImages) {
-      if (!existing.offeringKeys?.includes(k)) continue;
-      tx.patch(s._id, (p) =>
-        p.setIfMissing(Object.fromEntries(Object.entries(fields).map(([f, v]) => [`offerings[_key == "${k}"].${f}`, v]))),
-      );
+      const current = existing.offerings?.find((o) => o._key === k);
+      if (!current) continue;
+      const path = `offerings[_key == "${k}"].image`;
+      if (current.file && OLD_CARD_IMAGE.test(current.file)) tx.patch(s._id, (p) => p.set({ [path]: fields.image }));
+      else tx.patch(s._id, (p) => p.setIfMissing({ [path]: fields.image }));
     }
     const newFaqs = s.faqs.filter((f) => f._key && !(existing.faqKeys ?? []).includes(f._key));
     if (newFaqs.length) {
@@ -296,6 +326,17 @@ async function run() {
         ? p.insert("before", 'sections[_type == "callToAction"]', items)
         : p.setIfMissing({ sections: [] }).insert("after", "sections[-1]", items),
     );
+  }
+
+  if (!OVERWRITE && TEXT_UPDATES.length) {
+    const current = await client.fetch<Record<string, unknown> | null>(
+      `{ ${TEXT_UPDATES.map((u, i) => `"u${i}": *[_id == "${u.id}"][0].${u.get}`).join(", ")} }`,
+    );
+    TEXT_UPDATES.forEach((u, i) => {
+      if (current?.[`u${i}`] !== u.from) return;
+      console.log(`  updating ${u.id} ${u.path}`);
+      tx.patch(u.id, (p) => p.set({ [u.path]: u.to }));
+    });
   }
 
   console.log("Site settings");

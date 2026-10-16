@@ -30,33 +30,23 @@ export type ServiceRef = {
   group: ServiceGroup;
 };
 
-export type Offering = {
-  _key?: string;
-  title: string;
-  text?: string | null;
-  image?: Img | null;
-  wide?: boolean | null;
-  dark?: boolean | null;
-};
+export type Offering = { _key?: string; title: string; text?: string | null; image?: Img | null };
 
 export type Faq = { _key?: string; question: string; answer: string };
 
 export type Benefit = { _key?: string; title: string; text?: string | null };
 
-type Titled = { label?: string | null; heading: string; accent?: string | null };
+type Titled = { label?: string | null; heading?: string | null; accent?: string | null };
 
-/** Sections of the full service page layout (see servicePage.ts in the schema). */
+/** Sections of the full service page (see servicePage.ts in the schema). */
 export type ServicePage = {
-  hero?: { heading: string; accent?: string | null; text?: string | null; image?: Img | null } | null;
+  hero?: { image?: Img | null } | null;
   clientsLabel?: string | null;
-  why?: (Titled & { lead?: string | null; text?: string | null; image?: Img | null }) | null;
-  stats?: (Titled & { items: { _key?: string; value: string; label: string }[] }) | null;
-  feature?: (Titled & { lead?: string | null; text?: string | null; image?: Img | null }) | null;
-  offer?: (Titled & { text?: string | null }) | null;
-  uses?: (Titled & { items: { _key?: string; icon?: string | null; title: string; text?: string | null }[] }) | null;
-  steps?: (Titled & { text?: string | null; items: { _key?: string; title: string; text?: string | null }[] }) | null;
+  why?: Titled | null;
+  stats?: { label?: string | null; items: { _key?: string; value: string; label: string }[] } | null;
+  offer?: Titled | null;
+  steps?: (Titled & { items: { _key?: string; title: string; text?: string | null }[] }) | null;
   related?: Titled | null;
-  banner?: { heading: string; accent?: string | null; text?: string | null; image?: Img | null } | null;
 };
 
 export type Service = ServiceRef & ServicePage & {
