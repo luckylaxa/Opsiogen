@@ -328,6 +328,22 @@
   }
 }
 
+/* The page under the project pop-up stays still. */
+html.project-open {
+  overflow: hidden;
+}
+
+/* iPhone Safari zooms in when a field under 16px gets focus, and stays zoomed
+   after the page changes (the pop-up then opens zoomed and shifted). Fields
+   are at least 16px on touch screens. Unlayered, so it wins over utilities. */
+@media (pointer: coarse) {
+  input,
+  select,
+  textarea {
+    font-size: max(16px, var(--text-base));
+  }
+}
+
 /* Project pop-up: opens upwards like the menu, eases away on close, and
    fades each project in when stepping through them. */
 @keyframes project-open {

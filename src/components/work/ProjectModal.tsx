@@ -76,9 +76,10 @@ export function ProjectModal({
     const root = dialog.current;
     if (!root) return;
     const opener = document.activeElement as HTMLElement | null;
+    // A class, not the inline overflow the menu sets and clears, so opening a
+    // project from the menu's search can't unlock or re-lock the page.
     const html = document.documentElement;
-    const overflow = html.style.overflow;
-    html.style.overflow = "hidden";
+    html.classList.add("project-open");
     const hidden = Array.from(document.body.children).filter(
       (el): el is HTMLElement =>
         el instanceof HTMLElement && el !== root && !el.contains(root) && !el.inert && el.tagName !== "SCRIPT" && el.tagName !== "NEXT-ROUTE-ANNOUNCER",
@@ -86,9 +87,12 @@ export function ProjectModal({
     hidden.forEach((el) => (el.inert = true));
     root.focus({ preventScroll: true });
     return () => {
-      html.style.overflow = overflow;
+      html.classList.remove("project-open");
       hidden.forEach((el) => (el.inert = false));
-      if (opener?.isConnected) opener.focus({ preventScroll: true });
+      // Back to the link that opened it, if it's still on screen (not the closed menu's search).
+      if (opener?.isConnected && opener.offsetParent !== null && getComputedStyle(opener).visibility !== "hidden") {
+        opener.focus({ preventScroll: true });
+      }
     };
   }, [mounted]);
 
