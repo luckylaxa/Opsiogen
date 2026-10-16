@@ -64,7 +64,7 @@ Layout, colours, fonts and animations are fixed in the code, so edits can't brea
 
 1. Studio → **Projects** → **+**.
 2. Fill in name (the slug fills itself), client, industry, location, year, services, a one-line **tagline**, a two-to-three-line summary and an order number (lower shows first).
-3. Media tab: a cover image (4:3 or wider), a **card image** (a 1600 × 1200 mockup of the work that fills the big project card; keep the lower third quiet, the title sits there) and, optionally, a short muted MP4 loop. The cover is the video's poster. Then six to ten **gallery** images of the work, shown as big cards almost edge to edge. The first is the big image under the name: wide (16:9, 2400 × 1350), shown square on phones, so keep the work in the middle. The rest: squares (1400 × 1400) set to **Half**, two per row (one per row on phones), with an optional caption. Every image needs alt text.
+3. Media tab: a cover image (4:3 or wider), a **card image** (a 1600 × 1200 mockup of the work that fills the big project card; keep the lower third quiet, the title sits there) and, optionally, a short muted MP4 loop. The cover is the video's poster. Then six to ten **gallery** images of the work, shown as big cards with the same margins as the rest of the site. The first is the big image under the name: wide (16:9, 2400 × 1350), shown square on phones, so keep the work in the middle. The rest: squares (1400 × 1400) set to **Half**, two per row (one per row on phones), with an optional caption. Every image needs alt text.
 4. Optional: up to four **Results** (number + label, only if they are real) and a live site link.
 5. **Publish**. It shows on Home, Work and each tagged service page.
 
