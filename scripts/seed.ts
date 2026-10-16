@@ -288,16 +288,20 @@ async function run() {
         })),
       };
       const set: Record<string, unknown> = {};
+      const kept: RewriteField[] = [];
       for (const [field, was] of Object.entries(rewrite) as [RewriteField, string][]) {
-        if (fingerprint(field, existing[field]) === was) set[field] = next[field];
-        else console.log(`  kept ${s._id} ${field}: edited in Studio`);
+        const current = fingerprint(field, existing[field]);
+        if (current === fingerprint(field, next[field])) continue; // already up to date
+        if (current === was) set[field] = next[field];
+        else kept.push(field);
       }
+      if (kept.length) console.log(`  kept ${s._id} ${kept.join(", ")}: edited in Studio`);
       if (Object.keys(set).length) {
         console.log(`  updating ${s._id}: ${Object.keys(set).join(", ")}`);
         tx.patch(s._id, (p) => p.set(set));
       }
       // Cards that were kept as edited keep their own images too.
-      if (!("offerings" in set)) offeringImages.clear();
+      if (kept.includes("offerings")) offeringImages.clear();
     }
     for (const [k, fields] of offeringImages) {
       const current = existing.offerings?.find((o) => o._key === k);
