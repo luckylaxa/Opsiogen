@@ -57,6 +57,11 @@ export const MailIcon = svg(
     <path d="m3.5 7 8.5 6 8.5-6" />
   </>,
 );
+export const TrendIcon = svg(<path d="M3.5 17 9 11.5l4 4L20.5 8M15 8h5.5v5.5" />);
+export const CodeIcon = svg(<path d="m8.5 8-4 4 4 4M15.5 8l4 4-4 4M13.5 5.5l-3 13" />);
+export const SparkIcon = svg(
+  <path d="M12 3.5c.6 4.3 2.7 6.4 7 7-4.3.6-6.4 2.7-7 7-.6-4.3-2.7-6.4-7-7 4.3-.6 6.4-2.7 7-7ZM18.5 15.5c.2 1.6 1 2.4 2.5 2.5-1.6.2-2.4 1-2.5 2.5-.2-1.6-1-2.4-2.5-2.5 1.6-.2 2.4-1 2.5-2.5Z" />,
+);
 export const Check = svg(<path d="m5 12.5 4.5 4.5L19 7.5" />);
 export const ChevronDown = svg(<path d="m6 9 6 6 6-6" />);
 export const SearchIcon = svg(

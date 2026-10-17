@@ -15,6 +15,8 @@ import { FeaturedProject } from "@/components/sections/FeaturedProject";
 import { Process } from "@/components/sections/Process";
 import { WorkGrid } from "@/components/work/WorkGrid";
 import { ServiceFullPage, hasFullPage } from "@/components/services/ServiceFullPage";
+import { ServiceSamplePage } from "@/components/services/ServiceSamplePage";
+import { SAMPLE_ASSETS, SAMPLE_SERVICE } from "@/content/service-sample";
 
 export const revalidate = 60;
 export const dynamicParams = true;
@@ -62,6 +64,19 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
   if (!service) notFound();
 
   const work = projects.filter((p) => p.services.some((s) => s.slug === service.slug));
+  // The sample layout, tried on one service first.
+  if (service.slug === SAMPLE_SERVICE && SAMPLE_ASSETS[service.slug]) {
+    return (
+      <ServiceSamplePage
+        service={service}
+        settings={settings}
+        work={work}
+        clients={[...new Set(projects.map((p) => p.client || p.name))]}
+        process={process}
+        assets={SAMPLE_ASSETS[service.slug]}
+      />
+    );
+  }
   if (hasFullPage(service)) {
     return <ServiceFullPage service={service} settings={settings} work={work} process={process} />;
   }

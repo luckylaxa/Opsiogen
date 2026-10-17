@@ -77,6 +77,8 @@ export type ProjectCard = {
   coverVideo?: Video | null;
   order: number;
   summary?: string | null;
+  /** Real results, shown on service pages. */
+  stats?: ProjectStat[];
 };
 
 export type GalleryItem = Img & { _key: string; size: "full" | "half"; caption?: string | null };

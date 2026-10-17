@@ -60,6 +60,10 @@ Go to `yourdomain.com/studio`, make the change and click **Publish**. The live s
 
 Layout, colours, fonts and animations are fixed in the code, so edits can't break the design.
 
+### Sample service page
+
+AI Product Design & Design Systems (`/services/ai-product-design`) uses a sample layout, to review before it goes to every service: a dark hero banner with the service picture and a strip of its services, scrolling client names, why it matters, results taken from the case studies tagged with the service, the services as big cards (text on top, picture behind), why teams choose Opsiogen, how we work, a picture banner, related work and questions in two columns. The text comes from the service in Studio; its pictures are set in `src/content/service-sample.ts` for now.
+
 ## Add a project
 
 1. Studio → **Projects** → **+**.
