@@ -72,3 +72,52 @@ export const SunIcon = svg(
     <path d="M12 2.5v2m0 15v2M2.5 12h2m15 0h2M5.3 5.3l1.4 1.4m10.6 10.6 1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" />
   </>,
 );
+
+/* Line icons for the services, matched by slug (menu rows). */
+const ServiceIcons: Record<string, ReturnType<typeof svg>> = {
+  "ai-websites": svg(
+    <>
+      <rect x="3" y="4.5" width="18" height="15" rx="2" />
+      <path d="M3 9h18M6.5 6.75h.01M9 6.75h.01" />
+    </>,
+  ),
+  "ai-product-design": svg(
+    <>
+      <rect x="3.5" y="3.5" width="17" height="17" rx="2" />
+      <path d="M3.5 9h17M9 9v11.5" />
+    </>,
+  ),
+  "ai-mvps-business-apps": svg(<path d="m8 8-4 4 4 4m8-8 4 4-4 4m-2.5-11-3 14" />),
+  "ai-automation": svg(
+    <>
+      <rect x="3.5" y="4" width="6" height="6" rx="1.5" />
+      <rect x="14.5" y="14" width="6" height="6" rx="1.5" />
+      <path d="M9.5 7h4a3 3 0 0 1 3 3v4" />
+    </>,
+  ),
+  "ai-social-media-marketing": svg(
+    <path d="M12 19.5s-7.5-4.4-7.5-9.7A4.2 4.2 0 0 1 12 7.4a4.2 4.2 0 0 1 7.5 2.4c0 5.3-7.5 9.7-7.5 9.7Z" />,
+  ),
+  "digital-marketing": svg(<path d="m3.5 17.5 5.5-5.5 4 4 7.5-8M15 8h5.5v5.5" />),
+  "ai-creative-subscription": svg(<path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3M18.5 3v4h-4M5.5 21v-4h4" />),
+  "ai-print-collateral": svg(
+    <>
+      <path d="M7 9V3.5h10V9" />
+      <rect x="3.5" y="9" width="17" height="8" rx="2" />
+      <path d="M7 14h10v6.5H7z" />
+    </>,
+  ),
+  "ai-brand-services": svg(<path d="M6.5 4h11l3 5L12 20 3.5 9zM3.5 9h17M9.5 4 12 20l2.5-16" />),
+  "ai-video-production": svg(
+    <>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="m10 9 5 3-5 3z" />
+    </>,
+  ),
+};
+
+/** A service's line icon; services added later fall back to the layers icon. */
+export function ServiceIcon({ slug, className }: { slug: string; className?: string }) {
+  const Icon = ServiceIcons[slug] ?? LayersIcon;
+  return <Icon className={className} />;
+}

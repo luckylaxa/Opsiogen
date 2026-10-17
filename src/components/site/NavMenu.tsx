@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 export type MenuGroup = {
   group: ServiceGroup;
   label: string;
-  services: { name: string; tagline: string; href: string }[];
+  services: { name: string; slug: string; tagline: string; href: string }[];
 };
 
 /**

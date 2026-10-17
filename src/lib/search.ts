@@ -33,7 +33,7 @@ export function buildMenuGroups(services: Service[]): MenuGroup[] {
       label: GROUP_LABELS[group],
       services: services
         .filter((s) => s.group === group)
-        .map((s) => ({ name: s.name, tagline: s.tagline, href: `/services/${s.slug}` })),
+        .map((s) => ({ name: s.name, slug: s.slug, tagline: s.tagline, href: `/services/${s.slug}` })),
     }))
     .filter((g) => g.services.length > 0);
 }
