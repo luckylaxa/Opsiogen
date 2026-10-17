@@ -68,7 +68,7 @@ export function ProcessSteps({ steps }: { steps: ProcessStep[] }) {
   return (
     <ol
       ref={root}
-      className="[--dot:clamp(44px,3.8vw,68px)] [--step-title:clamp(20px,calc(0.84vw+16.8px),32px)]"
+      className="[--dot:clamp(56px,4.6vw,84px)] [--step-title:clamp(20px,calc(0.84vw+16.8px),32px)]"
     >
       {steps.map((s, i) => {
         const last = i === steps.length - 1;
@@ -90,7 +90,7 @@ export function ProcessSteps({ steps }: { steps: ProcessStep[] }) {
             <span
               data-step-dot
               aria-hidden="true"
-              className="relative grid size-[var(--dot)] place-items-center rounded-full border-2 border-line bg-page text-[length:clamp(17px,1.3vw,24px)] text-mute tabular-nums transition-colors duration-400 group-[.is-done]/step:text-ink"
+              className="relative grid size-[var(--dot)] place-items-center rounded-full border-2 border-line bg-page text-[length:clamp(20px,1.5vw,28px)] text-mute transition-colors duration-400 group-[.is-done]/step:text-ink"
             >
               {/* The accent ring over the grey one, drawn as the line passes through. */}
               <span
@@ -103,8 +103,8 @@ export function ProcessSteps({ steps }: { steps: ProcessStep[] }) {
             <div
               data-reveal
               className={cn(
-                "mt-[calc((var(--dot)-var(--step-title)*1.2)/2)] grid gap-y-[clamp(8px,0.8vw,14px)] lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-baseline lg:gap-x-gap",
-                !last && "pb-[clamp(44px,4vw,88px)]",
+                "-mt-[calc(var(--step-title)*0.2)] grid gap-y-[clamp(8px,0.8vw,14px)] lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-baseline lg:gap-x-gap",
+                !last && "pb-[clamp(44px,4vw,88px)] lg:pb-[clamp(72px,6.5vw,128px)]",
               )}
             >
               <h3 className="text-[length:var(--step-title)] leading-[1.2] font-medium tracking-[-0.015em] text-balance">
