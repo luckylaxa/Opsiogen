@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* `dark:` styles apply when the visitor picks the dark theme (data-theme on <html>). */
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *, html:has([data-hero-dark]) [data-site-header], html:has([data-hero-dark]) [data-site-header] *));
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 /*
  * Opsiogen design tokens.
@@ -90,9 +90,7 @@
    * keeps an element light in both themes, e.g. light buttons and fields on
    * dark cards and the menu.
    */
-  /* A page that opens on a dark hero (data-hero-dark) gets a light-on-dark header over it, in both themes. */
-  [data-theme="dark"],
-  html:has([data-hero-dark]) [data-site-header] {
+  [data-theme="dark"] {
     --color-page: #0a090d;
     --color-band: #121115;
     --color-field: #1b1a1e;
@@ -331,7 +329,7 @@
 }
 
 /* Client names scrolling sideways like a logo wall; they pause on hover, and
-   sit still in rows for visitors who prefer less motion. */
+   sit still in rows (each name once) for visitors who prefer less motion. */
 @keyframes marquee {
   to {
     transform: translateX(-50%);
@@ -357,14 +355,6 @@
   .marquee-track [aria-hidden="true"] {
     display: none;
   }
-}
-
-/* A sideways strip that scrolls without showing a scrollbar. */
-.no-scrollbar {
-  scrollbar-width: none;
-}
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
 }
 
 /* The page under the project pop-up stays still. */

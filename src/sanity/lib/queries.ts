@@ -25,8 +25,7 @@ const PROJECT_CARD = `{
   "services": services[]->${SERVICE_REF},
   "cover": cover${IMG},
   "cardImage": cardImage${IMG},
-  "coverVideo": coverVideo{ "url": asset->url, "mimeType": asset->mimeType },
-  "stats": coalesce(stats[]{ _key, value, label }, [])
+  "coverVideo": coverVideo{ "url": asset->url, "mimeType": asset->mimeType }
 }`;
 
 export const SETTINGS_QUERY = defineQuery(`*[_id == "siteSettings"][0]{

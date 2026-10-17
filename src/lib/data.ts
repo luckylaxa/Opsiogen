@@ -47,7 +47,6 @@ const toCard = (p: Project): ProjectCard => ({
   coverVideo: p.coverVideo,
   order: p.order,
   summary: p.summary,
-  stats: p.stats,
 });
 
 /** Drop null/undefined/empty values so defaults can fill the gaps. */
