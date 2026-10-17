@@ -936,7 +936,7 @@ function makeProject(order: number, p: ProjectInput): Project {
     story: [],
     result: null,
     liveUrl: p.liveUrl ?? null,
-    gallery: SAMPLE_GALLERY,
+    gallery: GALLERIES[p.slug] ?? SAMPLE_GALLERY,
   };
 }
 
@@ -963,6 +963,33 @@ const SAMPLE_GALLERY = [
     size: wide ? ("full" as const) : ("half" as const),
   };
 });
+
+/**
+ * A project's own mockups (public/work/<slug>): a wide image under the name,
+ * then squares, two by two.
+ */
+const workGallery = (slug: string, file: string, hero: string, squares: string[]) => [
+  { ...img(`/work/${slug}/${file}-hero.jpg`, 2400, 1350, hero), _key: `${file}-hero`, size: "full" as const },
+  ...squares.map((alt, i) => ({
+    ...img(`/work/${slug}/${file}-${i + 1}.jpg`, 1200, 1200, alt),
+    _key: `${file}-${i + 1}`,
+    size: "half" as const,
+  })),
+];
+
+/** Projects with their real work; the rest show the shared samples. */
+const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
+  "surgo-health": workGallery("surgo-health", "surgo", "The Surgo Health index explorer with a county map, on a laptop", [
+    "Saving a map view in the index explorer, on a laptop",
+    "Missouri's scores and a state map, on a phone",
+    "A county map with general health scores, on a phone",
+    "Missouri health scores by age group, on a desktop screen",
+    "Texas and Missouri compared side by side, on a laptop",
+    "Advanced filters beside a state map, on a desktop screen",
+    "A state map with a Missouri summary, on a laptop",
+    "Physical environment scores and local providers, on a desktop screen",
+  ]),
+};
 
 /** Case-study details from the client case studies; projects not listed show their card image and cover. */
 const CASE_DETAILS: Record<string, CaseDetails> = {

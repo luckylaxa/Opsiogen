@@ -245,11 +245,11 @@ const OLD_SUMMARY: Record<string, string> = {
   "project-engel-volkers": "624cd6050552087f",
 };
 /**
- * Gallery files from earlier seeds (1.jpg …, then m1.jpg …), replaced by the
- * shared sample mockups (sample-hero.jpg, sample-1.jpg …) while Studio still
- * holds them.
+ * Gallery files from earlier seeds (1.jpg …, m1.jpg …, then the shared
+ * samples sample-hero.jpg, sample-1.jpg …), replaced by a project's current
+ * gallery while Studio still holds them.
  */
-const OLD_GALLERY_FILE = /^m?\d+\.jpg$/;
+const OLD_GALLERY_FILE = /^(m?\d+|sample-(hero|\d+))\.jpg$/;
 const hash = (value: unknown) => createHash("sha1").update(JSON.stringify(value ?? null)).digest("hex").slice(0, 16);
 
 /** Card images rendered for an earlier version of the page; add mode swaps them for the current ones. */
@@ -413,7 +413,8 @@ async function run() {
     if (OVERWRITE || !existing) continue;
     const set: Record<string, unknown> = {};
     const files = existing.files ?? [];
-    if (gallery.length && files.every((f) => f && OLD_GALLERY_FILE.test(f))) set.gallery = gallery;
+    const next = p.gallery.map((g) => path.basename(g.url));
+    if (gallery.length && files.every((f) => f && OLD_GALLERY_FILE.test(f)) && files.join() !== next.join()) set.gallery = gallery;
     if (existing.summary !== p.summary && hash(existing.summary) === OLD_SUMMARY[p._id]) set.summary = p.summary;
     if (Object.keys(set).length) {
       console.log(`  updating ${p._id}: ${Object.keys(set).join(", ")}`);
