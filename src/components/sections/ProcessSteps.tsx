@@ -8,11 +8,14 @@ import { cn } from "@/lib/utils";
 /** How far down the screen a step counts as reached. */
 const LINE = "60%";
 
+/** Shows the ring's arc from the top down both sides, `--arc` each way (0deg to 180deg). */
+const ARC_MASK = "conic-gradient(from calc(var(--arc) * -1), #000 calc(var(--arc) * 2), transparent 0)";
+
 /**
  * The steps as a numbered timeline, every step's text showing. While the
- * page scrolls, the line between the numbers fills in the accent colour down
- * to the reading line, and each number's ring turns accent as it is reached;
- * scrolling back undoes it.
+ * page scrolls, one accent line follows the reading line down: through each
+ * number it draws the ring from the top down both sides to the bottom, then
+ * carries on down to the next number. Scrolling back rolls it up again.
  * With reduced motion the whole line shows as reached.
  */
 export function ProcessSteps({ steps }: { steps: ProcessStep[] }) {
@@ -26,15 +29,26 @@ export function ProcessSteps({ steps }: { steps: ProcessStep[] }) {
       if (prefersReducedMotion()) {
         items.forEach((item) => item.classList.add("is-done"));
         gsap.set(el.querySelectorAll("[data-step-fill]"), { scaleY: 1 });
+        gsap.set(el.querySelectorAll("[data-step-ring]"), { "--arc": "180deg" });
         return;
       }
       items.forEach((item) => {
+        const dot = item.querySelector<HTMLElement>("[data-step-dot]");
         ScrollTrigger.create({
-          trigger: item.querySelector("[data-step-dot]"),
+          trigger: dot,
           start: `center ${LINE}`,
           onEnter: () => item.classList.add("is-done"),
           onLeaveBack: () => item.classList.remove("is-done"),
         });
+        gsap.fromTo(
+          item.querySelector("[data-step-ring]"),
+          { "--arc": "0deg" },
+          {
+            "--arc": "180deg",
+            ease: "none",
+            scrollTrigger: { trigger: dot, start: `top ${LINE}`, end: `bottom ${LINE}`, scrub: 0.3 },
+          },
+        );
         const fill = item.querySelector<HTMLElement>("[data-step-fill]");
         if (!fill) return;
         gsap.fromTo(
@@ -76,8 +90,14 @@ export function ProcessSteps({ steps }: { steps: ProcessStep[] }) {
             <span
               data-step-dot
               aria-hidden="true"
-              className="grid size-[var(--dot)] place-items-center rounded-full border-2 border-line bg-page text-[length:clamp(17px,1.3vw,24px)] text-mute tabular-nums transition-colors duration-400 group-[.is-done]/step:border-accent group-[.is-done]/step:text-ink"
+              className="relative grid size-[var(--dot)] place-items-center rounded-full border-2 border-line bg-page text-[length:clamp(17px,1.3vw,24px)] text-mute tabular-nums transition-colors duration-400 group-[.is-done]/step:text-ink"
             >
+              {/* The accent ring over the grey one, drawn as the line passes through. */}
+              <span
+                data-step-ring
+                className="absolute -inset-[2px] rounded-full border-2 border-accent"
+                style={{ "--arc": "0deg", maskImage: ARC_MASK, WebkitMaskImage: ARC_MASK } as React.CSSProperties}
+              />
               {i + 1}
             </span>
             <div
