@@ -965,11 +965,23 @@ const SAMPLE_GALLERY = [
 });
 
 /**
- * A project's own mockups (public/work/<slug>): a wide image under the name,
- * then squares, two by two.
+ * A project's own mockups (public/work/<slug>): the image under the name
+ * (<file>-0.jpg), then squares, two by two. The first shows 16:9 on wider
+ * screens and square on phones, so a tall photo with its hotspot on the work
+ * keeps the work whole in both.
  */
-const workGallery = (slug: string, file: string, hero: string, squares: string[]) => [
-  { ...img(`/work/${slug}/${file}-hero.jpg`, 2400, 1350, hero), _key: `${file}-hero`, size: "full" as const },
+const workGallery = (
+  slug: string,
+  file: string,
+  hero: { alt: string; width: number; height: number; hotspot: { x: number; y: number } },
+  squares: string[],
+) => [
+  {
+    ...img(`/work/${slug}/${file}-0.jpg`, hero.width, hero.height, hero.alt),
+    hotspot: hero.hotspot,
+    _key: `${file}-hero`,
+    size: "full" as const,
+  },
   ...squares.map((alt, i) => ({
     ...img(`/work/${slug}/${file}-${i + 1}.jpg`, 1200, 1200, alt),
     _key: `${file}-${i + 1}`,
@@ -979,7 +991,11 @@ const workGallery = (slug: string, file: string, hero: string, squares: string[]
 
 /** Projects with their real work; the rest show the shared samples. */
 const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
-  "surgo-health": workGallery("surgo-health", "surgo", "The Surgo Health index explorer with a county map, on a laptop", [
+  "surgo-health": workGallery(
+    "surgo-health",
+    "surgo",
+    { alt: "The Surgo Health index explorer with a county map, on a laptop", width: 2400, height: 2768, hotspot: { x: 0.5, y: 0.44 } },
+    [
     "Saving a map view in the index explorer, on a laptop",
     "Missouri's scores and a state map, on a phone",
     "A county map with general health scores, on a phone",
@@ -988,7 +1004,8 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
     "Advanced filters beside a state map, on a desktop screen",
     "A state map with a Missouri summary, on a laptop",
     "Physical environment scores and local providers, on a desktop screen",
-  ]),
+    ],
+  ),
 };
 
 /** Case-study details from the client case studies; projects not listed show their card image and cover. */

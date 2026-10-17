@@ -245,11 +245,12 @@ const OLD_SUMMARY: Record<string, string> = {
   "project-engel-volkers": "624cd6050552087f",
 };
 /**
- * Gallery files from earlier seeds (1.jpg …, m1.jpg …, then the shared
- * samples sample-hero.jpg, sample-1.jpg …), replaced by a project's current
- * gallery while Studio still holds them.
+ * Gallery files written by seeds (1.jpg …, m1.jpg …, the shared samples
+ * sample-hero.jpg, sample-1.jpg …, and Surgo Health's surgo-hero.jpg,
+ * surgo-1.jpg …), replaced by a project's current gallery while Studio still
+ * holds them.
  */
-const OLD_GALLERY_FILE = /^(m?\d+|sample-(hero|\d+))\.jpg$/;
+const OLD_GALLERY_FILE = /^(m?\d+|sample-(hero|\d+)|surgo-(hero|\d+))\.jpg$/;
 const hash = (value: unknown) => createHash("sha1").update(JSON.stringify(value ?? null)).digest("hex").slice(0, 16);
 
 /** Card images rendered for an earlier version of the page; add mode swaps them for the current ones. */
@@ -376,7 +377,10 @@ async function run() {
       ? { _type: "file", asset: { _type: "reference", _ref: await upload("file", p.coverVideo.url) } }
       : undefined;
     const gallery = [];
-    for (const g of p.gallery) gallery.push({ _key: g._key, ...(await image(g.url, g.alt, { size: g.size })) });
+    for (const g of p.gallery) {
+      const hotspot = g.hotspot ? { hotspot: { _type: "sanity.imageHotspot", ...g.hotspot, width: 1, height: 1 } } : {};
+      gallery.push({ _key: g._key, ...(await image(g.url, g.alt, { size: g.size, ...hotspot })) });
+    }
     put(
       tx,
       {
