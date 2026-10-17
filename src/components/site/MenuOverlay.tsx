@@ -27,8 +27,9 @@ type SubRow = { href: string; title: string; text: string; icon: React.ReactNode
  * that rise in turn, and the search and contact beside them. Wipes down to
  * open and up to close.
  *
- * Work and Services open in place, one at a time: a link to the whole
- * section, then a row for each project or service.
+ * Work and Services open in place: a link to the whole section, then a row
+ * for each project or service. A list grows downward from its name, so
+ * nothing above it moves.
  */
 export function MenuOverlay({
   menu,
@@ -52,7 +53,24 @@ export function MenuOverlay({
   const pathname = usePathname();
   const lastPath = useRef(pathname);
   const id = useId();
-  const [expanded, setExpanded] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<string[]>([]);
+  const nav = useRef<HTMLElement>(null);
+  const list = useRef<HTMLUListElement>(null);
+  // The names sit at the bottom of the menu, so an opening list would push
+  // them up. While any list is open they keep the place they had (as a top
+  // offset) and settle back once every list has closed.
+  const [pin, setPin] = useState<number | null>(null);
+  const unpin = useRef<number | undefined>(undefined);
+
+  const toggle = (href: string) => {
+    window.clearTimeout(unpin.current);
+    const next = expanded.includes(href) ? expanded.filter((h) => h !== href) : [...expanded, href];
+    if (pin === null && nav.current && list.current) {
+      setPin(list.current.getBoundingClientRect().top - nav.current.getBoundingClientRect().top);
+    }
+    if (next.length === 0) unpin.current = window.setTimeout(() => setPin(null), prefersReducedMotion() ? 0 : 550);
+    setExpanded(next);
+  };
 
   const subItems: Record<string, { all: string; rows: SubRow[] }> = {};
   const services = groups.flatMap((g) => g.services);
@@ -126,7 +144,9 @@ export function MenuOverlay({
       ease: "power3.inOut",
       onComplete: () => {
         gsap.set(el, { visibility: "hidden" });
-        setExpanded(null);
+        window.clearTimeout(unpin.current);
+        setExpanded([]);
+        setPin(null);
       },
     });
     return () => {
@@ -184,13 +204,18 @@ export function MenuOverlay({
         </div>
       </div>
 
-      <div className="mt-[clamp(24px,4vh,64px)] grid flex-1 gap-y-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-x-[clamp(40px,5vw,110px)]">
-        <nav aria-label="Menu" className="flex flex-col justify-end">
-          <ul className="border-b border-white/10">
+      <div className="mt-[clamp(24px,4vh,64px)] flex flex-1 flex-col gap-y-12 lg:grid lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-x-[clamp(40px,5vw,110px)]">
+        <nav
+          ref={nav}
+          aria-label="Menu"
+          className="flex flex-1 flex-col justify-end"
+          style={pin === null ? undefined : { justifyContent: "flex-start", paddingTop: pin }}
+        >
+          <ul ref={list} className="border-b border-white/10">
             {menu.map((item, i) => {
               const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
               const sub = subItems[item.href];
-              const isOpen = expanded === item.href;
+              const isOpen = expanded.includes(item.href);
               const panelId = `${id}-${i}`;
               const label = (
                 <>
@@ -222,7 +247,7 @@ export function MenuOverlay({
                         aria-expanded={isOpen}
                         aria-controls={panelId}
                         aria-current={active ? "page" : undefined}
-                        onClick={() => setExpanded(isOpen ? null : item.href)}
+                        onClick={() => toggle(item.href)}
                         className={row}
                       >
                         {label}
@@ -247,7 +272,8 @@ export function MenuOverlay({
           </ul>
         </nav>
 
-        <div className="flex flex-col gap-10 lg:justify-end">
+        {/* Wide screens: stays at the bottom of the screen while a list opens beside it. */}
+        <div className="flex flex-col gap-10 lg:sticky lg:bottom-0 lg:self-end">
           <div data-menu-item className="theme-light relative z-10 text-ink">
             <SiteSearch items={searchItems} />
           </div>
