@@ -1,8 +1,8 @@
 import type { ProcessSection } from "@/lib/types";
 import { GiantHeading } from "@/components/ui/Headings";
-import { Accordion } from "@/components/ui/Accordion";
+import { ProcessSteps } from "./ProcessSteps";
 
-/** “How we work”: a giant title, then the steps as a numbered accordion. */
+/** “How we work”: a giant title, then the steps as a numbered timeline that fills as the page scrolls. */
 export function Process({ section }: { section: ProcessSection }) {
   const steps = section.steps?.filter((s) => s.title) ?? [];
   if (!steps.length) return null;
@@ -15,10 +15,7 @@ export function Process({ section }: { section: ProcessSection }) {
         className="mb-[clamp(40px,calc(3.4vw+27px),100px)]"
       />
       <div className="px-gutter">
-        <Accordion
-          name={`process-${section._key}`}
-          items={steps.map((s, i) => ({ key: s._key ?? String(i), title: s.title, content: s.text }))}
-        />
+        <ProcessSteps steps={steps} />
       </div>
     </div>
   );

@@ -221,6 +221,22 @@
     -webkit-text-fill-color: transparent;
   }
 
+  /* Process timeline (ProcessSteps): a number lights up once scrolled to. */
+  .step-dot {
+    transition:
+      border-color 0.4s ease,
+      color 0.4s ease;
+  }
+  .is-done .step-dot {
+    border-color: var(--color-ink);
+  }
+  .is-done .step-num {
+    background-image: var(--gradient-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
   /*
    * Hover colour (design system): links, menu items and every button label
    * turn into the brand gradient. Only the letters change, so underlines and
