@@ -10,8 +10,9 @@ const LINE = "60%";
 
 /**
  * The steps as a numbered timeline, every step's text showing. While the
- * page scrolls, the line between the numbers fills down to the reading line
- * and each number lights up as it is reached; scrolling back undoes it.
+ * page scrolls, the line between the numbers fills in the accent colour down
+ * to the reading line, and each number's ring turns accent as it is reached;
+ * scrolling back undoes it.
  * With reduced motion the whole line shows as reached.
  */
 export function ProcessSteps({ steps }: { steps: ProcessStep[] }) {
@@ -61,23 +62,23 @@ export function ProcessSteps({ steps }: { steps: ProcessStep[] }) {
           <li
             key={s._key ?? i}
             data-step
-            className="relative grid grid-cols-[var(--dot)_minmax(0,1fr)] gap-x-[clamp(16px,2.2vw,44px)]"
+            className="group/step relative grid grid-cols-[var(--dot)_minmax(0,1fr)] gap-x-[clamp(16px,2.2vw,44px)]"
           >
             {/* The line down to the next number, and its fill. */}
             {!last && (
               <span
                 aria-hidden="true"
-                className="absolute top-[var(--dot)] bottom-0 left-[calc(var(--dot)/2)] w-px -translate-x-1/2 bg-line"
+                className="absolute top-[var(--dot)] bottom-0 left-[calc(var(--dot)/2)] w-[2px] -translate-x-1/2 bg-line"
               >
-                <span data-step-fill className="absolute inset-0 origin-top scale-y-0 bg-ink" />
+                <span data-step-fill className="absolute inset-0 origin-top scale-y-0 bg-accent" />
               </span>
             )}
             <span
               data-step-dot
               aria-hidden="true"
-              className="step-dot grid size-[var(--dot)] place-items-center rounded-full border border-line bg-page text-[length:clamp(13px,1vw,17px)] text-mute tabular-nums"
+              className="grid size-[var(--dot)] place-items-center rounded-full border-2 border-line bg-page text-[length:clamp(17px,1.3vw,24px)] text-mute tabular-nums transition-colors duration-400 group-[.is-done]/step:border-accent group-[.is-done]/step:text-ink"
             >
-              <span className="step-num">{String(i + 1).padStart(2, "0")}</span>
+              {i + 1}
             </span>
             <div
               data-reveal
