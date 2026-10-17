@@ -994,7 +994,7 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
   "surgo-health": workGallery(
     "surgo-health",
     "surgo",
-    { alt: "The Surgo Health index explorer with a county map, on a laptop", width: 2400, height: 2768, hotspot: { x: 0.5, y: 0.44 } },
+    { alt: "A Surgo Health need map with population charts, on a laptop", width: 2400, height: 2770, hotspot: { x: 0.5, y: 0.39 } },
     [
     "Saving a map view in the index explorer, on a laptop",
     "Missouri's scores and a state map, on a phone",

@@ -366,8 +366,10 @@ async function run() {
   }
 
   console.log("Projects");
-  const existingProjects = await client.fetch<{ _id: string; summary: string | null; files: (string | null)[] | null }[]>(
-    `*[_type == "project" && _id in $ids]{ _id, summary, "files": gallery[].asset->originalFilename }`,
+  const existingProjects = await client.fetch<
+    { _id: string; summary: string | null; files: (string | null)[] | null; images: unknown[] | null }[]
+  >(
+    `*[_type == "project" && _id in $ids]{ _id, summary, "files": gallery[].asset->originalFilename, "images": gallery[]{ "ref": asset._ref, "x": hotspot.x, "y": hotspot.y } }`,
     { ids: PROJECTS.map((p) => p._id) },
   );
   for (const p of PROJECTS) {
@@ -417,8 +419,15 @@ async function run() {
     if (OVERWRITE || !existing) continue;
     const set: Record<string, unknown> = {};
     const files = existing.files ?? [];
-    const next = p.gallery.map((g) => path.basename(g.url));
-    if (gallery.length && files.every((f) => f && OLD_GALLERY_FILE.test(f)) && files.join() !== next.join()) set.gallery = gallery;
+    // Same files and focal points (asset ids follow the file's content) mean nothing to do.
+    const images = gallery.map((g, i) => ({
+      ref: g.asset._ref,
+      x: p.gallery[i].hotspot?.x ?? null,
+      y: p.gallery[i].hotspot?.y ?? null,
+    }));
+    if (gallery.length && files.every((f) => f && OLD_GALLERY_FILE.test(f)) && JSON.stringify(existing.images) !== JSON.stringify(images)) {
+      set.gallery = gallery;
+    }
     if (existing.summary !== p.summary && hash(existing.summary) === OLD_SUMMARY[p._id]) set.summary = p.summary;
     if (Object.keys(set).length) {
       console.log(`  updating ${p._id}: ${Object.keys(set).join(", ")}`);
