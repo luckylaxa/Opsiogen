@@ -23,7 +23,7 @@ export function Header({
   searchItems: SearchItem[];
 }) {
   return (
-    <header className="relative z-30 flex h-[var(--header-h)] items-center px-gutter">
+    <header data-site-header className="relative z-30 flex h-[var(--header-h)] items-center px-gutter text-ink">
       <Link href="/" className="link-fade shrink-0" aria-label={`${settings.siteTitle} home`}>
         <Logo logo={settings.logo} name={settings.siteTitle} priority />
       </Link>

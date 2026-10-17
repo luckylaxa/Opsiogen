@@ -94,37 +94,37 @@ export function ServiceSamplePage({ service, settings, work, clients, process, a
 
   return (
     <>
-      {/* 1. Hero banner: line, short intro and buttons beside the picture; the services as a strip */}
-      <section className="on-dark relative overflow-hidden bg-night text-white">
+      {/* 1. Hero banner under a see-through header (data-hero-dark turns the header light on dark):
+             the photo at the top on phones and across the right half from desktop up, then the
+             label, line, short intro and buttons; the services as a strip at the bottom. */}
+      <section data-hero-dark className="on-dark relative -mt-[var(--header-h)] overflow-hidden bg-night text-white">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(55%_70%_at_88%_25%,rgb(106_0_240/0.38),transparent_70%),radial-gradient(45%_60%_at_8%_100%,rgb(10_75_255/0.22),transparent_70%)]"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(45%_60%_at_8%_100%,rgb(106_0_240/0.3),transparent_70%)]"
         />
-        <div className="relative grid items-center gap-x-[clamp(24px,4vw,80px)] gap-y-10 px-gutter pt-[clamp(48px,5vw,104px)] lg:grid-cols-[minmax(0,11fr)_minmax(0,13fr)]">
-          <div>
-            <p className="w-fit rounded-[4px] border border-white/30 px-[0.6em] py-[0.15em] text-base">{service.name}</p>
-            <h1 className="mt-[clamp(20px,1.6vw,32px)] text-[length:clamp(40px,calc(3.3vw+25px),96px)] leading-[1.02] font-semibold tracking-[-0.04em] text-balance">
+        <div className="relative h-[clamp(400px,112vw,640px)] lg:absolute lg:inset-y-0 lg:right-0 lg:h-auto lg:w-[54%]">
+          <Media image={assets.heroPhoto} priority sizes="(min-width: 1024px) 54vw, 100vw" className="object-[50%_40%]" />
+          {/* Shades: under the header, into the text below (phones) or to the left (desktop) */}
+          <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[38%] bg-gradient-to-b from-black/60 to-transparent" />
+          <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[45%] bg-gradient-to-t from-night to-transparent lg:hidden" />
+          <div aria-hidden="true" className="absolute inset-y-0 left-0 hidden w-[55%] bg-gradient-to-r from-night via-night/70 to-transparent lg:block" />
+        </div>
+        <div className="relative -mt-[clamp(48px,12vw,96px)] px-gutter lg:mt-0 lg:flex lg:min-h-[clamp(600px,50vw,860px)] lg:items-center lg:pt-[var(--header-h)]">
+          <div className="lg:max-w-[48%]">
+            <p className="text-small font-medium tracking-[0.16em] text-white/80 uppercase">{service.shortName}</p>
+            <h1 className="mt-[clamp(14px,1.2vw,24px)] text-[length:clamp(40px,calc(3.1vw+26px),92px)] leading-[1.04] font-medium tracking-[-0.035em] text-balance">
               <AccentText text={service.tagline} />
             </h1>
             <p className="mt-[clamp(18px,1.4vw,28px)] max-w-[44ch] text-lead text-white/80 text-pretty">{intro[0]}</p>
-            <div className="mt-[clamp(24px,2vw,40px)] flex flex-wrap gap-3">
-              <ButtonLink href={contact} variant="light">
+            <div className="mt-[clamp(24px,2vw,40px)] grid gap-3 sm:flex sm:flex-wrap">
+              <ButtonLink href={contact} variant="light" size="lg">
                 {settings.headerButton.label}
               </ButtonLink>
-              <ButtonLink href="#work" variant="outline-light">
+              <ButtonLink href="#work" variant="outline-light" size="lg">
                 See our work
               </ButtonLink>
             </div>
           </div>
-          {service.hero?.image && (
-            <Media
-              image={service.hero.image}
-              fill={false}
-              priority
-              sizes="(min-width: 1024px) 55vw, 100vw"
-              className="mx-auto max-w-[900px] drop-shadow-[0_40px_60px_rgb(0_0_0/0.45)]"
-            />
-          )}
         </div>
         {offerings.length > 0 && (
           <nav aria-label={`${service.shortName} services`} className="relative mt-[clamp(32px,3vw,64px)] pb-[clamp(24px,2.4vw,48px)]">

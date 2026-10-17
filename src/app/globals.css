@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* `dark:` styles apply when the visitor picks the dark theme (data-theme on <html>). */
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *, html:has([data-hero-dark]) [data-site-header], html:has([data-hero-dark]) [data-site-header] *));
 
 /*
  * Opsiogen design tokens.
@@ -90,7 +90,9 @@
    * keeps an element light in both themes, e.g. light buttons and fields on
    * dark cards and the menu.
    */
-  [data-theme="dark"] {
+  /* A page that opens on a dark hero (data-hero-dark) gets a light-on-dark header over it, in both themes. */
+  [data-theme="dark"],
+  html:has([data-hero-dark]) [data-site-header] {
     --color-page: #0a090d;
     --color-band: #121115;
     --color-field: #1b1a1e;

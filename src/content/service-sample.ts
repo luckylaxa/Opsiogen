@@ -13,6 +13,8 @@ export type SampleAssets = {
   cards: Img[];
   /** Wider pictures for the cards that span two columns from desktop up, by card index. */
   wide: Record<number, Img>;
+  /** The hero photo: top of the hero on phones, its right half from desktop up. */
+  heroPhoto: Img;
   why: Img;
   banner: Img;
 };
@@ -28,6 +30,7 @@ export const SAMPLE_ASSETS: Record<string, SampleAssets> = {
       img("/services/ai-product-design/card-system.jpg", 1400, 1400, "A design system sheet with colours, type, buttons and inputs"),
       img("/services/ai-product-design/card-handoff.jpg", 1400, 1400, "An app screen with measurements beside its specs"),
     ],
+    heroPhoto: img("/services/ai-product-design/hero-photo.jpg", 1040, 1102, "Hands holding a phone with an activity insights app"),
     wide: {
       0: img("/services/ai-product-design/card-product-wide.jpg", 2400, 1100, "A product dashboard on a laptop and an app on a phone"),
       5: img("/services/ai-product-design/card-handoff-wide.jpg", 2400, 1100, "An app screen with measurements beside its specs"),
