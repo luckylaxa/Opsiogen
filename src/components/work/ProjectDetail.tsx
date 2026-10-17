@@ -152,7 +152,7 @@ export function ProjectDetail({
         </div>
         {hero && (
           <figure className="mx-gutter mt-[clamp(40px,calc(2.88vw+29.2px),92px)] overflow-hidden rounded-card bg-night">
-            <div className="relative aspect-square sm:aspect-video">
+            <div className="relative aspect-video">
               <CoverMedia
                 image={hero}
                 video={project.coverVideo}
