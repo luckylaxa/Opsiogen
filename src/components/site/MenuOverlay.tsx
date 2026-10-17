@@ -56,9 +56,9 @@ export function MenuOverlay({
   const [expanded, setExpanded] = useState<string[]>([]);
   const nav = useRef<HTMLElement>(null);
   const list = useRef<HTMLUListElement>(null);
-  // The names sit at the bottom of the menu, so an opening list would push
-  // them up. While any list is open they keep the place they had (as a top
-  // offset) and settle back once every list has closed.
+  // On wide screens the names sit at the bottom of the menu, so an opening
+  // list would push them up. While any list is open they keep the place they
+  // had (as a top offset) and settle back once every list has closed.
   const [pin, setPin] = useState<number | null>(null);
   const unpin = useRef<number | undefined>(undefined);
 
@@ -204,11 +204,13 @@ export function MenuOverlay({
         </div>
       </div>
 
-      <div className="mt-[clamp(24px,4vh,64px)] flex flex-1 flex-col gap-y-12 lg:grid lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-x-[clamp(40px,5vw,110px)]">
+      {/* Phones and tablets: the names in a list under the logo, then search and contact.
+          Wide screens: giant names at the bottom, search and contact beside them. */}
+      <div className="mt-[clamp(8px,1.5vh,16px)] flex flex-1 flex-col gap-y-10 lg:mt-[clamp(24px,4vh,64px)] lg:grid lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-x-[clamp(40px,5vw,110px)]">
         <nav
           ref={nav}
           aria-label="Menu"
-          className="flex flex-1 flex-col justify-end"
+          className="flex flex-col lg:justify-end"
           style={pin === null ? undefined : { justifyContent: "flex-start", paddingTop: pin }}
         >
           <ul ref={list} className="border-b border-white/10">
@@ -222,14 +224,14 @@ export function MenuOverlay({
                   <span className="w-[2ch] shrink-0 text-small tracking-[0.08em] text-white/45 tabular-nums">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <span data-menu-item className="flex items-center gap-[clamp(10px,1vw,20px)]">
-                    <span className="grad-hover text-[length:clamp(44px,calc(5.2vw+24px),124px)] leading-[0.95] font-semibold tracking-[-0.045em] group-aria-[current=page]:text-white/55">
+                  <span data-menu-item className="flex flex-1 items-center gap-[clamp(10px,1vw,20px)]">
+                    <span className="grad-hover text-[length:clamp(22px,calc(1.6vw+16px),32px)] leading-[1.1] font-medium tracking-[-0.02em] group-aria-[current=page]:text-white/55 lg:text-[length:clamp(44px,calc(5.2vw+24px),124px)] lg:leading-[0.95] lg:font-semibold lg:tracking-[-0.045em]">
                       {item.label}
                     </span>
                     {sub && (
                       <ChevronDown
                         className={cn(
-                          "size-[clamp(24px,calc(1.6vw+18px),52px)] shrink-0 text-white/60 transition-transform duration-500 ease-[var(--ease-out-soft)] motion-reduce:transition-none",
+                          "ml-auto size-5 shrink-0 text-white/60 transition-transform duration-500 ease-[var(--ease-out-soft)] motion-reduce:transition-none lg:ml-0 lg:size-[clamp(24px,calc(1.6vw+18px),52px)]",
                           isOpen && "-rotate-180",
                         )}
                       />
@@ -237,7 +239,8 @@ export function MenuOverlay({
                   </span>
                 </>
               );
-              const row = "group flex w-full items-baseline gap-[clamp(14px,1.4vw,28px)] overflow-hidden py-[clamp(6px,0.8vw,14px)] text-left";
+              const row =
+                "group flex w-full items-baseline gap-[clamp(14px,1.4vw,28px)] overflow-hidden py-[clamp(13px,1.6vw,18px)] text-left lg:py-[clamp(6px,0.8vw,14px)]";
               return (
                 <li key={item._key ?? item.href} className="border-t border-white/10">
                   {sub ? (
