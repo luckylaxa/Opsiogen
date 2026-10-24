@@ -1006,6 +1006,25 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
     "Physical environment scores and local providers, on a desktop screen",
     ],
   ),
+  meetingful: workGallery(
+    "meetingful",
+    "meetingful",
+    { alt: "The Meetingful landing page on a laptop", width: 2400, height: 2400, hotspot: { x: 0.5, y: 0.45 } },
+    [
+      "Signing in to Meetingful, on a laptop",
+      "Today's meetings on a laptop, with a live call on a phone",
+      "The meetings library with recordings, on a laptop",
+      "Scheduling a meeting, on a desktop screen",
+      "A live meeting with notes and actions, on a laptop",
+      "A meeting recap with action items, on a laptop",
+      "Asking questions across every meeting, on a laptop",
+      "The tasks board, on a tablet",
+      "Team meeting insights, on a laptop",
+      "A live call and its recap, on two phones",
+      "A meeting recap, on a phone",
+      "Meetingful's buttons, statuses, meeting card, type and colours",
+    ],
+  ),
 };
 
 /** Case-study details from the client case studies; projects not listed show their card image and cover. */

@@ -246,11 +246,11 @@ const OLD_SUMMARY: Record<string, string> = {
 };
 /**
  * Gallery files written by seeds (1.jpg …, m1.jpg …, the shared samples
- * sample-hero.jpg, sample-1.jpg …, and Surgo Health's surgo-hero.jpg,
- * surgo-1.jpg …), replaced by a project's current gallery while Studio still
- * holds them.
+ * sample-hero.jpg, sample-1.jpg …, and the projects' own surgo-0.jpg,
+ * meetingful-0.jpg …), replaced by a project's current gallery while Studio
+ * still holds them.
  */
-const OLD_GALLERY_FILE = /^(m?\d+|sample-(hero|\d+)|surgo-(hero|\d+))\.jpg$/;
+const OLD_GALLERY_FILE = /^(m?\d+|sample-(hero|\d+)|(surgo|meetingful)-(hero|\d+))\.jpg$/;
 const hash = (value: unknown) => createHash("sha1").update(JSON.stringify(value ?? null)).digest("hex").slice(0, 16);
 
 /** Card images rendered for an earlier version of the page; add mode swaps them for the current ones. */
