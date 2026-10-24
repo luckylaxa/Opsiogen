@@ -975,6 +975,7 @@ const workGallery = (
   file: string,
   hero: { alt: string; width: number; height: number; hotspot: { x: number; y: number } },
   squares: string[],
+  squareSize = 1200,
 ) => [
   {
     ...img(`/work/${slug}/${file}-0.jpg`, hero.width, hero.height, hero.alt),
@@ -983,7 +984,7 @@ const workGallery = (
     size: "full" as const,
   },
   ...squares.map((alt, i) => ({
-    ...img(`/work/${slug}/${file}-${i + 1}.jpg`, 1200, 1200, alt),
+    ...img(`/work/${slug}/${file}-${i + 1}.jpg`, squareSize, squareSize, alt),
     _key: `${file}-${i + 1}`,
     size: "half" as const,
   })),
@@ -1009,12 +1010,12 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
   meetingful: workGallery(
     "meetingful",
     "meetingful",
-    { alt: "The Meetingful landing page on a laptop", width: 2400, height: 2400, hotspot: { x: 0.5, y: 0.45 } },
+    { alt: "The Meetingful landing page on a laptop", width: 2400, height: 2400, hotspot: { x: 0.5, y: 0.5 } },
     [
       "Signing in to Meetingful, on a laptop",
       "Today's meetings on a laptop, with a live call on a phone",
-      "The meetings library with recordings, on a laptop",
-      "Scheduling a meeting, on a desktop screen",
+      "The meetings library with recordings, on a desktop screen",
+      "Scheduling a meeting, on a laptop",
       "A live meeting with notes and actions, on a laptop",
       "A meeting recap with action items, on a laptop",
       "Asking questions across every meeting, on a laptop",
@@ -1022,8 +1023,8 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
       "Team meeting insights, on a laptop",
       "A live call and its recap, on two phones",
       "A meeting recap, on a phone",
-      "Meetingful's buttons, statuses, meeting card, type and colours",
     ],
+    1600,
   ),
 };
 
