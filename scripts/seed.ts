@@ -247,10 +247,10 @@ const OLD_SUMMARY: Record<string, string> = {
 /**
  * Gallery files written by seeds (1.jpg …, m1.jpg …, the shared samples
  * sample-hero.jpg, sample-1.jpg …, and the projects' own surgo-0.jpg,
- * meetingful-0.jpg …), replaced by a project's current gallery while Studio
- * still holds them.
+ * meetingful-0.jpg, omg-0.jpg …), replaced by a project's current gallery
+ * while Studio still holds them.
  */
-const OLD_GALLERY_FILE = /^(m?\d+|sample-(hero|\d+)|(surgo|meetingful)-(hero|\d+))\.jpg$/;
+const OLD_GALLERY_FILE = /^(m?\d+|sample-(hero|\d+)|(surgo|meetingful|omg)-(hero|\d+))\.jpg$/;
 const hash = (value: unknown) => createHash("sha1").update(JSON.stringify(value ?? null)).digest("hex").slice(0, 16);
 
 /** Card images rendered for an earlier version of the page; add mode swaps them for the current ones. */
@@ -367,9 +367,18 @@ async function run() {
 
   console.log("Projects");
   const existingProjects = await client.fetch<
-    { _id: string; summary: string | null; files: (string | null)[] | null; images: unknown[] | null }[]
+    {
+      _id: string;
+      summary: string | null;
+      files: (string | null)[] | null;
+      images: unknown[] | null;
+      coverRef: string | null;
+      coverFile: string | null;
+      cardRef: string | null;
+      cardFile: string | null;
+    }[]
   >(
-    `*[_type == "project" && _id in $ids]{ _id, summary, "files": gallery[].asset->originalFilename, "images": gallery[]{ "ref": asset._ref, "x": hotspot.x, "y": hotspot.y } }`,
+    `*[_type == "project" && _id in $ids]{ _id, summary, "files": gallery[].asset->originalFilename, "images": gallery[]{ "ref": asset._ref, "x": hotspot.x, "y": hotspot.y }, "coverRef": cover.asset._ref, "coverFile": cover.asset->originalFilename, "cardRef": cardImage.asset._ref, "cardFile": cardImage.asset->originalFilename }`,
     { ids: PROJECTS.map((p) => p._id) },
   );
   for (const p of PROJECTS) {
@@ -429,6 +438,11 @@ async function run() {
       set.gallery = gallery;
     }
     if (existing.summary !== p.summary && hash(existing.summary) === OLD_SUMMARY[p._id]) set.summary = p.summary;
+    // A seeded cover or card image whose file has since been replaced (same name, new content).
+    if (existing.coverFile === path.basename(p.cover.url) && existing.coverRef !== cover.asset._ref) set.cover = cover;
+    if (cardImage && existing.cardFile === path.basename(p.cardImage!.url) && existing.cardRef !== cardImage.asset._ref) {
+      set.cardImage = cardImage;
+    }
     if (Object.keys(set).length) {
       console.log(`  updating ${p._id}: ${Object.keys(set).join(", ")}`);
       tx.patch(p._id, (patch) => patch.set(set));

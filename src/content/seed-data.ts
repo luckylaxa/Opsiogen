@@ -1033,6 +1033,29 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
     ],
     1600,
   ),
+  "oh-my-glam": workGallery(
+    "oh-my-glam",
+    "omg",
+    {
+      alt: "Trying on lip gloss live in the Oh My Glam app, with product cards",
+      width: 2400,
+      height: 2400,
+      hotspot: { x: 0.5, y: 0.42 },
+    },
+    [
+      "A lipstick product page with shades seen on you",
+      "Oh My Glam app screens, side by side",
+      "Creator profile, looks and profile screens",
+      "Store panels for shades, AI match and Glam AI",
+      "Onboarding, welcome and home screens",
+      "Trying on a lipstick live with AR tracking",
+      "Three try-on screens for eyes, a full look and blush",
+      "Bag, checkout and order confirmation screens",
+      "Glam AI chat and booking a glam artist",
+      "A face scan that matches shades to skin tone",
+    ],
+    1600,
+  ),
 };
 
 /** Case-study details from the client case studies; projects not listed show their card image and cover. */
