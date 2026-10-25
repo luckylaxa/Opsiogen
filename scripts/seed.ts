@@ -240,9 +240,13 @@ const OLD_SUMMARY: Record<string, string> = {
   "project-care-connect": "4a4f9b2fe4f3c4f2",
   "project-meetingful": "84e0f09a30e0ca6c",
   "project-rxlive": "9086de16afb3fce9",
-  "project-oh-my-glam": "794e711ba0283e71",
+  "project-oh-my-glam": "888b19f9e0aedb58",
   "project-carlton-noble": "666aad01ca2c3bdc",
   "project-engel-volkers": "624cd6050552087f",
+};
+/** Project taglines rewritten since, with a fingerprint of the earlier one; same rule as summaries. */
+const OLD_TAGLINE: Record<string, string> = {
+  "project-oh-my-glam": "85d6354e90c48795",
 };
 /**
  * Gallery files written by seeds (1.jpg …, m1.jpg …, the shared samples
@@ -370,6 +374,7 @@ async function run() {
     {
       _id: string;
       summary: string | null;
+      tagline: string | null;
       files: (string | null)[] | null;
       images: unknown[] | null;
       coverRef: string | null;
@@ -378,7 +383,7 @@ async function run() {
       cardFile: string | null;
     }[]
   >(
-    `*[_type == "project" && _id in $ids]{ _id, summary, "files": gallery[].asset->originalFilename, "images": gallery[]{ "ref": asset._ref, "x": hotspot.x, "y": hotspot.y }, "coverRef": cover.asset._ref, "coverFile": cover.asset->originalFilename, "cardRef": cardImage.asset._ref, "cardFile": cardImage.asset->originalFilename }`,
+    `*[_type == "project" && _id in $ids]{ _id, summary, tagline, "files": gallery[].asset->originalFilename, "images": gallery[]{ "ref": asset._ref, "x": hotspot.x, "y": hotspot.y }, "coverRef": cover.asset._ref, "coverFile": cover.asset->originalFilename, "cardRef": cardImage.asset._ref, "cardFile": cardImage.asset->originalFilename }`,
     { ids: PROJECTS.map((p) => p._id) },
   );
   for (const p of PROJECTS) {
@@ -438,6 +443,7 @@ async function run() {
       set.gallery = gallery;
     }
     if (existing.summary !== p.summary && hash(existing.summary) === OLD_SUMMARY[p._id]) set.summary = p.summary;
+    if (p.tagline && existing.tagline !== p.tagline && hash(existing.tagline) === OLD_TAGLINE[p._id]) set.tagline = p.tagline;
     // A seeded cover or card image whose file has since been replaced (same name, new content).
     if (existing.coverFile === path.basename(p.cover.url) && existing.coverRef !== cover.asset._ref) set.cover = cover;
     if (cardImage && existing.cardFile === path.basename(p.cardImage!.url) && existing.cardRef !== cardImage.asset._ref) {

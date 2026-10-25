@@ -1103,7 +1103,7 @@ const CASE_DETAILS: Record<string, CaseDetails> = {
     ],
   },
   "oh-my-glam": {
-    tagline: "Beauty services, booked in a few taps.",
+    tagline: "Make-up, tried on before you buy.",
     location: "China",
     year: "2017",
     stats: [
@@ -1265,7 +1265,7 @@ const CASE_STUDIES: ProjectInput[] = [
     industry: "Beauty",
     services: ["ai-product-design"],
     summary:
-      "Oh My Glam helps people discover, book and manage beauty appointments. We designed the mobile app, from browsing services and products to booking and checkout.",
+      "Oh My Glam lets shoppers try make-up on live before they buy. We designed the mobile app: AR try-on for lips, eyes and face, AI shade matching from a face scan, Glam AI for looks and artist bookings, and checkout.",
   },
   {
     name: "Carlton Noble",
