@@ -22,6 +22,8 @@ type Props = {
   footLeft?: React.ReactNode;
   footRight?: React.ReactNode;
   imageSizes?: string;
+  /** The image is the page's main one: it loads at once, ahead of the rest. */
+  priority?: boolean;
   /** Cursor over the card: the View disc for work, the ring for everything else. */
   cursor?: "view" | "link";
   className?: string;
@@ -48,6 +50,7 @@ export function BigCard({
   footLeft,
   footRight,
   imageSizes = "(min-width: 1024px) 50vw, 100vw",
+  priority,
   cursor = "link",
   className,
 }: Props) {
@@ -58,6 +61,7 @@ export function BigCard({
           <Media
             image={image}
             sizes={imageSizes}
+            priority={priority}
             className="transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-[1.04]"
           />
           {/* Shade so the badge and the text stay readable on any image. */}

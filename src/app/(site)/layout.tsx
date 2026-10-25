@@ -57,8 +57,6 @@ export default async function SiteLayout({ children, modal }: LayoutProps<"/">) 
     // The head scripts change <html> before React hydrates, hence suppressHydrationWarning.
     <html lang="en" data-theme={DEFAULT_THEME} className={outfit.variable} suppressHydrationWarning>
       <head>
-        {/* Lets CSS hide media that fades in on scroll, only when JS runs. */}
-        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
         {/* Applies the theme (dark unless the visitor chose light) before the first paint. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         {/* Decides whether the first-visit preloader shows. */}

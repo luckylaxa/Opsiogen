@@ -10,7 +10,7 @@ export function Mark({ className, priority }: { className?: string; priority?: b
       alt=""
       aria-hidden="true"
       sizes="96px"
-      priority={priority}
+      loading={priority ? "eager" : undefined}
       className={cn("shrink-0 select-none", className)}
       draggable={false}
     />

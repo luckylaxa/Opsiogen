@@ -131,6 +131,8 @@ export function ProjectDetail({
         : null,
     ] as (Fact | null)[]
   ).filter((f): f is Fact => Boolean(f));
+  // Section headings sit one level under the project's title (h1 on the page, h2 in the pop-up).
+  const Section = inModal ? "h3" : "h2";
 
   return (
     <article>
@@ -197,7 +199,7 @@ export function ProjectDetail({
              16:9 from tablets up. */}
       {rest.length > 0 && (
         <section className="mt-section">
-          <h3 className="sr-only">More from {project.name}</h3>
+          <Section className="sr-only">More from {project.name}</Section>
           <ul className="grid grid-cols-2 gap-gap px-gutter">
             {rest.map((img) => (
               <li key={img._key} data-reveal className={img.size === "half" ? "col-span-2 md:col-span-1" : "col-span-2"}>
@@ -223,11 +225,11 @@ export function ProjectDetail({
       {/* 5. Next projects */}
       {more.length > 0 && (
         <section className="mt-section px-gutter">
-          <h3 className="mb-[clamp(24px,calc(1.7vw+17.6px),50px)] text-h2 font-medium">Next projects</h3>
+          <Section className="mb-[clamp(24px,calc(1.7vw+17.6px),50px)] text-h2 font-medium">Next projects</Section>
           <ul className="@container grid grid-cols-1 gap-gap lg:grid-cols-2">
             {more.map((p) => (
               <li key={p._id}>
-                <ProjectBigCard project={p} titleAs="h4" replace={inModal} />
+                <ProjectBigCard project={p} titleAs={inModal ? "h4" : "h3"} replace={inModal} />
               </li>
             ))}
           </ul>

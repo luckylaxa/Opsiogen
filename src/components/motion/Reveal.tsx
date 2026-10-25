@@ -11,21 +11,24 @@ const TARGETS = "[data-reveal], [data-reveal-mask]";
  * revealed and staggers each batch by 70ms; the motion itself is CSS
  * (globals.css), so it costs nothing per frame.
  *
+ * Nothing is hidden until this runs: the server's HTML paints in full, then
+ * what is already on the first screen stays put and only what is further
+ * down waits to fade in. So the page's main image never waits for scripts.
+ *
  * Uses IntersectionObserver, so it needs no stored scroll positions and keeps
  * working across in-site page changes, Load more, filters and late-loading
  * images. A MutationObserver picks up elements as they are added.
  */
 export function Reveal() {
   useEffect(() => {
-    const reveal = (el: HTMLElement) => el.setAttribute("data-revealed", "");
+    // With reduced motion (or no IntersectionObserver) nothing is ever hidden.
+    if (prefersReducedMotion() || typeof IntersectionObserver === "undefined") return;
 
-    if (prefersReducedMotion() || typeof IntersectionObserver === "undefined") {
-      const showAll = () => document.querySelectorAll<HTMLElement>(TARGETS).forEach(reveal);
-      showAll();
-      const mo = new MutationObserver(showAll);
-      mo.observe(document.body, { childList: true, subtree: true });
-      return () => mo.disconnect();
-    }
+    const reveal = (el: HTMLElement) => el.setAttribute("data-revealed", "");
+    document.querySelectorAll<HTMLElement>(TARGETS).forEach((el) => {
+      if (el.getBoundingClientRect().top < window.innerHeight) reveal(el);
+    });
+    document.documentElement.classList.add("reveal-on");
 
     const io = new IntersectionObserver(
       (entries) => {

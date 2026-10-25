@@ -108,6 +108,7 @@ async function ServicesDirectory({ section }: { section: ServicesListSection }) 
 async function ServicesGroups({ section }: { section: ServicesListSection }) {
   const { services, workFor } = await loadServices();
   const titleLevel = section.heading ? "h3" : "h2";
+  const first = GROUPS.find((g) => services.some((s) => s.group === g));
   return (
     <div data-dock="/services">
       <ListHeading section={section} />
@@ -123,7 +124,7 @@ async function ServicesGroups({ section }: { section: ServicesListSection }) {
                   {GROUP_LABELS[group]}
                 </Heading>
               </div>
-              <ServiceCards services={items} workFor={workFor} />
+              <ServiceCards services={items} workFor={workFor} lead={group === first} />
             </section>
           );
         })}
@@ -150,20 +151,25 @@ function pickCovers(services: Service[], workFor: (slug: string) => ProjectCard[
   return picked;
 }
 
-/** Every service as a big dark card, two per row from desktop up. */
+/**
+ * Every service as a big dark card, two per row from desktop up. As the
+ * `lead` of a page, the first row's images load first.
+ */
 function ServiceCards({
   services,
   workFor,
   titleAs = "h3",
+  lead = false,
 }: {
   services: Service[];
   workFor: (slug: string) => ProjectCard[];
   titleAs?: "h2" | "h3";
+  lead?: boolean;
 }) {
   const covers = pickCovers(services, workFor);
   return (
     <ul className="@container grid grid-cols-1 gap-gap px-gutter lg:grid-cols-2">
-      {services.map((s) => {
+      {services.map((s, i) => {
         const work = workFor(s.slug);
         return (
           <li key={s.slug}>
@@ -171,6 +177,7 @@ function ServiceCards({
               href={`/services/${s.slug}`}
               badge={initials(s.shortName)}
               image={s.hero?.image ?? covers.get(s.slug)?.cover}
+              priority={lead && i < 2}
               label={GROUP_LABELS[s.group]}
               title={s.name}
               titleAs={titleAs}

@@ -35,7 +35,7 @@ export function Logo({
         alt={logo.alt || name}
         width={width}
         height={height}
-        priority={priority}
+        loading={priority ? "eager" : undefined}
         unoptimized={logo.url.endsWith(".svg")}
         className={cn(SIZE, className)}
       />
@@ -45,14 +45,14 @@ export function Logo({
   return (
     <span className={cn("flex", className)}>
       {tone === "auto" && (
-        <Image src={onLight} alt="" aria-hidden="true" sizes={sizes} priority={priority} className={cn(SIZE, "dark:hidden")} />
+        <Image src={onLight} alt="" aria-hidden="true" sizes={sizes} className={cn(SIZE, "dark:hidden")} />
       )}
       <Image
         src={onDark}
         alt=""
         aria-hidden="true"
         sizes={sizes}
-        priority={priority}
+        loading={priority ? "eager" : undefined}
         className={cn(SIZE, tone === "auto" && "hidden dark:block")}
       />
       <span className="sr-only">{name}</span>
