@@ -10,8 +10,9 @@ const WIPE = 900;
 /**
  * The design system's first-load preloader: the pulsing symbol inside an
  * orbiting hairline arc, a big gradient counter and a progress line, then the
- * whole panel wipes up. It shows once per visit; repeat page loads and
- * visitors who prefer reduced motion never see it (see PRELOADER_SCRIPT).
+ * whole panel wipes up. It shows once, when a visit starts on the home page;
+ * other pages, repeat page loads and visitors who prefer reduced motion never
+ * see it (see PRELOADER_SCRIPT).
  * The panel is in the server HTML, so it covers the page from the first paint.
  */
 export function Preloader() {
@@ -54,7 +55,7 @@ export function Preloader() {
     <div className="preloader on-dark" data-done={done || undefined} role="status" aria-label="Loading">
       <div className="preloader__mark">
         <span aria-hidden="true" className="preloader__arc" />
-        <Mark priority className="preloader__symbol size-full" />
+        <Mark className="preloader__symbol size-full" />
       </div>
       <p aria-hidden="true" className="preloader__name">
         Opsiogen

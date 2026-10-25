@@ -16,8 +16,9 @@ export const THEME_SCRIPT = `try{document.documentElement.dataset.theme=localSto
 export const PRELOADER_KEY = "op-preloaded";
 
 /**
- * Runs in <head> before the first paint. The preloader shows once per visit;
- * repeat page loads and visitors who prefer reduced motion skip it, and while
- * it shows the hero's own entrance waits (the `preloading` class).
+ * Runs in <head> before the first paint. The preloader shows only when a
+ * visit starts on the home page; a visit that starts on any other page marks
+ * it as seen, so later page loads, and visitors who prefer reduced motion,
+ * skip it. While it shows, the hero's own entrance waits (the `preloading` class).
  */
-export const PRELOADER_SCRIPT = `try{var d=document.documentElement;if(sessionStorage.getItem("${PRELOADER_KEY}")||matchMedia("(prefers-reduced-motion: reduce)").matches)d.classList.add("no-preloader");else d.classList.add("preloading")}catch(e){document.documentElement.classList.add("no-preloader")}`;
+export const PRELOADER_SCRIPT = `try{var d=document.documentElement,s=sessionStorage;if(s.getItem("${PRELOADER_KEY}")||location.pathname!=="/"||matchMedia("(prefers-reduced-motion: reduce)").matches){d.classList.add("no-preloader");s.setItem("${PRELOADER_KEY}","1")}else d.classList.add("preloading")}catch(e){document.documentElement.classList.add("no-preloader")}`;
