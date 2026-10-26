@@ -79,7 +79,8 @@ export type ProjectCard = {
   summary?: string | null;
 };
 
-export type GalleryItem = Img & { _key: string; size: "full" | "half"; caption?: string | null };
+/** `original`: full width at the image's own proportions, never cropped. */
+export type GalleryItem = Img & { _key: string; size: "full" | "half" | "original"; caption?: string | null };
 
 export type ProjectStat = { _key?: string; value: string; label: string };
 

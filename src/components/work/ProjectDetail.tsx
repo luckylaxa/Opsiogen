@@ -154,7 +154,10 @@ export function ProjectDetail({
         </div>
         {hero && (
           <figure className="mx-gutter mt-[clamp(40px,calc(2.88vw+29.2px),92px)] overflow-hidden rounded-card bg-night">
-            <div className="relative aspect-square sm:aspect-video">
+            <div
+              className={cn("relative", hero.size !== "original" && "aspect-square sm:aspect-video")}
+              style={hero.size === "original" ? { aspectRatio: `${hero.width} / ${hero.height}` } : undefined}
+            >
               <CoverMedia
                 image={hero}
                 video={project.coverVideo}
@@ -196,7 +199,7 @@ export function ProjectDetail({
       {/* 4. The rest of the work, as big image cards with the same margins and
              gaps as the site's other cards: squares, one per row on phones and
              two per row from tablets up; a Full width image spans the row at
-             16:9 from tablets up. */}
+             16:9 from tablets up, and an uncropped one at its own proportions. */}
       {rest.length > 0 && (
         <section className="mt-section">
           <Section className="sr-only">More from {project.name}</Section>
@@ -205,9 +208,11 @@ export function ProjectDetail({
               <li key={img._key} data-reveal className={img.size === "half" ? "col-span-2 md:col-span-1" : "col-span-2"}>
                 <figure
                   className={cn(
-                    "relative aspect-square overflow-hidden rounded-card bg-night",
-                    img.size !== "half" && "md:aspect-video",
+                    "relative overflow-hidden rounded-card bg-night",
+                    img.size === "half" && "aspect-square",
+                    img.size === "full" && "aspect-square md:aspect-video",
                   )}
+                  style={img.size === "original" ? { aspectRatio: `${img.width} / ${img.height}` } : undefined}
                 >
                   <Media image={img} sizes={img.size === "half" ? "(min-width: 768px) 50vw, 100vw" : "100vw"} />
                   {img.caption && (

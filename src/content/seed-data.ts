@@ -973,12 +973,13 @@ const SAMPLE_GALLERY = [
  * A project's own mockups (public/work/<slug>): the image under the name
  * (<file>-0.jpg), then squares, two by two. The first shows 16:9 on wider
  * screens and square on phones, so a tall photo with its hotspot on the work
- * keeps the work whole in both.
+ * keeps the work whole in both; with size `original` it shows whole, at its
+ * own proportions.
  */
 const workGallery = (
   slug: string,
   file: string,
-  hero: { alt: string; width: number; height: number; hotspot: { x: number; y: number } },
+  hero: { alt: string; width: number; height: number; hotspot: { x: number; y: number }; size?: "full" | "original" },
   squares: string[],
   squareSize = 1200,
 ) => [
@@ -986,7 +987,7 @@ const workGallery = (
     ...img(`/work/${slug}/${file}-0.jpg`, hero.width, hero.height, hero.alt),
     hotspot: hero.hotspot,
     _key: `${file}-hero`,
-    size: "full" as const,
+    size: hero.size ?? ("full" as const),
   },
   ...squares.map((alt, i) => ({
     ...img(`/work/${slug}/${file}-${i + 1}.jpg`, squareSize, squareSize, alt),
@@ -1003,8 +1004,10 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
     {
       alt: "The Surgo Health home page for its Population Health Index",
       width: 2400,
-      height: 2400,
+      height: 1877,
       hotspot: { x: 0.5, y: 0.5 },
+      // The whole Figma frame on every screen, so the site design fills the width on phones.
+      size: "original",
     },
     [
       "The index explorer: every US county ranked on social drivers of health",
