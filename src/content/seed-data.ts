@@ -909,6 +909,11 @@ type CaseDetails = {
 };
 
 /** A case study with its generated title-card cover (public/covers) and card mockup (public/cards). */
+/** Card images that show the real work rather than the case study on a laptop and a phone. */
+const CARD_ALTS: Record<string, string> = {
+  "surgo-health": "The Surgo Health home page for its Population Health Index",
+};
+
 function makeProject(order: number, p: ProjectInput): Project {
   const services = p.services.map(ref);
   const d = CASE_DETAILS[p.slug];
@@ -926,7 +931,7 @@ function makeProject(order: number, p: ProjectInput): Project {
       height: 1200,
       alt: `${p.name}: ${services.map((s) => s.name).join(", ")}`,
     },
-    cardImage: img(`/cards/${p.slug}.jpg`, 1600, 1200, `The ${p.name} case study on a laptop and a phone`),
+    cardImage: img(`/cards/${p.slug}.jpg`, 1600, 1200, CARD_ALTS[p.slug] ?? `The ${p.name} case study on a laptop and a phone`),
     coverVideo: null,
     order,
     summary: p.summary,
@@ -996,16 +1001,17 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
     "surgo-health",
     "surgo",
     {
-      alt: "The Surgo Health index overview over an aerial view of a town",
+      alt: "The Surgo Health home page for its Population Health Index",
       width: 2400,
       height: 2400,
-      hotspot: { x: 0.5, y: 0.52 },
+      hotspot: { x: 0.5, y: 0.5 },
     },
     [
-      "Signing in to Surgo Health, over a county map",
-      "Social vulnerability by county, with a county summary",
-      "A county's vulnerability score and what drives it",
-      "Two indices compared with a swipe across the map",
+      "The index explorer: every US county ranked on social drivers of health",
+      "Secure sign-in for care teams, payers and public agencies",
+      "The county explorer, with ten years of data and a county summary",
+      "A county profile: its score, what drives it and a projected impact",
+      "Two indices side by side on one map",
       "Ten years of vulnerability for a county, its state and the US",
       "Asking the index assistant about maternal health risk",
       "Building a regional brief to export",
