@@ -376,7 +376,7 @@ async function run() {
       summary: string | null;
       tagline: string | null;
       files: (string | null)[] | null;
-      images: unknown[] | null;
+      images: { ref: string | null; x: number | null; y: number | null; phone?: string | null }[] | null;
       coverRef: string | null;
       coverFile: string | null;
       cardRef: string | null;
@@ -436,14 +436,25 @@ async function run() {
     if (OVERWRITE || !existing) continue;
     const set: Record<string, unknown> = {};
     const files = existing.files ?? [];
-    // Same files and focal points (asset ids follow the file's content) mean nothing to do.
+    // Same files, focal points and phone versions (asset ids follow the file's
+    // content) mean nothing to do. Compared as tuples: the API may return keys in any order.
+    const tuple = (i: { ref: string | null; x: number | null; y: number | null; phone?: string | null }) => [
+      i.ref,
+      i.x ?? null,
+      i.y ?? null,
+      i.phone ?? null,
+    ];
     const images = gallery.map((g, i) => ({
       ref: g.asset._ref,
       x: p.gallery[i].hotspot?.x ?? null,
       y: p.gallery[i].hotspot?.y ?? null,
       phone: (g as { phone?: { asset: { _ref: string } } }).phone?.asset._ref ?? null,
     }));
-    if (gallery.length && files.every((f) => f && OLD_GALLERY_FILE.test(f)) && JSON.stringify(existing.images) !== JSON.stringify(images)) {
+    if (
+      gallery.length &&
+      files.every((f) => f && OLD_GALLERY_FILE.test(f)) &&
+      JSON.stringify((existing.images ?? []).map(tuple)) !== JSON.stringify(images.map(tuple))
+    ) {
       set.gallery = gallery;
     }
     if (existing.summary !== p.summary && hash(existing.summary) === OLD_SUMMARY[p._id]) set.summary = p.summary;
