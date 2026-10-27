@@ -1030,7 +1030,7 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
     {
       alt: "The Care Connect home page: admissions, decided in minutes",
       width: 2400,
-      height: 1800,
+      height: 1529,
       hotspot: { x: 0.5, y: 0.5 },
       size: "original",
     },
