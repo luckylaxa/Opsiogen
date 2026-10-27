@@ -911,13 +911,13 @@ type CaseDetails = {
 /** A case study with its generated title-card cover (public/covers) and card mockup (public/cards). */
 /**
  * Designed card images: the real home page on a laptop, 2016 × 1600, the
- * card's own 1.26:1 shape with the laptop kept in the middle for phones.
+ * card's own 1.26:1 shape, with the work kept near the middle for phones.
  */
 const DESIGNED_CARDS: Record<string, string> = {
   "surgo-health": "The Surgo Health Population Health Index home page on a laptop",
   "care-connect": "The Care Connect home page on a laptop",
   rxlive: "The RxLive home page on a laptop",
-  meetingful: "The Meetingful home page on a laptop",
+  meetingful: "The Meetingful home page on a laptop, with a live call on a phone",
 };
 
 function makeProject(order: number, p: ProjectInput): Project {
