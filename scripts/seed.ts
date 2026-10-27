@@ -383,7 +383,7 @@ async function run() {
       cardFile: string | null;
     }[]
   >(
-    `*[_type == "project" && _id in $ids]{ _id, summary, tagline, "files": gallery[].asset->originalFilename, "images": gallery[]{ "ref": asset._ref, "x": hotspot.x, "y": hotspot.y }, "coverRef": cover.asset._ref, "coverFile": cover.asset->originalFilename, "cardRef": cardImage.asset._ref, "cardFile": cardImage.asset->originalFilename }`,
+    `*[_type == "project" && _id in $ids]{ _id, summary, tagline, "files": gallery[].asset->originalFilename, "images": gallery[]{ "ref": asset._ref, "x": hotspot.x, "y": hotspot.y, "phone": phone.asset._ref }, "coverRef": cover.asset._ref, "coverFile": cover.asset->originalFilename, "cardRef": cardImage.asset._ref, "cardFile": cardImage.asset->originalFilename }`,
     { ids: PROJECTS.map((p) => p._id) },
   );
   for (const p of PROJECTS) {
@@ -395,7 +395,10 @@ async function run() {
     const gallery = [];
     for (const g of p.gallery) {
       const hotspot = g.hotspot ? { hotspot: { _type: "sanity.imageHotspot", ...g.hotspot, width: 1, height: 1 } } : {};
-      gallery.push({ _key: g._key, ...(await image(g.url, g.alt, { size: g.size, ...hotspot })) });
+      const phone = g.phone?.url
+        ? { phone: { _type: "image", asset: { _type: "reference", _ref: await upload("image", g.phone.url) } } }
+        : {};
+      gallery.push({ _key: g._key, ...(await image(g.url, g.alt, { size: g.size, ...hotspot, ...phone })) });
     }
     put(
       tx,
@@ -438,6 +441,7 @@ async function run() {
       ref: g.asset._ref,
       x: p.gallery[i].hotspot?.x ?? null,
       y: p.gallery[i].hotspot?.y ?? null,
+      phone: (g as { phone?: { asset: { _ref: string } } }).phone?.asset._ref ?? null,
     }));
     if (gallery.length && files.every((f) => f && OLD_GALLERY_FILE.test(f)) && JSON.stringify(existing.images) !== JSON.stringify(images)) {
       set.gallery = gallery;

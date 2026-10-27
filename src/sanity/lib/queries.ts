@@ -103,7 +103,13 @@ export const PROJECT_QUERY = defineQuery(`*[_type == "project" && slug.current =
     "lqip": asset->metadata.lqip,
     alt,
     caption,
-    "hotspot": hotspot{x, y}
+    "hotspot": hotspot{x, y},
+    "phone": phone{
+      "url": asset->url,
+      "width": asset->metadata.dimensions.width,
+      "height": asset->metadata.dimensions.height,
+      "lqip": asset->metadata.lqip
+    }
   },
   ${SEO}
 }`);

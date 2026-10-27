@@ -980,7 +980,15 @@ const SAMPLE_GALLERY = [
 const workGallery = (
   slug: string,
   file: string,
-  hero: { alt: string; width: number; height: number; hotspot: { x: number; y: number }; size?: "full" | "original" },
+  hero: {
+    alt: string;
+    width: number;
+    height: number;
+    hotspot: { x: number; y: number };
+    size?: "full" | "original";
+    /** A square <file>-0-phone.jpg (2400) shown on phones instead. */
+    phone?: boolean;
+  },
   squares: string[],
   squareSize = 1200,
 ) => [
@@ -989,6 +997,7 @@ const workGallery = (
     hotspot: hero.hotspot,
     _key: `${file}-hero`,
     size: hero.size ?? ("full" as const),
+    phone: hero.phone ? { url: `/work/${slug}/${file}-0-phone.jpg`, width: 2400, height: 2400 } : null,
   },
   ...squares.map((alt, i) => ({
     ...img(`/work/${slug}/${file}-${i + 1}.jpg`, squareSize, squareSize, alt),
@@ -1007,8 +1016,9 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
       width: 2400,
       height: 1877,
       hotspot: { x: 0.5, y: 0.5 },
-      // The whole Figma frame on every screen, so the site design fills the width on phones.
+      // The whole Figma frame wider up, and a square version of it on phones.
       size: "original",
+      phone: true,
     },
     [
       "The index explorer: every US county ranked on social drivers of health",
@@ -1033,6 +1043,7 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
       height: 1529,
       hotspot: { x: 0.5, y: 0.5 },
       size: "original",
+      phone: true,
     },
     [
       "Secure sign-in with single sign-on and passkeys",

@@ -16,12 +16,15 @@ export function CoverMedia({
   video,
   sizes,
   priority,
+  phone,
   className,
 }: {
   image: Img;
   video?: Video | null;
   sizes: string;
   priority?: boolean;
+  /** A version of the image for phones (see Media). */
+  phone?: Omit<Img, "alt" | "hotspot"> | null;
   className?: string;
 }) {
   const ref = useRef<HTMLVideoElement>(null);
@@ -48,7 +51,7 @@ export function CoverMedia({
 
   return (
     <div className={cn("absolute inset-0", className)}>
-      <Media image={image} sizes={sizes} priority={priority} />
+      <Media image={image} sizes={sizes} priority={priority} phone={phone} />
       {video && (
         <video
           ref={ref}

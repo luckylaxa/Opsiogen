@@ -398,6 +398,12 @@ export const project = defineType({
               },
               initialValue: "full",
             }),
+            defineField({
+              name: "phone",
+              title: "On phones",
+              type: "image",
+              description: "Optional, for the first image: a square version shown on phones instead.",
+            }),
           ],
         }),
       ],

@@ -79,8 +79,16 @@ export type ProjectCard = {
   summary?: string | null;
 };
 
-/** `original`: full width at the image's own proportions, never cropped. */
-export type GalleryItem = Img & { _key: string; size: "full" | "half" | "original"; caption?: string | null };
+/**
+ * `original`: full width at the image's own proportions, never cropped.
+ * `phone`: a version shown instead on phones (used for the first image).
+ */
+export type GalleryItem = Img & {
+  _key: string;
+  size: "full" | "half" | "original";
+  caption?: string | null;
+  phone?: Omit<Img, "alt" | "hotspot"> | null;
+};
 
 export type ProjectStat = { _key?: string; value: string; label: string };
 

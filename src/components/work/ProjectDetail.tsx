@@ -154,12 +154,21 @@ export function ProjectDetail({
         </div>
         {hero && (
           <figure className="mx-gutter mt-[clamp(40px,calc(2.88vw+29.2px),92px)] overflow-hidden rounded-card bg-night">
+            {/* Square on phones and 16:9 wider up; uncropped, the image's own shape (or its phone version on phones). */}
             <div
-              className={cn("relative", hero.size !== "original" && "aspect-square sm:aspect-video")}
-              style={hero.size === "original" ? { aspectRatio: `${hero.width} / ${hero.height}` } : undefined}
+              className={cn(
+                "relative",
+                hero.size !== "original"
+                  ? "aspect-square sm:aspect-video"
+                  : hero.phone?.url
+                    ? "aspect-square sm:aspect-[var(--ratio)]"
+                    : "aspect-[var(--ratio)]",
+              )}
+              style={hero.size === "original" ? ({ "--ratio": `${hero.width} / ${hero.height}` } as React.CSSProperties) : undefined}
             >
               <CoverMedia
                 image={hero}
+                phone={hero.phone}
                 video={project.coverVideo}
                 priority
                 sizes="(min-width: 1440px) 1440px, 100vw"
