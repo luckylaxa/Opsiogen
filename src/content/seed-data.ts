@@ -914,6 +914,7 @@ const CARD_ALTS: Record<string, string> = {
   "surgo-health": "The Surgo Health home page for its Population Health Index",
   "care-connect": "The Care Connect home page: admissions, decided in minutes",
   rxlive: "The RxLive home page: medication care that keeps patients home",
+  meetingful: "The Meetingful home page: clear agendas, live notes and outcomes that last",
 };
 
 function makeProject(order: number, p: ProjectInput): Project {
@@ -973,8 +974,7 @@ const SAMPLE_GALLERY = [
 
 /**
  * A project's own mockups (public/work/<slug>): the image under the name
- * (<file>-0.jpg), then tiles, two by two: squares unless a tile size is
- * given. The first shows 16:9 on wider
+ * (<file>-0.jpg), then squares, two by two. The first shows 16:9 on wider
  * screens and square on phones, so a tall photo with its hotspot on the work
  * keeps the work whole in both; with size `original` it shows whole, at its
  * own proportions.
@@ -991,8 +991,8 @@ const workGallery = (
     /** A square <file>-0-phone.jpg (2400) shown on phones instead. */
     phone?: boolean;
   },
-  tiles: string[],
-  tileSize: number | { width: number; height: number } = 1200,
+  squares: string[],
+  squareSize = 1200,
 ) => [
   {
     ...img(`/work/${slug}/${file}-0.jpg`, hero.width, hero.height, hero.alt),
@@ -1001,13 +1001,8 @@ const workGallery = (
     size: hero.size ?? ("full" as const),
     phone: hero.phone ? { url: `/work/${slug}/${file}-0-phone.jpg`, width: 2400, height: 2400 } : null,
   },
-  ...tiles.map((alt, i) => ({
-    ...img(
-      `/work/${slug}/${file}-${i + 1}.jpg`,
-      typeof tileSize === "number" ? tileSize : tileSize.width,
-      typeof tileSize === "number" ? tileSize : tileSize.height,
-      alt,
-    ),
+  ...squares.map((alt, i) => ({
+    ...img(`/work/${slug}/${file}-${i + 1}.jpg`, squareSize, squareSize, alt),
     _key: `${file}-${i + 1}`,
     size: "half" as const,
   })),
@@ -1089,24 +1084,30 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
       "Labs and vitals over time, with what changed since the last review",
       "Outcomes: adherence by drug class, admissions and payer partners",
     ],
-    { width: 2400, height: 1560 },
+    1600,
   ),
   meetingful: workGallery(
     "meetingful",
     "meetingful",
-    { alt: "The Meetingful landing page on a laptop", width: 2400, height: 2400, hotspot: { x: 0.5, y: 0.5 } },
+    {
+      alt: "The Meetingful home page: clear agendas, live notes and outcomes that last",
+      width: 2400,
+      height: 1529,
+      hotspot: { x: 0.5, y: 0.5 },
+      size: "original",
+      phone: true,
+    },
     [
-      "Signing in to Meetingful, on a laptop",
-      "Today's meetings on a laptop, with a live call on a phone",
-      "The meetings library with recordings, on a desktop screen",
-      "Scheduling a meeting, on a laptop",
-      "A live meeting with notes and actions, on a laptop",
-      "A meeting recap with action items, on a laptop",
-      "Asking questions across every meeting, on a laptop",
-      "The tasks board, on a tablet",
-      "Team meeting insights, on a laptop",
-      "A live call and its recap, on two phones",
-      "A meeting recap, on a phone",
+      "Secure sign-in to Meetingful with single sign-on",
+      "Today's meetings with their agendas, team and AI prep",
+      "The meeting library: recordings with decisions, actions and owners",
+      "Smart scheduling that finds a slot that works for everyone",
+      "A live meeting with captions, AI notes and one-tap actions",
+      "A meeting summary with highlights, decisions and action items",
+      "Asking questions across every meeting, with sources",
+      "Action items from every meeting on one board, each with an owner",
+      "Team insights: meeting time tied to outcomes, with a health score",
+      "Joining a call and reading its recap on a phone",
     ],
     1600,
   ),
