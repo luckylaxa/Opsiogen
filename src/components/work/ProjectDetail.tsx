@@ -206,9 +206,10 @@ export function ProjectDetail({
       )}
 
       {/* 4. The rest of the work, as big image cards with the same margins and
-             gaps as the site's other cards: squares, one per row on phones and
-             two per row from tablets up; a Full width image spans the row at
-             16:9 from tablets up, and an uncropped one at its own proportions. */}
+             gaps as the site's other cards: halves at their own proportions,
+             one per row on phones and two per row from tablets up; a Full width
+             image spans the row at 16:9 from tablets up, and an uncropped one at
+             its own proportions. */}
       {rest.length > 0 && (
         <section className="mt-section">
           <Section className="sr-only">More from {project.name}</Section>
@@ -221,7 +222,7 @@ export function ProjectDetail({
                     img.size === "half" && "aspect-square",
                     img.size === "full" && "aspect-square md:aspect-video",
                   )}
-                  style={img.size === "original" ? { aspectRatio: `${img.width} / ${img.height}` } : undefined}
+                  style={img.size !== "full" && img.width && img.height ? { aspectRatio: `${img.width} / ${img.height}` } : undefined}
                 >
                   <Media image={img} sizes={img.size === "half" ? "(min-width: 768px) 50vw, 100vw" : "100vw"} />
                   {img.caption && (

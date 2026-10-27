@@ -376,7 +376,7 @@ export const project = defineType({
       type: "array",
       group: "media",
       description:
-        "The work, as big mockup cards. Six to ten images. The first shows under the name, 16:9 on wider screens and square on phones: use a tall or square photo and set its hotspot on the work so both crops keep it, or set it to Full width, uncropped to show the whole image at its own proportions. The rest: squares (1400 × 1400) set to Half, two per row.",
+        "The work, as big mockup cards. Six to ten images. The first shows under the name, 16:9 on wider screens and square on phones: use a tall or square photo and set its hotspot on the work so both crops keep it, or set it to Full width, uncropped to show the whole image at its own proportions. The rest: set to Half, two per row at their own proportions; give both images in a row the same size, such as squares (1400 × 1400).",
       of: [
         defineArrayMember({
           type: "image",

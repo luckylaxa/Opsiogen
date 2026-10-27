@@ -913,6 +913,7 @@ type CaseDetails = {
 const CARD_ALTS: Record<string, string> = {
   "surgo-health": "The Surgo Health home page for its Population Health Index",
   "care-connect": "The Care Connect home page: admissions, decided in minutes",
+  rxlive: "The RxLive home page: medication care that keeps patients home",
 };
 
 function makeProject(order: number, p: ProjectInput): Project {
@@ -972,7 +973,8 @@ const SAMPLE_GALLERY = [
 
 /**
  * A project's own mockups (public/work/<slug>): the image under the name
- * (<file>-0.jpg), then squares, two by two. The first shows 16:9 on wider
+ * (<file>-0.jpg), then tiles, two by two: squares unless a tile size is
+ * given. The first shows 16:9 on wider
  * screens and square on phones, so a tall photo with its hotspot on the work
  * keeps the work whole in both; with size `original` it shows whole, at its
  * own proportions.
@@ -989,8 +991,8 @@ const workGallery = (
     /** A square <file>-0-phone.jpg (2400) shown on phones instead. */
     phone?: boolean;
   },
-  squares: string[],
-  squareSize = 1200,
+  tiles: string[],
+  tileSize: number | { width: number; height: number } = 1200,
 ) => [
   {
     ...img(`/work/${slug}/${file}-0.jpg`, hero.width, hero.height, hero.alt),
@@ -999,8 +1001,13 @@ const workGallery = (
     size: hero.size ?? ("full" as const),
     phone: hero.phone ? { url: `/work/${slug}/${file}-0-phone.jpg`, width: 2400, height: 2400 } : null,
   },
-  ...squares.map((alt, i) => ({
-    ...img(`/work/${slug}/${file}-${i + 1}.jpg`, squareSize, squareSize, alt),
+  ...tiles.map((alt, i) => ({
+    ...img(
+      `/work/${slug}/${file}-${i + 1}.jpg`,
+      typeof tileSize === "number" ? tileSize : tileSize.width,
+      typeof tileSize === "number" ? tileSize : tileSize.height,
+      alt,
+    ),
     _key: `${file}-${i + 1}`,
     size: "half" as const,
   })),
@@ -1058,6 +1065,31 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
       "Intake analytics: funnel, response times and partner performance",
     ],
     1600,
+  ),
+  rxlive: workGallery(
+    "rxlive",
+    "rx",
+    {
+      alt: "The RxLive home page: medication care that keeps patients home",
+      width: 2400,
+      height: 1529,
+      hotspot: { x: 0.5, y: 0.5 },
+      size: "original",
+      phone: true,
+    },
+    [
+      "Secure sign-in to the pharmacy workspace, with single sign-on and passkeys",
+      "The daily worklist: reviews, adherence calls, consults and care alerts",
+      "A patient overview: conditions, adherence, readmission risk and key medications",
+      "Active medications with adherence, and a drug interaction flagged for review",
+      "A medication review: recommended changes, problems found and a pharmacist note",
+      "Clinical messages with prescribers, about one patient's medications",
+      "A video consult with a live summary and talking points",
+      "Finding a patient's outside records across health information exchanges",
+      "Labs and vitals over time, with what changed since the last review",
+      "Outcomes: adherence by drug class, admissions and payer partners",
+    ],
+    { width: 2400, height: 1560 },
   ),
   meetingful: workGallery(
     "meetingful",
