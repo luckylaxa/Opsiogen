@@ -912,6 +912,7 @@ type CaseDetails = {
 /** Card images that show the real work rather than the case study on a laptop and a phone. */
 const CARD_ALTS: Record<string, string> = {
   "surgo-health": "The Surgo Health home page for its Population Health Index",
+  "care-connect": "The Care Connect home page: admissions, decided in minutes",
 };
 
 function makeProject(order: number, p: ProjectInput): Project {
@@ -1020,6 +1021,30 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
       "Building a regional brief to export",
       "Saved cohorts of counties on the map",
       "Simulating the impact of new programs for a cohort",
+    ],
+    1600,
+  ),
+  "care-connect": workGallery(
+    "care-connect",
+    "care",
+    {
+      alt: "The Care Connect home page: admissions, decided in minutes",
+      width: 2400,
+      height: 1800,
+      hotspot: { x: 0.5, y: 0.5 },
+      size: "original",
+    },
+    [
+      "Secure sign-in with single sign-on and passkeys",
+      "The daily dashboard: new intakes, open decisions and free beds",
+      "The intake board, moving each patient from new to accepted",
+      "All intakes in one table, with filters and bulk actions",
+      "Reviewing a patient with an AI summary, care needs and a checklist",
+      "Readmission risk scored automatically from the discharge summary",
+      "Clinicians, notes and activity in one thread per patient",
+      "Key fields pulled from discharge papers, checked in one click",
+      "Matching accepted patients to open beds for the week ahead",
+      "Intake analytics: funnel, response times and partner performance",
     ],
     1600,
   ),
