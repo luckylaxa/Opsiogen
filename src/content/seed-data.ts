@@ -909,12 +909,15 @@ type CaseDetails = {
 };
 
 /** A case study with its generated title-card cover (public/covers) and card mockup (public/cards). */
-/** Card images that show the real work rather than the case study on a laptop and a phone. */
-const CARD_ALTS: Record<string, string> = {
-  "surgo-health": "The Surgo Health home page for its Population Health Index",
-  "care-connect": "The Care Connect home page: admissions, decided in minutes",
-  rxlive: "The RxLive home page: medication care that keeps patients home",
-  meetingful: "The Meetingful home page: clear agendas, live notes and outcomes that last",
+/**
+ * Designed card images: the real home page on a laptop, 2016 × 1600, the
+ * card's own 1.26:1 shape with the laptop kept in the middle for phones.
+ */
+const DESIGNED_CARDS: Record<string, string> = {
+  "surgo-health": "The Surgo Health Population Health Index home page on a laptop",
+  "care-connect": "The Care Connect home page on a laptop",
+  rxlive: "The RxLive home page on a laptop",
+  meetingful: "The Meetingful home page on a laptop",
 };
 
 function makeProject(order: number, p: ProjectInput): Project {
@@ -934,7 +937,9 @@ function makeProject(order: number, p: ProjectInput): Project {
       height: 1200,
       alt: `${p.name}: ${services.map((s) => s.name).join(", ")}`,
     },
-    cardImage: img(`/cards/${p.slug}.jpg`, 1600, 1200, CARD_ALTS[p.slug] ?? `The ${p.name} case study on a laptop and a phone`),
+    cardImage: DESIGNED_CARDS[p.slug]
+      ? img(`/cards/${p.slug}.jpg`, 2016, 1600, DESIGNED_CARDS[p.slug])
+      : img(`/cards/${p.slug}.jpg`, 1600, 1200, `The ${p.name} case study on a laptop and a phone`),
     coverVideo: null,
     order,
     summary: p.summary,
