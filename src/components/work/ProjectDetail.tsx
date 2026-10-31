@@ -27,13 +27,13 @@ function workImages(project: Project): GalleryItem[] {
     .map((img, i) => ({ ...img, _key: `fallback${i}`, size: "full" as const }));
 }
 
-/** Half-width images sit in pairs; one without a partner goes full width. */
+/** Half-width images sit in pairs; one without a partner goes full width, uncropped. */
 function pairHalves(items: GalleryItem[]): GalleryItem[] {
   const out = [...items];
   for (let i = 0; i < out.length; i++) {
     if (out[i].size !== "half") continue;
     if (out[i + 1]?.size === "half") i++;
-    else out[i] = { ...out[i], size: "full" };
+    else out[i] = { ...out[i], size: "original" };
   }
   return out;
 }
