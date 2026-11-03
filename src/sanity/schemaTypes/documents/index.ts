@@ -335,7 +335,7 @@ export const project = defineType({
       title: "Story (optional)",
       type: "array",
       group: "content",
-      description: "Short blocks such as The challenge, What we did and What changed. Kept for reference; not shown, so case studies stay short.",
+      description: "A few lines each, such as The challenge or What we did. Shown from tablets up between gallery images that have a phone version, one block after every four.",
       of: [
         defineArrayMember({
           type: "object",

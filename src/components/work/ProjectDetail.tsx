@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import Link from "next/link";
 import type { GalleryItem, Img, Project, ProjectCard, ProjectStat } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -133,6 +134,7 @@ export function ProjectDetail({
   ).filter((f): f is Fact => Boolean(f));
   // Section headings sit one level under the project's title (h1 on the page, h2 in the pop-up).
   const Section = inModal ? "h3" : "h2";
+  const BlockHeading = inModal ? "h4" : "h3";
 
   return (
     <article>
@@ -209,22 +211,40 @@ export function ProjectDetail({
              gaps as the site's other cards: halves at their own proportions,
              one per row on phones and two per row from tablets up; a Full width
              image spans the row at 16:9 from tablets up, and an uncropped one at
-             its own proportions. */}
+             its own proportions. An image with a phone version shows that one,
+             square, on phones and itself full width from tablets up, and the
+             story's short blocks sit between them there, one after every four. */}
       {rest.length > 0 && (
         <section className="mt-section">
           <Section className="sr-only">More from {project.name}</Section>
           <ul className="grid grid-cols-2 gap-gap px-gutter">
-            {rest.map((img) => (
-              <li key={img._key} data-reveal className={img.size === "half" ? "col-span-2 md:col-span-1" : "col-span-2"}>
+            {rest.map((img, i) => {
+              const wide = Boolean(img.phone?.url);
+              const block = wide && (i + 1) % 4 === 0 && i + 1 < rest.length ? project.story[(i + 1) / 4 - 1] : undefined;
+              return (
+                <Fragment key={img._key}>
+              <li data-reveal className={img.size === "half" && !wide ? "col-span-2 md:col-span-1" : "col-span-2"}>
                 <figure
                   className={cn(
                     "relative overflow-hidden rounded-card bg-night",
-                    img.size === "half" && "aspect-square",
-                    img.size === "full" && "aspect-square md:aspect-video",
+                    wide && "aspect-square md:aspect-[var(--ratio)]",
+                    !wide && img.size === "half" && "aspect-square",
+                    !wide && img.size === "full" && "aspect-square md:aspect-video",
                   )}
-                  style={img.size !== "full" && img.width && img.height ? { aspectRatio: `${img.width} / ${img.height}` } : undefined}
+                  style={
+                    wide
+                      ? ({ "--ratio": `${img.width} / ${img.height}` } as React.CSSProperties)
+                      : img.size !== "full" && img.width && img.height
+                        ? { aspectRatio: `${img.width} / ${img.height}` }
+                        : undefined
+                  }
                 >
-                  <Media image={img} sizes={img.size === "half" ? "(min-width: 768px) 50vw, 100vw" : "100vw"} />
+                  <Media
+                    image={img}
+                    phone={img.phone}
+                    phoneBelow={768}
+                    sizes={img.size === "half" && !wide ? "(min-width: 768px) 50vw, 100vw" : "100vw"}
+                  />
                   {img.caption && (
                     <figcaption className="on-dark absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-[clamp(16px,2.4vw,46px)] pt-16 pb-[clamp(16px,2.4vw,40px)] text-base text-white">
                       {img.caption}
@@ -232,7 +252,17 @@ export function ProjectDetail({
                   )}
                 </figure>
               </li>
-            ))}
+                  {block && (
+                    <li data-reveal className="col-span-2 hidden py-[clamp(40px,4vw,80px)] md:grid md:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] md:gap-x-gap">
+                      <BlockHeading className="text-small text-mute">{block.title}</BlockHeading>
+                      <p className="max-w-[40ch] text-[length:clamp(22px,calc(0.84vw+18.8px),36px)] leading-[1.25] tracking-[-0.015em] text-pretty">
+                        {block.text}
+                      </p>
+                    </li>
+                  )}
+                </Fragment>
+              );
+            })}
           </ul>
         </section>
       )}

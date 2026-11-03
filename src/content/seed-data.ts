@@ -919,6 +919,23 @@ const DESIGNED_CARDS: Record<string, string> = {
   rxlive: "The RxLive home page on a laptop",
   meetingful: "The Meetingful home page on a laptop, with a live call on a phone",
 };
+/**
+ * A few lines of story, shown between a case study's wide mockups from tablets
+ * up, one block after every four.
+ */
+const STORIES: Record<string, Pair[]> = {
+  "sifio-health": [
+    [
+      "From lost time to a plan",
+      "Lost time, acuity and urgency each trace back to a cause. The optimization plan turns them into ranked changes a chief can accept in one click.",
+    ],
+    [
+      "The surgical day, live",
+      "The OR day twin models every room as cases start and end, and the outcomes view tracks the program before and after go-live.",
+    ],
+  ],
+};
+
 /** Generated 1600 × 1200 card images that show the real work, by what they show. */
 const CARD_ALTS: Record<string, string> = {
   "sifio-health": "The Sifio Health web app's home screen",
@@ -950,7 +967,7 @@ function makeProject(order: number, p: ProjectInput): Project {
     tagline: d?.tagline ?? null,
     location: d?.location ?? null,
     stats: (d?.stats ?? []).map(([value, label], i) => ({ _key: `r${i + 1}`, value, label })),
-    story: [],
+    story: (STORIES[p.slug] ?? []).map(([title, text], i) => ({ _key: `s${i + 1}`, title, text })),
     result: null,
     liveUrl: p.liveUrl ?? null,
     gallery: GALLERIES[p.slug] ?? SAMPLE_GALLERY,
@@ -1002,6 +1019,8 @@ const workGallery = (
   },
   squares: string[],
   squareSize = 1200,
+  /** Tiles that are wide (<file>-N-wide.jpg, 2400 × 1529) from tablets up, with the square on phones. */
+  wide = false,
 ) => [
   {
     ...img(`/work/${slug}/${file}-0.jpg`, hero.width, hero.height, hero.alt),
@@ -1011,9 +1030,14 @@ const workGallery = (
     phone: hero.phone ? { url: `/work/${slug}/${file}-0-phone.jpg`, width: 2400, height: 2400 } : null,
   },
   ...squares.map((alt, i) => ({
-    ...img(`/work/${slug}/${file}-${i + 1}.jpg`, squareSize, squareSize, alt),
+    ...(wide
+      ? {
+          ...img(`/work/${slug}/${file}-${i + 1}-wide.jpg`, 2400, 1529, alt),
+          phone: { url: `/work/${slug}/${file}-${i + 1}.jpg`, width: squareSize, height: squareSize },
+        }
+      : img(`/work/${slug}/${file}-${i + 1}.jpg`, squareSize, squareSize, alt)),
     _key: `${file}-${i + 1}`,
-    size: "half" as const,
+    size: wide ? ("original" as const) : ("half" as const),
   })),
 ];
 
@@ -1160,6 +1184,7 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
       "Outcomes before and after go-live",
     ],
     1600,
+    true,
   ),
   meetingful: workGallery(
     "meetingful",
