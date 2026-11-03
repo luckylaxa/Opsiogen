@@ -919,6 +919,10 @@ const DESIGNED_CARDS: Record<string, string> = {
   rxlive: "The RxLive home page on a laptop",
   meetingful: "The Meetingful home page on a laptop, with a live call on a phone",
 };
+/** Generated 1600 × 1200 card images that show the real work, by what they show. */
+const CARD_ALTS: Record<string, string> = {
+  "sifio-health": "The Sifio Health web app's home screen",
+};
 
 function makeProject(order: number, p: ProjectInput): Project {
   const services = p.services.map(ref);
@@ -939,7 +943,7 @@ function makeProject(order: number, p: ProjectInput): Project {
     },
     cardImage: DESIGNED_CARDS[p.slug]
       ? img(`/cards/${p.slug}.jpg`, 2016, 1600, DESIGNED_CARDS[p.slug])
-      : img(`/cards/${p.slug}.jpg`, 1600, 1200, `The ${p.name} case study on a laptop and a phone`),
+      : img(`/cards/${p.slug}.jpg`, 1600, 1200, CARD_ALTS[p.slug] ?? `The ${p.name} case study on a laptop and a phone`),
     coverVideo: null,
     order,
     summary: p.summary,
@@ -1128,6 +1132,32 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
       "A brochure in hand: precision, measured, proven",
       "An email newsletter inviting engineers to a live product launch",
       "Social posts and stories, with the logo and typeface",
+    ],
+    1600,
+  ),
+  // The web app now; the website's mockups follow it here later.
+  "sifio-health": workGallery(
+    "sifio-health",
+    "sifio",
+    {
+      alt: "The Sifio Health web app: every operating room minute, put to work",
+      width: 2400,
+      height: 1529,
+      hotspot: { x: 0.5, y: 0.5 },
+      size: "original",
+      phone: true,
+    },
+    [
+      "Secure sign-in with hospital single sign-on",
+      "The surgical overview: utilization, acuity, urgency and case volume",
+      "Block utilization by program, against the 85% target",
+      "Surgeon insights: block use, case length accuracy and on-time starts",
+      "Where block time is lost, traced to each cause",
+      "Acuity and urgency, with the beds needed downstream",
+      "An optimization plan of ranked changes for the next three weeks",
+      "Daily insights: live recommendations and warnings",
+      "The OR day twin: a live model of every room, with predicted overruns",
+      "Outcomes before and after go-live",
     ],
     1600,
   ),
@@ -1331,8 +1361,9 @@ const CASE_STUDIES: ProjectInput[] = [
     name: "Sifio Health",
     slug: "sifio-health",
     industry: "Healthcare software",
-    services: ["ai-websites"],
-    summary: "The website for Sifio Health, which builds AI software for surgical centres.",
+    services: ["ai-product-design", "ai-websites"],
+    summary:
+      "Sifio Health builds AI software for surgical centres. We designed its perioperative web app, which turns hospital data into a live model of the surgical day, and its website.",
     liveUrl: "https://sifiohealth.com/",
   },
   {

@@ -243,6 +243,11 @@ const OLD_SUMMARY: Record<string, string> = {
   "project-oh-my-glam": "888b19f9e0aedb58",
   "project-carlton-noble": "666aad01ca2c3bdc",
   "project-engel-volkers": "624cd6050552087f",
+  "project-sifio-health": "d5f64fcb3f05515d",
+};
+/** Project services changed since, with the list the earlier seed wrote; add mode replaces it only while Studio still holds that list. */
+const OLD_SERVICES: Record<string, string[]> = {
+  "project-sifio-health": ["ai-websites"],
 };
 /** Project taglines rewritten since, with a fingerprint of the earlier one; same rule as summaries. */
 const OLD_TAGLINE: Record<string, string> = {
@@ -254,7 +259,7 @@ const OLD_TAGLINE: Record<string, string> = {
  * meetingful-0.jpg, omg-0.jpg …), replaced by a project's current gallery
  * while Studio still holds them.
  */
-const OLD_GALLERY_FILE = /^(m?\d+|sample-(hero|\d+)|(surgo|meetingful|omg|care|rx|rs)-(hero|\d+))\.jpg$/;
+const OLD_GALLERY_FILE = /^(m?\d+|sample-(hero|\d+)|(surgo|meetingful|omg|care|rx|rs|sifio)-(hero|\d+))\.jpg$/;
 const hash = (value: unknown) => createHash("sha1").update(JSON.stringify(value ?? null)).digest("hex").slice(0, 16);
 
 /** Card images rendered for an earlier version of the page; add mode swaps them for the current ones. */
@@ -375,6 +380,7 @@ async function run() {
       _id: string;
       summary: string | null;
       tagline: string | null;
+      services: (string | null)[] | null;
       files: (string | null)[] | null;
       images: { ref: string | null; x: number | null; y: number | null; phone?: string | null }[] | null;
       coverRef: string | null;
@@ -383,7 +389,7 @@ async function run() {
       cardFile: string | null;
     }[]
   >(
-    `*[_type == "project" && _id in $ids]{ _id, summary, tagline, "files": gallery[].asset->originalFilename, "images": gallery[]{ "ref": asset._ref, "x": hotspot.x, "y": hotspot.y, "phone": phone.asset._ref }, "coverRef": cover.asset._ref, "coverFile": cover.asset->originalFilename, "cardRef": cardImage.asset._ref, "cardFile": cardImage.asset->originalFilename }`,
+    `*[_type == "project" && _id in $ids]{ _id, summary, tagline, "services": services[]->slug.current, "files": gallery[].asset->originalFilename, "images": gallery[]{ "ref": asset._ref, "x": hotspot.x, "y": hotspot.y, "phone": phone.asset._ref }, "coverRef": cover.asset._ref, "coverFile": cover.asset->originalFilename, "cardRef": cardImage.asset._ref, "cardFile": cardImage.asset->originalFilename }`,
     { ids: PROJECTS.map((p) => p._id) },
   );
   for (const p of PROJECTS) {
@@ -400,6 +406,11 @@ async function run() {
         : {};
       gallery.push({ _key: g._key, ...(await image(g.url, g.alt, { size: g.size, ...hotspot, ...phone })) });
     }
+    const services = p.services.map((s) => ({
+      _type: "reference",
+      _key: key(s.slug),
+      _ref: SERVICES.find((x) => x.slug === s.slug)!._id,
+    }));
     put(
       tx,
       {
@@ -416,11 +427,7 @@ async function run() {
         ...(p.tagline ? { tagline: p.tagline } : {}),
         ...(p.stats.length ? { stats: p.stats.map((st) => ({ _type: "projectStat", ...st })) } : {}),
         ...(p.liveUrl ? { liveUrl: p.liveUrl } : {}),
-        services: p.services.map((s) => ({
-          _type: "reference",
-          _key: key(s.slug),
-          _ref: SERVICES.find((x) => x.slug === s.slug)!._id,
-        })),
+        services,
         cover,
         ...(cardImage ? { cardImage } : {}),
         ...(coverVideo ? { coverVideo } : {}),
@@ -459,6 +466,10 @@ async function run() {
     }
     if (existing.summary !== p.summary && hash(existing.summary) === OLD_SUMMARY[p._id]) set.summary = p.summary;
     if (p.tagline && existing.tagline !== p.tagline && hash(existing.tagline) === OLD_TAGLINE[p._id]) set.tagline = p.tagline;
+    const oldServices = OLD_SERVICES[p._id];
+    if (oldServices && JSON.stringify(existing.services ?? []) === JSON.stringify(oldServices)) {
+      if (JSON.stringify(oldServices) !== JSON.stringify(p.services.map((s) => s.slug))) set.services = services;
+    }
     // A seeded cover or card image whose file has since been replaced (same name, new content).
     if (existing.coverFile === path.basename(p.cover.url) && existing.coverRef !== cover.asset._ref) set.cover = cover;
     if (cardImage && existing.cardFile === path.basename(p.cardImage!.url) && existing.cardRef !== cardImage.asset._ref) {
