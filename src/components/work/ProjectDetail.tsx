@@ -89,6 +89,8 @@ export function ProjectDetail({
 }) {
   const [hero, ...others] = workImages(project);
   const rest = pairHalves(others);
+  // Story blocks spread through the wide images: one after every four or five.
+  const every = Math.min(5, Math.max(4, Math.round(rest.length / (project.story.length + 1))));
   const stats: ProjectStat[] = project.stats.length
     ? project.stats
     : project.result?.number && project.result.label
@@ -213,14 +215,14 @@ export function ProjectDetail({
              image spans the row at 16:9 from tablets up, and an uncropped one at
              its own proportions. An image with a phone version shows that one,
              square, on phones and itself full width from tablets up, and the
-             story's short blocks sit between them there, one after every four. */}
+             story's short blocks sit between them there, one after every four or five. */}
       {rest.length > 0 && (
         <section className="mt-section">
           <Section className="sr-only">More from {project.name}</Section>
           <ul className="grid grid-cols-2 gap-gap px-gutter">
             {rest.map((img, i) => {
               const wide = Boolean(img.phone?.url);
-              const block = wide && (i + 1) % 4 === 0 && i + 1 < rest.length ? project.story[(i + 1) / 4 - 1] : undefined;
+              const block = wide && (i + 1) % every === 0 && i + 1 < rest.length ? project.story[(i + 1) / every - 1] : undefined;
               return (
                 <Fragment key={img._key}>
               <li data-reveal className={img.size === "half" && !wide ? "col-span-2 md:col-span-1" : "col-span-2"}>

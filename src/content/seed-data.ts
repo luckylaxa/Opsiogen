@@ -924,6 +924,74 @@ const DESIGNED_CARDS: Record<string, string> = {
  * up, one block after every four.
  */
 const STORIES: Record<string, Pair[]> = {
+  "surgo-health": [
+    [
+      "One index, every county",
+      "Care teams, payers and public agencies explore 42 social drivers of health on one map, then open any county to see its score and what drives it.",
+    ],
+    [
+      "From insight to action",
+      "Trends, an index assistant and regional briefs explain where risk is building. Saved cohorts and the impact simulator help plan programs that reach people first.",
+    ],
+  ],
+  "care-connect": [
+    [
+      "Every intake in one place",
+      "Partner hospitals send referrals to one shared board, where each patient is scored, summarised and moved from new to accepted.",
+    ],
+    [
+      "Decisions with the full picture",
+      "Readmission risk, team discussions and key fields from discharge papers sit beside each patient, and accepted patients are matched to open beds.",
+    ],
+  ],
+  rxlive: [
+    [
+      "A day's work, sorted",
+      "Pharmacists start from one worklist of reviews, adherence calls and care alerts, with each patient's conditions and medications a click away.",
+    ],
+    [
+      "From review to outcome",
+      "Reviews, messages with prescribers, video consults and outside records come together, and the outcomes view shows the value across payers.",
+    ],
+  ],
+  meetingful: [
+    [
+      "Before and during the meeting",
+      "Agendas, smart scheduling and live notes keep every meeting focused while it happens.",
+    ],
+    [
+      "After the meeting",
+      "Summaries, action items and answers across every meeting turn talk into work with an owner.",
+    ],
+  ],
+  "oh-my-glam": [
+    [
+      "Try before you buy",
+      "Shoppers see shades on their own face with live AR try-on, from a single lipstick to a full look.",
+    ],
+    [
+      "From look to checkout",
+      "Creator looks, AI shade matching and a simple bag and checkout make buying easy, and Glam AI can book a glam artist.",
+    ],
+  ],
+  "rohde-schwarz": [
+    [
+      "Print and digital, one look",
+      "Company and product brochures, social ads and newsletters share one clear look, from the brand story to each product range.",
+    ],
+    [
+      "One brand at every event",
+      "Sales decks, exhibition booths, roll-up banners and outdoor ads carry the same message across India.",
+    ],
+    [
+      "Down to the details",
+      "Business cards, letterheads, event badges and magazine ads keep the brand consistent in every hand.",
+    ],
+    [
+      "Campaigns that connect",
+      "Metro posters, keynote screens and digital brochures turn each launch into one story.",
+    ],
+  ],
   "sifio-health": [
     [
       "From lost time to a plan",
@@ -1068,6 +1136,7 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
       "Simulating the impact of new programs for a cohort",
     ],
     1600,
+    true,
   ),
   "care-connect": workGallery(
     "care-connect",
@@ -1093,6 +1162,7 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
       "Intake analytics: funnel, response times and partner performance",
     ],
     1600,
+    true,
   ),
   rxlive: workGallery(
     "rxlive",
@@ -1118,6 +1188,7 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
       "Outcomes: adherence by drug class, admissions and payer partners",
     ],
     1600,
+    true,
   ),
   "rohde-schwarz": workGallery(
     "rohde-schwarz",
@@ -1158,6 +1229,7 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
       "Social posts and stories, with the logo and typeface",
     ],
     1600,
+    true,
   ),
   // The web app now; the website's mockups follow it here later.
   "sifio-health": workGallery(
@@ -1210,6 +1282,7 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
       "Joining a call and reading its recap on a phone",
     ],
     1600,
+    true,
   ),
   "oh-my-glam": workGallery(
     "oh-my-glam",
@@ -1233,6 +1306,7 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
       "A face scan that matches shades to skin tone",
     ],
     1600,
+    true,
   ),
 };
 

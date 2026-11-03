@@ -335,7 +335,7 @@ export const project = defineType({
       title: "Story (optional)",
       type: "array",
       group: "content",
-      description: "A few lines each, such as The challenge or What we did. Shown from tablets up between gallery images that have a phone version, one block after every four.",
+      description: "A few lines each, such as The challenge or What we did. Shown from tablets up between gallery images that have a phone version, one block after every four or five.",
       of: [
         defineArrayMember({
           type: "object",
