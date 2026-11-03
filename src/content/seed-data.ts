@@ -1196,10 +1196,11 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
     {
       alt: "Rohde & Schwarz print, events, digital and sales materials",
       width: 2400,
-      height: 2400,
+      height: 1529,
       hotspot: { x: 0.5, y: 0.5 },
-      // A square collage: shown whole, at its own proportions, on every screen.
+      // The desktop frame designed in Figma; the square collage on phones.
       size: "original",
+      phone: true,
     },
     [
       "A company brochure cover: ensuring a safer and connected world",
