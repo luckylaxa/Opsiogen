@@ -78,9 +78,20 @@ async function upload(kind: "image" | "file", publicPath: string) {
   const cached = uploaded.get(publicPath);
   if (cached) return cached;
   const file = path.join(PUBLIC_DIR, publicPath);
-  const asset = await client.assets.upload(kind, fs.createReadStream(file), {
-    filename: path.basename(file),
-  });
+  // Every run uploads every file (Sanity keeps one asset per content), so a
+  // dropped connection is retried rather than ending the run; a refusal
+  // (4xx) is not.
+  let asset: { _id: string } | undefined;
+  for (let attempt = 1; !asset; attempt++) {
+    try {
+      asset = await client.assets.upload(kind, fs.createReadStream(file), { filename: path.basename(file) });
+    } catch (error) {
+      const status = (error as { statusCode?: number }).statusCode ?? 0;
+      if (attempt >= 4 || (status >= 400 && status < 500)) throw error;
+      console.log(`  retrying ${publicPath} (${(error as Error).message})`);
+      await new Promise((resolve) => setTimeout(resolve, 2000 * 2 ** (attempt - 1)));
+    }
+  }
   uploaded.set(publicPath, asset._id);
   console.log(`  uploaded ${publicPath}`);
   return asset._id;
