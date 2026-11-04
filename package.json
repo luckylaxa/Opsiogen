@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
-    "seed": "sanity exec scripts/seed.ts"
+    "seed": "sanity exec scripts/seed.ts",
+    "audit": "node scripts/audit.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

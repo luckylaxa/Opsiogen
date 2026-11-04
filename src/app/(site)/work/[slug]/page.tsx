@@ -18,7 +18,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps<"/work/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const project = await getProject(slug);
+  const [project, settings] = await Promise.all([getProject(slug), getSettings()]);
   if (!project) return {};
   return buildMetadata({
     title: project.name,
@@ -26,6 +26,7 @@ export async function generateMetadata({ params }: PageProps<"/work/[slug]">): P
     seo: project.seo,
     image: project.cardImage ?? project.cover,
     path: `/work/${project.slug}`,
+    fallback: settings.seo.description,
   });
 }
 

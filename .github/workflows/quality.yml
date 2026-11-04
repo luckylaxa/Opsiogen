@@ -1,0 +1,40 @@
+# Checks every push: lint, types, a production build, then the SEO and
+# performance audit (scripts/audit.mjs) against that build with the live CMS
+# content. A red check here means a page broke one of the site's standards
+# (see CLAUDE.md); the details are in the "Audit" step.
+name: Quality
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SANITY_PROJECT_ID: 79m429dl
+      NEXT_PUBLIC_SANITY_DATASET: production
+      NEXT_PUBLIC_SANITY_API_VERSION: "2026-02-01"
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Types
+        run: npm run typecheck
+      - name: Build
+        run: npm run build
+      - name: Audit
+        run: |
+          npm start > server.log 2>&1 &
+          for i in $(seq 1 60); do curl -s -o /dev/null http://localhost:3000 && break; sleep 1; done
+          npm run audit -- http://localhost:3000

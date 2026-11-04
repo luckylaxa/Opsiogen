@@ -19,6 +19,7 @@ export async function cmsMetadata(slug: string, path: string): Promise<Metadata>
   const meta = buildMetadata({
     title: isHome ? undefined : page.title,
     description: (hero && "text" in hero && hero.text) || settings.seo.description,
+    fallback: settings.seo.description,
     seo: page.seo,
     image: settings.seo.image,
     path,

@@ -15,16 +15,22 @@ export function buildMetadata({
   seo,
   image,
   path,
+  fallback,
 }: {
   title?: string;
   description?: string | null;
   seo?: Seo | null;
   image?: Img | null;
   path: string;
+  /** The site description, added after a page description too short for a search snippet. */
+  fallback?: string | null;
 }): Metadata {
   const shareImage = seo?.image?.url ? seo.image : image;
   const pageTitle = seo?.title || title;
-  const pageDescription = seo?.description || (description ? clip(description) : undefined);
+  let pageDescription = seo?.description || (description ? clip(description) : undefined);
+  if (fallback && (!pageDescription || pageDescription.length < 70)) {
+    pageDescription = clip(pageDescription ? `${pageDescription} ${fallback}` : fallback);
+  }
   return {
     title: pageTitle,
     description: pageDescription,

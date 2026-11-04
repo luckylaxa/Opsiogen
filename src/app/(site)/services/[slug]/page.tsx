@@ -35,6 +35,7 @@ export async function generateMetadata({ params }: PageProps<"/services/[slug]">
     description: `${service.tagline} ${service.description}`,
     seo: service.seo,
     image: settings.seo.image,
+    fallback: settings.seo.description,
     path: `/services/${service.slug}`,
   });
 }
