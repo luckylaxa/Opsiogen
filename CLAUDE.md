@@ -29,7 +29,9 @@ Launch to-dos live in `LAUNCH-CHECKLIST.md`.
 ## Performance (PageSpeed 97+ mobile, 99+ desktop)
 - Images go through `Media` (`src/components/ui/Media.tsx`): CMS images come straight
   from Sanity's CDN at the needed width, with their preview while loading.
-  - `priority` on the page's main (LCP) image only; `eager` for the next two or three.
+  - `priority` on the page's main (LCP) image only. Everything below it is lazy
+    (`lowPriority` for galleries): images loading alongside the main one slow it
+    down on phones.
   - Accurate `sizes`, and a box with a fixed aspect ratio so nothing shifts.
 - No new library in every page's first load. Heavy code is imported when used,
   e.g. `import("@/lib/gsap")` near the screen (see `ProcessSteps`). Prefer CSS for

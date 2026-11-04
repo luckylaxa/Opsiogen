@@ -11,6 +11,8 @@ type Props = {
   priority?: boolean;
   /** Loads at once at normal priority, for images just below the first screen. */
   eager?: boolean;
+  /** Further down a page: loads as it nears the screen, after the main image. */
+  lowPriority?: boolean;
   /** Fill the parent box (parent must be positioned and sized). */
   fill?: boolean;
   /** Shown instead on phones (below `phoneBelow`, 640px by default); each screen loads only its own image. */
@@ -26,13 +28,15 @@ const objectPosition = (img: Img) =>
  * from Sanity's CDN at the size each screen needs; until one arrives, its tiny
  * preview (lqip) fills the box instead of an empty frame.
  */
-export function Media({ image, sizes, className, priority, eager, fill = true, phone, phoneBelow = 640 }: Props) {
+export function Media({ image, sizes, className, priority, eager, lowPriority, fill = true, phone, phoneBelow = 640 }: Props) {
   const alt = image.alt || "";
   const load = priority
     ? { loading: "eager" as const, fetchPriority: "high" as const }
     : eager
       ? { loading: "eager" as const }
-      : {};
+      : lowPriority
+        ? { loading: "lazy" as const, fetchPriority: "low" as const }
+        : {};
   const props = (src: string, lqip?: string | null) =>
     getImageProps({
       src,

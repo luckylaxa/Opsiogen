@@ -245,7 +245,7 @@ export function ProjectDetail({
                     image={img}
                     phone={img.phone}
                     phoneBelow={768}
-                    eager={i < 3}
+                    lowPriority
                     sizes={img.size === "half" && !wide ? "(min-width: 768px) 50vw, 100vw" : "100vw"}
                   />
                   {img.caption && (
