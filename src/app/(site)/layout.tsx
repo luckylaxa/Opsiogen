@@ -16,6 +16,8 @@ import { Reveal } from "@/components/motion/Reveal";
 import { Cursor } from "@/components/motion/Cursor";
 import { BrandGradientDefs } from "@/components/site/SocialLinks";
 import { Preloader } from "@/components/motion/Preloader";
+import { JsonLd } from "@/components/site/JsonLd";
+import { siteSchema } from "@/lib/schema";
 
 /** Outfit, the Opsiogen typeface (SIL OFL), self-hosted as one variable file covering weights 100–900. */
 const outfit = localFont({
@@ -66,6 +68,7 @@ export default async function SiteLayout({ children, modal }: LayoutProps<"/">) 
         </noscript>
       </head>
       <body>
+        <JsonLd items={siteSchema(settings)} />
         <BrandGradientDefs />
         <Preloader />
         <MenuProvider>

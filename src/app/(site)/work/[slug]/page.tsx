@@ -5,6 +5,8 @@ import { buildMetadata } from "@/lib/metadata";
 import { Block } from "@/components/sections/SectionRenderer";
 import { CallToAction } from "@/components/sections/CallToAction";
 import { ProjectDetail } from "@/components/work/ProjectDetail";
+import { JsonLd } from "@/components/site/JsonLd";
+import { breadcrumbSchema, projectSchema } from "@/lib/schema";
 
 export const revalidate = 60;
 export const dynamicParams = true;
@@ -44,6 +46,15 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
 
   return (
     <>
+      <JsonLd
+        items={[
+          projectSchema(project),
+          breadcrumbSchema([
+            { name: "Work", path: "/work" },
+            { name: project.name, path: `/work/${project.slug}` },
+          ]),
+        ]}
+      />
       <ProjectDetail project={project} more={more} />
       <Block>
         <CallToAction cta={settings.cta} />

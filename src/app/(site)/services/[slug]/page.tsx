@@ -15,6 +15,8 @@ import { FeaturedProject } from "@/components/sections/FeaturedProject";
 import { Process } from "@/components/sections/Process";
 import { WorkGrid } from "@/components/work/WorkGrid";
 import { ServiceFullPage, hasFullPage } from "@/components/services/ServiceFullPage";
+import { JsonLd } from "@/components/site/JsonLd";
+import { breadcrumbSchema, faqSchema, serviceSchema } from "@/lib/schema";
 
 export const revalidate = 60;
 export const dynamicParams = true;
@@ -62,8 +64,25 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
   if (!service) notFound();
 
   const work = projects.filter((p) => p.services.some((s) => s.slug === service.slug));
+  const schema = (
+    <JsonLd
+      items={[
+        serviceSchema(service),
+        breadcrumbSchema([
+          { name: "Services", path: "/services" },
+          { name: service.name, path: `/services/${service.slug}` },
+        ]),
+        faqSchema(service.faqs),
+      ]}
+    />
+  );
   if (hasFullPage(service)) {
-    return <ServiceFullPage service={service} settings={settings} work={work} process={process} />;
+    return (
+      <>
+        {schema}
+        <ServiceFullPage service={service} settings={settings} work={work} process={process} />
+      </>
+    );
   }
   const clients = [...new Set(work.map((p) => p.client || p.name))];
   const offerings = service.offerings.length
@@ -73,6 +92,7 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
 
   return (
     <>
+      {schema}
       {/* 1. Hero, with the lead project in the dark frame */}
       <section
         data-band
