@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { Mark } from "@/components/site/Mark";
 import { PRELOADER_KEY } from "@/lib/theme";
 
-const DURATION = 1400;
-const WIPE = 900;
+const DURATION = 600;
+const WIPE = 500;
 
 /**
  * The design system's first-load preloader: the pulsing symbol inside an

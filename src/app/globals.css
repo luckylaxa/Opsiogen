@@ -450,7 +450,7 @@ html.project-open {
   background: #0a090d;
   color: #f8f6f8;
   clip-path: inset(0 0 0 0);
-  transition: clip-path 0.9s cubic-bezier(0.76, 0, 0.24, 1);
+  transition: clip-path 0.5s cubic-bezier(0.76, 0, 0.24, 1);
   /* Never left covering the page if scripts fail part-way. */
   animation: preloader-failsafe 0s linear 6s forwards;
 }
