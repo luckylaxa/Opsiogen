@@ -37,6 +37,7 @@ import {
   SERVICES,
   SETTINGS,
 } from "../src/content/seed-data";
+import { POSTS } from "../src/content/blog";
 
 nextEnv.loadEnvConfig(process.cwd());
 
@@ -586,6 +587,33 @@ async function run() {
       tx.delete(_id);
       tx.delete(`drafts.${_id}`);
     }
+  }
+
+  console.log("Blog posts");
+  for (const p of POSTS) {
+    const body = [];
+    for (const b of p.body) {
+      if (b._type === "image" && "url" in b) {
+        const { url, alt, caption, _key } = b;
+        body.push({ ...(await image(url, alt)), _key, ...(caption ? { caption } : {}) });
+      } else body.push(b);
+    }
+    put(
+      tx,
+      {
+        _id: p._id,
+        _type: "post",
+        title: p.title,
+        slug: slug(p.slug),
+        excerpt: p.excerpt,
+        category: p.category,
+        publishedAt: p.publishedAt,
+        cover: await image(p.cover.url, p.cover.alt),
+        body,
+        demo: Boolean(p.demo),
+      },
+      OVERWRITE,
+    );
   }
 
   // Case studies taken off the site go in either mode, unless something

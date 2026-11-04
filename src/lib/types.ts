@@ -229,3 +229,30 @@ export type SiteSettings = {
   enquirySuccessMessage: string;
   seo: { title: string; description: string; image?: Img | null };
 };
+
+/** Blog categories, in the order the filter shows them. */
+export const POST_CATEGORIES = ["Websites", "Product design", "AI & automation", "Marketing", "Brand & creative"] as const;
+export type PostCategory = (typeof POST_CATEGORIES)[number];
+
+export type PostCard = {
+  _id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  category: PostCategory;
+  publishedAt: string;
+  _updatedAt?: string;
+  /** Reading time, worked out from the body. */
+  readMinutes: number;
+  cover: Img;
+  /** Demo posts show only on /blog/preview, never to visitors or search. */
+  demo?: boolean | null;
+};
+
+/** An image inside a post body. */
+export type PostImageBlock = Img & { _type: "image"; _key: string; caption?: string | null };
+
+export type Post = PostCard & {
+  body: (PortableTextBlock | PostImageBlock)[];
+  seo?: Seo | null;
+};

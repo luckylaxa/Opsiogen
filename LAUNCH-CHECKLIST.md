@@ -28,6 +28,7 @@ Tick items as they are done.
 
 - [ ] 9 case studies still use sample images, which search engines treat as thin pages. Send the Figma links or hide them until they're ready: bigtapp, sandlogic, appdev-health, engel-volkers, amphenol, norsecom, afthab-tours, cabot-solutions, carlton-noble.
 - [ ] Sifio Health: add the website UI mockups (only the app UI is in now).
+- [ ] Blog: the four demo posts show only on /blog/preview. Delete them in Studio (Blog) when they're no longer needed, or untick Demo on one to publish it after rewriting it.
 
 ## Already done (4 November 2026)
 

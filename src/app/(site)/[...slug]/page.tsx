@@ -3,7 +3,7 @@ import { CmsPage, cmsMetadata } from "@/components/CmsPage";
 import { getPageSlugs } from "@/lib/data";
 
 /** Pages added later in the CMS, served at /<slug>. */
-const BUILT_IN = ["home", "work", "services", "about", "contact", "privacy"];
+const BUILT_IN = ["home", "work", "services", "about", "contact", "privacy", "blog"];
 
 export const revalidate = 60;
 export const dynamicParams = true;

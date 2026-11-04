@@ -33,7 +33,11 @@ export function Footer({ settings, services }: { settings: SiteSettings; service
         aria-label="Footer"
         className="mt-[clamp(40px,calc(2.7vw+30px),82px)] grid grid-cols-2 gap-x-gap gap-y-[clamp(32px,2.6vw,48px)] md:grid-cols-4"
       >
-        <Column title="Menu" items={settings.menu} />
+        {/* The blog is linked from the footer only, not the header or menu. */}
+        <Column
+          title="Menu"
+          items={[...settings.menu.filter((m) => m.href !== "/blog"), { _key: "blog", label: "Blog", href: "/blog" }]}
+        />
         {groups.map(({ group, items }) => (
           <Column
             key={group}

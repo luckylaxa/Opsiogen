@@ -41,6 +41,13 @@ Launch to-dos live in `LAUNCH-CHECKLIST.md`.
 - One font: the Latin subset of Outfit in `src/fonts`. No other font files.
 - The audit holds first-load JavaScript to 225 KB compressed per page (about 200 KB today).
 
+## Blog
+- Posts are Studio documents (`post`); starter posts live in `src/content/blog.ts`.
+- `/blog` is linked from the footer only, never the header or menu.
+- Posts marked Demo show only on `/blog/preview` (noindex, not in the sitemap).
+- Every post: a 16:10 cover with alt text, an excerpt of 50 to 160 characters, a
+  category, and h2 headings (they make the contents list). Same copy rules as above.
+
 ## Before pushing
 1. `npm run lint` and `npm run typecheck`.
 2. `npm run build`, `npm start`, then `npm run audit` in another terminal.

@@ -3,11 +3,13 @@ import { CaseIcon } from "@sanity/icons/Case";
 import { CogIcon } from "@sanity/icons/Cog";
 import { DocumentIcon } from "@sanity/icons/Document";
 import { EnvelopeIcon } from "@sanity/icons/Envelope";
+import { ComposeIcon } from "@sanity/icons/Compose";
 import { SparklesIcon } from "@sanity/icons/Sparkles";
 import { altField, imageField } from "../objects/shared";
 import { offeringImageFields, servicePageFields } from "../objects/servicePage";
+import { POST_CATEGORIES } from "../../../lib/types";
 
-const RESERVED_PAGE_SLUGS = ["studio", "api"];
+const RESERVED_PAGE_SLUGS = ["studio", "api", "blog", "work", "services"];
 
 export const siteSettings = defineType({
   name: "siteSettings",
@@ -506,4 +508,125 @@ export const enquiry = defineType({
   },
 });
 
-export const documentTypes = [siteSettings, page, project, service, enquiry];
+export const post = defineType({
+  name: "post",
+  title: "Blog post",
+  type: "document",
+  icon: ComposeIcon,
+  groups: [
+    { name: "content", title: "Content", default: true },
+    { name: "seo", title: "SEO" },
+  ],
+  orderings: [{ title: "Newest first", name: "publishedDesc", by: [{ field: "publishedAt", direction: "desc" }] }],
+  fields: [
+    defineField({
+      name: "title",
+      type: "string",
+      group: "content",
+      description: "Clear and specific. Up to about 60 characters reads best in search results.",
+      validation: (rule) => rule.required().max(90),
+    }),
+    defineField({
+      name: "slug",
+      type: "slug",
+      group: "content",
+      options: { source: "title", maxLength: 96 },
+      validation: (rule) =>
+        rule.required().custom((slug) => (slug?.current === "preview" ? "This address is reserved" : true)),
+    }),
+    defineField({
+      name: "excerpt",
+      type: "text",
+      rows: 3,
+      group: "content",
+      description: "One or two sentences shown on the blog page and in search results (50 to 160 characters).",
+      validation: (rule) => rule.required().min(50).max(200),
+    }),
+    defineField({
+      name: "category",
+      type: "string",
+      group: "content",
+      options: { list: [...POST_CATEGORIES], layout: "radio" },
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "publishedAt",
+      title: "Published on",
+      type: "datetime",
+      group: "content",
+      description: "Posts show newest first. A post without a date is not shown.",
+      initialValue: () => new Date().toISOString(),
+      validation: (rule) => rule.required(),
+    }),
+    { ...imageField("cover", "Cover image", true), group: "content", description: "16:10, at least 1600 × 1000." },
+    defineField({
+      name: "body",
+      type: "array",
+      group: "content",
+      of: [
+        defineArrayMember({
+          type: "block",
+          styles: [
+            { title: "Paragraph", value: "normal" },
+            { title: "Heading", value: "h2" },
+            { title: "Subheading", value: "h3" },
+            { title: "Quote", value: "blockquote" },
+          ],
+          lists: [
+            { title: "Bullets", value: "bullet" },
+            { title: "Numbers", value: "number" },
+          ],
+          marks: {
+            decorators: [
+              { title: "Bold", value: "strong" },
+              { title: "Italic", value: "em" },
+            ],
+            annotations: [
+              defineArrayMember({
+                name: "link",
+                type: "object",
+                title: "Link",
+                fields: [
+                  defineField({
+                    name: "href",
+                    type: "string",
+                    description: "A page on this site (/contact) or another site (https://…)",
+                    validation: (rule) => rule.required(),
+                  }),
+                ],
+              }),
+            ],
+          },
+        }),
+        defineArrayMember({
+          type: "image",
+          options: { hotspot: true },
+          fields: [altField, defineField({ name: "caption", type: "string" })],
+        }),
+      ],
+      description: "Headings make the contents list beside the post.",
+      validation: (rule) => rule.required().min(1),
+    }),
+    defineField({
+      name: "demo",
+      title: "Demo post",
+      type: "boolean",
+      group: "content",
+      initialValue: false,
+      description: "Shown only on /blog/preview to see the layout, never to visitors or search engines.",
+    }),
+    defineField({ name: "seo", type: "seo", group: "seo" }),
+  ],
+  preview: {
+    select: { title: "title", category: "category", date: "publishedAt", demo: "demo", media: "cover" },
+    prepare: ({ title, category, date, demo, media }) => ({
+      title,
+      subtitle: [demo ? "Demo" : null, category, date ? new Date(date).toLocaleDateString("en-GB", { dateStyle: "medium" }) : null]
+        .filter(Boolean)
+        .join(" · "),
+      media,
+    }),
+  },
+});
+
+export const documentTypes = [siteSettings, page, project, service, post, enquiry];

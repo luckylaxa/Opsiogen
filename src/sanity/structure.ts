@@ -4,6 +4,7 @@ import { CogIcon } from "@sanity/icons/Cog";
 import { DocumentIcon } from "@sanity/icons/Document";
 import { EnvelopeIcon } from "@sanity/icons/Envelope";
 import { SparklesIcon } from "@sanity/icons/Sparkles";
+import { ComposeIcon } from "@sanity/icons/Compose";
 
 export const structure: StructureResolver = (S) =>
   S.list()
@@ -30,6 +31,14 @@ export const structure: StructureResolver = (S) =>
           S.documentTypeList("service")
             .title("Services")
             .defaultOrdering([{ field: "order", direction: "asc" }]),
+        ),
+      S.listItem()
+        .title("Blog")
+        .icon(ComposeIcon)
+        .child(
+          S.documentTypeList("post")
+            .title("Blog posts")
+            .defaultOrdering([{ field: "publishedAt", direction: "desc" }]),
         ),
       S.divider(),
       S.listItem()

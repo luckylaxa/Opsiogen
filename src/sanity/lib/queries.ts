@@ -143,8 +143,45 @@ export const SERVICES_QUERY = defineQuery(
   `*[_type == "service" && defined(slug.current)] | order(order asc) ${SERVICE}`,
 );
 
+const POST_CARD = `{
+  _id,
+  _updatedAt,
+  title,
+  "slug": slug.current,
+  excerpt,
+  category,
+  publishedAt,
+  demo,
+  "chars": length(pt::text(body)),
+  "cover": cover${IMG}
+}`;
+
+/** Every dated post, newest first; demo posts are filtered out where visitors see the list. */
+export const POSTS_QUERY = defineQuery(
+  `*[_type == "post" && defined(slug.current) && defined(publishedAt)] | order(publishedAt desc) ${POST_CARD}`,
+);
+
+export const POST_QUERY = defineQuery(`*[_type == "post" && slug.current == $slug && defined(publishedAt)][0]{
+  ...${POST_CARD},
+  "body": body[]{
+    ...,
+    _type == "image" => {
+      _type,
+      _key,
+      caption,
+      alt,
+      "url": asset->url,
+      "width": asset->metadata.dimensions.width,
+      "height": asset->metadata.dimensions.height,
+      "lqip": asset->metadata.lqip
+    }
+  },
+  ${SEO}
+}`);
+
 export const SITEMAP_QUERY = defineQuery(`{
   "pages": *[_type == "page" && defined(slug.current) && seo.noIndex != true]{ "slug": slug.current, _updatedAt },
   "projects": *[_type == "project" && defined(slug.current) && seo.noIndex != true]{ "slug": slug.current, _updatedAt },
-  "services": *[_type == "service" && defined(slug.current) && seo.noIndex != true]{ "slug": slug.current, _updatedAt }
+  "services": *[_type == "service" && defined(slug.current) && seo.noIndex != true]{ "slug": slug.current, _updatedAt },
+  "posts": *[_type == "post" && defined(slug.current) && defined(publishedAt) && demo != true && seo.noIndex != true]{ "slug": slug.current, _updatedAt }
 }`);

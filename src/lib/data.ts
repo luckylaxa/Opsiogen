@@ -6,6 +6,8 @@ import { REVALIDATE_SECONDS } from "@/sanity/env";
 import {
   PAGE_QUERY,
   PAGE_SLUGS_QUERY,
+  POSTS_QUERY,
+  POST_QUERY,
   PROJECTS_QUERY,
   PROJECT_QUERY,
   SERVICES_QUERY,
@@ -19,7 +21,18 @@ import {
   SERVICES,
   SETTINGS,
 } from "@/content/seed-data";
-import type { ComparisonSection, Page, ProcessSection, Project, ProjectCard, Service, SiteSettings } from "./types";
+import { POSTS, readMinutes } from "@/content/blog";
+import type {
+  ComparisonSection,
+  Page,
+  Post,
+  PostCard,
+  ProcessSection,
+  Project,
+  ProjectCard,
+  Service,
+  SiteSettings,
+} from "./types";
 
 /**
  * Fetch published content. Results are cached and refreshed every
@@ -154,18 +167,47 @@ export const getPageSlugs = cache(async (): Promise<string[]> => {
   return data ?? PAGES.map((p) => p.slug);
 });
 
+type CmsPostCard = Omit<PostCard, "readMinutes"> & { chars?: number | null };
+const withReadTime = <T extends CmsPostCard>({ chars, ...p }: T) => ({ ...p, readMinutes: readMinutes(chars ?? 0) });
+const toPostCard = ({ body, seo, ...card }: Post): PostCard => (void body, void seo, card);
+
+/** CMS posts with a cover, newest first; the starter posts until the dataset has some. */
+const getAllPosts = cache(async (): Promise<PostCard[]> => {
+  const data = await sanityFetch<CmsPostCard[]>(POSTS_QUERY);
+  const posts = (data ?? []).filter((p) => p.cover?.url).map(withReadTime);
+  return posts.length ? posts : POSTS.map(toPostCard);
+});
+
+/** Posts for the blog. Demo posts only with `includeDemo` (the /blog/preview page). */
+export async function getPosts({ includeDemo = false } = {}): Promise<PostCard[]> {
+  const posts = await getAllPosts();
+  return includeDemo ? posts : posts.filter((p) => !p.demo);
+}
+
+export const getPost = cache(async (slug: string): Promise<Post | null> => {
+  const data = await sanityFetch<(CmsPostCard & Pick<Post, "body" | "seo">) | null>(POST_QUERY, { slug });
+  if (data) return { ...withReadTime(data), body: (data.body ?? []).filter((b) => b._type !== "image" || ("url" in b && b.url)) };
+  if ((await sanityFetch<CmsPostCard[]>(POSTS_QUERY))?.length) return null;
+  return POSTS.find((p) => p.slug === slug) ?? null;
+});
+
 type SitemapEntry = { slug: string; _updatedAt?: string };
 
 export async function getSitemapData(): Promise<{
   pages: SitemapEntry[];
   projects: SitemapEntry[];
   services: SitemapEntry[];
+  posts: SitemapEntry[];
 }> {
-  const data = await sanityFetch<{ pages: SitemapEntry[]; projects: SitemapEntry[]; services: SitemapEntry[] }>(SITEMAP_QUERY);
-  if (data) return data;
+  const data = await sanityFetch<{ pages: SitemapEntry[]; projects: SitemapEntry[]; services: SitemapEntry[]; posts: SitemapEntry[] }>(
+    SITEMAP_QUERY,
+  );
+  const starterPosts = POSTS.filter((p) => !p.demo).map((p) => ({ slug: p.slug }));
+  if (data) return { ...data, posts: data.posts?.length ? data.posts : starterPosts };
   return {
     pages: PAGES.map((p) => ({ slug: p.slug })),
     projects: PROJECTS.map((p) => ({ slug: p.slug })),
     services: SERVICES.map((s) => ({ slug: s.slug })),
+    posts: starterPosts,
   };
 }

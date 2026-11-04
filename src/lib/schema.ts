@@ -1,4 +1,4 @@
-import type { Faq, Project, Service, SiteSettings } from "./types";
+import type { Faq, PostCard, Project, Service, SiteSettings } from "./types";
 import { isExternal, siteUrl } from "./utils";
 
 /**
@@ -85,5 +85,37 @@ export function projectSchema(project: Project): Thing {
     ...(project.year && { dateCreated: project.year }),
     ...(project.client && { sourceOrganization: { "@type": "Organization", name: project.client } }),
     creator: { "@id": `${siteUrl()}/#organization` },
+  };
+}
+
+const org = () => ({ "@id": `${siteUrl()}/#organization` });
+
+/** The blog itself, listing its posts. */
+export function blogSchema(name: string, description: string, posts: PostCard[]): Thing {
+  return {
+    "@type": "Blog",
+    name,
+    description,
+    url: abs("/blog"),
+    publisher: org(),
+    blogPost: posts.map((p) => ({ "@type": "BlogPosting", headline: p.title, url: abs(`/blog/${p.slug}`), datePublished: p.publishedAt })),
+  };
+}
+
+/** A post, with Opsiogen as author and publisher. */
+export function postSchema(post: PostCard): Thing {
+  return {
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt,
+    url: abs(`/blog/${post.slug}`),
+    mainEntityOfPage: abs(`/blog/${post.slug}`),
+    image: post.cover.url.startsWith("/") ? abs(post.cover.url) : post.cover.url,
+    datePublished: post.publishedAt,
+    dateModified: post._updatedAt ?? post.publishedAt,
+    articleSection: post.category,
+    timeRequired: `PT${post.readMinutes}M`,
+    author: org(),
+    publisher: org(),
   };
 }
