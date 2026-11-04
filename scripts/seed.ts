@@ -32,6 +32,7 @@ import {
   FEATURED_PROJECT_SLUG,
   PAGES,
   PROJECTS,
+  REMOVED_PROJECT_IDS,
   RETIRED_PROJECT_IDS,
   SERVICES,
   SETTINGS,
@@ -585,6 +586,22 @@ async function run() {
       tx.delete(_id);
       tx.delete(`drafts.${_id}`);
     }
+  }
+
+  // Case studies taken off the site go in either mode, unless something
+  // still links to them (then the transaction would fail).
+  const removed = await client.fetch<{ _id: string; links: number }[]>(
+    `*[_id in $ids]{ _id, "links": count(*[references(^._id)]) }`,
+    { ids: REMOVED_PROJECT_IDS },
+  );
+  for (const { _id, links } of removed) {
+    if (links > 0) {
+      console.warn(`  kept ${_id}: another document still links to it`);
+      continue;
+    }
+    console.log(`removing ${_id}`);
+    tx.delete(_id);
+    tx.delete(`drafts.${_id}`);
   }
 
   await tx.commit({ visibility: "sync" });

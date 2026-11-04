@@ -1506,14 +1506,6 @@ const CASE_STUDIES: ProjectInput[] = [
       "Meetingful AI helps teams plan, run and follow up on meetings. We designed the web app, from meeting highlights and takeaways to an AI assistant that answers questions about any meeting.",
   },
   {
-    name: "Elcoteq",
-    slug: "elcoteq",
-    industry: "Electronics manufacturing",
-    services: ["ai-websites"],
-    summary: "The website for Elcoteq, an electronics manufacturing services company.",
-    liveUrl: "https://elcoteqems.com/",
-  },
-  {
     name: "Oh My Glam",
     slug: "oh-my-glam",
     industry: "Beauty",
@@ -1529,19 +1521,15 @@ const CASE_STUDIES: ProjectInput[] = [
     summary:
       "Carlton Noble is a luxury lifestyle brand for curated travel, bespoke events and high-end hospitality. We designed a website as refined as the experiences it offers.",
   },
-  {
-    name: "Ciber Digita",
-    slug: "ciber-digita",
-    industry: "Cybersecurity",
-    services: ["ai-websites"],
-    summary: "The website for Ciber Digita, which provides cybersecurity for critical infrastructure.",
-  },
 ];
 
 export const PROJECTS: Project[] = CASE_STUDIES.map((p, i) => makeProject(i + 1, p));
 
 /** Slug of the project featured on Home (set in Site settings). */
 export const FEATURED_PROJECT_SLUG = "surgo-health";
+
+/** Case studies taken off the site: the seed deletes them in either mode. */
+export const REMOVED_PROJECT_IDS = ["project-elcoteq", "project-ciber-digita"];
 
 /** Project ids from the first starter content, removed when the seed overwrites. */
 export const RETIRED_PROJECT_IDS = [
