@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import type { ProcessStep } from "@/lib/types";
-import { gsap, prefersReducedMotion, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { prefersReducedMotion } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 /** How far down the screen a step counts as reached. */
@@ -21,49 +21,68 @@ const ARC_MASK = "conic-gradient(from calc(var(--arc) * -1), #000 calc(var(--arc
 export function ProcessSteps({ steps }: { steps: ProcessStep[] }) {
   const root = useRef<HTMLOListElement>(null);
 
-  useGSAP(
-    () => {
-      const el = root.current;
-      if (!el) return;
-      const items = gsap.utils.toArray<HTMLElement>("[data-step]", el);
-      if (prefersReducedMotion()) {
-        items.forEach((item) => item.classList.add("is-done"));
-        gsap.set(el.querySelectorAll("[data-step-fill]"), { scaleY: 1 });
-        gsap.set(el.querySelectorAll("[data-step-ring]"), { "--arc": "180deg" });
-        return;
-      }
-      items.forEach((item) => {
-        const dot = item.querySelector<HTMLElement>("[data-step-dot]");
-        ScrollTrigger.create({
-          trigger: dot,
-          start: `center ${LINE}`,
-          onEnter: () => item.classList.add("is-done"),
-          onLeaveBack: () => item.classList.remove("is-done"),
+  useEffect(() => {
+    const el = root.current;
+    if (!el) return;
+    const items = Array.from(el.querySelectorAll<HTMLElement>("[data-step]"));
+    if (prefersReducedMotion()) {
+      items.forEach((item) => item.classList.add("is-done"));
+      el.querySelectorAll<HTMLElement>("[data-step-fill]").forEach((f) => (f.style.transform = "scaleY(1)"));
+      el.querySelectorAll<HTMLElement>("[data-step-ring]").forEach((r) => r.style.setProperty("--arc", "180deg"));
+      return;
+    }
+    // GSAP loads only when the timeline comes near the screen, so it never
+    // holds up the first paint.
+    let ctx: { revert(): void } | undefined;
+    let cancelled = false;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+        import("@/lib/gsap").then(({ gsap, ScrollTrigger }) => {
+          if (cancelled) return;
+          ctx = gsap.context(() => {
+            items.forEach((item) => {
+              const dot = item.querySelector<HTMLElement>("[data-step-dot]");
+              ScrollTrigger.create({
+                trigger: dot,
+                start: `center ${LINE}`,
+                onEnter: () => item.classList.add("is-done"),
+                onLeaveBack: () => item.classList.remove("is-done"),
+              });
+              gsap.fromTo(
+                item.querySelector("[data-step-ring]"),
+                { "--arc": "0deg" },
+                {
+                  "--arc": "180deg",
+                  ease: "none",
+                  scrollTrigger: { trigger: dot, start: `top ${LINE}`, end: `bottom ${LINE}`, scrub: 0.3 },
+                },
+              );
+              const fill = item.querySelector<HTMLElement>("[data-step-fill]");
+              if (!fill) return;
+              gsap.fromTo(
+                fill,
+                { scaleY: 0 },
+                {
+                  scaleY: 1,
+                  ease: "none",
+                  scrollTrigger: { trigger: fill.parentElement, start: `top ${LINE}`, end: `bottom ${LINE}`, scrub: 0.3 },
+                },
+              );
+            });
+          }, el);
         });
-        gsap.fromTo(
-          item.querySelector("[data-step-ring]"),
-          { "--arc": "0deg" },
-          {
-            "--arc": "180deg",
-            ease: "none",
-            scrollTrigger: { trigger: dot, start: `top ${LINE}`, end: `bottom ${LINE}`, scrub: 0.3 },
-          },
-        );
-        const fill = item.querySelector<HTMLElement>("[data-step-fill]");
-        if (!fill) return;
-        gsap.fromTo(
-          fill,
-          { scaleY: 0 },
-          {
-            scaleY: 1,
-            ease: "none",
-            scrollTrigger: { trigger: fill.parentElement, start: `top ${LINE}`, end: `bottom ${LINE}`, scrub: 0.3 },
-          },
-        );
-      });
-    },
-    { scope: root },
-  );
+      },
+      { rootMargin: "100% 0px" },
+    );
+    io.observe(el);
+    return () => {
+      cancelled = true;
+      io.disconnect();
+      ctx?.revert();
+    };
+  }, []);
 
   return (
     <ol

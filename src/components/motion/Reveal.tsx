@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { prefersReducedMotion } from "@/lib/gsap";
+import { prefersReducedMotion } from "@/lib/motion";
 
 const TARGETS = "[data-reveal], [data-reveal-mask]";
 

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Img, Video } from "@/lib/types";
 import { Media } from "@/components/ui/Media";
-import { prefersReducedMotion } from "@/lib/gsap";
+import { prefersReducedMotion } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 /**

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { ShowreelSection, Video } from "@/lib/types";
 import { Media } from "@/components/ui/Media";
-import { prefersReducedMotion } from "@/lib/gsap";
+import { prefersReducedMotion } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 /** MP4, or the WebM copy where this browser can't play it (no H.264, as in some open-source builds). */

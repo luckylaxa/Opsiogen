@@ -430,6 +430,47 @@ html.project-open {
   animation: dock-in 0.45s cubic-bezier(0.215, 0.61, 0.355, 1) 0.25s both;
 }
 
+/*
+ * Full-screen menu (components/site/MenuOverlay.tsx): the panel wipes down,
+ * then its items rise one after another; closing wipes it back up. The items
+ * reset only once the panel is out of sight.
+ */
+.site-menu {
+  visibility: hidden;
+  clip-path: inset(0 0 100% 0);
+  transition:
+    clip-path 0.45s cubic-bezier(0.65, 0, 0.35, 1),
+    visibility 0s linear 0.45s;
+}
+.site-menu[data-open] {
+  visibility: visible;
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.site-menu [data-menu-item] {
+  opacity: 0;
+  transform: translateY(40px);
+  transition:
+    opacity 0s linear 0.45s,
+    transform 0s linear 0.45s;
+}
+.site-menu[data-open] [data-menu-item] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.5s cubic-bezier(0.215, 0.61, 0.355, 1),
+    transform 0.5s cubic-bezier(0.215, 0.61, 0.355, 1);
+  transition-delay: calc(0.35s + var(--i, 0) * 0.06s);
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-menu,
+  .site-menu[data-open],
+  .site-menu [data-menu-item],
+  .site-menu[data-open] [data-menu-item] {
+    transition: none;
+  }
+}
+
 /* While the first-visit preloader shows, the page's own entrance waits. */
 .preloading h1 .reveal-mask > span,
 .preloading .dock-in {

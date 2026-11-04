@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import type { LinkItem } from "@/lib/types";
-import { gsap, prefersReducedMotion } from "@/lib/gsap";
+import { prefersReducedMotion } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight, ChevronDown, CloseIcon, ServiceIcon } from "@/components/ui/Icons";
 import { buttonClass } from "@/components/ui/Button";
@@ -61,6 +61,9 @@ export function MenuOverlay({
   // had (as a top offset) and settle back once every list has closed.
   const [pin, setPin] = useState<number | null>(null);
   const unpin = useRef<number | undefined>(undefined);
+  // Thumbnails load once the menu has been opened, not with every page.
+  const [primed, setPrimed] = useState(false);
+  if (open && !primed) setPrimed(true);
 
   const toggle = (href: string) => {
     window.clearTimeout(unpin.current);
@@ -100,7 +103,7 @@ export function MenuOverlay({
         project: true,
         icon: (
           <span className="relative block aspect-[4/3] h-[clamp(40px,calc(0.6vw+36px),50px)] overflow-hidden rounded-[6px] bg-night">
-            {p.image && <Image src={p.image.url} alt="" fill sizes="68px" className="object-cover" />}
+            {primed && p.image && <Image src={p.image.url} alt="" fill sizes="68px" className="object-cover" />}
           </span>
         ),
       })),
@@ -113,45 +116,26 @@ export function MenuOverlay({
     lastPath.current = pathname;
   }, [pathname, open, closeMenu]);
 
+  // The wipe and the staggered items are CSS (.site-menu in globals.css).
   useEffect(() => {
     const el = panel.current;
     if (!el) return;
-    const reduce = prefersReducedMotion();
     if (open) {
       document.documentElement.style.overflow = "hidden";
-      gsap.set(el, { visibility: "visible" });
-      const tl = gsap.timeline();
-      tl.fromTo(
-        el,
-        { clipPath: "inset(0 0 100% 0)" },
-        { clipPath: "inset(0 0 0% 0)", duration: reduce ? 0 : 0.6, ease: "power3.inOut" },
-      ).fromTo(
-        el.querySelectorAll("[data-menu-item]"),
-        { y: reduce ? 0 : 40, opacity: 0 },
-        { y: 0, opacity: 1, duration: reduce ? 0 : 0.5, ease: "power3.out", stagger: reduce ? 0 : 0.06 },
-        reduce ? 0 : "-=0.25",
-      );
       el.querySelector<HTMLElement>("[data-menu-close]")?.focus();
-      return () => {
-        tl.kill();
-      };
+      return;
     }
     document.documentElement.style.overflow = "";
-    if (getComputedStyle(el).visibility === "hidden") return;
-    const tl = gsap.to(el, {
-      clipPath: "inset(0 0 100% 0)",
-      duration: reduce ? 0 : 0.45,
-      ease: "power3.inOut",
-      onComplete: () => {
-        gsap.set(el, { visibility: "hidden" });
+    // Once the panel has wiped away, fold the lists back up.
+    const reset = window.setTimeout(
+      () => {
         window.clearTimeout(unpin.current);
         setExpanded([]);
         setPin(null);
       },
-    });
-    return () => {
-      tl.kill();
-    };
+      prefersReducedMotion() ? 0 : 450,
+    );
+    return () => window.clearTimeout(reset);
   }, [open]);
 
   // Escape to close and keep focus inside while open.
@@ -183,8 +167,8 @@ export function MenuOverlay({
       role="dialog"
       aria-modal="true"
       aria-label="Menu"
-      className="on-dark invisible fixed inset-0 z-50 flex flex-col overflow-y-auto bg-[#0a090d] px-gutter pb-[clamp(24px,2.4vw,44px)] text-white"
-      style={{ clipPath: "inset(0 0 100% 0)" }}
+      data-open={open || undefined}
+      className="site-menu on-dark fixed inset-0 z-50 flex flex-col overflow-y-auto bg-[#0a090d] px-gutter pb-[clamp(24px,2.4vw,44px)] text-white"
     >
       <div className="flex h-[clamp(64px,4.6vw,88px)] shrink-0 items-center justify-between">
         <Link href="/" className="link-fade" onClick={closeMenu} aria-label="Home">
@@ -224,7 +208,7 @@ export function MenuOverlay({
                   <span className="w-[2ch] shrink-0 text-small tracking-[0.08em] text-white/45 tabular-nums">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <span data-menu-item className="flex flex-1 items-center gap-[clamp(10px,1vw,20px)]">
+                  <span data-menu-item style={{ "--i": i } as React.CSSProperties} className="flex flex-1 items-center gap-[clamp(10px,1vw,20px)]">
                     <span className="grad-hover text-[length:clamp(22px,calc(1.6vw+16px),32px)] leading-[1.1] font-medium tracking-[-0.02em] group-aria-[current=page]:text-white/55 lg:text-[length:clamp(44px,calc(5.2vw+24px),124px)] lg:leading-[0.95] lg:font-semibold lg:tracking-[-0.045em]">
                       {item.label}
                     </span>
@@ -277,10 +261,10 @@ export function MenuOverlay({
 
         {/* Wide screens: stays at the bottom of the screen while a list opens beside it. */}
         <div className="flex flex-col gap-10 lg:sticky lg:bottom-0 lg:self-end">
-          <div data-menu-item className="theme-light relative z-10 text-ink">
+          <div data-menu-item style={{ "--i": menu.length } as React.CSSProperties} className="theme-light relative z-10 text-ink">
             <SiteSearch items={searchItems} />
           </div>
-          <div data-menu-item className="flex flex-col gap-5">
+          <div data-menu-item style={{ "--i": menu.length + 1 } as React.CSSProperties} className="flex flex-col gap-5">
             {email && (
               <a href={`mailto:${email}`} className="link-accent w-fit text-base text-white/80">
                 {email}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { gsap, prefersReducedMotion } from "@/lib/gsap";
+import { prefersReducedMotion } from "@/lib/motion";
 import { ArrowUp } from "@/components/ui/Icons";
 import { cn } from "@/lib/utils";
 
@@ -27,11 +27,7 @@ export function ScrollTop() {
   }, []);
 
   const toTop = () => {
-    if (prefersReducedMotion()) {
-      window.scrollTo(0, 0);
-    } else {
-      gsap.to(window, { scrollTo: 0, duration: 0.8, ease: "power2.inOut" });
-    }
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "instant" : "smooth" });
     document.getElementById("main")?.focus({ preventScroll: true });
   };
 

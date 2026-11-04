@@ -1,16 +1,14 @@
 "use client";
 
 import gsap from "gsap";
-import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
 
+/**
+ * GSAP with ScrollTrigger. Import it lazily (`import("@/lib/gsap")`) so it
+ * stays out of the first page load; reduced-motion checks live in lib/motion.
+ */
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, useGSAP);
+  gsap.registerPlugin(ScrollTrigger);
 }
 
-export { gsap, ScrollTrigger, useGSAP };
-
-export function prefersReducedMotion() {
-  return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
+export { gsap, ScrollTrigger };
