@@ -59,6 +59,8 @@ export default async function SiteLayout({ children, modal }: LayoutProps<"/">) 
     // The head scripts change <html> before React hydrates, hence suppressHydrationWarning.
     <html lang="en" data-theme={DEFAULT_THEME} className={outfit.variable} suppressHydrationWarning>
       <head>
+        {/* CMS images come from Sanity's CDN: open the connection early. */}
+        <link rel="preconnect" href="https://cdn.sanity.io" />
         {/* Applies the theme (dark unless the visitor chose light) before the first paint. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         {/* Decides whether the first-visit preloader shows. */}

@@ -1,5 +1,6 @@
-import Image, { getImageProps } from "next/image";
+import { getImageProps } from "next/image";
 import type { Img } from "@/lib/types";
+import { loaderFor } from "@/lib/sanityImage";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -8,6 +9,8 @@ type Props = {
   className?: string;
   /** The page's main (LCP) image: loads at once, ahead of the rest. */
   priority?: boolean;
+  /** Loads at once at normal priority, for images just below the first screen. */
+  eager?: boolean;
   /** Fill the parent box (parent must be positioned and sized). */
   fill?: boolean;
   /** Shown instead on phones (below `phoneBelow`, 640px by default); each screen loads only its own image. */
@@ -18,15 +21,33 @@ type Props = {
 const objectPosition = (img: Img) =>
   img.hotspot ? `${Math.round(img.hotspot.x * 100)}% ${Math.round(img.hotspot.y * 100)}%` : undefined;
 
-/** next/image wrapper for CMS and placeholder images. */
-export function Media({ image, sizes, className, priority, fill = true, phone, phoneBelow = 640 }: Props) {
-  const blur = image.lqip ? { placeholder: "blur" as const, blurDataURL: image.lqip } : {};
-  const load = priority ? { loading: "eager" as const, fetchPriority: "high" as const } : {};
+/**
+ * next/image wrapper for CMS and placeholder images. CMS images come straight
+ * from Sanity's CDN at the size each screen needs; until one arrives, its tiny
+ * preview (lqip) fills the box instead of an empty frame.
+ */
+export function Media({ image, sizes, className, priority, eager, fill = true, phone, phoneBelow = 640 }: Props) {
+  const alt = image.alt || "";
+  const load = priority
+    ? { loading: "eager" as const, fetchPriority: "high" as const }
+    : eager
+      ? { loading: "eager" as const }
+      : {};
+  const props = (src: string, lqip?: string | null) =>
+    getImageProps({
+      src,
+      alt,
+      sizes,
+      loader: loaderFor(src),
+      ...(fill ? { fill: true } : { width: image.width, height: image.height }),
+      // The preview stays behind the loaded image, so only opaque (JPEG) ones get it.
+      ...(lqip && /\.jpe?g(\?|$)/i.test(src) ? { placeholder: "blur" as const, blurDataURL: lqip } : {}),
+      ...load,
+    }).props;
+
   if (fill && phone?.url) {
-    const alt = image.alt || "";
-    const common = { alt, fill: true, sizes, ...load };
-    const { props: wide } = getImageProps({ ...common, src: image.url });
-    const { props: narrow } = getImageProps({ ...common, src: phone.url });
+    const wide = props(image.url);
+    const narrow = props(phone.url, phone.lqip ?? image.lqip);
     return (
       <picture>
         <source media={`(min-width: ${phoneBelow}px)`} srcSet={wide.srcSet} sizes={sizes} />
@@ -39,30 +60,14 @@ export function Media({ image, sizes, className, priority, fill = true, phone, p
       </picture>
     );
   }
-  if (fill) {
-    return (
-      <Image
-        src={image.url}
-        alt={image.alt || ""}
-        fill
-        sizes={sizes}
-        {...load}
-        className={cn("object-cover", className)}
-        style={{ objectPosition: objectPosition(image) }}
-        {...blur}
-      />
-    );
-  }
+  const own = props(image.url, image.lqip);
   return (
-    <Image
-      src={image.url}
-      alt={image.alt || ""}
-      width={image.width}
-      height={image.height}
-      sizes={sizes}
-      {...load}
-      className={cn("h-auto w-full", className)}
-      {...blur}
+    // eslint-disable-next-line @next/next/no-img-element -- getImageProps already sized and optimised it
+    <img
+      {...own}
+      alt={alt}
+      className={cn(fill ? "object-cover" : "h-auto w-full", className)}
+      style={{ ...own.style, objectPosition: fill ? objectPosition(image) : undefined }}
     />
   );
 }

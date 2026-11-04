@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { loaderFor } from "@/lib/sanityImage";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
@@ -103,7 +104,7 @@ export function MenuOverlay({
         project: true,
         icon: (
           <span className="relative block aspect-[4/3] h-[clamp(40px,calc(0.6vw+36px),50px)] overflow-hidden rounded-[6px] bg-night">
-            {primed && p.image && <Image src={p.image.url} alt="" fill sizes="68px" className="object-cover" />}
+            {primed && p.image && <Image src={p.image.url} loader={loaderFor(p.image.url)} alt="" fill sizes="68px" className="object-cover" />}
           </span>
         ),
       })),

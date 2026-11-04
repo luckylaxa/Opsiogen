@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { loaderFor } from "@/lib/sanityImage";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
@@ -198,7 +199,7 @@ export function SiteSearch({
                   >
                     {item.image ? (
                       <span aria-hidden="true" className="relative h-[38px] w-[50px] shrink-0 overflow-hidden rounded-[4px] bg-night">
-                        <Image src={item.image.url} alt="" fill sizes="50px" className="object-cover" />
+                        <Image src={item.image.url} loader={loaderFor(item.image.url)} alt="" fill sizes="50px" className="object-cover" />
                       </span>
                     ) : (
                       <span aria-hidden="true" className="grid h-[38px] w-[50px] shrink-0 place-items-center rounded-[4px] bg-coal text-small font-semibold text-white">
