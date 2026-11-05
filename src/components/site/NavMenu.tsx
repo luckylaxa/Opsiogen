@@ -143,17 +143,17 @@ function ServicesItem({ item, groups }: { item: LinkItem; groups: MenuGroup[] })
             aria-label={item.label}
             data-open={open || undefined}
             style={{ top }}
-            className="site-menu on-dark fixed inset-x-0 bottom-0 z-[55] flex flex-col overflow-y-auto overscroll-contain bg-[#0a090d] px-gutter pt-[clamp(16px,3.4vh,56px)] pb-[clamp(16px,3.2vh,48px)] text-white"
+            className="site-menu fixed inset-x-0 bottom-0 z-[55] flex flex-col overflow-y-auto overscroll-contain bg-surface px-gutter dark:bg-page pt-[clamp(16px,3.4vh,56px)] pb-[clamp(16px,3.2vh,48px)] text-ink"
           >
             <div data-menu-item style={{ "--i": 0 } as React.CSSProperties} className="flex items-center justify-between gap-6">
-              <p className="text-small uppercase tracking-[0.18em] text-white/45 tabular-nums">
+              <p className="text-small uppercase tracking-[0.18em] text-ink/45 tabular-nums">
                 {String(total).padStart(2, "0")} {item.label.toLowerCase()}
               </p>
               <button
                 type="button"
                 onClick={() => close()}
                 aria-label={`Close ${item.label.toLowerCase()}`}
-                className="grid size-11 place-items-center rounded-[var(--radius-btn)] border border-white/25 text-white transition-colors duration-300 hover:border-white/60"
+                className="grid size-11 place-items-center rounded-[var(--radius-btn)] border border-ink/25 text-ink transition-colors duration-300 hover:border-ink/60"
               >
                 <CloseIcon className="size-5" />
               </button>
@@ -162,36 +162,36 @@ function ServicesItem({ item, groups }: { item: LinkItem; groups: MenuGroup[] })
             <div className="mt-[clamp(12px,2.4vh,40px)] grid grid-cols-3 gap-x-gap">
               {groups.map((g, gi) => (
                 <section key={g.group} data-menu-item style={{ "--i": gi + 1 } as React.CSSProperties}>
-                  <h2 className="flex items-baseline justify-between pb-[clamp(8px,1.4vh,16px)] text-small uppercase tracking-[0.18em] text-white/55">
+                  <h2 className="flex items-baseline justify-between pb-[clamp(8px,1.4vh,16px)] text-small uppercase tracking-[0.18em] text-ink/55">
                     {g.label}
-                    <span className="tabular-nums text-white/35">{String(g.services.length).padStart(2, "0")}</span>
+                    <span className="tabular-nums text-ink/35">{String(g.services.length).padStart(2, "0")}</span>
                   </h2>
-                  <ul className="border-b border-white/10">
+                  <ul className="border-b border-ink/10">
                     {g.services.map((s, si) => {
                       const index = starts[gi] + si + 1;
                       return (
-                        <li key={s.href} className="border-t border-white/10">
+                        <li key={s.href} className="border-t border-ink/10">
                           <Link
                             href={s.href}
                             onClick={() => close(false)}
                             aria-current={pathname === s.href ? "page" : undefined}
                             className="group grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-x-[clamp(12px,1.1vw,22px)] py-[clamp(8px,1.7vh,24px)]"
                           >
-                            <span className="grid size-[clamp(32px,min(2.6vw,4.6vh),50px)] place-items-center rounded-[10px] border border-white/15 text-white/80 transition-colors duration-300 group-hover:border-white/40 group-hover:text-white">
+                            <span className="grid size-[clamp(32px,min(2.6vw,4.6vh),50px)] place-items-center rounded-[10px] border border-ink/15 text-ink/80 transition-colors duration-300 group-hover:border-ink/40 group-hover:text-ink">
                               <ServiceIcon slug={s.slug} className="size-[46%]" />
                             </span>
                             <span className="min-w-0">
                               <span className="flex items-baseline gap-3">
-                                <span className="text-small tabular-nums text-white/35">{String(index).padStart(2, "0")}</span>
-                                <span className="grad-hover text-[length:clamp(17px,min(1.55vw,2.7vh),29px)] leading-[1.15] font-medium tracking-[-0.015em] text-balance group-aria-[current=page]:text-white/55">
+                                <span className="text-small tabular-nums text-ink/35">{String(index).padStart(2, "0")}</span>
+                                <span className="grad-hover text-[length:clamp(17px,min(1.55vw,2.7vh),29px)] leading-[1.15] font-medium tracking-[-0.015em] text-balance group-aria-[current=page]:text-ink/55">
                                   {s.name}
                                 </span>
                               </span>
-                              <span className="mt-1 block text-[length:clamp(13px,min(1vw,1.8vh),17px)] leading-[1.4] text-white/60 text-pretty">
+                              <span className="mt-1 block text-[length:clamp(13px,min(1vw,1.8vh),17px)] leading-[1.4] text-ink/60 text-pretty">
                                 {s.tagline}
                               </span>
                             </span>
-                            <ArrowRight className="mt-1 size-5 text-white/50 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white" />
+                            <ArrowRight className="mt-1 size-5 text-ink/50 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-ink" />
                           </Link>
                         </li>
                       );
