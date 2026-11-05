@@ -24,9 +24,9 @@ type SubRow = { href: string; title: string; text: string; icon: React.ReactNode
 
 /**
  * The full-screen menu from the design system, opened from the floating menu
- * (and the header on phones): always dark, with oversized numbered page links
- * that rise in turn, and the search and contact beside them. Wipes down to
- * open and up to close.
+ * (and the header on phones): white in the light theme and dark in the dark one,
+ * with the header's logo, oversized numbered page links from the top that rise
+ * in turn, and the search and contact beside them. Wipes down to open and up to close.
  *
  * Work and Services open in place: a link to the whole section, then a row
  * for each project or service. A list grows downward from its name, so
@@ -55,26 +55,12 @@ export function MenuOverlay({
   const lastPath = useRef(pathname);
   const id = useId();
   const [expanded, setExpanded] = useState<string[]>([]);
-  const nav = useRef<HTMLElement>(null);
-  const list = useRef<HTMLUListElement>(null);
-  // On wide screens the names sit at the bottom of the menu, so an opening
-  // list would push them up. While any list is open they keep the place they
-  // had (as a top offset) and settle back once every list has closed.
-  const [pin, setPin] = useState<number | null>(null);
-  const unpin = useRef<number | undefined>(undefined);
   // Thumbnails load once the menu has been opened, not with every page.
   const [primed, setPrimed] = useState(false);
   if (open && !primed) setPrimed(true);
 
-  const toggle = (href: string) => {
-    window.clearTimeout(unpin.current);
-    const next = expanded.includes(href) ? expanded.filter((h) => h !== href) : [...expanded, href];
-    if (pin === null && nav.current && list.current) {
-      setPin(list.current.getBoundingClientRect().top - nav.current.getBoundingClientRect().top);
-    }
-    if (next.length === 0) unpin.current = window.setTimeout(() => setPin(null), prefersReducedMotion() ? 0 : 550);
-    setExpanded(next);
-  };
+  const toggle = (href: string) =>
+    setExpanded((list) => (list.includes(href) ? list.filter((h) => h !== href) : [...list, href]));
 
   const subItems: Record<string, { all: string; rows: SubRow[] }> = {};
   const services = groups.flatMap((g) => g.services);
@@ -85,7 +71,7 @@ export function MenuOverlay({
         href: s.href,
         title: s.name,
         text: s.tagline,
-        icon: <ServiceIcon slug={s.slug} className="size-[clamp(24px,calc(0.4vw+21px),30px)] text-white/70" />,
+        icon: <ServiceIcon slug={s.slug} className="size-[clamp(24px,calc(0.4vw+21px),30px)] text-ink/70" />,
       })),
     };
   }
@@ -129,11 +115,7 @@ export function MenuOverlay({
     document.documentElement.style.overflow = "";
     // Once the panel has wiped away, fold the lists back up.
     const reset = window.setTimeout(
-      () => {
-        window.clearTimeout(unpin.current);
-        setExpanded([]);
-        setPin(null);
-      },
+      () => setExpanded([]),
       prefersReducedMotion() ? 0 : 450,
     );
     return () => window.clearTimeout(reset);
@@ -169,19 +151,19 @@ export function MenuOverlay({
       aria-modal="true"
       aria-label="Menu"
       data-open={open || undefined}
-      className="site-menu on-dark fixed inset-0 z-50 flex flex-col overflow-y-auto bg-[#0a090d] px-gutter pb-[clamp(24px,2.4vw,44px)] text-white"
+      className="site-menu fixed inset-0 z-50 flex flex-col overflow-y-auto bg-surface px-gutter pb-[clamp(24px,2.4vw,44px)] text-ink dark:bg-page"
     >
-      <div className="flex h-[clamp(64px,4.6vw,88px)] shrink-0 items-center justify-between">
+      <div className="flex h-[var(--header-h)] shrink-0 items-center justify-between">
         <Link href="/" className="link-fade" onClick={closeMenu} aria-label="Home">
           {wordmark}
         </Link>
         <div className="flex items-center gap-2">
-          <ThemeToggle className="text-white hover:bg-white/10" />
+          <ThemeToggle className="hover:bg-ink/[0.07]" />
           <button
             type="button"
             data-menu-close
             onClick={closeMenu}
-            className="grid size-11 place-items-center rounded-[var(--radius-btn)] border border-white/25 text-white transition-colors duration-300 hover:border-white/60"
+            className="grid size-11 place-items-center rounded-[var(--radius-btn)] border border-ink/25 text-ink transition-colors duration-300 hover:border-ink/60"
             aria-label="Close menu"
           >
             <CloseIcon className="size-5" />
@@ -190,15 +172,10 @@ export function MenuOverlay({
       </div>
 
       {/* Phones and tablets: the names in a list under the logo, then search and contact.
-          Wide screens: giant names at the bottom, search and contact beside them. */}
-      <div className="mt-[clamp(8px,1.5vh,16px)] flex flex-1 flex-col gap-y-10 lg:mt-[clamp(24px,4vh,64px)] lg:grid lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-x-[clamp(40px,5vw,110px)]">
-        <nav
-          ref={nav}
-          aria-label="Menu"
-          className="flex flex-col lg:justify-end"
-          style={pin === null ? undefined : { justifyContent: "flex-start", paddingTop: pin }}
-        >
-          <ul ref={list} className="border-b border-white/10">
+          Wide screens: giant names from the top, search and contact beside them. */}
+      <div className="mt-[clamp(8px,1.5vh,16px)] flex flex-1 flex-col gap-y-10 lg:mt-[clamp(32px,7vh,104px)] lg:grid lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-x-[clamp(40px,5vw,110px)]">
+        <nav aria-label="Menu" className="flex flex-col">
+          <ul className="border-b border-ink/10">
             {menu.map((item, i) => {
               const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
               const sub = subItems[item.href];
@@ -206,17 +183,17 @@ export function MenuOverlay({
               const panelId = `${id}-${i}`;
               const label = (
                 <>
-                  <span className="w-[2ch] shrink-0 text-small tracking-[0.08em] text-white/45 tabular-nums">
+                  <span className="w-[2ch] shrink-0 text-small tracking-[0.08em] text-ink/45 tabular-nums">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <span data-menu-item style={{ "--i": i } as React.CSSProperties} className="flex flex-1 items-center gap-[clamp(10px,1vw,20px)]">
-                    <span className="grad-hover text-[length:clamp(22px,calc(1.6vw+16px),32px)] leading-[1.1] font-medium tracking-[-0.02em] group-aria-[current=page]:text-white/55 lg:text-[length:clamp(44px,calc(5.2vw+24px),124px)] lg:leading-[0.95] lg:font-semibold lg:tracking-[-0.045em]">
+                    <span className="grad-hover text-[length:clamp(22px,calc(1.6vw+16px),32px)] leading-[1.1] font-medium tracking-[-0.02em] group-aria-[current=page]:text-ink/55 lg:text-[length:clamp(44px,calc(5.2vw+24px),124px)] lg:leading-[0.95] lg:font-semibold lg:tracking-[-0.045em]">
                       {item.label}
                     </span>
                     {sub && (
                       <ChevronDown
                         className={cn(
-                          "ml-auto size-5 shrink-0 text-white/60 transition-transform duration-500 ease-[var(--ease-out-soft)] motion-reduce:transition-none lg:ml-0 lg:size-[clamp(24px,calc(1.6vw+18px),52px)]",
+                          "ml-auto size-5 shrink-0 text-ink/60 transition-transform duration-500 ease-[var(--ease-out-soft)] motion-reduce:transition-none lg:ml-0 lg:size-[clamp(24px,calc(1.6vw+18px),52px)]",
                           isOpen && "-rotate-180",
                         )}
                       />
@@ -227,7 +204,7 @@ export function MenuOverlay({
               const row =
                 "group flex w-full items-baseline gap-[clamp(14px,1.4vw,28px)] overflow-hidden py-[clamp(13px,1.6vw,18px)] text-left lg:py-[clamp(6px,0.8vw,14px)]";
               return (
-                <li key={item._key ?? item.href} className="border-t border-white/10">
+                <li key={item._key ?? item.href} className="border-t border-ink/10">
                   {sub ? (
                     <>
                       <button
@@ -260,19 +237,19 @@ export function MenuOverlay({
           </ul>
         </nav>
 
-        {/* Wide screens: stays at the bottom of the screen while a list opens beside it. */}
-        <div className="flex flex-col gap-10 lg:sticky lg:bottom-0 lg:self-end">
-          <div data-menu-item style={{ "--i": menu.length } as React.CSSProperties} className="theme-light relative z-10 text-ink">
+        {/* Wide screens: stays in view while a list opens beside it. */}
+        <div className="flex flex-col gap-10 lg:sticky lg:top-0 lg:self-start">
+          <div data-menu-item style={{ "--i": menu.length } as React.CSSProperties} className="relative z-10">
             <SiteSearch items={searchItems} />
           </div>
           <div data-menu-item style={{ "--i": menu.length + 1 } as React.CSSProperties} className="flex flex-col gap-5">
             {email && (
-              <a href={`mailto:${email}`} className="link-accent w-fit text-base text-white/80">
+              <a href={`mailto:${email}`} className="link-accent w-fit text-base text-ink/80">
                 {email}
               </a>
             )}
-            <SocialLinks items={socialLinks} onDark />
-            <Link href={button.href} className={buttonClass("light", "lg", "w-fit")}>
+            <SocialLinks items={socialLinks} />
+            <Link href={button.href} className={buttonClass("dark", "lg", "w-fit")}>
               <span className="btn-label">{button.label}</span>
             </Link>
           </div>
@@ -318,14 +295,14 @@ function SubPanel({
             <Link
               href={allHref}
               onClick={onNavigate}
-              className="group flex items-center justify-between gap-4 rounded-[var(--radius-btn)] bg-white/[0.08] px-[clamp(14px,1.2vw,22px)] py-[clamp(12px,1vw,18px)] text-row font-medium transition-colors duration-300 hover:bg-white/[0.13]"
+              className="group flex items-center justify-between gap-4 rounded-[var(--radius-btn)] bg-ink/[0.06] px-[clamp(14px,1.2vw,22px)] py-[clamp(12px,1vw,18px)] text-row font-medium transition-colors duration-300 hover:bg-ink/[0.1]"
             >
               <span className="grad-hover">{allLabel}</span>
               <ArrowUpRight className="size-[1.1em] shrink-0 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </Link>
             <ul className="mt-[clamp(6px,0.6vw,10px)] grid lg:grid-cols-2 lg:gap-x-gap">
               {rows.map((r) => (
-                <li key={r.href} className="border-b border-white/10 last:border-b-0 lg:[&:nth-last-child(2):nth-child(odd)]:border-b-0">
+                <li key={r.href} className="border-b border-ink/10 last:border-b-0 lg:[&:nth-last-child(2):nth-child(odd)]:border-b-0">
                   <Link
                     href={r.href}
                     scroll={r.project ? false : undefined}
@@ -336,7 +313,7 @@ function SubPanel({
                       <span className="block text-row font-medium">
                         <span className="grad-hover">{r.title}</span>
                       </span>
-                      <span className="mt-0.5 block truncate text-small text-white/55">{r.text}</span>
+                      <span className="mt-0.5 block truncate text-small text-ink/55">{r.text}</span>
                     </span>
                     <span className="flex shrink-0">{r.icon}</span>
                   </Link>

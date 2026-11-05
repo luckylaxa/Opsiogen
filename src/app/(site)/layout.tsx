@@ -91,7 +91,7 @@ export default async function SiteLayout({ children, modal }: LayoutProps<"/">) 
           <MenuOverlay
             menu={settings.menu}
             button={settings.headerButton}
-            wordmark={<Logo logo={settings.logoOnDark ?? settings.logo} name={settings.siteTitle} tone="dark" />}
+            wordmark={<Logo logo={settings.logo} name={settings.siteTitle} large />}
             searchItems={searchItems}
             groups={groups}
             email={settings.email}
