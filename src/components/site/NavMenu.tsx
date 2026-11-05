@@ -22,7 +22,7 @@ export type MenuGroup = {
  */
 export function NavMenu({ menu, groups, button }: { menu: LinkItem[]; groups: MenuGroup[]; button: LinkItem }) {
   return (
-    <nav aria-label="Main" className="ml-[clamp(40px,4.2vw,80px)] hidden lg:block">
+    <nav aria-label="Main" className="mr-[clamp(20px,2.1vw,40px)] ml-[clamp(40px,4.2vw,80px)] hidden shrink-0 lg:block">
       <ul className="flex items-center gap-[clamp(18px,1.3vw,25px)]">
         {menu.map((item) => (
           <li key={item._key ?? item.href}>

@@ -30,7 +30,7 @@ export function Header({
       <NavMenu menu={settings.menu} groups={groups} button={settings.headerButton} />
       <SiteSearch
         items={searchItems}
-        className="mx-[clamp(20px,2.1vw,40px)] hidden max-w-[clamp(260px,24vw,460px)] flex-1 lg:ml-auto lg:block"
+        className="mr-[clamp(20px,2.1vw,40px)] hidden min-w-0 max-w-[clamp(260px,24vw,460px)] flex-1 lg:ml-auto lg:block"
       />
       <div className="ml-auto flex items-center gap-2 lg:ml-0">
         <ThemeToggle className="hover:bg-ink/[0.07]" />
