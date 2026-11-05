@@ -204,6 +204,9 @@ const TEXT_UPDATES: { id: string; get: string; path: string; from: string; to: s
   { id: "service-ai-websites", get: "steps.accent", path: "steps.accent", from: "waiting", to: "live" },
   { id: "service-ai-websites", get: "related.label", path: "related.label", from: "Our work", to: "Selected work" },
   { id: "service-ai-websites", get: "related.heading", path: "related.heading", from: "Websites we’ve launched", to: "Websites we’ve launched." },
+  // Home hero: a second path instead of a third Start a project.
+  { id: "page-home", get: 'sections[_key == "hero"][0].button.label', path: 'sections[_key == "hero"].button.label', from: "Start a project", to: "See our work" },
+  { id: "page-home", get: 'sections[_key == "hero"][0].button.href', path: 'sections[_key == "hero"].button.href', from: "/contact", to: "/work" },
 ];
 
 /**

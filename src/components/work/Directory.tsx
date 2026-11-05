@@ -23,7 +23,8 @@ const ALL = "";
  * The Work page laid out like the reference's directory: a filter bar
  * (service, industry, year and a search box), the giant title, the video
  * card, a results line, then every project as a big dark card, two per row,
- * and Load more.
+ * and Load more. While a filter or search is on, the title and video step
+ * aside so the results come straight after the filter bar.
  */
 export function Directory({ projects, services, pageSize, children, feature }: Props) {
   const [service, setService] = useState(ALL);
@@ -117,11 +118,17 @@ export function Directory({ projects, services, pageSize, children, feature }: P
         </div>
       </div>
 
-      {children}
+      {/* While filtering, the title steps aside (kept for screen readers) so the results sit right under the filters. */}
+      <div className={filtering ? "sr-only" : undefined}>{children}</div>
 
       {!filtering && feature}
 
-      <div className="mb-[clamp(20px,1.6vw,32px)] flex items-center justify-between gap-4 px-gutter text-base">
+      <div
+        className={cn(
+          "mb-[clamp(20px,1.6vw,32px)] flex items-center justify-between gap-4 px-gutter text-base",
+          filtering && "mt-[clamp(24px,2vw,40px)]",
+        )}
+      >
         <p role="status" aria-live="polite">
           <span className="font-semibold tabular-nums">{filtered.length}</span>{" "}
           <span className="text-ink-2">{filtered.length === 1 ? "project" : "projects"}</span>

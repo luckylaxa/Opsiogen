@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 /** Logo height, from the design system's header (22px), scaled for the larger screens here. */
 const SIZE = "h-[clamp(20px,calc(0.42vw+17px),26px)] w-auto";
 /** The header's larger logo. */
-const SIZE_LG = "h-[clamp(24px,calc(0.62vw+19.6px),34px)] w-auto";
+const SIZE_LG = "h-[clamp(28px,calc(0.9vw+23px),44px)] w-auto";
 
 /**
  * The design system's full logo (wordmark with the ribbon O), exactly as
@@ -32,7 +32,7 @@ export function Logo({
   className?: string;
 }) {
   if (logo?.url) {
-    const height = large ? 34 : 28;
+    const height = large ? 44 : 28;
     const width = Math.round((logo.width / logo.height) * height) || 120;
     return (
       <Image
@@ -46,7 +46,7 @@ export function Logo({
       />
     );
   }
-  const sizes = large ? "(min-width: 1024px) 210px, 150px" : "(min-width: 1024px) 160px, 130px";
+  const sizes = large ? "(min-width: 1024px) 270px, 180px" : "(min-width: 1024px) 160px, 130px";
   return (
     <span className={cn("flex", className)}>
       {tone === "auto" && (
