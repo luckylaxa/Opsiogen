@@ -112,11 +112,14 @@ export function BrandGradientDefs() {
     <svg width="0" height="0" aria-hidden="true" focusable="false" className="pointer-events-none absolute">
       <defs>
         <linearGradient id="brand-gradient" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="24" y2="24">
-          <stop offset="0" stopColor="#00d2ff" />
-          <stop offset="0.25" stopColor="#0a4bff" />
-          <stop offset="0.5" stopColor="#6a00f0" />
-          <stop offset="0.75" stopColor="#c800c8" />
-          <stop offset="1" stopColor="#ff1a8c" />
+          <stop offset="0" stopColor="#d8fa01" />
+          <stop offset="0.14" stopColor="#01f14c" />
+          <stop offset="0.29" stopColor="#00ecfd" />
+          <stop offset="0.43" stopColor="#01a5e2" />
+          <stop offset="0.57" stopColor="#9b1cf0" />
+          <stop offset="0.71" stopColor="#ff2a1a" />
+          <stop offset="0.86" stopColor="#fe9102" />
+          <stop offset="1" stopColor="#feb702" />
         </linearGradient>
       </defs>
     </svg>

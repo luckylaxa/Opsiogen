@@ -25,8 +25,8 @@
   --color-on-ink: #f8f6f8;
   --color-rule: #a2a0a6;
   --color-error: #da002f;
-  --color-focus: #d41be8;
-  --color-accent: #b800ca;
+  --color-focus: #006e4e;
+  --color-accent: #006e4e;
   --color-dock: #47464b;
   --color-dock-inner: #3a393e;
   --color-dock-logo: #1b1a1e;
@@ -80,8 +80,40 @@
 @layer base {
   :root {
     --header-h: clamp(64px, calc(1.57vw + 58.1px), 88px);
-    /* The logo ribbon spectrum. Type only (.text-gradient), never a fill. */
-    --gradient-brand: linear-gradient(120deg, #00d2ff 0%, #0a4bff 34%, #6a00f0 58%, #c800c8 80%, #ff1a8c 100%);
+    /*
+     * "Fresh spectrum": the brightest highlights of the logo O in ring order.
+     * Type only (.text-gradient), large and bold, never a fill. The same on
+     * black and white; OKLCH interpolation where the browser supports it.
+     */
+    --gradient-brand: linear-gradient(120deg, #d8fa01 0%, #01f14c 14%, #00ecfd 29%, #01a5e2 43%, #9b1cf0 57%, #ff2a1a 71%, #fe9102 86%, #feb702 100%);
+    /* Hover on small text: the spectrum on dark grounds, Forest on light ones (see .link-accent). */
+    --gradient-hover: linear-gradient(#006e4e, #006e4e);
+    --icon-hover: #006e4e;
+  }
+  @supports (background: linear-gradient(in oklch, red, blue)) {
+    :root {
+      --gradient-brand: linear-gradient(in oklch 120deg, #d8fa01 0%, #01f14c 14%, #00ecfd 29%, #01a5e2 43%, #9b1cf0 57%, #ff2a1a 71%, #fe9102 86%, #feb702 100%);
+    }
+  }
+  [data-theme="dark"],
+  .on-dark {
+    --gradient-hover: var(--gradient-brand);
+    --icon-hover: url(#brand-gradient);
+  }
+  .theme-light,
+  .btn-paper {
+    --gradient-hover: linear-gradient(#006e4e, #006e4e);
+    --icon-hover: #006e4e;
+  }
+  /* Ink-filled buttons: dark in the light theme, paper in the dark theme. */
+  .btn-ink {
+    --gradient-hover: var(--gradient-brand);
+  }
+  [data-theme="dark"] .btn-ink {
+    --gradient-hover: linear-gradient(#006e4e, #006e4e);
+  }
+  [data-theme="dark"] .theme-light .btn-ink {
+    --gradient-hover: var(--gradient-brand);
   }
 
   /*
@@ -105,8 +137,8 @@
     --color-on-ink: #0a090d;
     --color-rule: rgb(248 246 248 / 0.22);
     --color-error: #ff7776;
-    --color-focus: #ee61ff;
-    --color-accent: #ee61ff;
+    --color-focus: #d8ff3e;
+    --color-accent: #d8ff3e;
     --color-dock: #2a292d;
     --color-dock-inner: #1b1a1e;
     --color-dock-logo: #0a090d;
@@ -126,8 +158,8 @@
     --color-on-ink: #f8f6f8;
     --color-rule: #a2a0a6;
     --color-error: #da002f;
-    --color-focus: #d41be8;
-    --color-accent: #b800ca;
+    --color-focus: #006e4e;
+    --color-accent: #006e4e;
     color-scheme: light;
   }
 
@@ -148,11 +180,11 @@
   }
 
   ::selection {
-    background: #d41be8;
-    color: #ffffff;
+    background: #d8ff3e;
+    color: #0a090d;
   }
 
-  /* Magenta focus ring with a 2px gap, as in the design system. */
+  /* Focus ring with a 2px gap: Forest on light, Volt on dark, as in the design system. */
   :focus-visible {
     outline: 2px solid var(--color-focus);
     outline-offset: 2px;
@@ -160,7 +192,7 @@
   }
 
   .on-dark {
-    --color-focus: #ee61ff;
+    --color-focus: #d8ff3e;
   }
 
   button {
@@ -222,9 +254,10 @@
   }
 
   /*
-   * Hover colour (design system): links, menu items and every button label
-   * turn into the brand gradient. Only the letters change, so underlines and
-   * icons keep their colour.
+   * Hover colour: links, menu items and every button label take
+   * --gradient-hover, the brand spectrum on dark grounds and Forest on light
+   * ones (the spectrum's pale stops can't carry small text on white). Only
+   * the letters change, so underlines and icons keep their colour.
    */
   .link-accent,
   .link-underline,
@@ -246,16 +279,16 @@
   .btn:focus-visible .btn-label,
   .group:hover .btn .btn-label,
   .group:focus-visible .btn .btn-label {
-    background-image: var(--gradient-brand);
+    background-image: var(--gradient-hover);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
-  /* Icon links (social): the line drawing takes the gradient on hover. */
+  /* Icon links (social): the line drawing takes the spectrum on dark grounds, Forest on light. */
   .icon-grad:hover svg,
   .icon-grad:focus-visible svg {
-    stroke: url(#brand-gradient);
+    stroke: var(--icon-hover);
   }
   /* Tight tracking pushes the last letter past the word's box, where the
      gradient isn't painted; widen the painted area without moving the text. */

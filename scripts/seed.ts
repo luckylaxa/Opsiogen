@@ -564,6 +564,18 @@ async function run() {
     },
   });
 
+  // The seeded share image, re-drawn under the same name (e.g. for a new
+  // logo): swap it in while Studio still holds a version of that file.
+  if (!OVERWRITE) {
+    const share = await client.fetch<{ file?: string; ref?: string } | null>(
+      `*[_id == "siteSettings"][0]{ "file": seo.image.asset->originalFilename, "ref": seo.image.asset._ref }`,
+    );
+    if (share?.file === path.basename(SETTINGS.seo.image!.url) && share.ref !== shareImage.asset._ref) {
+      console.log("  updating the share image");
+      tx.patch("siteSettings", (p) => p.set({ "seo.image": shareImage }));
+    }
+  }
+
   if (OVERWRITE) {
     const current = await client.fetch<{ shareFile?: string } | null>(
       `*[_id == "siteSettings"][0]{ "shareFile": seo.image.asset->originalFilename }`,
@@ -590,6 +602,10 @@ async function run() {
   }
 
   console.log("Blog posts");
+  const existingCovers = await client.fetch<{ _id: string; file?: string; ref?: string }[]>(
+    `*[_type == "post" && _id in $ids]{ _id, "file": cover.asset->originalFilename, "ref": cover.asset._ref }`,
+    { ids: POSTS.map((p) => p._id) },
+  );
   for (const p of POSTS) {
     const body = [];
     for (const b of p.body) {
@@ -614,6 +630,13 @@ async function run() {
       },
       OVERWRITE,
     );
+    // A seeded cover re-drawn under the same name: swap it in (add mode).
+    const cover = await image(p.cover.url, p.cover.alt);
+    const had = existingCovers.find((e) => e._id === p._id);
+    if (!OVERWRITE && had?.file === path.basename(p.cover.url) && had.ref !== cover.asset._ref) {
+      console.log(`  updating the cover of ${p._id}`);
+      tx.patch(p._id, (patch) => patch.set({ cover }));
+    }
   }
 
   // Case studies taken off the site go in either mode, unless something

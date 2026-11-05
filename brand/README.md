@@ -4,7 +4,7 @@ The site follows the Opsiogen design system: its font, logo files and colours.
 
 ## Logo
 
-`logo/` holds the design system's logo files exactly as supplied: the master vector, the full logo for light and dark backgrounds, one-colour versions, and the ribbon symbol (`opsiogen-symbol.png`) with its one-colour versions.
+`logo/` holds the design system's logo files exactly as supplied (November 2026 update): the master vectors (`opsiogen-logo-master.svg`, and `-white` for dark grounds), the full logo for light and dark backgrounds, one-colour versions (black, white, Forest, Volt), and the spectrum-ring symbol (`opsiogen-symbol.png`) with its one-colour versions.
 
 - The header, footer and phone menu show the full logo: `src/assets/opsiogen-logo-on-light.png` in the light theme and `src/assets/opsiogen-logo-on-dark.png` in the dark theme (copies of the files in `logo/`).
 - The floating menu tile uses the symbol (`src/assets/opsiogen-mark.png`, a copy of `logo/opsiogen-symbol.png`), and the browser icons (`src/app/icon.png`, `src/app/apple-icon.png`) are made from it.
@@ -41,9 +41,13 @@ Tokens live at the top of `src/app/globals.css`; dark values are in the `[data-t
 | `mute` | `#5B5A60` | `#A2A0A6` | Small grey text |
 | `coal` | `#0A090D` | `#1B1A1E` | Dark cards, menu, scroll button |
 | `night` | `#121115` | `#050407` | Featured project and cover frames |
-| `focus` | `#D41BE8` | `#EE61FF` | Focus ring |
-| `accent` | `#B800CA` | `#EE61FF` | Link hover |
+| `focus` | `#006E4E` Forest | `#D8FF3E` Volt | Focus ring |
+| `accent` | `#006E4E` Forest | `#D8FF3E` Volt | Accent text, quote rules, list markers |
 
-The brand gradient (`--gradient-brand`: `#00D2FF → #0A4BFF → #6A00F0 → #C800C8 → #FF1A8C`) is for type only: link and button labels turn into it on hover (`.link-accent`, `.grad-hover`, `.btn-label`), social icons take it on their lines, and `.text-gradient` applies it to a display word. Never use it as a background, line or glow.
+Brand palette **"Volt"**: Volt `#D8FF3E` (acid lime: a fill with ink text, or text on dark, never text on white), Leaf `#7BEA4E` and Emerald `#00C98D` (secondary), Forest `#006E4E` (brand text and links on light). Selection is Volt with ink text.
+
+The brand gradient (`--gradient-brand`, "Fresh spectrum": `#D8FA01 → #01F14C → #00ECFD → #01A5E2 → #9B1CF0 → #FF2A1A → #FE9102 → #FEB702` at 120°, OKLCH-interpolated where supported) is for large bold type only: `.text-gradient` on one display word and big numbers. Never a background, line or glow.
+
+**Hover.** Links, menu items and button labels take `--gradient-hover`: the spectrum on dark grounds (the dark theme, `.on-dark` surfaces and ink-filled buttons, `.btn-ink`) and Forest on light ones (the light theme, `.theme-light` and paper-filled buttons, `.btn-paper`), because the spectrum's pale stops can't carry small text on white. Social icons follow the same rule through `--icon-hover`.
 
 **Accent word.** Every giant title shows one word in the gradient, as in the design system (“We remove the DRAG.”). It is the last word by default; to pick another, fill in **Word in colour** on the Hero, Project grid or Services list section in Studio. Keep it to one gradient word per screen.
