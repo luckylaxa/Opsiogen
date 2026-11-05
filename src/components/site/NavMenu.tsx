@@ -146,7 +146,7 @@ function ServicesItem({ item, groups }: { item: LinkItem; groups: MenuGroup[] })
             className="site-menu fixed inset-x-0 bottom-0 z-[55] flex flex-col overflow-y-auto overscroll-contain bg-surface px-gutter dark:bg-page pt-[clamp(16px,3.4vh,56px)] pb-[clamp(16px,3.2vh,48px)] text-ink"
           >
             <div data-menu-item style={{ "--i": 0 } as React.CSSProperties} className="flex items-center justify-between gap-6">
-              <p className="text-small uppercase tracking-[0.18em] text-ink/45 tabular-nums">
+              <p className="text-small uppercase tracking-[0.18em] text-mute tabular-nums">
                 {String(total).padStart(2, "0")} {item.label.toLowerCase()}
               </p>
               <button
@@ -162,9 +162,9 @@ function ServicesItem({ item, groups }: { item: LinkItem; groups: MenuGroup[] })
             <div className="mt-[clamp(12px,2.4vh,40px)] grid grid-cols-3 gap-x-gap">
               {groups.map((g, gi) => (
                 <section key={g.group} data-menu-item style={{ "--i": gi + 1 } as React.CSSProperties}>
-                  <h2 className="flex items-baseline justify-between pb-[clamp(8px,1.4vh,16px)] text-small uppercase tracking-[0.18em] text-ink/55">
+                  <h2 className="flex items-baseline justify-between pb-[clamp(8px,1.4vh,16px)] text-small uppercase tracking-[0.18em] text-mute">
                     {g.label}
-                    <span className="tabular-nums text-ink/35">{String(g.services.length).padStart(2, "0")}</span>
+                    <span className="tabular-nums text-mute">{String(g.services.length).padStart(2, "0")}</span>
                   </h2>
                   <ul className="border-b border-ink/10">
                     {g.services.map((s, si) => {
@@ -182,7 +182,7 @@ function ServicesItem({ item, groups }: { item: LinkItem; groups: MenuGroup[] })
                             </span>
                             <span className="min-w-0">
                               <span className="flex items-baseline gap-3">
-                                <span className="text-small tabular-nums text-ink/35">{String(index).padStart(2, "0")}</span>
+                                <span className="text-small tabular-nums text-mute">{String(index).padStart(2, "0")}</span>
                                 <span className="grad-hover text-[length:clamp(17px,min(1.55vw,2.7vh),29px)] leading-[1.15] font-medium tracking-[-0.015em] text-balance group-aria-[current=page]:text-ink/55">
                                   {s.name}
                                 </span>

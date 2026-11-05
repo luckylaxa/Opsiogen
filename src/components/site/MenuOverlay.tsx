@@ -183,7 +183,7 @@ export function MenuOverlay({
               const panelId = `${id}-${i}`;
               const label = (
                 <>
-                  <span className="w-[2ch] shrink-0 text-small tracking-[0.08em] text-ink/45 tabular-nums">
+                  <span className="w-[2ch] shrink-0 text-small tracking-[0.08em] text-mute tabular-nums">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <span data-menu-item style={{ "--i": i } as React.CSSProperties} className="flex flex-1 items-center gap-[clamp(10px,1vw,20px)]">
@@ -313,7 +313,7 @@ function SubPanel({
                       <span className="block text-row font-medium">
                         <span className="grad-hover">{r.title}</span>
                       </span>
-                      <span className="mt-0.5 block truncate text-small text-ink/55">{r.text}</span>
+                      <span className="mt-0.5 block truncate text-small text-mute">{r.text}</span>
                     </span>
                     <span className="flex shrink-0">{r.icon}</span>
                   </Link>

@@ -163,7 +163,7 @@ export function Dock({ menu, button }: { menu: LinkItem[]; button: LinkItem }) {
           </Link>
 
           <p className="flex min-w-[8.5rem] flex-col justify-center px-3 leading-tight">
-            <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-white/45 tabular-nums">
+            <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-white/60 tabular-nums">
               {String(index).padStart(2, "0")} / {String(menu.length + 1).padStart(2, "0")}
             </span>
             <span className="text-[length:clamp(14px,calc(0.2vw+13px),17px)] font-medium">{current?.label ?? "Home"}</span>
