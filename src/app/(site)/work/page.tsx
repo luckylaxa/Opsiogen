@@ -7,7 +7,7 @@ import { Directory } from "@/components/work/Directory";
 import { getPage, getProjects, getServices } from "@/lib/data";
 import type { HeroSection, ProjectGridSection, ShowreelSection } from "@/lib/types";
 
-export const revalidate = 60;
+export const revalidate = 10;
 
 export function generateMetadata() {
   return cmsMetadata("work", "/work");

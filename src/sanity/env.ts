@@ -9,4 +9,4 @@ export const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "";
 export const isSanityConfigured = projectId.length > 0;
 
 /** Seconds before published CMS changes show on the live site. */
-export const REVALIDATE_SECONDS = 60;
+export const REVALIDATE_SECONDS = 10;

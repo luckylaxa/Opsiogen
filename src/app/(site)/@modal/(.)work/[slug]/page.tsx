@@ -5,7 +5,7 @@ import { Block } from "@/components/sections/SectionRenderer";
 import { ProjectDetail } from "@/components/work/ProjectDetail";
 import { ProjectModal } from "@/components/work/ProjectModal";
 
-export const revalidate = 60;
+export const revalidate = 10;
 export const dynamicParams = true;
 
 export async function generateStaticParams() {

@@ -18,7 +18,7 @@ import { ServiceFullPage, hasFullPage } from "@/components/services/ServiceFullP
 import { JsonLd } from "@/components/site/JsonLd";
 import { breadcrumbSchema, faqSchema, serviceSchema } from "@/lib/schema";
 
-export const revalidate = 60;
+export const revalidate = 10;
 export const dynamicParams = true;
 
 export async function generateStaticParams() {

@@ -4,7 +4,7 @@ import { ContactForm, ContactFormWithParams } from "@/components/contact/Contact
 import { getServices, getSettings } from "@/lib/data";
 import { CONTACT_FORM } from "@/content/seed-data";
 
-export const revalidate = 60;
+export const revalidate = 10;
 
 export function generateMetadata() {
   return cmsMetadata("contact", "/contact");

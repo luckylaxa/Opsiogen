@@ -8,7 +8,7 @@ import { ProjectDetail } from "@/components/work/ProjectDetail";
 import { JsonLd } from "@/components/site/JsonLd";
 import { breadcrumbSchema, projectSchema } from "@/lib/schema";
 
-export const revalidate = 60;
+export const revalidate = 10;
 export const dynamicParams = true;
 
 export async function generateStaticParams() {

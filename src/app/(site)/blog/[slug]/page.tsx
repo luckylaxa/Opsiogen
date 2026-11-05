@@ -14,7 +14,7 @@ import { CallToAction } from "@/components/sections/CallToAction";
 import { CategoryPill, PostTile, postDate } from "@/components/blog/PostCards";
 import { PostBody, postHeadings } from "@/components/blog/PostBody";
 
-export const revalidate = 60;
+export const revalidate = 10;
 export const dynamicParams = true;
 
 export async function generateStaticParams() {

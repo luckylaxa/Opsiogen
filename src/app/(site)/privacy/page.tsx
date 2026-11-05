@@ -1,6 +1,6 @@
 import { CmsPage, cmsMetadata } from "@/components/CmsPage";
 
-export const revalidate = 60;
+export const revalidate = 10;
 
 export function generateMetadata() {
   return cmsMetadata("privacy", "/privacy");

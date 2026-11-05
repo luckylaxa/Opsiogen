@@ -4,7 +4,7 @@ import { BlogIndex } from "@/components/blog/BlogIndex";
 import { Block } from "@/components/sections/SectionRenderer";
 import { CallToAction } from "@/components/sections/CallToAction";
 
-export const revalidate = 60;
+export const revalidate = 10;
 
 /** Kept out of search and the sitemap: it exists to see the layout with demo posts. */
 export const metadata: Metadata = {

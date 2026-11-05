@@ -76,13 +76,26 @@ const client: SanityClient = createClient({ projectId, dataset, token, apiVersio
 const PUBLIC_DIR = path.join(process.cwd(), "public");
 const uploaded = new Map<string, string>();
 
+/** Assets already in the dataset, by content hash: a file Sanity has is not sent again. */
+let known: Promise<Map<string, string>> | undefined;
+const knownAssets = () =>
+  (known ??= client
+    .fetch<{ _id: string; sha1hash?: string }[]>(`*[_type in ["sanity.imageAsset", "sanity.fileAsset"]]{ _id, sha1hash }`)
+    .then((list) => new Map(list.filter((a) => a.sha1hash).map((a) => [a.sha1hash!, a._id]))));
+
 async function upload(kind: "image" | "file", publicPath: string) {
   const cached = uploaded.get(publicPath);
   if (cached) return cached;
   const file = path.join(PUBLIC_DIR, publicPath);
-  // Every run uploads every file (Sanity keeps one asset per content), so a
-  // dropped connection is retried rather than ending the run; a refusal
-  // (4xx) is not.
+  // Sanity keeps one asset per content, so an unchanged file is reused by its
+  // hash without uploading it again; that keeps a run to a minute or two.
+  const sha1 = createHash("sha1").update(fs.readFileSync(file)).digest("hex");
+  const existing = (await knownAssets()).get(sha1);
+  if (existing) {
+    uploaded.set(publicPath, existing);
+    return existing;
+  }
+  // A dropped connection is retried rather than ending the run; a refusal (4xx) is not.
   let asset: { _id: string } | undefined;
   for (let attempt = 1; !asset; attempt++) {
     try {
@@ -95,6 +108,7 @@ async function upload(kind: "image" | "file", publicPath: string) {
     }
   }
   uploaded.set(publicPath, asset._id);
+  (await knownAssets()).set(sha1, asset._id);
   console.log(`  uploaded ${publicPath}`);
   return asset._id;
 }

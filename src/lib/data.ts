@@ -36,7 +36,7 @@ import type {
 
 /**
  * Fetch published content. Results are cached and refreshed every
- * REVALIDATE_SECONDS, so Studio changes reach the live site within a minute.
+ * REVALIDATE_SECONDS (10s), so Studio changes reach the live site within seconds.
  * Returns undefined when no Sanity project is configured.
  */
 async function sanityFetch<T>(query: string, params: QueryParams = {}): Promise<T | undefined> {

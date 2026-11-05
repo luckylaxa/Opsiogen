@@ -5,7 +5,7 @@ import { getPageSlugs } from "@/lib/data";
 /** Pages added later in the CMS, served at /<slug>. */
 const BUILT_IN = ["home", "work", "services", "about", "contact", "privacy", "blog"];
 
-export const revalidate = 60;
+export const revalidate = 10;
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
