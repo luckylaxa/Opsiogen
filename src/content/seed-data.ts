@@ -1561,8 +1561,7 @@ export const PAGES: Page[] = [
         _key: "hero",
         label: "AI-first design and digital company",
         heading: "Your digital department, without the hiring.",
-        // The header and the floating bar already offer Start a project.
-        button: { label: "See our work", href: "/work" },
+        // No button: the header and the floating bar already offer Start a project.
       },
       { _type: "featuredProject", _key: "featured", project: null },
       {

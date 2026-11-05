@@ -204,9 +204,12 @@ const TEXT_UPDATES: { id: string; get: string; path: string; from: string; to: s
   { id: "service-ai-websites", get: "steps.accent", path: "steps.accent", from: "waiting", to: "live" },
   { id: "service-ai-websites", get: "related.label", path: "related.label", from: "Our work", to: "Selected work" },
   { id: "service-ai-websites", get: "related.heading", path: "related.heading", from: "Websites we’ve launched", to: "Websites we’ve launched." },
-  // Home hero: a second path instead of a third Start a project.
-  { id: "page-home", get: 'sections[_key == "hero"][0].button.label', path: 'sections[_key == "hero"].button.label', from: "Start a project", to: "See our work" },
-  { id: "page-home", get: 'sections[_key == "hero"][0].button.href', path: 'sections[_key == "hero"].button.href', from: "/contact", to: "/work" },
+];
+
+/** Seeded buttons taken off a page since: removed in add mode while Studio still holds a seeded label. */
+const REMOVED_BUTTONS: { id: string; get: string; path: string; labels: string[] }[] = [
+  // Home hero: the header and the floating bar already offer Start a project.
+  { id: "page-home", get: 'sections[_key == "hero"][0].button.label', path: 'sections[_key == "hero"].button', labels: ["Start a project", "See our work"] },
 ];
 
 /**
@@ -543,6 +546,16 @@ async function run() {
       if (current?.[`u${i}`] !== u.from) return;
       console.log(`  updating ${u.id} ${u.path}`);
       tx.patch(u.id, (p) => p.set({ [u.path]: u.to }));
+    });
+  }
+  if (!OVERWRITE && REMOVED_BUTTONS.length) {
+    const current = await client.fetch<Record<string, unknown> | null>(
+      `{ ${REMOVED_BUTTONS.map((u, i) => `"b${i}": *[_id == "${u.id}"][0].${u.get}`).join(", ")} }`,
+    );
+    REMOVED_BUTTONS.forEach((u, i) => {
+      if (!u.labels.includes(String(current?.[`b${i}`]))) return;
+      console.log(`  removing ${u.id} ${u.path}`);
+      tx.patch(u.id, (p) => p.unset([u.path]));
     });
   }
 

@@ -6,7 +6,6 @@ import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { LinkItem, ServiceGroup } from "@/lib/types";
 import { ArrowRight, ChevronDown, CloseIcon, ServiceIcon } from "@/components/ui/Icons";
-import { AccentText } from "@/components/ui/Headings";
 import { buttonClass } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
@@ -22,7 +21,7 @@ export type MenuGroup = {
  */
 export function NavMenu({ menu, groups, button }: { menu: LinkItem[]; groups: MenuGroup[]; button: LinkItem }) {
   return (
-    <nav aria-label="Main" className="mr-[clamp(20px,2.1vw,40px)] ml-[clamp(40px,4.2vw,80px)] hidden shrink-0 lg:block">
+    <nav aria-label="Main" className="mr-[clamp(16px,1.4vw,28px)] ml-[clamp(40px,4.2vw,80px)] hidden shrink-0 lg:block">
       <ul className="flex items-center gap-[clamp(18px,1.3vw,25px)]">
         {menu.map((item) => (
           <li key={item._key ?? item.href}>
@@ -147,26 +146,21 @@ function ServicesItem({ item, groups, button }: { item: LinkItem; groups: MenuGr
             style={{ top }}
             className="site-menu on-dark fixed inset-x-0 bottom-0 z-[55] flex flex-col overflow-y-auto overscroll-contain bg-[#0a090d] px-gutter pt-[clamp(16px,3.4vh,56px)] pb-[clamp(16px,3.2vh,48px)] text-white"
           >
-            <div data-menu-item style={{ "--i": 0 } as React.CSSProperties} className="flex items-start justify-between gap-6">
-              <p className="text-[length:clamp(32px,min(5vw,7.4vh),112px)] leading-[0.92] font-bold tracking-[-0.045em] uppercase">
-                <AccentText text={`Our ${item.label}`} />
+            <div data-menu-item style={{ "--i": 0 } as React.CSSProperties} className="flex items-center justify-between gap-6">
+              <p className="text-small uppercase tracking-[0.18em] text-white/45 tabular-nums">
+                {String(total).padStart(2, "0")} {item.label.toLowerCase()}
               </p>
-              <div className="flex items-center gap-4">
-                <span className="hidden text-small uppercase tracking-[0.18em] text-white/45 tabular-nums md:inline">
-                  {String(total).padStart(2, "0")} {item.label.toLowerCase()}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => close()}
-                  aria-label={`Close ${item.label.toLowerCase()}`}
-                  className="grid size-11 place-items-center rounded-[var(--radius-btn)] border border-white/25 text-white transition-colors duration-300 hover:border-white/60"
-                >
-                  <CloseIcon className="size-5" />
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => close()}
+                aria-label={`Close ${item.label.toLowerCase()}`}
+                className="grid size-11 place-items-center rounded-[var(--radius-btn)] border border-white/25 text-white transition-colors duration-300 hover:border-white/60"
+              >
+                <CloseIcon className="size-5" />
+              </button>
             </div>
 
-            <div className="mt-[clamp(16px,3.6vh,64px)] grid grid-cols-3 gap-x-gap">
+            <div className="mt-[clamp(12px,2.4vh,40px)] grid grid-cols-3 gap-x-gap">
               {groups.map((g, gi) => (
                 <section key={g.group} data-menu-item style={{ "--i": gi + 1 } as React.CSSProperties}>
                   <h2 className="flex items-baseline justify-between pb-[clamp(8px,1.4vh,16px)] text-small uppercase tracking-[0.18em] text-white/55">
