@@ -52,7 +52,7 @@ export async function SectionRenderer({
           out.push(
             <section key={section._key} data-band>
               <Hero section={section} full={layout.heroFull && i === 0}>
-                <FeaturedProject project={next.project} />
+                <FeaturedProject project={next.project} priority={!layout.heroFull} />
               </Hero>
             </section>,
           );

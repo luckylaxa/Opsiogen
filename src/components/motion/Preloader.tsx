@@ -55,7 +55,7 @@ export function Preloader() {
     <div className="preloader on-dark" data-done={done || undefined} role="status" aria-label="Loading">
       <div className="preloader__mark">
         <span aria-hidden="true" className="preloader__arc" />
-        <Mark className="preloader__symbol size-full" />
+        <Mark className="preloader__symbol size-full" eager />
       </div>
       <p aria-hidden="true" className="preloader__name">
         Opsiogen
