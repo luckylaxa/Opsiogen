@@ -192,6 +192,8 @@ async function servicePageFields(s: (typeof SERVICES)[number]) {
  * only while Studio still holds the old text, so edits are never overwritten.
  */
 const TEXT_UPDATES: { id: string; get: string; path: string; from: string; to: string }[] = [
+  // Each call to action has its own label; Start a project stays with the header.
+  { id: "siteSettings", get: "cta.button.label", path: "cta.button.label", from: "Start a project", to: "Get in touch" },
   { id: "service-ai-websites", get: "stats.label", path: "stats.label", from: "Why Opsiogen", to: "In numbers" },
   {
     id: "service-ai-websites",
@@ -222,8 +224,8 @@ const TEXT_UPDATES: { id: string; get: string; path: string; from: string; to: s
 
 /** Seeded buttons taken off a page since: removed in add mode while Studio still holds a seeded label. */
 const REMOVED_BUTTONS: { id: string; get: string; path: string; labels: string[] }[] = [
-  // Home hero: the header and the floating bar already offer Start a project.
-  { id: "page-home", get: 'sections[_key == "hero"][0].button.label', path: 'sections[_key == "hero"].button', labels: ["Start a project", "See our work"] },
+  // Home hero: Start a project is the header's label (the hero now says See our work).
+  { id: "page-home", get: 'sections[_key == "hero"][0].button.label', path: 'sections[_key == "hero"].button', labels: ["Start a project"] },
 ];
 
 /**
@@ -562,6 +564,14 @@ async function run() {
       tx.patch(u.id, (p) => p.set({ [u.path]: u.to }));
     });
   }
+  // Home hero: the See our work button, where the hero has none.
+  if (!OVERWRITE) {
+    const hero = PAGES.find((p) => p._id === "page-home")?.sections.find((s) => s._key === "hero");
+    if (hero?._type === "hero" && hero.button) {
+      const button = link(hero.button);
+      tx.patch("page-home", (p) => p.setIfMissing({ 'sections[_key == "hero"].button': button }));
+    }
+  }
   if (!OVERWRITE && REMOVED_BUTTONS.length) {
     const current = await client.fetch<Record<string, unknown> | null>(
       `{ ${REMOVED_BUTTONS.map((u, i) => `"b${i}": *[_id == "${u.id}"][0].${u.get}`).join(", ")} }`,
@@ -583,6 +593,7 @@ async function run() {
     footerLine: SETTINGS.footerLine,
     menu: SETTINGS.menu.map((m) => link(m, m._key)),
     headerButton: link(SETTINGS.headerButton),
+    dockButton: link(SETTINGS.dockButton),
     socialLinks: [],
     cta: { heading: SETTINGS.cta.heading, button: link(SETTINGS.cta.button) },
     enquirySuccessMessage: SETTINGS.enquirySuccessMessage,
@@ -593,6 +604,9 @@ async function run() {
       image: shareImage,
     },
   });
+
+  // Fields added since the first seed.
+  if (!OVERWRITE) tx.patch("siteSettings", (p) => p.setIfMissing({ dockButton: link(SETTINGS.dockButton) }));
 
   // The seeded share image, re-drawn under the same name (e.g. for a new
   // logo): swap it in while Studio still holds a version of that file.

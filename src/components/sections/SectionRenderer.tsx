@@ -21,6 +21,8 @@ export type PageLayout = {
   services?: "rows" | "directory" | "groups";
   /** One call-to-action card, or two side by side. */
   cta?: "single" | "dual";
+  /** The first hero fills the screen (Home). */
+  heroFull?: boolean;
 };
 
 /**
@@ -49,7 +51,7 @@ export async function SectionRenderer({
         if (next?._type === "featuredProject") {
           out.push(
             <section key={section._key} data-band>
-              <Hero section={section}>
+              <Hero section={section} full={layout.heroFull && i === 0}>
                 <FeaturedProject project={next.project} />
               </Hero>
             </section>,
@@ -58,7 +60,7 @@ export async function SectionRenderer({
         } else {
           out.push(
             <section key={section._key} data-band>
-              <Hero section={section} />
+              <Hero section={section} full={layout.heroFull && i === 0} />
             </section>,
           );
         }

@@ -17,7 +17,7 @@ const field =
 
 const initial: EnquiryState = { status: "idle" };
 
-/** Reads ?service=<slug> so “Start a project” on a service page pre-ticks it. */
+/** Reads ?service=<slug> so “Get a quote” on a service page pre-ticks it. */
 export function ContactFormWithParams(props: Omit<Props, "preselect">) {
   const params = useSearchParams();
   return <ContactForm {...props} preselect={params.get("service")} />;

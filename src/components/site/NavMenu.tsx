@@ -6,7 +6,6 @@ import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { LinkItem, ServiceGroup } from "@/lib/types";
 import { ArrowRight, ChevronDown, CloseIcon, ServiceIcon } from "@/components/ui/Icons";
-import { buttonClass } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 export type MenuGroup = {
@@ -19,14 +18,14 @@ export type MenuGroup = {
  * Main navigation. Services opens a mega menu below the header listing every
  * service by group (see ServicesItem).
  */
-export function NavMenu({ menu, groups, button }: { menu: LinkItem[]; groups: MenuGroup[]; button: LinkItem }) {
+export function NavMenu({ menu, groups }: { menu: LinkItem[]; groups: MenuGroup[] }) {
   return (
     <nav aria-label="Main" className="mr-[clamp(16px,1.4vw,28px)] ml-[clamp(40px,4.2vw,80px)] hidden shrink-0 lg:block">
       <ul className="flex items-center gap-[clamp(18px,1.3vw,25px)]">
         {menu.map((item) => (
           <li key={item._key ?? item.href}>
             {item.href === "/services" && groups.length > 0 ? (
-              <ServicesItem item={item} groups={groups} button={button} />
+              <ServicesItem item={item} groups={groups} />
             ) : (
               <Link href={item.href} className="link-accent text-base">
                 {item.label}
@@ -47,7 +46,7 @@ export function NavMenu({ menu, groups, button }: { menu: LinkItem[]; groups: Me
  * Moving the pointer back to the rest of the header, the close button,
  * Escape or choosing a link closes it.
  */
-function ServicesItem({ item, groups, button }: { item: LinkItem; groups: MenuGroup[]; button: LinkItem }) {
+function ServicesItem({ item, groups }: { item: LinkItem; groups: MenuGroup[] }) {
   const id = useId();
   const [open, setOpen] = useState(false);
   // The panel is added to the page on the first open, then kept so it can animate closed.
@@ -210,9 +209,6 @@ function ServicesItem({ item, groups, button }: { item: LinkItem; groups: MenuGr
               <Link href={item.href} onClick={() => close(false)} className="group inline-flex items-center gap-2 text-base font-medium">
                 <span className="grad-hover underline underline-offset-[0.28em]">All {item.label.toLowerCase()}</span>
                 <ArrowRight className="size-[1.1em] transition-transform duration-300 group-hover:translate-x-1" />
-              </Link>
-              <Link href={button.href} onClick={() => close(false)} className={buttonClass("light", "md")}>
-                <span className="btn-label">{button.label}</span>
               </Link>
             </div>
           </div>,

@@ -39,6 +39,7 @@ export const SETTINGS_QUERY = defineQuery(`*[_id == "siteSettings"][0]{
   "socialLinks": socialLinks[]{ _key, label, href },
   "menu": menu[]{ _key, label, href },
   headerButton{ label, href },
+  dockButton{ label, href },
   cta{ heading, button{ label, href } },
   enquirySuccessMessage,
   seo{ title, description, "image": image${IMG} }

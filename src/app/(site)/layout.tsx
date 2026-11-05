@@ -86,7 +86,7 @@ export default async function SiteLayout({ children, modal }: LayoutProps<"/">) 
           </main>
           {modal}
           <Footer settings={settings} services={services} />
-          <Dock menu={settings.menu} button={settings.headerButton} />
+          <Dock menu={settings.menu} button={settings.dockButton} />
           <ScrollTop />
           <MenuOverlay
             menu={settings.menu}

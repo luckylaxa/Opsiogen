@@ -225,6 +225,8 @@ export type SiteSettings = {
   socialLinks: LinkItem[];
   menu: LinkItem[];
   headerButton: LinkItem;
+  /** The floating bar's button: a different label from the header's. */
+  dockButton: LinkItem;
   cta: { heading: string; button: LinkItem };
   enquirySuccessMessage: string;
   seo: { title: string; description: string; image?: Img | null };

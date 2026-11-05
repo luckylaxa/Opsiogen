@@ -54,7 +54,7 @@ export function ServiceFullPage({ service, settings, work, process }: Props) {
       <section data-band className="-mt-[var(--header-h)] bg-band pb-[clamp(40px,calc(2.3vw+31.4px),76px)] pt-[calc(var(--header-h)+clamp(40px,calc(1.57vw+34px),64px))]">
         <GiantHeading as="h1" label={GROUP_LABELS[service.group]} labelStyle="pill" heading={service.name} text={service.tagline}>
           <ButtonLink href={contact} className="mt-[clamp(28px,calc(1.7vw+21.6px),54px)]">
-            {settings.headerButton.label}
+            Get a quote
           </ButtonLink>
           {service.note && <p className="mt-5 text-small text-mute">{service.note}</p>}
         </GiantHeading>

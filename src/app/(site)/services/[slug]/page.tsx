@@ -105,7 +105,7 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
         <GiantHeading as="h1" label={GROUP_LABELS[service.group]} labelStyle="pill" heading={service.name} text={service.tagline}>
           <p className="mt-[clamp(20px,calc(1.3vw+15px),40px)] max-w-[60ch] text-base text-ink-2 text-pretty">{service.description}</p>
           <div className="mt-[clamp(28px,calc(1.7vw+21.6px),54px)] flex flex-wrap justify-center gap-3">
-            <ButtonLink href={`/contact?service=${encodeURIComponent(service.slug)}`}>{settings.headerButton.label}</ButtonLink>
+            <ButtonLink href={`/contact?service=${encodeURIComponent(service.slug)}`}>Get a quote</ButtonLink>
             {work.length > 0 && (
               <Link href="#work" className={buttonClass("outline", "md")}>
                 <span className="btn-label">See the work</span>

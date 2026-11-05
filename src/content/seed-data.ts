@@ -39,10 +39,13 @@ export const SETTINGS: SiteSettings = {
     { _key: "about", label: "About", href: "/about" },
     { _key: "contact", label: "Contact", href: "/contact" },
   ],
+  // Each call to action has its own label: Start a project (header),
+  // Let’s talk (floating bar), See our work (Home hero), Get in touch (closing band).
   headerButton: { label: "Start a project", href: "/contact" },
+  dockButton: { label: "Let’s talk", href: "/contact" },
   cta: {
     heading: "One partner. Every digital need. One monthly plan.",
-    button: { label: "Start a project", href: "/contact" },
+    button: { label: "Get in touch", href: "/contact" },
   },
   enquirySuccessMessage:
     "Thanks, we’ve got your message. We’ll be in touch soon.",
@@ -1561,7 +1564,8 @@ export const PAGES: Page[] = [
         _key: "hero",
         label: "AI-first design and digital company",
         heading: "Your digital department, without the hiring.",
-        // No button: the header and the floating bar already offer Start a project.
+        // See our work: the header and the floating bar already lead to Contact.
+        button: { label: "See our work", href: "/work" },
       },
       { _type: "featuredProject", _key: "featured", project: null },
       {

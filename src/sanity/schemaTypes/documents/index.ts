@@ -55,6 +55,13 @@ export const siteSettings = defineType({
       group: "navigation",
     }),
     defineField({
+      name: "dockButton",
+      title: "Floating bar button",
+      type: "link",
+      group: "navigation",
+      description: "Use a different label from the header button, e.g. Let’s talk.",
+    }),
+    defineField({
       name: "socialLinks",
       type: "array",
       group: "navigation",

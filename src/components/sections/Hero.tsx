@@ -7,8 +7,9 @@ import { cn } from "@/lib/utils";
  * Hero band from the reference: grey band that runs up under the header, a
  * small pill label, a giant uppercase heading and a button or line of text.
  * When followed by a featured project, the band continues behind its card.
+ * `full` makes the heading fill the first screen (Home).
  */
-export function Hero({ section, children }: { section: HeroSection; children?: React.ReactNode }) {
+export function Hero({ section, full, children }: { section: HeroSection; full?: boolean; children?: React.ReactNode }) {
   return (
     <div
       className={cn(
@@ -16,7 +17,16 @@ export function Hero({ section, children }: { section: HeroSection; children?: R
         children ? "pb-[clamp(40px,calc(2.3vw+31.4px),76px)]" : "pb-[clamp(72px,calc(5.24vw+52.3px),132px)]",
       )}
     >
-      <GiantHeading as="h1" label={section.label} labelStyle="pill" heading={section.heading} accent={section.accent} text={section.text}>
+      <GiantHeading
+        as="h1"
+        label={section.label}
+        labelStyle="pill"
+        heading={section.heading}
+        accent={section.accent}
+        text={section.text}
+        // Full screen: the heading fills the first screen, centred above the floating bar.
+        className={full ? "min-h-[calc(100svh-var(--header-h)-clamp(40px,calc(1.57vw+34px),64px))] justify-center pb-[clamp(96px,12vh,160px)]" : undefined}
+      >
         {section.button?.href && section.button.label && (
           <ButtonLink href={section.button.href} className="mt-[clamp(28px,calc(1.7vw+21.6px),54px)]">
             {section.button.label}
