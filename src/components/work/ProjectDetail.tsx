@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { GiantHeading, Label } from "@/components/ui/Headings";
 import { CoverMedia } from "@/components/media/CoverMedia";
 import { Media } from "@/components/ui/Media";
+import { LoadAhead } from "@/components/media/LoadAhead";
 import { ExternalLink } from "@/components/ui/Icons";
 import { ProjectBigCard } from "@/components/work/ProjectBigCard";
 
@@ -217,15 +218,17 @@ export function ProjectDetail({
              square, on phones and itself full width from tablets up, and the
              story's short blocks sit between them there, one after every four or five. */}
       {rest.length > 0 && (
-        <section className="mt-section">
+        <section id={`gallery-${inModal ? "pop" : "page"}-${project.slug}`} className="mt-section">
           <Section className="sr-only">More from {project.name}</Section>
+          {/* Images start loading about two screens before they're reached. */}
+          <LoadAhead target={`gallery-${inModal ? "pop" : "page"}-${project.slug}`} />
           <ul className="grid grid-cols-2 gap-gap px-gutter">
             {rest.map((img, i) => {
               const wide = Boolean(img.phone?.url);
               const block = wide && (i + 1) % every === 0 && i + 1 < rest.length ? project.story[(i + 1) / every - 1] : undefined;
               return (
                 <Fragment key={img._key}>
-              <li data-reveal className={img.size === "half" && !wide ? "col-span-2 md:col-span-1" : "col-span-2"}>
+              <li className={img.size === "half" && !wide ? "col-span-2 md:col-span-1" : "col-span-2"}>
                 <figure
                   className={cn(
                     "relative overflow-hidden rounded-card bg-night",

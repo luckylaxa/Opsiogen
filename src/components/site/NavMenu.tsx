@@ -17,8 +17,8 @@ export type MenuGroup = {
 };
 
 /**
- * Main navigation. Services opens a full-screen overlay listing every service
- * by group (see ServicesItem).
+ * Main navigation. Services opens a mega menu below the header listing every
+ * service by group (see ServicesItem).
  */
 export function NavMenu({ menu, groups, button }: { menu: LinkItem[]; groups: MenuGroup[]; button: LinkItem }) {
   return (
@@ -41,19 +41,24 @@ export function NavMenu({ menu, groups, button }: { menu: LinkItem[]; groups: Me
 }
 
 /**
- * The Services item: a click opens the services full screen, in the style of
- * the main menu (it wipes down and the groups rise in turn; .site-menu in
- * globals.css). Each service is a large row with its icon, name and line.
- * Closes with the close button, Escape, or by choosing a link; focus stays
- * inside while it is open and returns to the Services button after.
+ * The Services item: hovering it (or a click or Enter) opens the services
+ * mega menu, full width and the full height left below the header, which
+ * stays visible above it. It wipes down and the groups rise in turn, like the
+ * main menu (.site-menu in globals.css), and everything fits on one screen.
+ * Moving the pointer back to the rest of the header, the close button,
+ * Escape or choosing a link closes it.
  */
 function ServicesItem({ item, groups, button }: { item: LinkItem; groups: MenuGroup[]; button: LinkItem }) {
   const id = useId();
   const [open, setOpen] = useState(false);
-  // The overlay is added to the page on the first open, then kept so it can animate closed.
+  // The panel is added to the page on the first open, then kept so it can animate closed.
   const [primed, setPrimed] = useState(false);
+  // Where the panel starts: the bottom of the header when it opened.
+  const [top, setTop] = useState(0);
   const trigger = useRef<HTMLButtonElement>(null);
   const panel = useRef<HTMLDivElement>(null);
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const viaKeyboard = useRef(false);
   const pathname = usePathname();
   const [lastPath, setLastPath] = useState(pathname);
 
@@ -63,37 +68,40 @@ function ServicesItem({ item, groups, button }: { item: LinkItem; groups: MenuGr
     setOpen(false);
   }
 
+  const show = () => {
+    const header = trigger.current?.closest("header");
+    setTop(Math.max(0, Math.round(header?.getBoundingClientRect().bottom ?? 0)));
+    setPrimed(true);
+    setOpen(true);
+  };
   const close = (returnFocus = true) => {
+    clearTimeout(timer.current);
     setOpen(false);
     if (returnFocus) trigger.current?.focus();
   };
+  // Hover intent: a short pause before opening, a little longer before closing.
+  const hover = (next: boolean) => {
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => (next ? show() : setOpen(false)), next ? 120 : 200);
+  };
+  useEffect(() => () => clearTimeout(timer.current), []);
 
   useEffect(() => {
     if (!open) return;
     const root = document.documentElement;
     root.style.overflow = "hidden";
-    panel.current?.querySelector<HTMLElement>("[data-close]")?.focus();
+    root.dataset.megaOpen = "";
+    if (viaKeyboard.current) panel.current?.querySelector<HTMLElement>("a")?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setOpen(false);
         trigger.current?.focus();
       }
-      if (e.key === "Tab" && panel.current) {
-        const items = Array.from(panel.current.querySelectorAll<HTMLElement>("a, button"));
-        const first = items[0];
-        const last = items[items.length - 1];
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
     };
     document.addEventListener("keydown", onKey);
     return () => {
       root.style.overflow = "";
+      delete root.dataset.megaOpen;
       document.removeEventListener("keydown", onKey);
     };
   }, [open]);
@@ -103,16 +111,24 @@ function ServicesItem({ item, groups, button }: { item: LinkItem; groups: MenuGr
   const starts = groups.map((_, gi) => groups.slice(0, gi).reduce((n, g) => n + g.services.length, 0));
 
   return (
-    <>
+    // The panel is portalled to <body>, but pointer events still bubble through
+    // this wrapper, so hovering the panel counts as hovering Services.
+    <div
+      onPointerEnter={(e) => e.pointerType === "mouse" && hover(true)}
+      onPointerLeave={(e) => e.pointerType === "mouse" && hover(false)}
+    >
       <button
         ref={trigger}
         type="button"
         aria-expanded={open}
         aria-controls={`${id}-panel`}
-        aria-haspopup="dialog"
+        onKeyDown={(e) => {
+          viaKeyboard.current = e.key === "Enter" || e.key === " ";
+        }}
         onClick={() => {
-          setPrimed(true);
-          setOpen((o) => !o);
+          clearTimeout(timer.current);
+          if (open) close(false);
+          else show();
         }}
         className="link-accent inline-flex items-center gap-1 text-base"
       >
@@ -125,39 +141,35 @@ function ServicesItem({ item, groups, button }: { item: LinkItem; groups: MenuGr
           <div
             ref={panel}
             id={`${id}-panel`}
-            role="dialog"
-            aria-modal="true"
+            role="region"
             aria-label={item.label}
             data-open={open || undefined}
-            className="site-menu on-dark fixed inset-0 z-[55] flex flex-col overflow-y-auto overscroll-contain bg-[#0a090d] px-gutter pb-[clamp(28px,2.6vw,52px)] text-white"
+            style={{ top }}
+            className="site-menu on-dark fixed inset-x-0 bottom-0 z-[55] flex flex-col overflow-y-auto overscroll-contain bg-[#0a090d] px-gutter pt-[clamp(16px,3.4vh,56px)] pb-[clamp(16px,3.2vh,48px)] text-white"
           >
-            <div className="flex h-[var(--header-h)] shrink-0 items-center justify-between">
-              <p className="text-small uppercase tracking-[0.18em] text-white/55">
-                {item.label} <span className="tabular-nums text-white/35">· {String(total).padStart(2, "0")}</span>
+            <div data-menu-item style={{ "--i": 0 } as React.CSSProperties} className="flex items-start justify-between gap-6">
+              <p className="text-[length:clamp(32px,min(5vw,7.4vh),112px)] leading-[0.92] font-bold tracking-[-0.045em] uppercase">
+                <AccentText text={`Our ${item.label}`} />
               </p>
-              <button
-                type="button"
-                data-close
-                onClick={() => close()}
-                aria-label={`Close ${item.label.toLowerCase()}`}
-                className="grid size-11 place-items-center rounded-[var(--radius-btn)] border border-white/25 text-white transition-colors duration-300 hover:border-white/60"
-              >
-                <CloseIcon className="size-5" />
-              </button>
+              <div className="flex items-center gap-4">
+                <span className="hidden text-small uppercase tracking-[0.18em] text-white/45 tabular-nums md:inline">
+                  {String(total).padStart(2, "0")} {item.label.toLowerCase()}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => close()}
+                  aria-label={`Close ${item.label.toLowerCase()}`}
+                  className="grid size-11 place-items-center rounded-[var(--radius-btn)] border border-white/25 text-white transition-colors duration-300 hover:border-white/60"
+                >
+                  <CloseIcon className="size-5" />
+                </button>
+              </div>
             </div>
 
-            <p
-              data-menu-item
-              style={{ "--i": 0 } as React.CSSProperties}
-              className="mt-[clamp(20px,3vw,64px)] text-[length:clamp(40px,calc(4.4vw+20px),120px)] leading-[0.92] font-bold tracking-[-0.045em] uppercase"
-            >
-              <AccentText text={`Our ${item.label}`} />
-            </p>
-
-            <div className="mt-[clamp(32px,4vw,88px)] grid gap-x-gap gap-y-12 lg:grid-cols-3">
+            <div className="mt-[clamp(16px,3.6vh,64px)] grid grid-cols-3 gap-x-gap">
               {groups.map((g, gi) => (
                 <section key={g.group} data-menu-item style={{ "--i": gi + 1 } as React.CSSProperties}>
-                  <h2 className="flex items-baseline justify-between pb-4 text-small uppercase tracking-[0.18em] text-white/55">
+                  <h2 className="flex items-baseline justify-between pb-[clamp(8px,1.4vh,16px)] text-small uppercase tracking-[0.18em] text-white/55">
                     {g.label}
                     <span className="tabular-nums text-white/35">{String(g.services.length).padStart(2, "0")}</span>
                   </h2>
@@ -170,19 +182,21 @@ function ServicesItem({ item, groups, button }: { item: LinkItem; groups: MenuGr
                             href={s.href}
                             onClick={() => close(false)}
                             aria-current={pathname === s.href ? "page" : undefined}
-                            className="group grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-x-[clamp(14px,1.2vw,24px)] py-[clamp(16px,1.4vw,26px)]"
+                            className="group grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-x-[clamp(12px,1.1vw,22px)] py-[clamp(8px,1.7vh,24px)]"
                           >
-                            <span className="grid size-[clamp(40px,2.6vw,52px)] place-items-center rounded-[10px] border border-white/15 text-white/80 transition-colors duration-300 group-hover:border-white/40 group-hover:text-white">
+                            <span className="grid size-[clamp(32px,min(2.6vw,4.6vh),50px)] place-items-center rounded-[10px] border border-white/15 text-white/80 transition-colors duration-300 group-hover:border-white/40 group-hover:text-white">
                               <ServiceIcon slug={s.slug} className="size-[46%]" />
                             </span>
                             <span className="min-w-0">
                               <span className="flex items-baseline gap-3">
                                 <span className="text-small tabular-nums text-white/35">{String(index).padStart(2, "0")}</span>
-                                <span className="grad-hover text-[length:clamp(20px,calc(0.8vw+16px),30px)] leading-[1.15] font-medium tracking-[-0.015em] text-balance group-aria-[current=page]:text-white/55">
+                                <span className="grad-hover text-[length:clamp(17px,min(1.55vw,2.7vh),29px)] leading-[1.15] font-medium tracking-[-0.015em] text-balance group-aria-[current=page]:text-white/55">
                                   {s.name}
                                 </span>
                               </span>
-                              <span className="mt-1.5 block text-base text-white/60 text-pretty">{s.tagline}</span>
+                              <span className="mt-1 block text-[length:clamp(13px,min(1vw,1.8vh),17px)] leading-[1.4] text-white/60 text-pretty">
+                                {s.tagline}
+                              </span>
                             </span>
                             <ArrowRight className="mt-1 size-5 text-white/50 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white" />
                           </Link>
@@ -197,19 +211,19 @@ function ServicesItem({ item, groups, button }: { item: LinkItem; groups: MenuGr
             <div
               data-menu-item
               style={{ "--i": groups.length + 1 } as React.CSSProperties}
-              className="mt-auto flex flex-wrap items-center justify-between gap-5 pt-[clamp(40px,3.4vw,72px)]"
+              className="mt-auto flex flex-wrap items-center justify-between gap-5 pt-[clamp(16px,3.2vh,56px)]"
             >
               <Link href={item.href} onClick={() => close(false)} className="group inline-flex items-center gap-2 text-base font-medium">
                 <span className="grad-hover underline underline-offset-[0.28em]">All {item.label.toLowerCase()}</span>
                 <ArrowRight className="size-[1.1em] transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
-              <Link href={button.href} onClick={() => close(false)} className={buttonClass("light", "lg")}>
+              <Link href={button.href} onClick={() => close(false)} className={buttonClass("light", "md")}>
                 <span className="btn-label">{button.label}</span>
               </Link>
             </div>
           </div>,
           document.body,
         )}
-    </>
+    </div>
   );
 }

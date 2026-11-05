@@ -23,14 +23,14 @@ export function Header({
   searchItems: SearchItem[];
 }) {
   return (
-    <header className="relative z-30 flex h-[var(--header-h)] items-center px-gutter">
+    <header className="site-header relative z-30 flex h-[var(--header-h)] items-center px-gutter">
       <Link href="/" className="link-fade shrink-0" aria-label={`${settings.siteTitle} home`}>
-        <Logo logo={settings.logo} name={settings.siteTitle} priority />
+        <Logo logo={settings.logo} name={settings.siteTitle} priority large />
       </Link>
       <NavMenu menu={settings.menu} groups={groups} button={settings.headerButton} />
       <SiteSearch
         items={searchItems}
-        className="mx-[clamp(20px,2.1vw,40px)] hidden flex-1 lg:block"
+        className="mx-[clamp(20px,2.1vw,40px)] hidden max-w-[clamp(260px,24vw,460px)] flex-1 lg:ml-auto lg:block"
       />
       <div className="ml-auto flex items-center gap-2 lg:ml-0">
         <ThemeToggle className="hover:bg-ink/[0.07]" />

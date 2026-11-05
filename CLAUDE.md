@@ -31,7 +31,9 @@ Launch to-dos live in `LAUNCH-CHECKLIST.md`.
   from Sanity's CDN at the needed width, with their preview while loading.
   - `priority` on the page's main (LCP) image only. Everything below it is lazy
     (`lowPriority` for galleries): images loading alongside the main one slow it
-    down on phones.
+    down on phones. Long galleries add `<LoadAhead>` (`src/components/media`), which
+    starts each image about two screens ahead once the page has loaded, and skip
+    the scroll fade-up (`data-reveal`) on images so they show as soon as they're in.
   - Accurate `sizes`, and a box with a fixed aspect ratio so nothing shifts.
 - No new library in every page's first load. Heavy code is imported when used,
   e.g. `import("@/lib/gsap")` near the screen (see `ProcessSteps`). Prefer CSS for

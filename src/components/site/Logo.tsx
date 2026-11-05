@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 
 /** Logo height, from the design system's header (22px), scaled for the larger screens here. */
 const SIZE = "h-[clamp(20px,calc(0.42vw+17px),26px)] w-auto";
+/** The header's larger logo. */
+const SIZE_LG = "h-[clamp(24px,calc(0.62vw+19.6px),34px)] w-auto";
 
 /**
  * The design system's full logo (wordmark with the ribbon O), exactly as
@@ -18,16 +20,19 @@ export function Logo({
   name,
   tone = "auto",
   priority,
+  large,
   className,
 }: {
   logo?: Img | null;
   name: string;
   tone?: "auto" | "dark";
   priority?: boolean;
+  /** The header's larger size. */
+  large?: boolean;
   className?: string;
 }) {
   if (logo?.url) {
-    const height = 28;
+    const height = large ? 34 : 28;
     const width = Math.round((logo.width / logo.height) * height) || 120;
     return (
       <Image
@@ -37,15 +42,15 @@ export function Logo({
         height={height}
         loading={priority ? "eager" : undefined}
         unoptimized={logo.url.endsWith(".svg")}
-        className={cn(SIZE, className)}
+        className={cn(large ? SIZE_LG : SIZE, className)}
       />
     );
   }
-  const sizes = "(min-width: 1024px) 160px, 130px";
+  const sizes = large ? "(min-width: 1024px) 210px, 150px" : "(min-width: 1024px) 160px, 130px";
   return (
     <span className={cn("flex", className)}>
       {tone === "auto" && (
-        <Image src={onLight} alt="" aria-hidden="true" sizes={sizes} className={cn(SIZE, "dark:hidden")} />
+        <Image src={onLight} alt="" aria-hidden="true" sizes={sizes} className={cn(large ? SIZE_LG : SIZE, "dark:hidden")} />
       )}
       <Image
         src={onDark}
@@ -53,7 +58,7 @@ export function Logo({
         aria-hidden="true"
         sizes={sizes}
         loading={priority ? "eager" : undefined}
-        className={cn(SIZE, tone === "auto" && "hidden dark:block")}
+        className={cn(large ? SIZE_LG : SIZE, tone === "auto" && "hidden dark:block")}
       />
       <span className="sr-only">{name}</span>
     </span>

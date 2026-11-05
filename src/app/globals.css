@@ -499,6 +499,11 @@ html.project-open {
   }
 }
 
+/* The header stays above the Services mega menu while it is open (NavMenu.tsx). */
+html[data-mega-open] .site-header {
+  z-index: 60;
+}
+
 /* While the first-visit preloader shows, the page's own entrance waits. */
 .preloading h1 .reveal-mask > span,
 .preloading .dock-in {
