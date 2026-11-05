@@ -50,11 +50,19 @@ Launch to-dos live in `LAUNCH-CHECKLIST.md`.
 - Every post: a 16:10 cover with alt text, an excerpt of 50 to 160 characters, a
   category, and h2 headings (they make the contents list). Same copy rules as above.
 
-## Before pushing
+## Staging mode (now)
+opsiogen.vercel.app is a staging site: every change goes live straight away.
+1. `npm run typecheck`, commit and push.
+2. Deploy at once through the Vercel API: redeploy the latest production deployment
+   with `withLatestCommit: true`, target production. Pushes don't deploy by themselves
+   (`vercel.json` turns off git deployments, since GitHub's notices arrived late and
+   out of order and rebuilt older commits over newer ones).
+3. Content and images in `src/content` go live through the **Seed Sanity** action
+   (add mode); Studio edits show on the site within about 10 seconds.
+The full checks below wait for the move to Hostinger (see LAUNCH-CHECKLIST.md).
+
+## Before going live on Hostinger
 1. `npm run lint` and `npm run typecheck`.
 2. `npm run build`, `npm start`, then `npm run audit` in another terminal.
 3. For layout or image changes, run Lighthouse on mobile and desktop for the
    changed page, and check phone (390px) and desktop (1440px) widths.
-
-Pushing this branch deploys production on Vercel. CMS content and images go live
-through the **Seed Sanity** action (add mode).

@@ -3,6 +3,10 @@
 Last updated: 4 November 2026. Ask "what's pending" and Claude reads this file.
 Tick items as they are done.
 
+## Before moving to Hostinger (the site is a staging site until then)
+
+- [ ] Run the full checks in CLAUDE.md: lint, types, build, `npm run audit`, Lighthouse on mobile and desktop.
+
 ## When you connect the real domain
 
 - [ ] Connect the domain in Vercel (Project → Settings → Domains), with www or without, and redirect the other version to it.
