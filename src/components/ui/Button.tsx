@@ -4,15 +4,14 @@ import { cn, isExternal } from "@/lib/utils";
 type Variant = "dark" | "outline" | "outline-light" | "light";
 type Size = "md" | "lg";
 
-// `btn` turns the label (`.btn-label`) into the hover colour (--gradient-hover): the brand
-// spectrum on an ink fill (`btn-ink`), Forest on a paper fill (`btn-paper`); see globals.css.
+// `btn` turns the label (`.btn-label`) into the brand spectrum on hover, in both themes; see globals.css.
 const base =
   "btn inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-btn)] border font-medium transition-[background-color,color,border-color,scale] duration-300 ease-out active:scale-[0.97]";
 
 const variants: Record<Variant, string> = {
-  dark: "btn-ink border-ink bg-ink text-on-ink",
-  outline: "btn-ink border-ink bg-transparent text-ink hover:bg-ink hover:text-on-ink",
-  "outline-light": "btn-paper border-white/90 bg-transparent text-white hover:bg-white hover:text-coal hover:border-white",
+  dark: "border-ink bg-ink text-on-ink",
+  outline: "border-ink bg-transparent text-ink hover:bg-ink hover:text-on-ink",
+  "outline-light": "border-white/90 bg-transparent text-white hover:bg-white hover:text-coal hover:border-white",
   light: "theme-light border-band bg-band text-ink hover:bg-white hover:border-white",
 };
 

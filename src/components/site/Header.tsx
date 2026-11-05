@@ -9,7 +9,7 @@ import { SiteSearch, type SearchItem } from "./SiteSearch";
 import { ThemeToggle } from "./ThemeToggle";
 
 /**
- * Top bar from the reference: logo, menu (Services opens a drop-down), the
+ * Top bar from the reference: logo, menu (Services opens a full-screen list), the
  * search bar, the theme switch and the main button. Scrolls away with the page; the floating
  * dock stays.
  */
@@ -27,7 +27,7 @@ export function Header({
       <Link href="/" className="link-fade shrink-0" aria-label={`${settings.siteTitle} home`}>
         <Logo logo={settings.logo} name={settings.siteTitle} priority />
       </Link>
-      <NavMenu menu={settings.menu} groups={groups} />
+      <NavMenu menu={settings.menu} groups={groups} button={settings.headerButton} />
       <SiteSearch
         items={searchItems}
         className="mx-[clamp(20px,2.1vw,40px)] hidden flex-1 lg:block"

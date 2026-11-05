@@ -100,20 +100,9 @@
     --gradient-hover: var(--gradient-brand);
     --icon-hover: url(#brand-gradient);
   }
-  .theme-light,
-  .btn-paper {
+  .theme-light {
     --gradient-hover: linear-gradient(#006e4e, #006e4e);
     --icon-hover: #006e4e;
-  }
-  /* Ink-filled buttons: dark in the light theme, paper in the dark theme. */
-  .btn-ink {
-    --gradient-hover: var(--gradient-brand);
-  }
-  [data-theme="dark"] .btn-ink {
-    --gradient-hover: linear-gradient(#006e4e, #006e4e);
-  }
-  [data-theme="dark"] .theme-light .btn-ink {
-    --gradient-hover: var(--gradient-brand);
   }
 
   /*
@@ -254,10 +243,10 @@
   }
 
   /*
-   * Hover colour: links, menu items and every button label take
-   * --gradient-hover, the brand spectrum on dark grounds and Forest on light
-   * ones (the spectrum's pale stops can't carry small text on white). Only
-   * the letters change, so underlines and icons keep their colour.
+   * Hover colour: links and menu items take --gradient-hover, the brand
+   * spectrum on dark grounds and Forest on light ones (the spectrum's pale
+   * stops can't carry small text on white); button labels always take the
+   * spectrum. Only the letters change, so underlines and icons keep their colour.
    */
   .link-accent,
   .link-underline,
@@ -274,12 +263,18 @@
   .link-underline:focus-visible,
   .group:hover .grad-hover,
   .group:focus-visible .grad-hover,
-  .grad-hover:hover,
+  .grad-hover:hover {
+    background-image: var(--gradient-hover);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  /* Button labels take the full spectrum on hover in both themes, on any fill. */
   .btn:hover .btn-label,
   .btn:focus-visible .btn-label,
   .group:hover .btn .btn-label,
   .group:focus-visible .btn .btn-label {
-    background-image: var(--gradient-hover);
+    background-image: var(--gradient-brand);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;

@@ -48,6 +48,6 @@ Brand palette **"Volt"**: Volt `#D8FF3E` (acid lime: a fill with ink text, or te
 
 The brand gradient (`--gradient-brand`, "Fresh spectrum": `#D8FA01 → #01F14C → #00ECFD → #01A5E2 → #9B1CF0 → #FF2A1A → #FE9102 → #FEB702` at 120°, OKLCH-interpolated where supported) is for large bold type only: `.text-gradient` on one display word and big numbers. Never a background, line or glow.
 
-**Hover.** Links, menu items and button labels take `--gradient-hover`: the spectrum on dark grounds (the dark theme, `.on-dark` surfaces and ink-filled buttons, `.btn-ink`) and Forest on light ones (the light theme, `.theme-light` and paper-filled buttons, `.btn-paper`), because the spectrum's pale stops can't carry small text on white. Social icons follow the same rule through `--icon-hover`.
+**Hover.** Button labels turn into the spectrum in both themes. Links and menu items take `--gradient-hover`: the spectrum on dark grounds (the dark theme and `.on-dark` surfaces) and Forest on light ones (the light theme and `.theme-light`), because the spectrum's pale stops can't carry small text on white. Social icons follow the link rule through `--icon-hover`.
 
 **Accent word.** Every giant title shows one word in the gradient, as in the design system (“We remove the DRAG.”). It is the last word by default; to pick another, fill in **Word in colour** on the Hero, Project grid or Services list section in Studio. Keep it to one gradient word per screen.
