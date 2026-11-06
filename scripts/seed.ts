@@ -191,6 +191,12 @@ async function servicePageFields(s: (typeof SERVICES)[number]) {
  * Starter text that changed after an earlier seed. Add mode replaces each one
  * only while Studio still holds the old text, so edits are never overwritten.
  */
+/** Pairs of projects whose places in the list swap (see the seed run below). */
+const ORDER_SWAPS: [string, string][] = [
+  // Oh My Glam takes Rohde & Schwarz's place near the top (shown on Home).
+  ["project-rohde-schwarz", "project-oh-my-glam"],
+];
+
 const TEXT_UPDATES: { id: string; get: string; path: string; from: string; to: string }[] = [
   // Each call to action has its own label; Start a project stays with the header.
   { id: "siteSettings", get: "cta.button.label", path: "cta.button.label", from: "Start a project", to: "Get in touch" },
@@ -554,6 +560,21 @@ async function run() {
     );
   }
 
+  // Project order swaps (Home's latest work shows the first ones). Done once:
+  // only while the first project still comes before the second.
+  if (!OVERWRITE && ORDER_SWAPS.length) {
+    const ids = ORDER_SWAPS.flat();
+    const orders = await client.fetch<{ _id: string; order?: number }[]>(`*[_id in $ids]{ _id, order }`, { ids });
+    const orderOf = (id: string) => orders.find((o) => o._id === id)?.order;
+    for (const [first, second] of ORDER_SWAPS) {
+      const a = orderOf(first);
+      const b = orderOf(second);
+      if (a == null || b == null || a >= b) continue;
+      console.log(`  swapping the order of ${first} and ${second}`);
+      tx.patch(first, (p) => p.set({ order: b }));
+      tx.patch(second, (p) => p.set({ order: a }));
+    }
+  }
   if (!OVERWRITE && TEXT_UPDATES.length) {
     const current = await client.fetch<Record<string, unknown> | null>(
       `{ ${TEXT_UPDATES.map((u, i) => `"u${i}": *[_id == "${u.id}"][0].${u.get}`).join(", ")} }`,

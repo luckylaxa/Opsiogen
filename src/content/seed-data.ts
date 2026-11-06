@@ -1404,13 +1404,12 @@ const CASE_STUDIES: ProjectInput[] = [
     liveUrl: "https://www.surgohealth.com/",
   },
   {
-    name: "Rohde & Schwarz",
-    slug: "rohde-schwarz",
-    industry: "Technology",
-    services: ["ai-social-media-marketing", "ai-automation", "digital-marketing", "ai-print-collateral"],
+    name: "Oh My Glam",
+    slug: "oh-my-glam",
+    industry: "Beauty",
+    services: ["ai-product-design"],
     summary:
-      "Social media, digital marketing and print for Rohde & Schwarz in India, plus an AI voice assistant.",
-    liveUrl: "https://www.rohde-schwarz.com/in/home_48230.html",
+      "Oh My Glam lets shoppers try make-up on live before they buy. We designed the mobile app: AR try-on for lips, eyes and face, AI shade matching from a face scan, Glam AI for looks and artist bookings, and checkout.",
   },
   {
     name: "BigTapp",
@@ -1493,12 +1492,13 @@ const CASE_STUDIES: ProjectInput[] = [
       "Meetingful AI helps teams plan, run and follow up on meetings. We designed the web app, from meeting highlights and takeaways to an AI assistant that answers questions about any meeting.",
   },
   {
-    name: "Oh My Glam",
-    slug: "oh-my-glam",
-    industry: "Beauty",
-    services: ["ai-product-design"],
+    name: "Rohde & Schwarz",
+    slug: "rohde-schwarz",
+    industry: "Technology",
+    services: ["ai-social-media-marketing", "ai-automation", "digital-marketing", "ai-print-collateral"],
     summary:
-      "Oh My Glam lets shoppers try make-up on live before they buy. We designed the mobile app: AR try-on for lips, eyes and face, AI shade matching from a face scan, Glam AI for looks and artist bookings, and checkout.",
+      "Social media, digital marketing and print for Rohde & Schwarz in India, plus an AI voice assistant.",
+    liveUrl: "https://www.rohde-schwarz.com/in/home_48230.html",
   },
   {
     name: "Carlton Noble",
