@@ -1445,14 +1445,6 @@ const CASE_STUDIES: ProjectInput[] = [
       "In luxury real estate, a strong identity builds trust with high-value buyers. We created a refined branding and illustration system for Engel & Völkers, used across its website and marketing.",
   },
   {
-    name: "Amphenol",
-    slug: "amphenol",
-    industry: "Connectors and interconnects",
-    services: ["ai-social-media-marketing", "digital-marketing"],
-    summary: "Social media and digital marketing for Amphenol’s connector and interconnect businesses.",
-    liveUrl: "https://www.amphenol-cs.com/",
-  },
-  {
     name: "Sifio Health",
     slug: "sifio-health",
     industry: "Healthcare software",
@@ -1524,7 +1516,7 @@ export const PROJECTS: Project[] = CASE_STUDIES.map((p, i) => makeProject(i + 1,
 export const FEATURED_PROJECT_SLUG = "surgo-health";
 
 /** Case studies taken off the site: the seed deletes them in either mode. */
-export const REMOVED_PROJECT_IDS = ["project-elcoteq", "project-ciber-digita", "project-appdev-health"];
+export const REMOVED_PROJECT_IDS = ["project-elcoteq", "project-ciber-digita", "project-appdev-health", "project-amphenol"];
 
 /** Project ids from the first starter content, removed when the seed overwrites. */
 export const RETIRED_PROJECT_IDS = [
