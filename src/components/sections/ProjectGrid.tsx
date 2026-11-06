@@ -4,9 +4,13 @@ import { GiantHeading } from "@/components/ui/Headings";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { WorkGrid } from "@/components/work/WorkGrid";
 
-/** “Latest work” on Home and the filterable grid on Work. */
-export async function ProjectGrid({ section }: { section: ProjectGridSection }) {
-  const [projects, services] = await Promise.all([getProjects(), getServices()]);
+/**
+ * “Latest work” on Home and the filterable grid on Work. A grid without filters
+ * leaves out `exclude` (projects already featured on the page), so nothing repeats.
+ */
+export async function ProjectGrid({ section, exclude = [] }: { section: ProjectGridSection; exclude?: string[] }) {
+  const [all, services] = await Promise.all([getProjects(), getServices()]);
+  const projects = section.showFilters ? all : all.filter((p) => !exclude.includes(p.slug));
   const limit = section.limit && section.limit > 0 ? section.limit : 6;
   const filters = section.showFilters
     ? services.map(({ name, slug, shortName, group }) => ({ name, slug, shortName, group }))

@@ -42,6 +42,9 @@ export async function SectionRenderer({
   const settings = await getSettings();
   const out: React.ReactNode[] = [];
   let afterPlaced = false;
+  // Projects already shown big on this page (featured cards), so a grid of
+  // latest work below them doesn't repeat them.
+  const featured = sections.flatMap((s) => (s._type === "featuredProject" && s.project ? [s.project.slug] : []));
 
   for (let i = 0; i < sections.length; i++) {
     const section = sections[i];
@@ -80,7 +83,7 @@ export async function SectionRenderer({
       case "projectGrid":
         out.push(
           <Block key={section._key}>
-            <ProjectGrid section={section} />
+            <ProjectGrid section={section} exclude={featured} />
           </Block>,
         );
         break;
