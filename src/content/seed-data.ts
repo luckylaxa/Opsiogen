@@ -1437,14 +1437,6 @@ const CASE_STUDIES: ProjectInput[] = [
     liveUrl: "https://www.sandlogic.com/",
   },
   {
-    name: "AppDev Health",
-    slug: "appdev-health",
-    industry: "Healthcare software",
-    services: ["ai-websites", "digital-marketing", "ai-print-collateral"],
-    summary: "Website, digital marketing and print for AppDev Health, a custom healthcare software company.",
-    liveUrl: "https://appdev.health/",
-  },
-  {
     name: "Engel & Völkers",
     slug: "engel-volkers",
     industry: "Real estate",
@@ -1532,7 +1524,7 @@ export const PROJECTS: Project[] = CASE_STUDIES.map((p, i) => makeProject(i + 1,
 export const FEATURED_PROJECT_SLUG = "surgo-health";
 
 /** Case studies taken off the site: the seed deletes them in either mode. */
-export const REMOVED_PROJECT_IDS = ["project-elcoteq", "project-ciber-digita"];
+export const REMOVED_PROJECT_IDS = ["project-elcoteq", "project-ciber-digita", "project-appdev-health"];
 
 /** Project ids from the first starter content, removed when the seed overwrites. */
 export const RETIRED_PROJECT_IDS = [
