@@ -114,10 +114,11 @@ export function Dock({ menu, button }: { menu: LinkItem[]; button: LinkItem }) {
               <Link
                 href="/"
                 aria-current={pathname === "/" ? "page" : undefined}
-                className={cn(tabClass, pathname === "/" ? "text-white" : "text-white/55 hover:text-white")}
+                aria-label="Home"
+                className="flex h-full w-full items-center justify-center"
               >
-                <Mark className="size-6" />
-                <span className="grad-hover">Home</span>
+                {/* Just the mark, as on desktop. */}
+                <Mark className="size-9" />
               </Link>
             </li>
             {tabs[0] && tab(tabs[0])}
