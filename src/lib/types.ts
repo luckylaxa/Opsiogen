@@ -52,6 +52,8 @@ export type ServicePage = {
 export type Service = ServiceRef & ServicePage & {
   _id: string;
   order: number;
+  /** A colourful thumbnail for service cards; the hero image is used when there is none. */
+  card?: Img | null;
   tagline: string;
   description: string;
   included: string[];

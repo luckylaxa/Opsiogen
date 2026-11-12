@@ -88,11 +88,26 @@ const PRICING: Pair = [
   "With a fixed price agreed before we start, or a monthly plan. Start on a monthly plan or bring us a project.",
 ];
 
+/** Colourful thumbnails for the service cards (public/services/<slug>/card.jpg). */
+const CARD_ALT: Record<string, string> = {
+  "ai-websites": "Website pages on a laptop and a phone, on a colourful gradient",
+  "ai-product-design": "A product dashboard and app screens, on a colourful gradient",
+  "ai-mvps-business-apps": "A business app on a laptop and a phone, on a colourful gradient",
+  "ai-automation": "An automated workflow and an AI assistant, on a colourful gradient",
+  "ai-social-media-marketing": "Social posts and a short video on phones, on a colourful gradient",
+  "digital-marketing": "A campaign dashboard and ads, on a colourful gradient",
+  "ai-creative-subscription": "Slides, posters, ads and social posts, on a colourful gradient",
+  "ai-print-collateral": "A brochure, business cards, a box and a mug, on a colourful gradient",
+  "ai-brand-services": "Brand guidelines, an app icon and a business card, on a colourful gradient",
+  "ai-video-production": "A video editor and a vertical video, on a colourful gradient",
+};
+
 export const SERVICES: Service[] = [
   {
     _id: "service-ai-websites",
     name: "AI Websites & Revamps",
     slug: "ai-websites",
+    card: img(`/services/ai-websites/card.jpg`, 1600, 1200, CARD_ALT["ai-websites"]),
     shortName: "Websites",
     group: "build",
     order: 1,
@@ -207,6 +222,7 @@ export const SERVICES: Service[] = [
     _id: "service-ai-product-design",
     name: "AI Product Design & Design Systems",
     slug: "ai-product-design",
+    card: img(`/services/ai-product-design/card.jpg`, 1600, 1200, CARD_ALT["ai-product-design"]),
     shortName: "Product Design",
     group: "build",
     order: 2,
@@ -287,6 +303,7 @@ export const SERVICES: Service[] = [
     _id: "service-ai-mvps-business-apps",
     name: "AI MVPs & Business Apps",
     slug: "ai-mvps-business-apps",
+    card: img(`/services/ai-mvps-business-apps/card.jpg`, 1600, 1200, CARD_ALT["ai-mvps-business-apps"]),
     shortName: "MVPs & Apps",
     group: "build",
     order: 3,
@@ -363,6 +380,7 @@ export const SERVICES: Service[] = [
     _id: "service-ai-automation",
     name: "AI Automation",
     slug: "ai-automation",
+    card: img(`/services/ai-automation/card.jpg`, 1600, 1200, CARD_ALT["ai-automation"]),
     shortName: "Automation",
     group: "build",
     order: 4,
@@ -444,6 +462,7 @@ export const SERVICES: Service[] = [
     _id: "service-ai-social-media-marketing",
     name: "AI Social Media Marketing",
     slug: "ai-social-media-marketing",
+    card: img(`/services/ai-social-media-marketing/card.jpg`, 1600, 1200, CARD_ALT["ai-social-media-marketing"]),
     shortName: "Social Media",
     group: "grow",
     order: 5,
@@ -518,6 +537,7 @@ export const SERVICES: Service[] = [
     _id: "service-digital-marketing",
     name: "Digital Marketing",
     slug: "digital-marketing",
+    card: img(`/services/digital-marketing/card.jpg`, 1600, 1200, CARD_ALT["digital-marketing"]),
     shortName: "Digital Marketing",
     group: "grow",
     order: 6,
@@ -596,6 +616,7 @@ export const SERVICES: Service[] = [
     _id: "service-ai-creative-subscription",
     name: "AI Creative Subscription",
     slug: "ai-creative-subscription",
+    card: img(`/services/ai-creative-subscription/card.jpg`, 1600, 1200, CARD_ALT["ai-creative-subscription"]),
     shortName: "Creative",
     group: "create",
     order: 7,
@@ -674,6 +695,7 @@ export const SERVICES: Service[] = [
     _id: "service-ai-print-collateral",
     name: "AI Print & Collateral Design",
     slug: "ai-print-collateral",
+    card: img(`/services/ai-print-collateral/card.jpg`, 1600, 1200, CARD_ALT["ai-print-collateral"]),
     shortName: "Print",
     group: "create",
     order: 8,
@@ -746,6 +768,7 @@ export const SERVICES: Service[] = [
     _id: "service-ai-brand",
     name: "AI Brand Services",
     slug: "ai-brand-services",
+    card: img(`/services/ai-brand-services/card.jpg`, 1600, 1200, CARD_ALT["ai-brand-services"]),
     shortName: "Brand",
     group: "create",
     order: 9,
@@ -821,6 +844,7 @@ export const SERVICES: Service[] = [
     _id: "service-ai-video",
     name: "AI Video Production",
     slug: "ai-video-production",
+    card: img(`/services/ai-video-production/card.jpg`, 1600, 1200, CARD_ALT["ai-video-production"]),
     shortName: "Video",
     group: "create",
     order: 10,
@@ -913,21 +937,25 @@ type CaseDetails = {
 
 /** A case study with its generated title-card cover (public/covers) and card mockup (public/cards). */
 /**
- * Designed card images: the real home page on a laptop, 2016 × 1600, the
- * card's own 1.26:1 shape, with the work kept near the middle for phones.
+ * Colourful card thumbnails (public/cards/<slug>.jpg, 1512 × 1200, the card's
+ * own 1.26:1 shape): the real screens or mockups on a bold gradient.
  */
 const DESIGNED_CARDS: Record<string, string> = {
-  "surgo-health": "The Surgo Health Population Health Index home page on a laptop",
-  "care-connect": "The Care Connect home page on a laptop",
-  rxlive: "The RxLive home page on a laptop",
-  meetingful: "The Meetingful home page on a laptop, with a live call on a phone",
-  bigtapp: "BigTapp website pages on a laptop and tablets",
-  "cabot-solutions": "Cabot Solutions website pages on three screens",
-  "carlton-noble": "Carlton Noble website pages on three screens",
-  "engel-volkers": "Engel & Völkers country pages on three screens",
-  norsecom: "The Norsecom brand on a reception wall and an exhibition booth",
-  sandlogic: "The SandLogic brand on a keynote stage and a brochure",
+  "surgo-health": "The Surgo Health index on a laptop and a browser window, on a teal and blue gradient",
+  "care-connect": "The Care Connect intake board on a laptop and a phone, on a blue and lilac gradient",
+  "rxlive": "The RxLive worklist on a laptop, on a green and lime gradient",
+  "sifio-health": "The Sifio Health surgical overview on a laptop, on a green and peach gradient",
+  "meetingful": "The Meetingful app on a laptop and a phone, on a violet, pink and orange gradient",
+  "oh-my-glam": "Oh My Glam app screens on three phones, on a pink and yellow gradient",
+  "bigtapp": "BigTapp website pages on a laptop and a tablet, on an indigo and cyan gradient",
+  "cabot-solutions": "Cabot Solutions website pages on a laptop and a tablet, on a blue and lilac gradient",
+  "carlton-noble": "Carlton Noble website pages on a laptop and a tablet, on a burgundy and gold gradient",
+  "engel-volkers": "Engel & Völkers pages on a laptop and a tablet, on a sand and blue gradient",
+  "norsecom": "The Norsecom booth, business card and N mark, on a blue gradient",
+  "sandlogic": "SandLogic brand mockups, on a coral and violet gradient",
+  "rohde-schwarz": "Rohde & Schwarz brochures, booth and a phone ad, on a blue gradient",
 };
+
 /**
  * A few lines of story, shown between a case study's wide mockups from tablets
  * up, one block after every four.
@@ -1100,7 +1128,7 @@ function makeProject(order: number, p: ProjectInput): Project {
       alt: `${p.name}: ${services.map((s) => s.name).join(", ")}`,
     },
     cardImage: DESIGNED_CARDS[p.slug]
-      ? img(`/cards/${p.slug}.jpg`, 2016, 1600, DESIGNED_CARDS[p.slug])
+      ? img(`/cards/${p.slug}.jpg`, 1512, 1200, DESIGNED_CARDS[p.slug])
       : img(`/cards/${p.slug}.jpg`, 1600, 1200, CARD_ALTS[p.slug] ?? `The ${p.name} case study on a laptop and a phone`),
     coverVideo: null,
     order,

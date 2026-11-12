@@ -152,6 +152,11 @@ export const service = defineType({
       },
       validation: (rule) => rule.required(),
     }),
+    {
+      ...imageField("card", "Card thumbnail"),
+      group: "content",
+      description: "A colourful thumbnail for the service cards on Home and Services. 4:3. Uses the page's hero image when empty.",
+    },
     defineField({
       name: "shortName",
       title: "Short filter name",

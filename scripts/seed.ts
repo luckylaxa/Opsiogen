@@ -57,6 +57,7 @@ const OVERWRITE_PAGES = ["page-work", "page-services"];
 const STARTER_SHARE_FILE = "share-default.jpg";
 /** Service fields added after the first seed; add mode fills them in where empty. */
 const SERVICE_FILL_IN = [
+  "card",
   "statement",
   "benefits",
   "offerings",
@@ -355,6 +356,7 @@ async function run() {
           ...(o._key ? offeringImages.get(o._key) : {}),
         })),
         faqs: s.faqs.map((f) => ({ _type: "faq", _key: f._key ?? key(f.question), question: f.question, answer: f.answer })),
+        ...(s.card?.url ? { card: await image(s.card.url, s.card.alt) } : {}),
         ...pageFields,
       },
       OVERWRITE,

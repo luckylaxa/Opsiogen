@@ -139,6 +139,7 @@ const SERVICE = `{
   "offerings": coalesce(offerings[]{ _key, title, text, "image": image${IMG} }, []),
   "faqs": coalesce(faqs[]{ _key, question, answer }, []),
   hero{ "image": image${IMG} },
+  "card": card${IMG},
   clientsLabel,
   why{ label, heading, accent },
   stats{ label, "items": coalesce(items[]{ _key, value, label }, []) },
