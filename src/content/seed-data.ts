@@ -1588,7 +1588,7 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
     {
       alt: "The Norsecom brand on a booth, a reception wall and business cards",
       width: 2400,
-      height: 1500,
+      height: 1529,
       hotspot: { x: 0.5, y: 0.5 },
       size: "original",
       phone: true,
@@ -1611,16 +1611,16 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
       "Packaging for a Mergein gateway",
     ],
     1600,
-    { width: 2400, height: 1500 },
+    true,
   ),
-  // Brand presentation slides (16:9) from tablets up, with 1:1 versions in the same style as the others on phones.
+  // Brand projects in the Rohde & Schwarz layout: photo and side panel from tablets up, the photo alone on phones.
   "sandlogic": workGallery(
     "sandlogic",
     "sandlogic",
     {
       alt: "The SandLogic brand: where silicon meets intelligence",
       width: 2400,
-      height: 1350,
+      height: 1529,
       hotspot: { x: 0.5, y: 0.5 },
       size: "original",
       phone: true,
@@ -1648,7 +1648,7 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
       "Social posts",
     ],
     1600,
-    { width: 2400, height: 1350 },
+    true,
   ),
 };
 
