@@ -1474,7 +1474,9 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
     1600,
     { width: 2400, height: 1500 },
   ),
-  "cabot-solutions": workGallery(
+  // The website, then the brand collateral.
+  "cabot-solutions": [
+    ...workGallery(
     "cabot-solutions",
     "cabot",
     {
@@ -1501,7 +1503,26 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
     ],
     1600,
     { width: 2400, height: 1500 },
-  ),
+    ),
+    // Brand collateral mockups (no image of their own under the name, so the first is dropped).
+    ...workGallery(
+      "cabot-solutions",
+      "cabotbrand",
+      { alt: "", width: 2400, height: 1500, hotspot: { x: 0.5, y: 0.5 } },
+      [
+        "A Cabot tri-fold brochure: redefining healthcare with digital transformation",
+        "A Cabot exhibition booth with a clinical dashboard on screen",
+        "Cabot T-shirts in blue and white",
+        "Cabot business cards, letterhead and envelope",
+        "Two Cabot roll-up banners in a hospital lobby",
+        "Cabot staff ID badges on blue lanyards",
+        "Cabot mugs in white and blue on a desk",
+        "A Cabot canvas tote bag: healthcare, engineered",
+      ],
+      1600,
+      { width: 2400, height: 1500 },
+    ).slice(1),
+  ],
   "carlton-noble": workGallery(
     "carlton-noble",
     "carlton",

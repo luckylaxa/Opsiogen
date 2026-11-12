@@ -300,7 +300,7 @@ const OLD_TAGLINE: Record<string, string> = {
  * meetingful-0.jpg, omg-0.jpg …), replaced by a project's current gallery
  * while Studio still holds them.
  */
-const OLD_GALLERY_FILE = /^(m?\d+|sample-(hero|\d+)|(surgo|meetingful|omg|care|rx|rs|sifio|sifioweb|bigtapp|cabot|carlton|ev|norsecom|sandlogic)-(hero|\d+)(-wide)?)\.jpg$/;
+const OLD_GALLERY_FILE = /^(m?\d+|sample-(hero|\d+)|(surgo|meetingful|omg|care|rx|rs|sifio|sifioweb|bigtapp|cabot|cabotbrand|carlton|ev|norsecom|sandlogic)-(hero|\d+)(-wide)?)\.jpg$/;
 const hash = (value: unknown) => createHash("sha1").update(JSON.stringify(value ?? null)).digest("hex").slice(0, 16);
 
 /** Card images rendered for an earlier version of the page; add mode swaps them for the current ones. */
