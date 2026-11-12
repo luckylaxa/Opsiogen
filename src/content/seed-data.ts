@@ -1166,9 +1166,12 @@ const FLOW_HEADINGS: Record<string, string> = {
   "cabot-solutions": "Healthcare software, page by page.",
   "carlton-noble": "Travel, events and access, page by page.",
   "engel-volkers": "One look, country by country.",
+  "rohde-schwarz": "One brand, from print to the show floor.",
+  norsecom: "One mark, everywhere the team shows up.",
+  sandlogic: "Where silicon meets intelligence, out in the world.",
 };
 
-/** UI/UX projects with a screen-flow video (public/work/<slug>/<slug>-flow*.mp4), shown after the results. */
+/** Projects with a screen-flow video (public/work/<slug>/<slug>-flow*.mp4), shown after the results. */
 const FLOWS = [
   "surgo-health",
   "care-connect",
@@ -1180,6 +1183,9 @@ const FLOWS = [
   "cabot-solutions",
   "carlton-noble",
   "engel-volkers",
+  "rohde-schwarz",
+  "norsecom",
+  "sandlogic",
 ];
 
 /**
