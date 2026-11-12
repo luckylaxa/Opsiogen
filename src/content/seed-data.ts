@@ -90,16 +90,16 @@ const PRICING: Pair = [
 
 /** Colourful thumbnails for the service cards (public/services/<slug>/card.jpg). */
 const CARD_ALT: Record<string, string> = {
-  "ai-websites": "A laptop with a clean website on a walnut table in golden light",
-  "ai-product-design": "A tablet with a board of interface components on a green velvet sofa",
-  "ai-mvps-business-apps": "Hands holding a phone with a simple business app, in an ochre armchair",
-  "ai-automation": "A laptop showing a connected workflow on a wooden desk by lamplight",
-  "ai-social-media-marketing": "A woman on a green sofa scrolling a short video on her phone",
-  "digital-marketing": "A hand holding a phone with a product ad above a café table",
-  "ai-creative-subscription": "A poster, a tablet of social posts, postcards and a sketchbook on green felt",
-  "ai-print-collateral": "Printed brochures and business cards on an oak shelf",
-  "ai-brand-services": "Colour swatches, a rubber stamp and a tote bag on an ochre armchair",
-  "ai-video-production": "A cinema camera on a tripod in a warm wood-panelled room",
+  "ai-websites": "A real estate website on a laptop, on a sand-coloured ledge",
+  "ai-product-design": "A hospital analytics dashboard on a tablet, resting on green velvet",
+  "ai-mvps-business-apps": "A pharmacy worklist app on a phone, tucked into green velvet",
+  "ai-automation": "A patient intake board on a laptop, on a sand-coloured ledge",
+  "ai-social-media-marketing": "A beauty campaign post on a phone leaning against a sand wall",
+  "digital-marketing": "A landing page on a laptop, on a green velvet seat",
+  "ai-creative-subscription": "A brochure, a flyer and a phone ad from one campaign, on green velvet",
+  "ai-print-collateral": "A printed tri-fold brochure standing on a sand-coloured ledge",
+  "ai-brand-services": "Business cards and a mug from one brand identity, on a sand-coloured ledge",
+  "ai-video-production": "A clapperboard and a monitor showing a keynote, on green velvet",
 };
 
 export const SERVICES: Service[] = [
