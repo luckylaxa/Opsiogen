@@ -1121,8 +1121,19 @@ function makeProject(order: number, p: ProjectInput): Project {
   };
 }
 
-/** Projects with a screen-flow video (public/work/<slug>/<slug>-flow*.mp4), shown after the first image. */
-const FLOWS = ["surgo-health", "care-connect", "rxlive", "sifio-health", "meetingful"];
+/** UI/UX projects with a screen-flow video (public/work/<slug>/<slug>-flow*.mp4), shown after the results. */
+const FLOWS = [
+  "surgo-health",
+  "care-connect",
+  "rxlive",
+  "sifio-health",
+  "meetingful",
+  "oh-my-glam",
+  "bigtapp",
+  "cabot-solutions",
+  "carlton-noble",
+  "engel-volkers",
+];
 
 /**
  * Sample mockups shared by every project until its real work is added

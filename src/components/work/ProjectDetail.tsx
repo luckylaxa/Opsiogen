@@ -183,11 +183,7 @@ export function ProjectDetail({
             {hero.caption && <figcaption className="sr-only">{hero.caption}</figcaption>}
           </figure>
         )}
-        {project.flow?.video?.url && (
-          <div className="mx-gutter mt-gap">
-            <FlowVideo flow={project.flow} label={`A walkthrough of ${project.name}, screen by screen`} />
-          </div>
-        )}
+
       </header>
 
       {/* 2. A few facts beside the summary */}
@@ -216,7 +212,14 @@ export function ProjectDetail({
         </section>
       )}
 
-      {/* 4. The rest of the work, as big image cards with the same margins and
+      {/* 4. The screen-flow video, after the results */}
+      {project.flow?.video?.url && (
+        <section className="mt-section px-gutter">
+          <FlowVideo flow={project.flow} label={`A walkthrough of ${project.name}, screen by screen`} />
+        </section>
+      )}
+
+      {/* 5. The rest of the work, as big image cards with the same margins and
              gaps as the site's other cards: halves at their own proportions,
              one per row on phones and two per row from tablets up; a Full width
              image spans the row at 16:9 from tablets up, and an uncropped one at
@@ -279,7 +282,7 @@ export function ProjectDetail({
         </section>
       )}
 
-      {/* 5. Next projects */}
+      {/* 6. Next projects */}
       {more.length > 0 && (
         <section className="mt-section px-gutter">
           <Section className="mb-[clamp(24px,calc(1.7vw+17.6px),50px)] text-h2 font-medium">Next projects</Section>

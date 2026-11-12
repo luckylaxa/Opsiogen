@@ -429,9 +429,11 @@ async function run() {
       coverFile: string | null;
       cardRef: string | null;
       cardFile: string | null;
+      flowFile: string | null;
+      flowRefs: (string | null)[] | null;
     }[]
   >(
-    `*[_type == "project" && _id in $ids]{ _id, summary, tagline, "services": services[]->slug.current, "storyCount": count(story), "files": gallery[].asset->originalFilename, "images": gallery[]{ "ref": asset._ref, "x": hotspot.x, "y": hotspot.y, "phone": phone.asset._ref }, "coverRef": cover.asset._ref, "coverFile": cover.asset->originalFilename, "cardRef": cardImage.asset._ref, "cardFile": cardImage.asset->originalFilename }`,
+    `*[_type == "project" && _id in $ids]{ _id, summary, tagline, "services": services[]->slug.current, "storyCount": count(story), "files": gallery[].asset->originalFilename, "images": gallery[]{ "ref": asset._ref, "x": hotspot.x, "y": hotspot.y, "phone": phone.asset._ref }, "coverRef": cover.asset._ref, "coverFile": cover.asset->originalFilename, "cardRef": cardImage.asset._ref, "cardFile": cardImage.asset->originalFilename, "flowFile": flow.video.asset->originalFilename, "flowRefs": [flow.video.asset._ref, flow.videoWebm.asset._ref, flow.phone.asset._ref, flow.phoneWebm.asset._ref, flow.poster.asset._ref, flow.posterPhone.asset._ref] }`,
     { ids: PROJECTS.map((p) => p._id) },
   );
   for (const p of PROJECTS) {
@@ -534,6 +536,11 @@ async function run() {
     if (existing.coverFile === path.basename(p.cover.url) && existing.coverRef !== cover.asset._ref) set.cover = cover;
     if (cardImage && existing.cardFile === path.basename(p.cardImage!.url) && existing.cardRef !== cardImage.asset._ref) {
       set.cardImage = cardImage;
+    }
+    // A seeded screen-flow video whose files have since been re-made.
+    if (flow && existing.flowFile === path.basename(p.flow!.video.url)) {
+      const refs = [flow.video, flow.videoWebm, flow.phone, flow.phoneWebm, flow.poster, flow.posterPhone].map((f) => f?.asset._ref ?? null);
+      if (JSON.stringify(refs) !== JSON.stringify(existing.flowRefs ?? [])) set.flow = flow;
     }
     if (Object.keys(set).length) {
       console.log(`  updating ${p._id}: ${Object.keys(set).join(", ")}`);
