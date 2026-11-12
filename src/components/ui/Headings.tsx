@@ -46,8 +46,8 @@ export function accentRange(words: string[], accent?: string | null): [number, n
 }
 
 /**
- * Display text with one accent word (or short phrase) in the brand gradient,
- * as the design system sets its headlines: “We remove the DRAG.”.
+ * Display text with one accent word (or short phrase) marked up on its own.
+ * It used to carry the brand gradient; it is now plain ink like the rest.
  */
 export function AccentText({ text, accent }: { text: string; accent?: string | null }) {
   const words = text.trim().split(/\s+/);

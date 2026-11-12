@@ -82,7 +82,7 @@
     --header-h: clamp(64px, calc(1.57vw + 58.1px), 88px);
     /*
      * "Fresh spectrum": the brightest highlights of the logo O in ring order.
-     * Type only (.text-gradient), large and bold, never a fill. The same on
+     * Hover states and the logo only, never a fill. The same on
      * black and white; OKLCH interpolation where the browser supports it.
      */
     --gradient-brand: linear-gradient(120deg, #d8fa01 0%, #01f14c 14%, #00ecfd 29%, #01a5e2 43%, #9b1cf0 57%, #ff2a1a 71%, #fe9102 86%, #feb702 100%);
@@ -233,13 +233,10 @@
     display: block;
   }
 
-  /* Brand gradient on type: display words and big numbers. */
+  /* Accent words and big numbers: plain ink (white on dark, black on light).
+     The spectrum stays in the logo and on hover only. */
   .text-gradient {
-    background-image: var(--gradient-brand);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
+    color: inherit;
   }
 
   /*
@@ -284,12 +281,6 @@
   .icon-grad:hover svg,
   .icon-grad:focus-visible svg {
     stroke: var(--icon-hover);
-  }
-  /* Tight tracking pushes the last letter past the word's box, where the
-     gradient isn't painted; widen the painted area without moving the text. */
-  .text-gradient {
-    padding-inline: 0.1em;
-    margin-inline: -0.1em;
   }
 }
 
