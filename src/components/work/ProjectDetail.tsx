@@ -215,10 +215,11 @@ export function ProjectDetail({
         </section>
       )}
 
-      {/* 4. The screen-flow video, after the results */}
+      {/* 4. The screen-flow video under its title. The title is never hidden by the
+             scroll reveal, so it shows in the pop-up on every browser. */}
       {project.flow?.video?.url && (
         <section className="mt-section px-gutter">
-          <div data-reveal className="mb-[clamp(24px,2.4vw,48px)] grid gap-y-3 md:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] md:gap-x-gap">
+          <div className="mb-[clamp(24px,2.4vw,48px)] grid gap-y-3 md:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] md:gap-x-gap">
             <Section className="text-small text-mute">In motion</Section>
             <p className="max-w-[40ch] text-[length:clamp(22px,calc(0.84vw+18.8px),36px)] leading-[1.25] tracking-[-0.015em] text-pretty">
               {project.flow.heading || `${project.name}, screen by screen.`}
@@ -237,7 +238,7 @@ export function ProjectDetail({
              story's short blocks sit between them there, one after every four or five. */}
       {rest.length > 0 && (
         <section id={`gallery-${inModal ? "pop" : "page"}-${project.slug}`} className="mt-section">
-          <div data-reveal className="mb-[clamp(24px,2.4vw,48px)] grid gap-y-3 px-gutter md:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] md:gap-x-gap">
+          <div className="mb-[clamp(24px,2.4vw,48px)] grid gap-y-3 px-gutter md:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] md:gap-x-gap">
             <Section className="text-small text-mute">The work</Section>
             <p className="max-w-[40ch] text-[length:clamp(22px,calc(0.84vw+18.8px),36px)] leading-[1.25] tracking-[-0.015em] text-pretty">
               More from {project.name}, up close.
