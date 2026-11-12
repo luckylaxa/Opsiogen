@@ -1643,8 +1643,8 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
       phone: true,
     },
     [
-      "The Norsecom logo",
-      "The N mark",
+      "Norsecom business cards and a mug on a sand-coloured ledge",
+      "A Norsecom billboard on a grey stone wall",
       "Business cards",
       "Letterhead and envelope",
       "A notebook and folder",
