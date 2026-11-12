@@ -31,7 +31,6 @@ Tick items as they are done.
 ## Content
 
 - [ ] Afthab Tours still uses sample images, which search engines treat as thin pages. Send its Figma link or hide it until it's ready.
-- [ ] Sifio Health: add the website UI mockups (only the app UI is in now).
 - [ ] Case-study mockups for BigTapp and Cabot show a "Webflow" tag (a tool name) inside the images; edit the Figma frames if it should go.
 - [ ] Blog: the four demo posts show only on /blog/preview. Delete them in Studio (Blog) when they're no longer needed, or untick Demo on one to publish it after rewriting it.
 

@@ -1010,6 +1010,10 @@ const STORIES: Record<string, Pair[]> = {
       "The surgical day, live",
       "The OR day twin models every room as cases start and end, and the outcomes view tracks the program before and after go-live.",
     ],
+    [
+      "A website that explains it",
+      "The website walks hospitals from the problem to SurgiTwin, with an efficiency calculator, a case study and clear next steps.",
+    ],
   ],
   bigtapp: [
     [
@@ -1331,8 +1335,9 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
     1600,
     true,
   ),
-  // The web app now; the website's mockups follow it here later.
-  "sifio-health": workGallery(
+  // The web app, then the website.
+  "sifio-health": [
+    ...workGallery(
     "sifio-health",
     "sifio",
     {
@@ -1357,7 +1362,38 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
     ],
     1600,
     true,
-  ),
+    ),
+    ...workGallery(
+      "sifio-health",
+      "sifioweb",
+      {
+        alt: "The Sifio Health website on three screens",
+        width: 2400,
+        height: 1500,
+        hotspot: { x: 0.5, y: 0.5 },
+        size: "original",
+        phone: true,
+      },
+      [
+        "The home page: unlocking healthcare workflow",
+        "The problem, in three ring charts: overtime, throughput and margin",
+        "Solutions: platforms that streamline healthcare",
+        "The planning view, shown inside the page",
+        "An efficiency calculator: where does your department rank",
+        "SurgiTwin: healthcare scheduling software for the future",
+        "Dynamic review, with collectable time",
+        "Monitoring overtime and nudges",
+        "A case study with a regional Canadian health system",
+        "Three steps to integrate SurgiTwin",
+        "Our story: reimagining surgical efficiency",
+        "Mission and vision",
+        "Careers",
+        "Resources: insights and success stories",
+      ],
+      1600,
+      { width: 2400, height: 1500 },
+    ),
+  ],
   meetingful: workGallery(
     "meetingful",
     "meetingful",
