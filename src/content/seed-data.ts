@@ -1900,7 +1900,10 @@ const CASE_STUDIES: ProjectInput[] = [
 export const PROJECTS: Project[] = CASE_STUDIES.map((p, i) => makeProject(i + 1, p));
 
 /** Slug of the project featured on Home (set in Site settings). */
-export const FEATURED_PROJECT_SLUG = "surgo-health";
+export const FEATURED_PROJECT_SLUG = "oh-my-glam";
+
+/** Earlier Home features: add mode moves the setting on from these, but keeps a pick made in Studio. */
+export const PREVIOUS_FEATURED_IDS = ["project-surgo-health"];
 
 /** Case studies taken off the site: the seed deletes them in either mode. */
 export const REMOVED_PROJECT_IDS = ["project-elcoteq", "project-ciber-digita", "project-appdev-health", "project-amphenol"];

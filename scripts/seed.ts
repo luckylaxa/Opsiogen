@@ -30,6 +30,7 @@ import nextEnv from "@next/env";
 import { createClient, type SanityClient } from "@sanity/client";
 import {
   FEATURED_PROJECT_SLUG,
+  PREVIOUS_FEATURED_IDS,
   PAGES,
   PROJECTS,
   REMOVED_PROJECT_IDS,
@@ -674,6 +675,14 @@ async function run() {
     if (share?.file === path.basename(SETTINGS.seo.image!.url) && share.ref !== shareImage.asset._ref) {
       console.log("  updating the share image");
       tx.patch("siteSettings", (p) => p.set({ "seo.image": shareImage }));
+    }
+  }
+
+  if (!OVERWRITE) {
+    const was = await client.fetch<string | null>(`*[_id == "siteSettings"][0].featuredProject._ref`);
+    if (was && was !== featured._id && PREVIOUS_FEATURED_IDS.includes(was)) {
+      console.log(`  Home feature: ${was} -> ${featured._id}`);
+      tx.patch("siteSettings", (p) => p.set({ featuredProject: { _type: "reference", _ref: featured._id } }));
     }
   }
 

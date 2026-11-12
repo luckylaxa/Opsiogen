@@ -12,7 +12,7 @@ export function buildSearchItems(projects: ProjectCard[], services: Service[]): 
       subtitle: [p.client, p.industry].filter(Boolean).join(" · "),
       href: `/work/${p.slug}`,
       keywords: [p.year, ...p.services.flatMap((s) => [s.name, s.shortName])].filter(Boolean).join(" "),
-      image: { url: p.cover.url, alt: p.cover.alt },
+      image: { url: (p.cardImage ?? p.cover).url, alt: (p.cardImage ?? p.cover).alt },
     })),
     ...services.map((s) => ({
       kind: "service" as const,
@@ -21,6 +21,7 @@ export function buildSearchItems(projects: ProjectCard[], services: Service[]): 
       href: `/services/${s.slug}`,
       keywords: [s.shortName, GROUP_LABELS[s.group], ...s.included].join(" "),
       mark: GROUP_LABELS[s.group].charAt(0),
+      image: s.card ? { url: s.card.url, alt: s.card.alt } : null,
     })),
   ];
 }

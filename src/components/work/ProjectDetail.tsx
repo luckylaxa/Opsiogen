@@ -237,7 +237,12 @@ export function ProjectDetail({
              story's short blocks sit between them there, one after every four or five. */}
       {rest.length > 0 && (
         <section id={`gallery-${inModal ? "pop" : "page"}-${project.slug}`} className="mt-section">
-          <Section className="sr-only">More from {project.name}</Section>
+          <div data-reveal className="mb-[clamp(24px,2.4vw,48px)] grid gap-y-3 px-gutter md:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] md:gap-x-gap">
+            <Section className="text-small text-mute">The work</Section>
+            <p className="max-w-[40ch] text-[length:clamp(22px,calc(0.84vw+18.8px),36px)] leading-[1.25] tracking-[-0.015em] text-pretty">
+              More from {project.name}, up close.
+            </p>
+          </div>
           {/* Images start loading about two screens before they're reached. */}
           <LoadAhead target={`gallery-${inModal ? "pop" : "page"}-${project.slug}`} />
           <ul className="grid grid-cols-2 gap-gap px-gutter">
