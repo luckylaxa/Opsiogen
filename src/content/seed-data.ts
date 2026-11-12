@@ -1142,6 +1142,7 @@ function makeProject(order: number, p: ProjectInput): Project {
     gallery: GALLERIES[p.slug] ?? SAMPLE_GALLERY,
     flow: FLOWS.includes(p.slug)
       ? {
+          heading: FLOW_HEADINGS[p.slug] ?? null,
           video: { url: `/work/${p.slug}/${p.slug}-flow.mp4`, mimeType: "video/mp4" },
           videoWebm: { url: `/work/${p.slug}/${p.slug}-flow.webm`, mimeType: "video/webm" },
           phone: { url: `/work/${p.slug}/${p.slug}-flow-phone.mp4`, mimeType: "video/mp4" },
@@ -1152,6 +1153,20 @@ function makeProject(order: number, p: ProjectInput): Project {
       : null,
   };
 }
+
+/** The line above each screen-flow video, under an "In motion" label. */
+const FLOW_HEADINGS: Record<string, string> = {
+  "surgo-health": "From the national map to one county's story, in a few clicks.",
+  "care-connect": "From a new referral to an accepted patient.",
+  rxlive: "A pharmacist's day, from worklist to review.",
+  "sifio-health": "Every operating room minute, put to work.",
+  meetingful: "From agenda to action items.",
+  "oh-my-glam": "Try it on, find the shade, add to bag.",
+  bigtapp: "AI that acts, page by page.",
+  "cabot-solutions": "Healthcare software, page by page.",
+  "carlton-noble": "Travel, events and access, page by page.",
+  "engel-volkers": "One look, country by country.",
+};
 
 /** UI/UX projects with a screen-flow video (public/work/<slug>/<slug>-flow*.mp4), shown after the results. */
 const FLOWS = [

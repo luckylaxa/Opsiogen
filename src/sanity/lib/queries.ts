@@ -96,6 +96,7 @@ export const PROJECT_QUERY = defineQuery(`*[_type == "project" && slug.current =
   result,
   liveUrl,
   "flow": select(defined(flow.video.asset) => flow{
+    heading,
     "video": video{ "url": asset->url, "mimeType": asset->mimeType },
     "videoWebm": videoWebm{ "url": asset->url, "mimeType": asset->mimeType },
     "phone": phone{ "url": asset->url, "mimeType": asset->mimeType },

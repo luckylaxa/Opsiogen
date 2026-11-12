@@ -392,6 +392,7 @@ export const project = defineType({
       group: "media",
       description: "A short muted loop shown right after the first image: 16:10 MP4 (1600 × 1000) for wider screens and a square one for phones, each under 5 MB.",
       fields: [
+        defineField({ name: "heading", title: "Heading", type: "string", description: "One short line above the video, e.g. From agenda to action items.", validation: (rule) => rule.max(80) }),
         defineField({ name: "video", title: "Video, 16:10 (MP4)", type: "file", options: { accept: "video/mp4" } }),
         defineField({ name: "videoWebm", title: "Video, 16:10 (WebM, optional)", type: "file", options: { accept: "video/webm" } }),
         defineField({ name: "phone", title: "Phone video, square (MP4)", type: "file", options: { accept: "video/mp4" } }),

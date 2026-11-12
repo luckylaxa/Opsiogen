@@ -215,6 +215,12 @@ export function ProjectDetail({
       {/* 4. The screen-flow video, after the results */}
       {project.flow?.video?.url && (
         <section className="mt-section px-gutter">
+          <div data-reveal className="mb-[clamp(24px,2.4vw,48px)] grid gap-y-3 md:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] md:gap-x-gap">
+            <Section className="text-small text-mute">In motion</Section>
+            <p className="max-w-[40ch] text-[length:clamp(22px,calc(0.84vw+18.8px),36px)] leading-[1.25] tracking-[-0.015em] text-pretty">
+              {project.flow.heading || `${project.name}, screen by screen.`}
+            </p>
+          </div>
           <FlowVideo flow={project.flow} label={`A walkthrough of ${project.name}, screen by screen`} />
         </section>
       )}

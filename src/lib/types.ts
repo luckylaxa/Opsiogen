@@ -112,6 +112,8 @@ export type Project = ProjectCard & {
 
 /** A screen-flow loop: 16:10 for wider screens, with an optional square version for phones. */
 export type ProjectFlow = {
+  /** A line shown above the video, under an "In motion" label. */
+  heading?: string | null;
   video: Video;
   videoWebm?: Video | null;
   phone?: Video | null;

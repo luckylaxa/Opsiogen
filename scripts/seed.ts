@@ -459,6 +459,7 @@ async function run() {
             : {}),
         }
       : undefined;
+    if (flow && p.flow?.heading) Object.assign(flow, { heading: p.flow.heading });
     const gallery = [];
     for (const g of p.gallery) {
       const hotspot = g.hotspot ? { hotspot: { _type: "sanity.imageHotspot", ...g.hotspot, width: 1, height: 1 } } : {};
@@ -539,6 +540,8 @@ async function run() {
     if (cardImage && existing.cardFile === path.basename(p.cardImage!.url) && existing.cardRef !== cardImage.asset._ref) {
       set.cardImage = cardImage;
     }
+    // The line above a seeded video, where Studio has none yet.
+    if (flow && p.flow?.heading && existing.flowFile) tx.patch(p._id, (patch) => patch.setIfMissing({ "flow.heading": p.flow!.heading }));
     // A seeded screen-flow video whose files have since been re-made.
     if (flow && existing.flowFile === path.basename(p.flow!.video.url)) {
       const refs = [flow.video, flow.videoWebm, flow.phone, flow.phoneWebm, flow.poster, flow.posterPhone].map((f) => f?.asset._ref ?? null);
