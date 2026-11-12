@@ -941,18 +941,18 @@ type CaseDetails = {
  * own 1.26:1 shape): the real screens or mockups on a bold gradient.
  */
 const DESIGNED_CARDS: Record<string, string> = {
-  "surgo-health": "Hands holding the Surgo Health index on a tablet, on an orange backdrop",
-  "care-connect": "Hands holding the Care Connect intake board on a tablet, on a blue backdrop",
+  "surgo-health": "Hands holding the Surgo Health index on a tablet, on a tomato red backdrop",
+  "care-connect": "Hands holding the Care Connect intake board on a tablet, on a sky blue backdrop",
   "rxlive": "A hand holding the RxLive worklist on a phone, against warm sandstone",
-  "sifio-health": "The Sifio Health app on a phone beside a small vase, on a green backdrop",
+  "sifio-health": "The Sifio Health app on a phone standing on a stone block, on a sage backdrop",
   "meetingful": "The Meetingful app on a laptop on an oak table, in warm light",
-  "oh-my-glam": "A hand holding the Oh My Glam lipstick page on a phone, on a pink backdrop",
-  "bigtapp": "Hands holding the BigTapp homepage on a tablet, on a navy backdrop",
-  "cabot-solutions": "The Cabot website homepage on a laptop, on a light blue backdrop",
-  "carlton-noble": "The Carlton Noble website on a tablet resting on travertine stone",
-  "engel-volkers": "Hands holding the Engel & Völkers homepage on a tablet, on a stone backdrop",
-  "norsecom": "A hand holding Norsecom business cards, with a branded mug, on a blue backdrop",
-  "sandlogic": "SandLogic bottle, mugs and brochure on a plinth, on a violet backdrop",
+  "oh-my-glam": "A hand holding the Oh My Glam lipstick page on a phone, on a blush pink backdrop",
+  "bigtapp": "The BigTapp homepage on a laptop, on a cobalt blue backdrop",
+  "cabot-solutions": "The Cabot website homepage on a laptop, on a sky blue backdrop",
+  "carlton-noble": "Hands holding the Carlton Noble website on a tablet, on a terracotta backdrop",
+  "engel-volkers": "The Engel & Völkers homepage on a tablet resting on travertine, on a sand backdrop",
+  "norsecom": "A hand holding Norsecom business cards, on a butter yellow backdrop",
+  "sandlogic": "A SandLogic water bottle and mug, on a lilac backdrop",
   "rohde-schwarz": "Hands holding a Rohde & Schwarz brochure, on a navy backdrop",
 };
 

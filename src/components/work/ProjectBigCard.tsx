@@ -26,10 +26,9 @@ export function ProjectBigCard({
       cursor="view"
       badge={initials(project.client || project.name)}
       image={project.cardImage ?? project.cover}
-      label={[client, project.industry].filter(Boolean).join(" · ") || null}
+      label={[client, project.industry, project.year].filter(Boolean).join(" · ") || null}
       title={project.name}
       titleAs={titleAs}
-      stat={project.year ? { label: "Year", value: String(project.year) } : null}
       footLeft={project.services.map((s) => s.shortName).join(" · ")}
       footRight={<span className="grad-hover underline underline-offset-[0.28em]">View project</span>}
     />

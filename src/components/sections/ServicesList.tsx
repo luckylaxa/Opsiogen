@@ -170,7 +170,6 @@ function ServiceCards({
   return (
     <ul className="@container grid grid-cols-1 gap-gap px-gutter lg:grid-cols-2">
       {services.map((s, i) => {
-        const work = workFor(s.slug);
         return (
           <li key={s.slug}>
             <BigCard
@@ -181,7 +180,6 @@ function ServiceCards({
               label={GROUP_LABELS[s.group]}
               title={s.name}
               titleAs={titleAs}
-              stat={work.length ? { label: "Projects", value: String(work.length).padStart(2, "0") } : null}
               footLeft={s.tagline}
               footRight={
                 <span className="inline-flex items-center gap-2">
