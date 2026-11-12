@@ -328,6 +328,10 @@
     transform: none;
     transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms);
   }
+  /* A form step coming in (contact form). */
+  .step-in {
+    animation: step-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
   /* Page titles rise on load without waiting for scripts. */
   h1 .reveal-mask > span {
     animation: mask-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
@@ -666,3 +670,9 @@ html.has-cursor * {
   opacity: 1;
 }
 
+@keyframes step-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
