@@ -90,16 +90,16 @@ const PRICING: Pair = [
 
 /** Colourful thumbnails for the service cards (public/services/<slug>/card.jpg). */
 const CARD_ALT: Record<string, string> = {
-  "ai-websites": "A website on a laptop on a sandstone ledge, in warm daylight",
-  "ai-product-design": "Hands with a phone and a tablet showing a product dashboard",
-  "ai-mvps-business-apps": "A business app on a laptop and a phone on a walnut desk",
-  "ai-automation": "A hand moving a card across a workflow board on a tablet",
-  "ai-social-media-marketing": "A hand holding a phone with a social post, on an orange backdrop",
-  "digital-marketing": "A hand holding a landing page on a phone, on a green backdrop",
-  "ai-creative-subscription": "Brochure, phone, business card and tablet laid out on a sand backdrop",
-  "ai-print-collateral": "A hand lifting a brochure cover, beside a leaflet and business cards",
-  "ai-brand-services": "Business cards, a mug and a brochure from one brand identity",
-  "ai-video-production": "Hands holding a camera monitor showing a keynote, on a violet backdrop",
+  "ai-websites": "A laptop with a clean website on a walnut table in golden light",
+  "ai-product-design": "A tablet with a board of interface components on a green velvet sofa",
+  "ai-mvps-business-apps": "Hands holding a phone with a simple business app, in an ochre armchair",
+  "ai-automation": "A laptop showing a connected workflow on a wooden desk by lamplight",
+  "ai-social-media-marketing": "A woman on a green sofa scrolling a short video on her phone",
+  "digital-marketing": "A hand holding a phone with a product ad above a café table",
+  "ai-creative-subscription": "A poster, a tablet of social posts, postcards and a sketchbook on green felt",
+  "ai-print-collateral": "Printed brochures and business cards on an oak shelf",
+  "ai-brand-services": "Colour swatches, a rubber stamp and a tote bag on an ochre armchair",
+  "ai-video-production": "A cinema camera on a tripod in a warm wood-panelled room",
 };
 
 export const SERVICES: Service[] = [
@@ -943,9 +943,9 @@ type CaseDetails = {
 const DESIGNED_CARDS: Record<string, string> = {
   "surgo-health": "Hands holding the Surgo Health index on a tablet, on a tomato red backdrop",
   "care-connect": "Hands holding the Care Connect intake board on a tablet, on a sky blue backdrop",
-  "rxlive": "A hand holding the RxLive worklist on a phone, against warm sandstone",
+  "rxlive": "A hand holding the RxLive worklist on a phone, on a sage backdrop",
   "sifio-health": "The Sifio Health app on a phone standing on a stone block, on a sage backdrop",
-  "meetingful": "The Meetingful app on a laptop on an oak table, in warm light",
+  "meetingful": "The Meetingful dashboard on a laptop, on a butter yellow backdrop",
   "oh-my-glam": "A hand holding the Oh My Glam lipstick page on a phone, on a blush pink backdrop",
   "bigtapp": "The BigTapp homepage on a laptop, on a cobalt blue backdrop",
   "cabot-solutions": "The Cabot website homepage on a laptop, on a sky blue backdrop",
@@ -953,7 +953,7 @@ const DESIGNED_CARDS: Record<string, string> = {
   "engel-volkers": "The Engel & Völkers homepage on a tablet resting on travertine, on a sand backdrop",
   "norsecom": "A hand holding Norsecom business cards, on a butter yellow backdrop",
   "sandlogic": "A SandLogic water bottle and mug, on a lilac backdrop",
-  "rohde-schwarz": "Hands holding a Rohde & Schwarz brochure, on a navy backdrop",
+  "rohde-schwarz": "Hands holding a Rohde & Schwarz brochure, on a cobalt blue backdrop",
 };
 
 /**

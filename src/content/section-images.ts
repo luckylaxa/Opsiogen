@@ -7,10 +7,15 @@ import type { Img } from "@/lib/types";
  */
 const photo = (url: string, alt: string): Img => ({ url, width: 1600, height: 1200, alt });
 
-/** The single call to action, and the two closing cards on Home (first, second). */
+/** The call to action banner: its subject sits on the right, text goes on the left. */
 export const CTA_IMAGES: Img[] = [
-  photo("/cta/cta-1.jpg", "A laptop, phone, brochure and business cards from one brand, on a sand backdrop"),
-  photo("/cta/cta-2.jpg", "Hands holding a tablet with a grid of service cards, on a terracotta backdrop"),
+  {
+    url: "/cta/cta-banner.jpg",
+    width: 2400,
+    height: 1350,
+    alt: "",
+    hotspot: { x: 0.72, y: 0.4 },
+  },
 ];
 
 /** Promise list photos by section key, in item order. */
