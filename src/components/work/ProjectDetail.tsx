@@ -41,6 +41,9 @@ function pairHalves(items: GalleryItem[]): GalleryItem[] {
   return out;
 }
 
+/** Case-study Results are hidden for now; set to true to show them again. */
+const SHOW_RESULTS = false;
+
 /** Results as big numbers on dark cards. */
 function Stats({ stats }: { stats: ProjectStat[] }) {
   const cols = stats.length >= 4 ? "xl:grid-cols-4" : stats.length === 3 ? "md:grid-cols-3" : "";
@@ -206,7 +209,7 @@ export function ProjectDetail({
       </section>
 
       {/* 3. Results */}
-      {stats.length > 0 && (
+      {SHOW_RESULTS && stats.length > 0 && (
         <section className="mt-section">
           <Stats stats={stats} />
         </section>
