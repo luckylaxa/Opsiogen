@@ -90,16 +90,16 @@ const PRICING: Pair = [
 
 /** Colourful thumbnails for the service cards (public/services/<slug>/card.jpg). */
 const CARD_ALT: Record<string, string> = {
-  "ai-websites": "Website pages on a laptop and a phone, on a colourful gradient",
-  "ai-product-design": "A product dashboard and app screens, on a colourful gradient",
-  "ai-mvps-business-apps": "A business app on a laptop and a phone, on a colourful gradient",
-  "ai-automation": "An automated workflow and an AI assistant, on a colourful gradient",
-  "ai-social-media-marketing": "Social posts and a short video on phones, on a colourful gradient",
-  "digital-marketing": "A campaign dashboard and ads, on a colourful gradient",
-  "ai-creative-subscription": "Slides, posters, ads and social posts, on a colourful gradient",
-  "ai-print-collateral": "A brochure, business cards, a box and a mug, on a colourful gradient",
-  "ai-brand-services": "Brand guidelines, an app icon and a business card, on a colourful gradient",
-  "ai-video-production": "A video editor and a vertical video, on a colourful gradient",
+  "ai-websites": "A website on a laptop on a sandstone ledge, in warm daylight",
+  "ai-product-design": "Hands with a phone and a tablet showing a product dashboard",
+  "ai-mvps-business-apps": "A business app on a laptop and a phone on a walnut desk",
+  "ai-automation": "A hand moving a card across a workflow board on a tablet",
+  "ai-social-media-marketing": "A hand holding a phone with a social post, on an orange backdrop",
+  "digital-marketing": "A hand holding a landing page on a phone, on a green backdrop",
+  "ai-creative-subscription": "Brochure, phone, business card and tablet laid out on a sand backdrop",
+  "ai-print-collateral": "A hand lifting a brochure cover, beside a leaflet and business cards",
+  "ai-brand-services": "Business cards, a mug and a brochure from one brand identity",
+  "ai-video-production": "Hands holding a camera monitor showing a keynote, on a violet backdrop",
 };
 
 export const SERVICES: Service[] = [
@@ -941,19 +941,19 @@ type CaseDetails = {
  * own 1.26:1 shape): the real screens or mockups on a bold gradient.
  */
 const DESIGNED_CARDS: Record<string, string> = {
-  "surgo-health": "The Surgo Health index on a laptop and a browser window, on a teal and blue gradient",
-  "care-connect": "The Care Connect intake board on a laptop and a phone, on a blue and lilac gradient",
-  "rxlive": "The RxLive worklist on a laptop, on a green and lime gradient",
-  "sifio-health": "The Sifio Health surgical overview on a laptop, on a green and peach gradient",
-  "meetingful": "The Meetingful app on a laptop and a phone, on a violet, pink and orange gradient",
-  "oh-my-glam": "Oh My Glam app screens on three phones, on a pink and yellow gradient",
-  "bigtapp": "BigTapp website pages on a laptop and a tablet, on an indigo and cyan gradient",
-  "cabot-solutions": "Cabot Solutions website pages on a laptop and a tablet, on a blue and lilac gradient",
-  "carlton-noble": "Carlton Noble website pages on a laptop and a tablet, on a burgundy and gold gradient",
-  "engel-volkers": "Engel & Völkers pages on a laptop and a tablet, on a sand and blue gradient",
-  "norsecom": "The Norsecom booth, business card and N mark, on a blue gradient",
-  "sandlogic": "SandLogic brand mockups, on a coral and violet gradient",
-  "rohde-schwarz": "Rohde & Schwarz brochures, booth and a phone ad, on a blue gradient",
+  "surgo-health": "Hands holding the Surgo Health index on a tablet, on an orange backdrop",
+  "care-connect": "Hands holding the Care Connect intake board on a tablet, on a blue backdrop",
+  "rxlive": "A hand holding the RxLive worklist on a phone, against warm sandstone",
+  "sifio-health": "The Sifio Health app on a phone beside a small vase, on a green backdrop",
+  "meetingful": "The Meetingful app on a laptop on an oak table, in warm light",
+  "oh-my-glam": "A hand holding the Oh My Glam lipstick page on a phone, on a pink backdrop",
+  "bigtapp": "Hands holding the BigTapp homepage on a tablet, on a navy backdrop",
+  "cabot-solutions": "The Cabot website homepage on a laptop, on a light blue backdrop",
+  "carlton-noble": "The Carlton Noble website on a tablet resting on travertine stone",
+  "engel-volkers": "Hands holding the Engel & Völkers homepage on a tablet, on a stone backdrop",
+  "norsecom": "A hand holding Norsecom business cards, with a branded mug, on a blue backdrop",
+  "sandlogic": "SandLogic bottle, mugs and brochure on a plinth, on a violet backdrop",
+  "rohde-schwarz": "Hands holding a Rohde & Schwarz brochure, on a navy backdrop",
 };
 
 /**

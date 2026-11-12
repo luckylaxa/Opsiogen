@@ -320,9 +320,11 @@ async function run() {
       included: string[] | null;
       offerings: { _key: string; title?: string | null; text?: string | null; file?: string | null }[] | null;
       faqKeys: string[] | null;
+      cardRef: string | null;
+      cardFile: string | null;
     }[]
   >(
-    `*[_type == "service" && _id in $ids]{ _id, tagline, description, included, "offerings": offerings[]{ _key, title, text, "file": image.asset->originalFilename }, "faqKeys": faqs[]._key }`,
+    `*[_type == "service" && _id in $ids]{ _id, tagline, description, included, "offerings": offerings[]{ _key, title, text, "file": image.asset->originalFilename }, "faqKeys": faqs[]._key, "cardRef": card.asset._ref, "cardFile": card.asset->originalFilename }`,
     { ids: SERVICES.map((s) => s._id) },
   );
   for (const s of SERVICES) {
@@ -332,6 +334,7 @@ async function run() {
       offeringImages.set(o._key, { image: await image(o.image.url, o.image.alt) });
     }
     const pageFields = await servicePageFields(s);
+    const card = s.card?.url ? await image(s.card.url, s.card.alt) : undefined;
     put(
       tx,
       {
@@ -356,7 +359,7 @@ async function run() {
           ...(o._key ? offeringImages.get(o._key) : {}),
         })),
         faqs: s.faqs.map((f) => ({ _type: "faq", _key: f._key ?? key(f.question), question: f.question, answer: f.answer })),
-        ...(s.card?.url ? { card: await image(s.card.url, s.card.alt) } : {}),
+        ...(card ? { card } : {}),
         ...pageFields,
       },
       OVERWRITE,
@@ -367,6 +370,11 @@ async function run() {
     // questions, without changing anything already there.
     const existing = existingServices.find((e) => e._id === s._id);
     if (OVERWRITE || !existing) continue;
+    // A seeded card whose file has since been replaced (same name, new content).
+    if (card && existing.cardFile === path.basename(s.card!.url) && existing.cardRef !== card.asset._ref) {
+      console.log(`  updating ${s._id}: card`);
+      tx.patch(s._id, (p) => p.set({ card }));
+    }
     const rewrite = REWRITTEN[s._id];
     if (rewrite) {
       const next: Record<RewriteField, unknown> = {
