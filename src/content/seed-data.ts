@@ -1556,7 +1556,7 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
     1600,
     { width: 2400, height: 1500 },
   ),
-  // Brand presentation slides (16:9), shown whole on every screen.
+  // Brand presentation slides (16:9) from tablets up, with 1:1 versions in the same style as the others on phones.
   "sandlogic": workGallery(
     "sandlogic",
     "sandlogic",
@@ -1566,7 +1566,7 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
       height: 1350,
       hotspot: { x: 0.5, y: 0.5 },
       size: "original",
-      phone: false,
+      phone: true,
     },
     [
       "The brand board",
@@ -1591,7 +1591,7 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
       "Social posts",
     ],
     1600,
-    { width: 2400, height: 1350, phone: false },
+    { width: 2400, height: 1350 },
   ),
 };
 
