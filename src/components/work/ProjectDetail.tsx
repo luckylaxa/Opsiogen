@@ -4,6 +4,7 @@ import type { GalleryItem, Img, Project, ProjectCard, ProjectStat } from "@/lib/
 import { cn } from "@/lib/utils";
 import { GiantHeading, Label } from "@/components/ui/Headings";
 import { CoverMedia } from "@/components/media/CoverMedia";
+import { FlowVideo } from "@/components/media/FlowVideo";
 import { Media } from "@/components/ui/Media";
 import { LoadAhead } from "@/components/media/LoadAhead";
 import { ExternalLink } from "@/components/ui/Icons";
@@ -181,6 +182,11 @@ export function ProjectDetail({
             </div>
             {hero.caption && <figcaption className="sr-only">{hero.caption}</figcaption>}
           </figure>
+        )}
+        {project.flow?.video?.url && (
+          <div className="mx-gutter mt-gap">
+            <FlowVideo flow={project.flow} label={`A walkthrough of ${project.name}, screen by screen`} />
+          </div>
         )}
       </header>
 

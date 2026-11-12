@@ -102,8 +102,20 @@ export type Project = ProjectCard & {
   story: StoryBlock[];
   result?: { number?: string | null; label?: string | null } | null;
   gallery: GalleryItem[];
+  /** A short screen-flow video shown after the first image. */
+  flow?: ProjectFlow | null;
   liveUrl?: string | null;
   seo?: Seo | null;
+};
+
+/** A screen-flow loop: 16:10 for wider screens, with an optional square version for phones. */
+export type ProjectFlow = {
+  video: Video;
+  videoWebm?: Video | null;
+  phone?: Video | null;
+  phoneWebm?: Video | null;
+  poster?: { url: string } | null;
+  posterPhone?: { url: string } | null;
 };
 
 export type HeroSection = {

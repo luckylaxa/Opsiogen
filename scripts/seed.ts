@@ -300,7 +300,7 @@ const OLD_TAGLINE: Record<string, string> = {
  * meetingful-0.jpg, omg-0.jpg …), replaced by a project's current gallery
  * while Studio still holds them.
  */
-const OLD_GALLERY_FILE = /^(m?\d+|sample-(hero|\d+)|(surgo|meetingful|omg|care|rx|rs|sifio)-(hero|\d+)(-wide)?)\.jpg$/;
+const OLD_GALLERY_FILE = /^(m?\d+|sample-(hero|\d+)|(surgo|meetingful|omg|care|rx|rs|sifio|bigtapp|cabot|carlton|ev|norsecom|sandlogic)-(hero|\d+)(-wide)?)\.jpg$/;
 const hash = (value: unknown) => createHash("sha1").update(JSON.stringify(value ?? null)).digest("hex").slice(0, 16);
 
 /** Card images rendered for an earlier version of the page; add mode swaps them for the current ones. */
@@ -440,6 +440,21 @@ async function run() {
     const coverVideo = p.coverVideo
       ? { _type: "file", asset: { _type: "reference", _ref: await upload("file", p.coverVideo.url) } }
       : undefined;
+    // The screen-flow videos and their posters.
+    const fileRef = async (url?: string) => (url ? { _type: "file", asset: { _type: "reference", _ref: await upload("file", url) } } : undefined);
+    const flow = p.flow
+      ? {
+          _type: "object",
+          video: await fileRef(p.flow.video.url),
+          ...(p.flow.videoWebm ? { videoWebm: await fileRef(p.flow.videoWebm.url) } : {}),
+          ...(p.flow.phone ? { phone: await fileRef(p.flow.phone.url) } : {}),
+          ...(p.flow.phoneWebm ? { phoneWebm: await fileRef(p.flow.phoneWebm.url) } : {}),
+          ...(p.flow.poster ? { poster: { _type: "image", asset: { _type: "reference", _ref: await upload("image", p.flow.poster.url) } } } : {}),
+          ...(p.flow.posterPhone
+            ? { posterPhone: { _type: "image", asset: { _type: "reference", _ref: await upload("image", p.flow.posterPhone.url) } } }
+            : {}),
+        }
+      : undefined;
     const gallery = [];
     for (const g of p.gallery) {
       const hotspot = g.hotspot ? { hotspot: { _type: "sanity.imageHotspot", ...g.hotspot, width: 1, height: 1 } } : {};
@@ -473,10 +488,11 @@ async function run() {
         cover,
         ...(cardImage ? { cardImage } : {}),
         ...(coverVideo ? { coverVideo } : {}),
+        ...(flow ? { flow } : {}),
         gallery,
       },
       OVERWRITE,
-      ["cardImage", "industry", "year", "location", "tagline", "stats"],
+      ["cardImage", "industry", "year", "location", "tagline", "stats", "flow"],
     );
 
     // Add mode: give projects their work mockups and case studies their new

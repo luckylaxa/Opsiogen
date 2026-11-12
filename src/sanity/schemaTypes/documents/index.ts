@@ -381,6 +381,21 @@ export const project = defineType({
       description: "Short MP4 loop, no sound, under 10 MB. Plays muted on the project and on card hover.",
     }),
     defineField({
+      name: "flow",
+      title: "Screen-flow video (optional)",
+      type: "object",
+      group: "media",
+      description: "A short muted loop shown right after the first image: 16:10 MP4 (1600 × 1000) for wider screens and a square one for phones, each under 5 MB.",
+      fields: [
+        defineField({ name: "video", title: "Video, 16:10 (MP4)", type: "file", options: { accept: "video/mp4" } }),
+        defineField({ name: "videoWebm", title: "Video, 16:10 (WebM, optional)", type: "file", options: { accept: "video/webm" } }),
+        defineField({ name: "phone", title: "Phone video, square (MP4)", type: "file", options: { accept: "video/mp4" } }),
+        defineField({ name: "phoneWebm", title: "Phone video, square (WebM, optional)", type: "file", options: { accept: "video/webm" } }),
+        defineField({ name: "poster", title: "Poster, 16:10", type: "image" }),
+        defineField({ name: "posterPhone", title: "Phone poster, square", type: "image" }),
+      ],
+    }),
+    defineField({
       name: "gallery",
       type: "array",
       group: "media",

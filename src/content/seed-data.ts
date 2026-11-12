@@ -921,6 +921,12 @@ const DESIGNED_CARDS: Record<string, string> = {
   "care-connect": "The Care Connect home page on a laptop",
   rxlive: "The RxLive home page on a laptop",
   meetingful: "The Meetingful home page on a laptop, with a live call on a phone",
+  bigtapp: "BigTapp website pages on a laptop and tablets",
+  "cabot-solutions": "Cabot Solutions website pages on three screens",
+  "carlton-noble": "Carlton Noble website pages on three screens",
+  "engel-volkers": "Engel & Völkers country pages on three screens",
+  norsecom: "The Norsecom brand on a reception wall and an exhibition booth",
+  sandlogic: "The SandLogic brand on a keynote stage and a brochure",
 };
 /**
  * A few lines of story, shown between a case study's wide mockups from tablets
@@ -1005,6 +1011,66 @@ const STORIES: Record<string, Pair[]> = {
       "The OR day twin models every room as cases start and end, and the outcomes view tracks the program before and after go-live.",
     ],
   ],
+  bigtapp: [
+    [
+      "From data to agents",
+      "The site leads with what BigTapp does best: help enterprise AI act, on a governed data foundation, with the Beeonix AI platform at the centre.",
+    ],
+    [
+      "Proof on every page",
+      "Impact numbers, case studies and pages for banking, insurance and retail show the outcome of the work, with a clear way to get in touch.",
+    ],
+  ],
+  "cabot-solutions": [
+    [
+      "Healthcare first",
+      "The home page, services and solution areas speak to providers, payers and health technology companies, from EHR integration to voice AI agents.",
+    ],
+    [
+      "From pilot to production",
+      "AI development, product engineering and agent workflows each get a page, and a side-by-side table shows how a healthcare-native partner works.",
+    ],
+  ],
+  "carlton-noble": [
+    [
+      "Three houses, one story",
+      "Travel, events and access each open with a full-screen photograph, so the experiences speak for themselves.",
+    ],
+    [
+      "Quiet, generous pages",
+      "Black space, editorial type and photo collages keep the focus on the moments, with a gallery and journal to explore.",
+    ],
+  ],
+  "engel-volkers": [
+    [
+      "One look, every country",
+      "Every country page shares one layout: a full-width property film with search right above it.",
+    ],
+    [
+      "Regions and listings",
+      "Region cards, featured listings and the Private Office lead buyers from a country to the right home.",
+    ],
+  ],
+  norsecom: [
+    [
+      "A mark with meaning",
+      "The logo is built from a two-way arrow and a signal wave, and the N stands on its own as an icon.",
+    ],
+    [
+      "Everywhere the team shows up",
+      "Stationery, apparel, signage, an exhibition booth and packaging all carry the same azure and carbon look.",
+    ],
+  ],
+  sandlogic: [
+    [
+      "Where silicon meets intelligence",
+      "A new mark, typeface, colours and voice for a full-stack AI company, set out in one brand system.",
+    ],
+    [
+      "The brand, in the world",
+      "Events, print, apparel, merchandise and digital share one look, from the keynote stage to a water bottle.",
+    ],
+  ],
 };
 
 /** Generated 1600 × 1200 card images that show the real work, by what they show. */
@@ -1042,8 +1108,21 @@ function makeProject(order: number, p: ProjectInput): Project {
     result: null,
     liveUrl: p.liveUrl ?? null,
     gallery: GALLERIES[p.slug] ?? SAMPLE_GALLERY,
+    flow: FLOWS.includes(p.slug)
+      ? {
+          video: { url: `/work/${p.slug}/${p.slug}-flow.mp4`, mimeType: "video/mp4" },
+          videoWebm: { url: `/work/${p.slug}/${p.slug}-flow.webm`, mimeType: "video/webm" },
+          phone: { url: `/work/${p.slug}/${p.slug}-flow-phone.mp4`, mimeType: "video/mp4" },
+          phoneWebm: { url: `/work/${p.slug}/${p.slug}-flow-phone.webm`, mimeType: "video/webm" },
+          poster: { url: `/work/${p.slug}/${p.slug}-flow.jpg` },
+          posterPhone: { url: `/work/${p.slug}/${p.slug}-flow-phone.jpg` },
+        }
+      : null,
   };
 }
+
+/** Projects with a screen-flow video (public/work/<slug>/<slug>-flow*.mp4), shown after the first image. */
+const FLOWS = ["surgo-health", "care-connect", "rxlive", "sifio-health", "meetingful"];
 
 /**
  * Sample mockups shared by every project until its real work is added
@@ -1090,9 +1169,14 @@ const workGallery = (
   },
   squares: string[],
   squareSize = 1200,
-  /** Tiles that are wide (<file>-N-wide.jpg, 2400 × 1529) from tablets up, with the square on phones. */
-  wide = false,
-) => [
+  /**
+   * Tiles that are wide (<file>-N-wide.jpg, 2400 × 1529, or the size given) from
+   * tablets up, with the square (<file>-N.jpg) on phones unless `phone` is false.
+   */
+  wide: boolean | { width: number; height: number; phone?: boolean } = false,
+) => {
+  const w = wide === true ? { width: 2400, height: 1529, phone: true } : wide ? { phone: true, ...wide } : null;
+  return [
   {
     ...img(`/work/${slug}/${file}-0.jpg`, hero.width, hero.height, hero.alt),
     hotspot: hero.hotspot,
@@ -1101,16 +1185,17 @@ const workGallery = (
     phone: hero.phone ? { url: `/work/${slug}/${file}-0-phone.jpg`, width: 2400, height: 2400 } : null,
   },
   ...squares.map((alt, i) => ({
-    ...(wide
+    ...(w
       ? {
-          ...img(`/work/${slug}/${file}-${i + 1}-wide.jpg`, 2400, 1529, alt),
-          phone: { url: `/work/${slug}/${file}-${i + 1}.jpg`, width: squareSize, height: squareSize },
+          ...img(`/work/${slug}/${file}-${i + 1}-wide.jpg`, w.width, w.height, alt),
+          phone: w.phone ? { url: `/work/${slug}/${file}-${i + 1}.jpg`, width: squareSize, height: squareSize } : null,
         }
       : img(`/work/${slug}/${file}-${i + 1}.jpg`, squareSize, squareSize, alt)),
     _key: `${file}-${i + 1}`,
-    size: wide ? ("original" as const) : ("half" as const),
+    size: w ? ("original" as const) : ("half" as const),
   })),
-];
+  ];
+};
 
 /** Projects with their real work; the rest show the shared samples. */
 const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
@@ -1311,6 +1396,191 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
     ],
     1600,
     true,
+  ),
+  // Desktop 16:10 mockups from Figma, with their 1:1 versions on phones.
+  "bigtapp": workGallery(
+    "bigtapp",
+    "bigtapp",
+    {
+      alt: "The BigTapp website on a laptop, tablet and phone",
+      width: 2400,
+      height: 1500,
+      hotspot: { x: 0.5, y: 0.5 },
+      size: "original",
+      phone: true,
+    },
+    [
+      "The home page: most enterprise AI just advises, BigTapp helps it act",
+      "Proven impact, in numbers from real enterprise work",
+      "One platform, from governed data to AI agents",
+      "Why BigTapp: IP-led, domain-deep and tech-strong",
+      "Industry pages for banking, insurance and retail",
+      "Services from strategy to run, as one partner",
+      "Case studies with the outcome of each engagement",
+      "Thought leadership for regulated industries",
+      "The Beeonix AI product page",
+      "Beeonix AI features, in a grid of cards",
+      "The banking and finance industry page",
+      "The approach: identify, prove, operationalize, scale",
+      "Contact, with offices in Singapore and India",
+    ],
+    1600,
+    { width: 2400, height: 1500 },
+  ),
+  "cabot-solutions": workGallery(
+    "cabot-solutions",
+    "cabot",
+    {
+      alt: "The Cabot Solutions website for healthcare software",
+      width: 2400,
+      height: 1500,
+      hotspot: { x: 0.5, y: 0.5 },
+      size: "original",
+      phone: true,
+    },
+    [
+      "The home page: redefining healthcare with digital transformation",
+      "The vision, with years, projects, offices and clients",
+      "Healthcare software services, in one blue panel",
+      "Solution areas, from integration to voice AI agents",
+      "AI development that gets programs past the pilot",
+      "Product engineering, from MVP to quality engineering",
+      "What a healthcare-native partner does differently",
+      "Why healthcare leaders choose Cabot",
+      "An invitation to map which system to move first",
+      "The contact form and footer",
+      "Clinician-supervised AI agents for healthcare",
+      "Healthcare workflows an AI agent can take on",
+    ],
+    1600,
+    { width: 2400, height: 1500 },
+  ),
+  "carlton-noble": workGallery(
+    "carlton-noble",
+    "carlton",
+    {
+      alt: "The Carlton Noble website on three screens",
+      width: 2400,
+      height: 1500,
+      hotspot: { x: 0.5, y: 0.5 },
+      size: "original",
+      phone: true,
+    },
+    [
+      "The home page: access the extraordinary",
+      "Travel House, opening with a full-screen photograph",
+      "Experiential travel",
+      "Private travel",
+      "Event House, as a photo collage",
+      "VIP guest management",
+      "Brand activation",
+      "Access House, as a photo collage",
+      "Hospitality and ticketing",
+      "Bespoke brand collaboration",
+      "Exclusive access",
+      "The gallery",
+      "Stories from the Carlton Noble world, by house",
+    ],
+    1600,
+    { width: 2400, height: 1500 },
+  ),
+  "engel-volkers": workGallery(
+    "engel-volkers",
+    "ev",
+    {
+      alt: "Engel & Völkers country landing pages on three screens",
+      width: 2400,
+      height: 1500,
+      hotspot: { x: 0.5, y: 0.5 },
+      size: "original",
+      phone: true,
+    },
+    [
+      "Dubai: find your dream property",
+      "Mauritius",
+      "Mykonos",
+      "Quinta do Lago, from the air",
+      "Berlin",
+      "Italy, region by region",
+      "The Greek islands",
+      "Portugal",
+      "Spain",
+      "Switzerland",
+      "France",
+      "Featured luxury listings in Dubai",
+      "The Private Office",
+      "The world of Engel & Völkers clients",
+    ],
+    1600,
+    { width: 2400, height: 1500 },
+  ),
+  "norsecom": workGallery(
+    "norsecom",
+    "norsecom",
+    {
+      alt: "The Norsecom brand on a booth, a reception wall and business cards",
+      width: 2400,
+      height: 1500,
+      hotspot: { x: 0.5, y: 0.5 },
+      size: "original",
+      phone: true,
+    },
+    [
+      "The Norsecom logo",
+      "The N mark",
+      "Business cards",
+      "Letterhead and envelope",
+      "A notebook and folder",
+      "A tri-fold brochure",
+      "A staff ID card",
+      "A T-shirt",
+      "A mug",
+      "A tote bag",
+      "The reception",
+      "Office signage",
+      "An exhibition booth",
+      "A bus shelter poster",
+      "Packaging for a Mergein gateway",
+    ],
+    1600,
+    { width: 2400, height: 1500 },
+  ),
+  // Brand presentation slides (16:9), shown whole on every screen.
+  "sandlogic": workGallery(
+    "sandlogic",
+    "sandlogic",
+    {
+      alt: "The SandLogic brand: where silicon meets intelligence",
+      width: 2400,
+      height: 1350,
+      hotspot: { x: 0.5, y: 0.5 },
+      size: "original",
+      phone: false,
+    },
+    [
+      "The brand board",
+      "The brand mark",
+      "The brand system: symbol, app icon and type",
+      "Colours and social posts",
+      "An exhibition booth",
+      "A panel discussion stage",
+      "A keynote stage",
+      "A digital billboard",
+      "The reception wall",
+      "The company profile",
+      "A brochure",
+      "A tri-fold brochure",
+      "Stationery",
+      "Event badges",
+      "A team polo shirt",
+      "A T-shirt",
+      "Enamel mugs",
+      "A water bottle",
+      "The website on a phone",
+      "Social posts",
+    ],
+    1600,
+    { width: 2400, height: 1350, phone: false },
   ),
 };
 

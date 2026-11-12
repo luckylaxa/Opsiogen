@@ -95,6 +95,14 @@ export const PROJECT_QUERY = defineQuery(`*[_type == "project" && slug.current =
   "story": coalesce(story[]{ _key, title, text }, []),
   result,
   liveUrl,
+  "flow": select(defined(flow.video.asset) => flow{
+    "video": video{ "url": asset->url, "mimeType": asset->mimeType },
+    "videoWebm": videoWebm{ "url": asset->url, "mimeType": asset->mimeType },
+    "phone": phone{ "url": asset->url, "mimeType": asset->mimeType },
+    "phoneWebm": phoneWebm{ "url": asset->url, "mimeType": asset->mimeType },
+    "poster": poster{ "url": asset->url },
+    "posterPhone": posterPhone{ "url": asset->url }
+  }),
   "gallery": gallery[]{
     _key,
     "size": coalesce(size, "full"),
