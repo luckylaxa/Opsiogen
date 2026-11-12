@@ -174,19 +174,13 @@ function ServiceCards({
           <li key={s.slug}>
             <BigCard
               href={`/services/${s.slug}`}
+              layout="top"
               badge={initials(s.shortName)}
               image={s.card ?? s.hero?.image ?? covers.get(s.slug)?.cover}
               priority={lead && i < 2}
-              label={GROUP_LABELS[s.group]}
               title={s.name}
               titleAs={titleAs}
               footLeft={s.tagline}
-              footRight={
-                <span className="inline-flex items-center gap-2">
-                  <span className="grad-hover">View service</span>
-                  <ArrowRight className="size-[clamp(18px,1.15vw,22px)] transition-transform duration-300 group-hover:translate-x-1" />
-                </span>
-              }
             />
           </li>
         );

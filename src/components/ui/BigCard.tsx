@@ -24,6 +24,12 @@ type Props = {
   imageSizes?: string;
   /** The image is the page's main one: it loads at once, ahead of the rest. */
   priority?: boolean;
+  /**
+   * Where the text sits. "bottom" (work): badge on top, label, big title and a
+   * footer line over a shade at the bottom. "top" (services): title and one
+   * line at the top left, straight on the image, whose subject sits low.
+   */
+  layout?: "bottom" | "top";
   /** Cursor over the card: the View disc for work, the ring for everything else. */
   cursor?: "view" | "link";
   className?: string;
@@ -52,9 +58,34 @@ export function BigCard({
   imageSizes = "(min-width: 1024px) 50vw, 100vw",
   priority,
   cursor = "link",
+  layout = "bottom",
   className,
 }: Props) {
-  const body = (
+  const top = (
+    <>
+      {image && (
+        <>
+          <Media
+            image={image}
+            sizes={imageSizes}
+            priority={priority}
+            className="transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-[1.04]"
+          />
+          {/* A light shade at the top only, under the text. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgb(0_0_0/0.62)_0%,rgb(0_0_0/0.34)_26%,rgb(0_0_0/0)_52%)]"
+          />
+        </>
+      )}
+      <div className="relative max-w-[26ch]">
+        <Title className="text-[length:clamp(24px,2.1vw,40px)] leading-[1.1] font-medium tracking-[-0.015em] text-balance">{title}</Title>
+        {footLeft && <div className="mt-[clamp(8px,0.7vw,14px)] text-base text-white/85 text-pretty">{footLeft}</div>}
+      </div>
+      {footRight && <div className="relative mt-auto pt-4 text-base">{footRight}</div>}
+    </>
+  );
+  const body = layout === "top" ? top : (
     <>
       {image && (
         <>
@@ -102,7 +133,11 @@ export function BigCard({
   );
 
   const cls = cn(
-    "on-dark group relative flex h-full min-h-[460px] flex-col overflow-hidden rounded-card bg-coal p-[clamp(24px,3.05vw,58px)] text-white sm:min-h-[540px] lg:min-h-[calc((100cqw-var(--spacing-gap))*0.397)]",
+    "on-dark group relative flex h-full flex-col overflow-hidden rounded-card bg-coal text-white lg:min-h-[calc((100cqw-var(--spacing-gap))*0.397)]",
+    // Top layout keeps the card near the photo's own shape, so its subject is never cropped away.
+    layout === "top"
+      ? "aspect-[10/9] p-[clamp(20px,2.3vw,44px)] sm:aspect-[4/3] lg:aspect-auto"
+      : "min-h-[460px] p-[clamp(24px,3.05vw,58px)] sm:min-h-[540px]",
     className,
   );
   return href ? (

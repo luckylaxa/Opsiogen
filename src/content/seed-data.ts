@@ -90,16 +90,16 @@ const PRICING: Pair = [
 
 /** Colourful thumbnails for the service cards (public/services/<slug>/card.jpg). */
 const CARD_ALT: Record<string, string> = {
-  "ai-websites": "A real estate website on a laptop, on a sand-coloured ledge",
-  "ai-product-design": "A hospital analytics dashboard on a tablet, resting on green velvet",
-  "ai-mvps-business-apps": "A pharmacy worklist app on a phone, tucked into green velvet",
-  "ai-automation": "A patient intake board on a laptop, on a sand-coloured ledge",
-  "ai-social-media-marketing": "A beauty campaign post on a phone leaning against a sand wall",
-  "digital-marketing": "A landing page on a laptop, on a green velvet seat",
-  "ai-creative-subscription": "A brochure, a flyer and a phone ad from one campaign, on green velvet",
-  "ai-print-collateral": "A printed tri-fold brochure standing on a sand-coloured ledge",
-  "ai-brand-services": "Business cards and a mug from one brand identity, on a sand-coloured ledge",
-  "ai-video-production": "A clapperboard and a monitor showing a keynote, on green velvet",
+  "ai-websites": "A real estate website on a laptop, on a green armchair",
+  "ai-product-design": "A hand holding a phone with a pharmacy worklist, against an orange wood wall",
+  "ai-mvps-business-apps": "A woman pinning notes to a wall of app sketches",
+  "ai-automation": "Three steps of an automated workflow: new enquiry, quote sent, call booked",
+  "ai-social-media-marketing": "A phone with a beauty campaign post, leaning on a brown sofa",
+  "digital-marketing": "Three mobile landing pages side by side on a blue background",
+  "ai-creative-subscription": "A brochure and a phone ad from one campaign, on an orange leather sofa",
+  "ai-print-collateral": "An open printed brochure on dark green fabric",
+  "ai-brand-services": "A brand billboard on a grey stone wall",
+  "ai-video-production": "A camera operator filming on a dark set",
 };
 
 export const SERVICES: Service[] = [
