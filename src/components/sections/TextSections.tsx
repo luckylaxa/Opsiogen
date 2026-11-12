@@ -1,4 +1,6 @@
 import { PortableText, type PortableTextComponents } from "next-sanity";
+import { Media } from "@/components/ui/Media";
+import { LIST_IMAGES } from "@/content/section-images";
 import type { PromiseListSection, ShortTextSection } from "@/lib/types";
 import { Label, SectionHeading } from "@/components/ui/Headings";
 
@@ -32,6 +34,7 @@ export function ShortText({ section }: { section: ShortTextSection }) {
 export function PromiseList({ section }: { section: PromiseListSection }) {
   const items = section.items?.filter(Boolean) ?? [];
   if (!items.length) return null;
+  const photos = LIST_IMAGES[section._key] ?? [];
   const heading = (section.label || section.heading) && (
     <div className="mb-[clamp(32px,calc(2.6vw+22px),80px)] px-gutter">
       {section.label && <Label className={section.heading ? "mb-[clamp(16px,calc(1.24vw+11.4px),35px)]" : ""}>{section.label}</Label>}
@@ -47,9 +50,14 @@ export function PromiseList({ section }: { section: PromiseListSection }) {
           <li aria-hidden="true" className="rule-dotted" />
           {items.map((item, i) => (
             <li key={`${i}-${item}`}>
-              <div className="flex items-baseline gap-[clamp(16px,2vw,40px)] px-[clamp(0px,1.84vw,35px)] py-[clamp(18px,calc(1.24vw+13.4px),40px)]">
+              <div className="flex items-center gap-[clamp(16px,2vw,40px)] px-[clamp(0px,1.84vw,35px)] py-[clamp(18px,calc(1.24vw+13.4px),40px)]">
                 <span className="w-[2.2em] shrink-0 text-base text-mute tabular-nums">{String(i + 1).padStart(2, "0")}</span>
-                <span className="text-[length:clamp(26px,calc(1.7vw+19.6px),52px)] font-medium leading-[1.12] tracking-[-0.01em]">{item}</span>
+                <span className="min-w-0 flex-1 text-[length:clamp(26px,calc(1.7vw+19.6px),52px)] font-medium leading-[1.12] tracking-[-0.01em]">{item}</span>
+                {photos[i] && (
+                  <span className="relative aspect-[4/3] w-[clamp(72px,9vw,168px)] shrink-0 overflow-hidden rounded-[8px] bg-night">
+                    <Media image={photos[i]} sizes="(min-width: 768px) 168px, 72px" lowPriority />
+                  </span>
+                )}
               </div>
               <div className="rule-dotted" />
             </li>
@@ -67,10 +75,15 @@ export function PromiseList({ section }: { section: PromiseListSection }) {
           <li
             key={`${i}-${item}`}
             data-reveal
-            className="flex min-h-[clamp(220px,calc(10.5vw+180px),380px)] flex-col justify-between rounded-card bg-coal p-[clamp(24px,calc(1.9vw+17px),58px)] text-white"
+            className="flex min-h-[clamp(220px,calc(10.5vw+180px),380px)] flex-col justify-between overflow-hidden rounded-card bg-coal text-white"
           >
-            <span className="text-base text-white/55 tabular-nums">{String(i + 1).padStart(2, "0")}</span>
-            <p className="mt-10 max-w-[14ch] text-[length:clamp(30px,calc(1.37vw+24.9px),51px)] font-semibold leading-[1.06] tracking-[-0.015em] text-balance">
+            {photos[i] && (
+              <div className="relative aspect-[16/9]">
+                <Media image={photos[i]} sizes="(min-width: 768px) 48vw, 100vw" lowPriority />
+              </div>
+            )}
+            <span className="px-[clamp(24px,calc(1.9vw+17px),58px)] pt-[clamp(24px,calc(1.9vw+17px),58px)] text-base text-white/55 tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+            <p className="mt-10 max-w-[14ch] px-[clamp(24px,calc(1.9vw+17px),58px)] pb-[clamp(24px,calc(1.9vw+17px),58px)] text-[length:clamp(30px,calc(1.37vw+24.9px),51px)] font-semibold leading-[1.06] tracking-[-0.015em] text-balance">
               {item}
             </p>
           </li>

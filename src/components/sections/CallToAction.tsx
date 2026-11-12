@@ -1,28 +1,37 @@
 import type { HeroSection, Img, LinkItem, SiteSettings } from "@/lib/types";
-import { getPage, getProjects, getSettings } from "@/lib/data";
+import { getPage, getSettings } from "@/lib/data";
+import { CTA_IMAGES } from "@/content/section-images";
 import { ButtonLink } from "@/components/ui/Button";
 import { Media } from "@/components/ui/Media";
 
 /**
  * Shared call to action, edited once in Site settings.
- * - single: a flat dark card (the design system keeps surfaces flat: no glows).
+ * - single: a flat dark card, the heading beside a photo.
  * - dual: the reference's two closing cards side by side. The first carries
  *   the call to action; the second leads to Services, using the Services
- *   page's own heading. Both sit on a dimmed project image.
+ *   page's own heading. Each sits on a photo that fades to dark behind the text.
  */
 export async function CallToAction({ cta, variant = "single" }: { cta: SiteSettings["cta"]; variant?: "single" | "dual" }) {
   if (variant === "dual") return <DualCallToAction cta={cta} />;
+  const image = CTA_IMAGES[0];
   return (
     <div className="px-gutter">
       <div
         data-reveal
-        className="on-dark relative flex min-h-[clamp(340px,calc(20.2vw+264px),650px)] flex-col overflow-hidden rounded-card bg-coal p-[clamp(28px,calc(3.2vw+16px),77px)] text-white"
+        className="on-dark grid overflow-hidden rounded-card bg-coal text-white md:min-h-[clamp(340px,calc(20.2vw+264px),650px)] md:grid-cols-2"
       >
-        <h2 className="relative max-w-[15ch] text-cta font-semibold text-balance">{cta.heading}</h2>
-        {cta.button.href && cta.button.label && (
-          <ButtonLink href={cta.button.href} variant="outline-light" size="lg" className="relative mt-[clamp(32px,calc(1.9vw+25px),62px)] w-fit">
-            {cta.button.label}
-          </ButtonLink>
+        <div className="flex flex-col p-[clamp(28px,calc(3.2vw+16px),77px)]">
+          <h2 className="max-w-[15ch] text-cta font-semibold text-balance">{cta.heading}</h2>
+          {cta.button.href && cta.button.label && (
+            <ButtonLink href={cta.button.href} variant="outline-light" size="lg" className="mt-[clamp(32px,calc(1.9vw+25px),62px)] w-fit">
+              {cta.button.label}
+            </ButtonLink>
+          )}
+        </div>
+        {image && (
+          <div className="relative aspect-[4/3] md:aspect-auto">
+            <Media image={image} sizes="(min-width: 768px) 48vw, 100vw" lowPriority />
+          </div>
         )}
       </div>
     </div>
@@ -30,7 +39,7 @@ export async function CallToAction({ cta, variant = "single" }: { cta: SiteSetti
 }
 
 async function DualCallToAction({ cta }: { cta: SiteSettings["cta"] }) {
-  const [projects, settings, servicesPage] = await Promise.all([getProjects(), getSettings(), getPage("services")]);
+  const [settings, servicesPage] = await Promise.all([getSettings(), getPage("services")]);
   const servicesHero = servicesPage?.sections.find((s): s is HeroSection => s._type === "hero");
   const servicesLink = settings.menu.find((m) => m.href === "/services");
   const second =
@@ -40,8 +49,8 @@ async function DualCallToAction({ cta }: { cta: SiteSettings["cta"] }) {
 
   return (
     <div className="@container grid gap-gap px-gutter md:grid-cols-2">
-      <CtaCard heading={cta.heading} button={cta.button} image={projects[0]?.cover} />
-      {second && <CtaCard heading={second.heading} button={second.button} image={projects[1]?.cover ?? projects[0]?.cover} />}
+      <CtaCard heading={cta.heading} button={cta.button} image={CTA_IMAGES[0]} />
+      {second && <CtaCard heading={second.heading} button={second.button} image={CTA_IMAGES[1] ?? CTA_IMAGES[0]} />}
     </div>
   );
 }
@@ -54,8 +63,8 @@ function CtaCard({ heading, button, image }: { heading: string; button: LinkItem
     >
       {image && (
         <div aria-hidden="true" className="absolute inset-0">
-          <Media image={{ ...image, alt: "" }} sizes="(min-width: 768px) 48vw, 100vw" className="opacity-35 grayscale" />
-          <div className="absolute inset-0 bg-[linear-gradient(105deg,color-mix(in_srgb,var(--color-coal)_92%,transparent)_0%,color-mix(in_srgb,var(--color-coal)_55%,transparent)_55%,color-mix(in_srgb,var(--color-coal)_35%,transparent)_100%)]" />
+          <Media image={{ ...image, alt: "" }} sizes="(min-width: 768px) 48vw, 100vw" lowPriority />
+          <div className="absolute inset-0 bg-[linear-gradient(100deg,color-mix(in_srgb,var(--color-coal)_94%,transparent)_0%,color-mix(in_srgb,var(--color-coal)_70%,transparent)_42%,transparent_78%)]" />
         </div>
       )}
       <h2 className="relative max-w-[14ch] text-[length:clamp(30px,2.9vw,55px)] leading-[1.2] font-semibold tracking-[-0.015em] text-balance">
