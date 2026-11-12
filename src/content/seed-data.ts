@@ -90,15 +90,15 @@ const PRICING: Pair = [
 
 /** Colourful thumbnails for the service cards (public/services/<slug>/card.jpg). */
 const CARD_ALT: Record<string, string> = {
-  "ai-websites": "A real estate website on a laptop, on a green armchair",
-  "ai-product-design": "A hand holding a phone with a pharmacy worklist, against an orange wood wall",
+  "ai-websites": "A coffee exporter's website on a laptop, on a green armchair",
+  "ai-product-design": "A hand holding a phone with a savings app, against an orange wood wall",
   "ai-mvps-business-apps": "A woman pinning notes to a wall of app sketches",
   "ai-automation": "Three steps of an automated workflow: new enquiry, quote sent, call booked",
-  "ai-social-media-marketing": "A phone with a beauty campaign post, leaning on a brown sofa",
-  "digital-marketing": "Three mobile landing pages side by side on a blue background",
-  "ai-creative-subscription": "A brochure and a phone ad from one campaign, on an orange leather sofa",
-  "ai-print-collateral": "An open printed brochure on dark green fabric",
-  "ai-brand-services": "A brand billboard on a grey stone wall",
+  "ai-social-media-marketing": "A phone with a bakery's social post, leaning on a brown sofa",
+  "digital-marketing": "Three ads for an e-bike brand on a blue background",
+  "ai-creative-subscription": "A yoga studio's brochure and a matching phone ad, on an orange leather sofa",
+  "ai-print-collateral": "An open hotel brochure with a houseboat photo, on dark green fabric",
+  "ai-brand-services": "A bicycle brand's billboard on a grey stone wall",
   "ai-video-production": "A camera operator filming on a dark set",
 };
 
