@@ -327,12 +327,12 @@ export const SERVICES: Service[] = [
       ["Yours to keep", "You own everything we build."],
     ]),
     offerings: cards("ai-mvps-business-apps", [
-      ["MVPs and prototypes", "A working first version to test with users and investors.", "tile-mvp.jpg", "A first app version on a phone beside a launch checklist"],
-      ["AI-powered features", "Smart search, chat, summaries and forms built into your product.", "tile-ai.jpg", "A phone showing a question answered by AI above a list of orders"],
-      ["Customer and partner portals", "One place for customers and partners to log in, track and get things done.", "tile-portal.jpg", "A laptop showing a customer portal with a list of orders"],
-      ["Dashboards", "Live views of the numbers that matter, in one place.", "tile-dashboard.jpg", "A monitor showing a dashboard with numbers and charts"],
-      ["Booking and intake systems", "Online booking and intake that feed straight into your workflow.", "tile-booking.jpg", "A tablet with a booking calendar and a phone with time slots"],
-      ["Internal tools and trackers", "Simple tools that replace spreadsheets and manual work.", "tile-internal.jpg", "A laptop showing a request board with cards in three columns"],
+      ["MVPs and prototypes", "A working first version to test with users and investors.", "tile-mvp.jpg", "A first app version on a phone beside a Version 1 checklist: sign up, orders, payments done"],
+      ["AI-powered features", "Smart search, chat, summaries and forms built into your product.", "tile-ai.jpg", "A question typed into a search bar and its answer: three late orders, listed"],
+      ["Customer and partner portals", "One place for customers and partners to log in, track and get things done.", "tile-portal.jpg", "A sign-in card beside a customer portal listing orders and their status"],
+      ["Dashboards", "Live views of the numbers that matter, in one place.", "tile-dashboard.jpg", "A dashboard: an on-time ring, three number tiles and a line chart of orders"],
+      ["Booking and intake systems", "Online booking and intake that feed straight into your workflow.", "tile-booking.jpg", "A month calendar with a chosen day and a list of time slots, one selected"],
+      ["Internal tools and trackers", "Simple tools that replace spreadsheets and manual work.", "tile-internal.jpg", "A request board with New, In progress and Done columns, and a card being moved"],
     ]),
     faqs: faqs([
       [
@@ -405,12 +405,12 @@ export const SERVICES: Service[] = [
       ["Looked after", "A monthly care plan keeps every automation running and improving."],
     ]),
     offerings: cards("ai-automation", [
-      ["Process audit", "We map how work gets done and find the tasks worth automating first.", "tile-audit.jpg", "A process map on a clipboard with three steps marked to automate"],
-      ["Lead and enquiry automation", "Every enquiry captured, sorted and followed up without manual work.", "tile-leads.jpg", "A phone showing an enquiry sorted and answered with call times"],
-      ["Internal dashboards", "Dashboards and reports that update themselves from the tools you use.", "tile-dashboards.jpg", "A tablet showing a weekly report that updates itself"],
-      ["Document and data extraction", "Data pulled from forms, invoices and PDFs into your systems.", "tile-documents.jpg", "A paper invoice beside a tablet showing the details pulled from it"],
-      ["AI chatbots and voice assistants", "Assistants that answer questions and handle routine requests by chat or voice.", "tile-assistants.jpg", "A chat assistant on a phone beside a voice assistant speaker"],
-      ["Reports, proposals and approvals", "Documents drafted and approvals routed automatically.", "tile-approvals.jpg", "A tablet showing a drafted proposal with an Approve button"],
+      ["Process audit", "We map how work gets done and find the tasks worth automating first.", "tile-audit.jpg", "A six-step process map with three steps marked to automate"],
+      ["Lead and enquiry automation", "Every enquiry captured, sorted and followed up without manual work.", "tile-leads.jpg", "A contact form feeding three steps: new enquiry, sorted, reply sent"],
+      ["Internal dashboards", "Dashboards and reports that update themselves from the tools you use.", "tile-dashboards.jpg", "Orders, invoices and enquiries feeding a weekly report that updated just now"],
+      ["Document and data extraction", "Data pulled from forms, invoices and PDFs into your systems.", "tile-documents.jpg", "A paper invoice beside the supplier, number, date and total pulled from it"],
+      ["AI chatbots and voice assistants", "Assistants that answer questions and handle routine requests by chat or voice.", "tile-assistants.jpg", "A chat that moves a booking to Friday, beside a voice assistant bar"],
+      ["Reports, proposals and approvals", "Documents drafted and approvals routed automatically.", "tile-approvals.jpg", "A drafted proposal moving through two approvers to you, with an Approve button"],
     ]),
     faqs: faqs([
       [
