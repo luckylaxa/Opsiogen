@@ -14,6 +14,8 @@ type Props = {
   badge: string;
   /** Fills the whole card, under the badge and the text. */
   image?: Img | null;
+  /** A version of the image shaped for phones, shown below 640px. */
+  imagePhone?: Omit<Img, "alt" | "hotspot"> | null;
   label?: string | null;
   title: string;
   titleAs?: "h2" | "h3" | "h4";
@@ -49,6 +51,7 @@ export function BigCard({
   scroll = true,
   badge,
   image,
+  imagePhone,
   label,
   title,
   titleAs: Title = "h3",
@@ -67,6 +70,7 @@ export function BigCard({
         <>
           <Media
             image={image}
+            phone={imagePhone}
             sizes={imageSizes}
             priority={priority}
             className="transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-[1.04]"
@@ -91,6 +95,7 @@ export function BigCard({
         <>
           <Media
             image={image}
+            phone={imagePhone}
             sizes={imageSizes}
             priority={priority}
             className="transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-[1.04]"

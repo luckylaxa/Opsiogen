@@ -1,5 +1,6 @@
 import type { ProjectCard } from "@/lib/types";
 import { BigCard } from "@/components/ui/BigCard";
+import { CARD_PHONE } from "@/content/section-images";
 import { initials } from "@/lib/utils";
 
 /**
@@ -26,6 +27,7 @@ export function ProjectBigCard({
       cursor="view"
       badge={initials(project.client || project.name)}
       image={project.cardImage ?? project.cover}
+      imagePhone={CARD_PHONE[project.slug]}
       label={[client, project.industry, project.year].filter(Boolean).join(" · ") || null}
       title={project.name}
       titleAs={titleAs}

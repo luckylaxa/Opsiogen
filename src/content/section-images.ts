@@ -38,3 +38,15 @@ export const LIST_IMAGES: Record<string, Img[]> = {
 export const CARD_IMAGES: Record<string, Img> = {
   about: { url: "/about/studio.jpg", width: 1600, height: 1600, alt: "A studio lounge with a green sofa, a laptop and coffee on the table" },
 };
+
+/**
+ * Phone versions of work cards whose mockup is wider than a phone card shows
+ * (public/cards/<slug>-phone.jpg, 1200 x 1542). Projects not listed use the
+ * wide card on every screen.
+ */
+export const CARD_PHONE: Record<string, { url: string; width: number; height: number }> = Object.fromEntries(
+  ["norsecom", "rxlive", "afthab-tours", "meetingful", "bigtapp", "cabot-solutions"].map((slug) => [
+    slug,
+    { url: `/cards/${slug}-phone.jpg`, width: 1200, height: 1542 },
+  ]),
+);
