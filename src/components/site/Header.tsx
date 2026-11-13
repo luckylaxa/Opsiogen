@@ -27,7 +27,8 @@ export function Header({
       <Link href="/" className="link-fade shrink-0" aria-label={`${settings.siteTitle} home`}>
         <Logo logo={settings.logo} name={settings.siteTitle} priority large />
       </Link>
-      <NavMenu menu={settings.menu} groups={groups} />
+      {/* The main button already goes to that page, so its link is left out of the bar (it stays in the footer). */}
+      <NavMenu menu={settings.menu.filter((m) => m.href !== settings.headerButton.href)} groups={groups} />
       <SiteSearch
         items={searchItems}
         className="mr-[clamp(20px,2.1vw,40px)] hidden min-w-0 flex-1 lg:block"
