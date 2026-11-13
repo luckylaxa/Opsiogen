@@ -135,7 +135,7 @@ export const SERVICES: Service[] = [
         _key: "o1",
         title: "New websites",
         text: "Designed around your offer and built to turn visits into enquiries.",
-        image: img(`${WEB}/tile-new.jpg`, 1600, 1200, "A coffee brand's new home page on a laptop"),
+        image: img(`${WEB}/tile-new.jpg`, 1600, 1200, "A coffee brand's new home page on a laptop, on a leather armchair"),
       },
       {
         _key: "o2",
@@ -147,7 +147,7 @@ export const SERVICES: Service[] = [
         _key: "o3",
         title: "Landing pages",
         text: "Focused pages for campaigns, launches and lead generation.",
-        image: img(`${WEB}/tile-landing.jpg`, 1600, 1200, "A landing page with an email field and an Order now button, on a phone"),
+        image: img(`${WEB}/tile-landing.jpg`, 1600, 1200, "A landing page with an email field and an Order now button on a phone, against a green velvet cushion"),
       },
       {
         _key: "o4",
@@ -159,13 +159,13 @@ export const SERVICES: Service[] = [
         _key: "o5",
         title: "Corporate and portfolio sites",
         text: "A clear, credible home for your business and your work.",
-        image: img(`${WEB}/tile-corporate.jpg`, 1600, 1200, "A company's About page on a tablet, beside a stylus and a plant"),
+        image: img(`${WEB}/tile-corporate.jpg`, 1600, 1200, "A company's About page on a tablet, on a green leather sofa"),
       },
       {
         _key: "o6",
         title: "Easy-to-use CMS",
         text: "Change text, pages and images yourself, without waiting on developers.",
-        image: img(`${WEB}/tile-cms.jpg`, 1600, 1200, "A page editor on a tablet with a keyboard: a headline being edited, and a Publish button"),
+        image: img(`${WEB}/tile-cms.jpg`, 1600, 1200, "A page editor on a tablet: a headline being edited, and a Publish button"),
       },
     ],
     faqs: faqs([
@@ -246,7 +246,7 @@ export const SERVICES: Service[] = [
       ["Designer-led AI", "AI speeds up research, flows and screens. Our designers make every decision count."],
     ]),
     offerings: cards("ai-product-design", [
-      ["Product design", "New SaaS, web and mobile products, from flows to polished screens.", "tile-product.jpg", "A personal finance app's home screen on a phone"],
+      ["Product design", "New SaaS, web and mobile products, from flows to polished screens.", "tile-product.jpg", "A personal finance app's home screen on a phone, against corduroy"],
       ["UX audits", "We find where people get stuck and rank the fixes.", "tile-audit.jpg", "A tablet showing a UX audit: an app screen with three numbered issues and how to fix each"],
       ["Redesign and iteration", "Live products made simpler, one release at a time.", "tile-redesign.jpg", "A desktop screen comparing a cluttered old dashboard with its simpler redesign"],
       ["Prototypes and validation", "Clickable prototypes to test ideas before you build.", "tile-prototype.jpg", "A tablet showing four linked app screens for setting a savings goal, with a Play button"],
@@ -327,12 +327,12 @@ export const SERVICES: Service[] = [
       ["Yours to keep", "You own everything we build."],
     ]),
     offerings: cards("ai-mvps-business-apps", [
-      ["MVPs and prototypes", "A working first version to test with users and investors.", "tile-mvp.jpg", "A first app version on a phone beside a Version 1 checklist: sign up, orders, payments done"],
-      ["AI-powered features", "Smart search, chat, summaries and forms built into your product.", "tile-ai.jpg", "A question typed into a search bar and its answer: three late orders, listed"],
-      ["Customer and partner portals", "One place for customers and partners to log in, track and get things done.", "tile-portal.jpg", "A sign-in card beside a customer portal listing orders and their status"],
-      ["Dashboards", "Live views of the numbers that matter, in one place.", "tile-dashboard.jpg", "A dashboard: an on-time ring, three number tiles and a line chart of orders"],
-      ["Booking and intake systems", "Online booking and intake that feed straight into your workflow.", "tile-booking.jpg", "A month calendar with a chosen day and a list of time slots, one selected"],
-      ["Internal tools and trackers", "Simple tools that replace spreadsheets and manual work.", "tile-internal.jpg", "A request board with New, In progress and Done columns, and a card being moved"],
+      ["MVPs and prototypes", "A working first version to test with users and investors.", "tile-mvp.jpg", "A first version of an orders app on a phone, propped against a velvet cushion"],
+      ["AI-powered features", "Smart search, chat, summaries and forms built into your product.", "tile-ai.jpg", "A phone on a leather sofa: a question about late orders and the answer, with three orders listed"],
+      ["Customer and partner portals", "One place for customers and partners to log in, track and get things done.", "tile-portal.jpg", "A customer portal on a laptop: a list of orders with their status"],
+      ["Dashboards", "Live views of the numbers that matter, in one place.", "tile-dashboard.jpg", "An operations dashboard on a desktop screen: four key numbers and a chart of orders"],
+      ["Booking and intake systems", "Online booking and intake that feed straight into your workflow.", "tile-booking.jpg", "A booking screen on a tablet: a month calendar and time slots for one day"],
+      ["Internal tools and trackers", "Simple tools that replace spreadsheets and manual work.", "tile-internal.jpg", "A requests board on a laptop with New, In progress and Done columns"],
     ]),
     faqs: faqs([
       [
@@ -405,12 +405,12 @@ export const SERVICES: Service[] = [
       ["Looked after", "A monthly care plan keeps every automation running and improving."],
     ]),
     offerings: cards("ai-automation", [
-      ["Process audit", "We map how work gets done and find the tasks worth automating first.", "tile-audit.jpg", "A six-step process map with three steps marked to automate"],
-      ["Lead and enquiry automation", "Every enquiry captured, sorted and followed up without manual work.", "tile-leads.jpg", "A contact form feeding three steps: new enquiry, sorted, reply sent"],
-      ["Internal dashboards", "Dashboards and reports that update themselves from the tools you use.", "tile-dashboards.jpg", "Orders, invoices and enquiries feeding a weekly report that updated just now"],
-      ["Document and data extraction", "Data pulled from forms, invoices and PDFs into your systems.", "tile-documents.jpg", "A paper invoice beside the supplier, number, date and total pulled from it"],
-      ["AI chatbots and voice assistants", "Assistants that answer questions and handle routine requests by chat or voice.", "tile-assistants.jpg", "A chat that moves a booking to Friday, beside a voice assistant bar"],
-      ["Reports, proposals and approvals", "Documents drafted and approvals routed automatically.", "tile-approvals.jpg", "A drafted proposal moving through two approvers to you, with an Approve button"],
+      ["Process audit", "We map how work gets done and find the tasks worth automating first.", "tile-audit.jpg", "A process audit on a tablet: six steps, three marked to automate first"],
+      ["Lead and enquiry automation", "Every enquiry captured, sorted and followed up without manual work.", "tile-leads.jpg", "A phone showing a new enquiry captured, sorted and answered automatically"],
+      ["Internal dashboards", "Dashboards and reports that update themselves from the tools you use.", "tile-dashboards.jpg", "A weekly report on a desktop screen that updates itself, with enquiries by day"],
+      ["Document and data extraction", "Data pulled from forms, invoices and PDFs into your systems.", "tile-documents.jpg", "A laptop showing an invoice and the fields pulled from it"],
+      ["AI chatbots and voice assistants", "Assistants that answer questions and handle routine requests by chat or voice.", "tile-assistants.jpg", "A chat on a phone: a booking moved to Friday and confirmed by an assistant"],
+      ["Reports, proposals and approvals", "Documents drafted and approvals routed automatically.", "tile-approvals.jpg", "A drafted proposal on a laptop with its approval route beside it"],
     ]),
     faqs: faqs([
       [
