@@ -155,7 +155,8 @@ export function ServiceFullPage({ service, settings, work, process }: Props) {
               <li key={o._key ?? o.title}>
                 <BigCard
                   badge={pad(i + 1)}
-                  image={o.image}
+                  // The tiles' subjects sit high and to the right; keep them in view when the card crops.
+                  image={o.image ? { ...o.image, hotspot: o.image.hotspot ?? { x: 0.78, y: 0.3 } } : o.image}
                   label={service.shortName}
                   title={o.title}
                   footLeft={o.text}

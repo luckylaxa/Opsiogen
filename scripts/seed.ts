@@ -327,13 +327,13 @@ async function run() {
       tagline: string | null;
       description: string | null;
       included: string[] | null;
-      offerings: { _key: string; title?: string | null; text?: string | null; file?: string | null }[] | null;
+      offerings: { _key: string; title?: string | null; text?: string | null; file?: string | null; ref?: string | null }[] | null;
       faqKeys: string[] | null;
       cardRef: string | null;
       cardFile: string | null;
     }[]
   >(
-    `*[_type == "service" && _id in $ids]{ _id, tagline, description, included, "offerings": offerings[]{ _key, title, text, "file": image.asset->originalFilename }, "faqKeys": faqs[]._key, "cardRef": card.asset._ref, "cardFile": card.asset->originalFilename }`,
+    `*[_type == "service" && _id in $ids]{ _id, tagline, description, included, "offerings": offerings[]{ _key, title, text, "file": image.asset->originalFilename, "ref": image.asset._ref }, "faqKeys": faqs[]._key, "cardRef": card.asset._ref, "cardFile": card.asset->originalFilename }`,
     { ids: SERVICES.map((s) => s._id) },
   );
   for (const s of SERVICES) {
@@ -418,7 +418,11 @@ async function run() {
       const current = existing.offerings?.find((o) => o._key === k);
       if (!current) continue;
       const path = `offerings[_key == "${k}"].image`;
-      if (current.file && OLD_CARD_IMAGE.test(current.file)) tx.patch(s._id, (p) => p.set({ [path]: fields.image }));
+      // A seeded tile whose file has since been re-made (same name, new content).
+      const source = s.offerings.find((o) => o._key === k)?.image?.url;
+      const fresh = (fields.image as { asset?: { _ref?: string } } | undefined)?.asset?._ref;
+      const remade = Boolean(source && fresh && current.ref && current.file === source.split("/").pop() && current.ref !== fresh);
+      if ((current.file && OLD_CARD_IMAGE.test(current.file)) || remade) tx.patch(s._id, (p) => p.set({ [path]: fields.image }));
       else tx.patch(s._id, (p) => p.setIfMissing({ [path]: fields.image }));
     }
     const newFaqs = s.faqs.filter((f) => f._key && !(existing.faqKeys ?? []).includes(f._key));
