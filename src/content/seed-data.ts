@@ -640,12 +640,12 @@ export const SERVICES: Service[] = [
       ["No hiring", "Dedicated creative support without adding headcount."],
     ]),
     offerings: cards("ai-creative-subscription", [
-      ["Ad creatives", "Static and animated ads sized for every channel.", "tile-ads.jpg", "One ad printed in five sizes"],
-      ["Presentations and pitch decks", "Decks that make your story clear and convincing.", "tile-decks.jpg", "A presentation slide on a laptop beside two printed slides"],
-      ["Brand assets and templates", "Templates, icons, illustrations and everyday brand materials.", "tile-assets.jpg", "Printed brand templates: an icon set, a report cover, a social post and a letter"],
-      ["Motion graphics", "Animated graphics for social, ads and product stories.", "tile-motion.jpg", "A tablet showing an animation timeline with keyframes and an easing curve"],
-      ["AI imagery and video", "Original visuals made with AI and finished by designers.", "tile-ai.jpg", "A contact sheet of nine visuals with one circled as final"],
-      ["Email and landing pages", "Designs for campaigns, newsletters, launches and reports.", "tile-email.jpg", "An email design on a phone beside its landing page on a laptop"],
+      ["Ad creatives", "Static and animated ads sized for every channel.", "tile-ads.jpg", "A phone on a leather sofa showing an ad for a yoga studio"],
+      ["Presentations and pitch decks", "Decks that make your story clear and convincing.", "tile-decks.jpg", "A laptop on a leather armchair showing the first slide of a deck"],
+      ["Brand assets and templates", "Templates, icons, illustrations and everyday brand materials.", "tile-assets.jpg", "A colour swatch fan on a stack of paper, on leather"],
+      ["Motion graphics", "Animated graphics for social, ads and product stories.", "tile-motion.jpg", "Warm streaks of light in motion on a dark brown background"],
+      ["AI imagery and video", "Original visuals made with AI and finished by designers.", "tile-ai.jpg", "Five photo prints of calm still lifes on a leather sofa"],
+      ["Email and landing pages", "Designs for campaigns, newsletters, launches and reports.", "tile-email.jpg", "A tablet on a leather sofa showing a landing page"],
     ]),
     faqs: faqs([
       [
