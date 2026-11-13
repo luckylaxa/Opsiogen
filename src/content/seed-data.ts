@@ -792,12 +792,12 @@ export const SERVICES: Service[] = [
       ["Faster with AI", "AI speeds up exploration, so you see more options sooner."],
     ]),
     offerings: cards("ai-brand-services", [
-      ["Brand strategy and messaging", "Who you are, who you serve and how you sound.", "tile-strategy.jpg", "Three cards: who we are, who we serve and how we sound"],
-      ["Logo and visual identity", "A distinctive logo, colours and type that fit your business.", "tile-identity.jpg", "The logo and symbol on charcoal, cream and orange tiles"],
-      ["Brand guidelines", "Clear rules, so everyone uses your brand the same way.", "tile-guidelines.jpg", "Brand guidelines open at the logo and colour pages"],
-      ["Brand refresh", "A modern update that keeps what people already recognise.", "tile-refresh.jpg", "An old badge beside its modern refresh"],
-      ["Brand assets and templates", "Ready-to-use templates for decks, social posts and documents.", "tile-assets.jpg", "A slide, a report cover and a social post template"],
-      ["Brand rollout", "Your new brand applied across website, social and print.", "tile-rollout.jpg", "The brand on a poster, a phone, a tote bag and a business card"],
+      ["Brand strategy and messaging", "Who you are, who you serve and how you sound.", "tile-strategy.jpg", "Message cards for a cycle brand: who we are, who we serve and three tone words"],
+      ["Logo and visual identity", "A distinctive logo, colours and type that fit your business.", "tile-identity.jpg", "A wheel logo mark being drawn, with guides and handles, beside its lockup and colour versions"],
+      ["Brand guidelines", "Clear rules, so everyone uses your brand the same way.", "tile-guidelines.jpg", "Brand guidelines: the typeface, the logo's clear space and four colour swatches"],
+      ["Brand refresh", "A modern update that keeps what people already recognise.", "tile-refresh.jpg", "An old oval badge marked Before and the new logo marked After"],
+      ["Brand assets and templates", "Ready-to-use templates for decks, social posts and documents.", "tile-assets.jpg", "Three brand templates: a slide, a square post being resized and a letter"],
+      ["Brand rollout", "Your new brand applied across website, social and print.", "tile-rollout.jpg", "One brand on a phone screen, a business card, a poster and a sticker"],
     ]),
     faqs: faqs([
       ["Can you refresh our existing brand?", "Yes. We modernise what you have and keep the parts people recognise."],
