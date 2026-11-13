@@ -99,7 +99,7 @@ const CARD_ALT: Record<string, string> = {
   "ai-creative-subscription": "A hand holding an iPhone with a yoga studio's ad: Slow down. Breathe out.",
   "ai-print-collateral": "An open hotel brochure with a houseboat photo, on dark green fabric",
   "ai-brand-services": "A bicycle brand's billboard on a grey stone wall",
-  "ai-video-production": "A camera operator filming on a dark set",
+  "ai-video-production": "A laptop on a wooden desk showing a video edit: a prompt, the preview and a timeline with captions",
 };
 
 export const SERVICES: Service[] = [
