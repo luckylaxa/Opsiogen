@@ -246,12 +246,12 @@ export const SERVICES: Service[] = [
       ["Designer-led AI", "AI speeds up research, flows and screens. Our designers make every decision count."],
     ]),
     offerings: cards("ai-product-design", [
-      ["Product design", "New SaaS, web and mobile products, from flows to polished screens.", "tile-product.jpg", "A finance product on a web dashboard and a phone, with a designer's cursor"],
-      ["UX audits", "We find where people get stuck and rank the fixes.", "tile-audit.jpg", "An app screen with three numbered pins beside a list of findings ranked high, medium and low"],
-      ["Redesign and iteration", "Live products made simpler, one release at a time.", "tile-redesign.jpg", "A cluttered grey screen turning into a clean app screen, with version tags"],
-      ["Prototypes and validation", "Clickable prototypes to test ideas before you build.", "tile-prototype.jpg", "Three app screens linked by prototype arrows, with a tap that leads to Home"],
-      ["Design systems", "Components, colours and rules that keep every screen consistent.", "tile-system.jpg", "A design system: colours, type, buttons, an input, toggles and cards"],
-      ["Developer-ready handoff", "Specs, assets and annotated screens your developers can build from.", "tile-handoff.jpg", "A balance card with its measurements marked, beside its styles as code"],
+      ["Product design", "New SaaS, web and mobile products, from flows to polished screens.", "tile-product.jpg", "A personal finance app's home screen on a phone"],
+      ["UX audits", "We find where people get stuck and rank the fixes.", "tile-audit.jpg", "A tablet showing a UX audit: an app screen with three numbered issues and how to fix each"],
+      ["Redesign and iteration", "Live products made simpler, one release at a time.", "tile-redesign.jpg", "A desktop screen comparing a cluttered old dashboard with its simpler redesign"],
+      ["Prototypes and validation", "Clickable prototypes to test ideas before you build.", "tile-prototype.jpg", "A tablet showing four linked app screens for setting a savings goal, with a Play button"],
+      ["Design systems", "Components, colours and rules that keep every screen consistent.", "tile-system.jpg", "A design system page on a laptop: six colours, type sizes and button styles"],
+      ["Developer-ready handoff", "Specs, assets and annotated screens your developers can build from.", "tile-handoff.jpg", "A laptop showing an app screen with measurements and the code for one card"],
     ]),
     faqs: faqs([
       ["Do you work on existing products?", "Yes. We audit and redesign live products as well as design new ones."],
