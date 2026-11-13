@@ -93,7 +93,7 @@ const CARD_ALT: Record<string, string> = {
   "ai-websites": "A coffee exporter's website on a laptop, on a green armchair",
   "ai-product-design": "A hand holding an iPhone with a savings app, in front of green plants",
   "ai-mvps-business-apps": "A woman pinning notes to a wall of app sketches",
-  "ai-automation": "Three steps of an automated workflow: new enquiry, quote sent, call booked",
+  "ai-automation": "A person at a desk watching a workflow run on a laptop: new enquiry, quote sent, call booked",
   "ai-social-media-marketing": "A hand holding an iPhone showing a bakery's social post",
   "digital-marketing": "Three ads for an e-bike brand on a blue background",
   "ai-creative-subscription": "A hand holding an iPhone with a yoga studio's ad: Slow down. Breathe out.",
