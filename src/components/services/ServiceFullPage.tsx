@@ -50,7 +50,7 @@ export function ServiceFullPage({ service, settings, work, process }: Props) {
 
   return (
     <>
-      {/* 1. Hero: giant title, one line, a button, then the image in the dark frame */}
+      {/* 1. Hero: giant title, one line, a button, then the service's thumbnail */}
       <section data-band className="-mt-[var(--header-h)] bg-band pb-[clamp(40px,calc(2.3vw+31.4px),76px)] pt-[calc(var(--header-h)+clamp(40px,calc(1.57vw+34px),64px))]">
         <GiantHeading as="h1" label={GROUP_LABELS[service.group]} labelStyle="pill" heading={service.name} text={service.tagline}>
           <ButtonLink href={contact} className="mt-[clamp(28px,calc(1.7vw+21.6px),54px)]">
@@ -58,10 +58,17 @@ export function ServiceFullPage({ service, settings, work, process }: Props) {
           </ButtonLink>
           {service.note && <p className="mt-5 text-small text-mute">{service.note}</p>}
         </GiantHeading>
-        {service.hero?.image?.url && (
-          <div className="mx-edge mt-[clamp(48px,calc(2.88vw+37.2px),92px)] overflow-hidden rounded-card bg-night px-[clamp(12px,7.5%,142px)] pt-[clamp(24px,5%,96px)] pb-[clamp(12px,2%,40px)]">
-            <Media image={service.hero.image} fill={false} priority sizes="(min-width: 640px) 85vw, 100vw" className="mx-auto max-w-[1300px]" />
+        {service.card?.url ? (
+          // The service's own thumbnail, as on the Services page: 4:3 on phones, wider from tablets up.
+          <div className="relative mx-edge mt-[clamp(48px,calc(2.88vw+37.2px),92px)] aspect-[4/3] overflow-hidden rounded-card bg-night md:aspect-[2/1]">
+            <Media image={{ ...service.card, hotspot: service.card.hotspot ?? { x: 0.7, y: 0.72 } }} priority sizes="100vw" />
           </div>
+        ) : (
+          service.hero?.image?.url && (
+            <div className="mx-edge mt-[clamp(48px,calc(2.88vw+37.2px),92px)] overflow-hidden rounded-card bg-night px-[clamp(12px,7.5%,142px)] pt-[clamp(24px,5%,96px)] pb-[clamp(12px,2%,40px)]">
+              <Media image={service.hero.image} fill={false} priority sizes="(min-width: 640px) 85vw, 100vw" className="mx-auto max-w-[1300px]" />
+            </div>
+          )
         )}
       </section>
 

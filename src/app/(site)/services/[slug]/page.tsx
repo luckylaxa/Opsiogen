@@ -64,7 +64,11 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
   ]);
   if (!service) notFound();
 
-  const work = projects.filter((p) => p.services.some((s) => s.slug === service.slug));
+  // Only work for this service: projects that lead with it. Where none do, the
+  // projects that list it at all.
+  const listed = projects.filter((p) => p.services.some((s) => s.slug === service.slug));
+  const leading = listed.filter((p) => p.services[0]?.slug === service.slug);
+  const work = leading.length ? leading : listed;
   const schema = (
     <JsonLd
       items={[
