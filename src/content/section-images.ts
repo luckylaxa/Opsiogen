@@ -7,7 +7,7 @@ import type { Img } from "@/lib/types";
  */
 const photo = (url: string, alt: string): Img => ({ url, width: 1600, height: 1200, alt });
 
-/** The call to action banner: its subject sits on the right, text goes on the left. */
+/** The call to action banner, shown whole: its subject sits on the right, text goes on the left. */
 export const CTA_IMAGES: Img[] = [
   {
     url: "/cta/cta-banner-3.jpg",

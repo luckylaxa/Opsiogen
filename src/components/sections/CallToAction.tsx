@@ -3,11 +3,13 @@ import { getPage, getSettings } from "@/lib/data";
 import { CTA_IMAGES } from "@/content/section-images";
 import { ButtonLink } from "@/components/ui/Button";
 import { Media } from "@/components/ui/Media";
+import { cn } from "@/lib/utils";
 
 /**
  * Shared call to action, edited once in Site settings: one wide photo banner.
- * The photo fills the card with its subject on the right; a dark shade from
- * the left (from the bottom on phones) keeps the heading and buttons readable.
+ * The card takes the photo's own shape, so the whole picture shows. From 768px
+ * the heading sits over the photo's plain left side under a dark shade; on
+ * phones the photo sits on top, uncropped, with the heading below it.
  * - single: the call to action's button.
  * - dual: the same banner with a second button to Services.
  */
@@ -21,30 +23,46 @@ export async function CallToAction({ cta, variant = "single" }: { cta: SiteSetti
   }
   const image = CTA_IMAGES[0];
 
+  // The card takes the photo's own shape, so the whole picture shows, uncropped.
+  const ratio = image ? ({ "--cta-ratio": `${image.width} / ${image.height}` } as React.CSSProperties) : undefined;
+
   return (
     <div className="px-gutter">
       <div
         data-reveal
-        className="on-dark relative flex min-h-[clamp(520px,calc(14vw+460px),660px)] flex-col justify-end overflow-hidden rounded-card bg-coal p-[clamp(28px,calc(3.2vw+16px),77px)] text-white md:min-h-[clamp(420px,30vw,620px)] md:justify-center"
+        style={ratio}
+        className={cn(
+          "on-dark relative overflow-hidden rounded-card bg-coal text-white md:flex md:flex-col md:justify-center",
+          image
+            ? "md:aspect-(--cta-ratio)"
+            : "flex min-h-[clamp(520px,calc(14vw+460px),660px)] flex-col justify-end md:min-h-[clamp(420px,30vw,620px)]",
+        )}
       >
         {image && (
-          <div aria-hidden="true" className="absolute inset-0">
+          <div aria-hidden="true" className="relative aspect-(--cta-ratio) md:absolute md:inset-0 md:aspect-auto">
             <Media image={{ ...image, alt: "" }} sizes="100vw" lowPriority />
-            <div className="absolute inset-0 bg-[linear-gradient(0deg,color-mix(in_srgb,var(--color-coal)_92%,transparent)_0%,color-mix(in_srgb,var(--color-coal)_70%,transparent)_38%,transparent_70%)] md:bg-[linear-gradient(90deg,color-mix(in_srgb,var(--color-coal)_88%,transparent)_0%,color-mix(in_srgb,var(--color-coal)_62%,transparent)_38%,transparent_64%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(0deg,var(--color-coal)_0%,transparent_32%)] md:bg-[linear-gradient(90deg,color-mix(in_srgb,var(--color-coal)_88%,transparent)_0%,color-mix(in_srgb,var(--color-coal)_62%,transparent)_38%,transparent_64%)]" />
           </div>
         )}
-        <h2 className="relative max-w-[15ch] text-cta font-semibold text-balance">{cta.heading}</h2>
-        <div className="relative mt-[clamp(28px,calc(1.9vw+22px),56px)] flex flex-wrap gap-3">
-          {cta.button.href && cta.button.label && (
-            <ButtonLink href={cta.button.href} variant="light" size="lg">
-              {cta.button.label}
-            </ButtonLink>
+        <div
+          className={cn(
+            "relative px-[clamp(28px,calc(3.2vw+16px),77px)] pb-[clamp(28px,calc(3.2vw+16px),77px)] md:pt-[clamp(28px,calc(3.2vw+16px),77px)]",
+            image ? "pt-4" : "pt-[clamp(28px,calc(3.2vw+16px),77px)]",
           )}
-          {second && (
-            <ButtonLink href={second.href} variant="outline-light" size="lg">
-              {second.label}
-            </ButtonLink>
-          )}
+        >
+          <h2 className="max-w-[15ch] text-cta font-semibold text-balance">{cta.heading}</h2>
+          <div className="mt-[clamp(28px,calc(1.9vw+22px),56px)] flex flex-wrap gap-3">
+            {cta.button.href && cta.button.label && (
+              <ButtonLink href={cta.button.href} variant="light" size="lg">
+                {cta.button.label}
+              </ButtonLink>
+            )}
+            {second && (
+              <ButtonLink href={second.href} variant="outline-light" size="lg">
+                {second.label}
+              </ButtonLink>
+            )}
+          </div>
         </div>
       </div>
     </div>
