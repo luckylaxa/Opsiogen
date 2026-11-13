@@ -230,6 +230,14 @@ const TEXT_UPDATES: { id: string; get: string; path: string; from: string; to: s
   { id: "service-ai-websites", get: "related.heading", path: "related.heading", from: "Websites we’ve launched", to: "Websites we’ve launched." },
 ];
 
+/**
+ * Pages rebuilt since an earlier seed. Add mode replaces the page's sections
+ * only while Studio still holds the hero heading that seed wrote.
+ */
+const PAGE_REWRITES: { id: string; was: string }[] = [
+  { id: "page-about", was: "The digital department for businesses that don’t have one." },
+];
+
 /** Seeded buttons taken off a page since: removed in add mode while Studio still holds a seeded label. */
 const REMOVED_BUTTONS: { id: string; get: string; path: string; labels: string[] }[] = [
   // Home hero: Start a project is the header's label (the hero now says See our work).
@@ -597,6 +605,20 @@ async function run() {
         ? p.insert("before", 'sections[_type == "callToAction"]', items)
         : p.setIfMissing({ sections: [] }).insert("after", "sections[-1]", items),
     );
+  }
+
+  if (!OVERWRITE && PAGE_REWRITES.length) {
+    const held = await client.fetch<{ _id: string; heading: string | null }[]>(
+      `*[_type == "page" && _id in $ids]{ _id, "heading": sections[_type == "hero"][0].heading }`,
+      { ids: PAGE_REWRITES.map((r) => r.id) },
+    );
+    for (const r of PAGE_REWRITES) {
+      const page = PAGES.find((p) => p._id === r.id);
+      if (!page || held.find((h) => h._id === r.id)?.heading !== r.was) continue;
+      const sections = await Promise.all(page.sections.map(sectionDoc));
+      console.log(`  rebuilding ${r.id}`);
+      tx.patch(r.id, (p) => p.set({ sections }));
+    }
   }
 
   // Project order swaps (Home's latest work shows the first ones). Done once:

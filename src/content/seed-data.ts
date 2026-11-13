@@ -2076,8 +2076,24 @@ export const PAGES: Page[] = [
       {
         _type: "hero",
         _key: "hero",
-        heading: "The digital department for businesses that don’t have one.",
-        text: "Opsiogen is the outsourced digital department for growing businesses that don’t have one in-house. We use AI at every stage of our work, so we deliver in days what traditionally takes months.",
+        heading: "We are Opsiogen.",
+        text: "The digital department for businesses that don’t have one.",
+      },
+      {
+        _type: "shortText",
+        _key: "about",
+        label: "About us",
+        heading: "One partner. Every digital need.",
+        body: [
+          block(
+            "a1",
+            "Opsiogen is the outsourced digital department for growing businesses that don’t have one in-house.",
+          ),
+          block(
+            "a2",
+            "We design and build websites, products, marketing and automation. We use AI at every stage of our work, so we deliver in days what traditionally takes months.",
+          ),
+        ],
       },
       {
         _type: "promiseList",
@@ -2095,13 +2111,13 @@ export const PAGES: Page[] = [
         _type: "promiseList",
         _key: "serve",
         label: "Who we serve",
+        heading: "Any business. Any industry.",
         layout: "rows",
         items: [
-          "Manufacturers",
-          "Exporters",
-          "Healthcare providers",
-          "Service businesses",
+          "Businesses without a digital department",
           "Startups building their first product",
+          "Growing companies that need to move faster",
+          "Established brands ready for a refresh",
         ],
       },
       { _type: "callToAction", _key: "cta" },

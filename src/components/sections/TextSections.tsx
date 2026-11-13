@@ -1,8 +1,9 @@
 import { PortableText, type PortableTextComponents } from "next-sanity";
 import { Media } from "@/components/ui/Media";
-import { LIST_IMAGES } from "@/content/section-images";
+import { CARD_IMAGES, LIST_IMAGES } from "@/content/section-images";
 import type { PromiseListSection, ShortTextSection } from "@/lib/types";
 import { Label, SectionHeading } from "@/components/ui/Headings";
+import { cn } from "@/lib/utils";
 
 const components: PortableTextComponents = {
   block: {
@@ -17,7 +18,43 @@ const components: PortableTextComponents = {
   },
 };
 
+/** Text on the dark card: lighter, a little larger. */
+const cardText: PortableTextComponents = {
+  block: {
+    normal: ({ children }) => <p className="mt-[1em] text-lead text-white/75 first:mt-0">{children}</p>,
+  },
+  marks: {
+    strong: ({ children }) => <strong className="font-semibold text-white">{children}</strong>,
+  },
+};
+
 export function ShortText({ section }: { section: ShortTextSection }) {
+  const photo = CARD_IMAGES[section._key];
+  // With a photo: one big dark card, the photo beside the text (above it on phones).
+  if (photo) {
+    return (
+      <div className="px-gutter">
+        <div data-reveal className="on-dark grid overflow-hidden rounded-card bg-coal text-white lg:grid-cols-2">
+          <div className="relative aspect-[4/3] lg:aspect-auto lg:min-h-[clamp(460px,44vw,760px)]">
+            <Media image={photo} sizes="(min-width: 1024px) 50vw, 100vw" lowPriority />
+          </div>
+          <div className="flex flex-col justify-center p-[clamp(24px,calc(2.9vw+13px),80px)]">
+            {section.label && <p className="text-base text-white/55">{section.label}</p>}
+            {section.heading && (
+              <h2 className="mt-[clamp(12px,1.2vw,24px)] max-w-[13ch] text-[length:clamp(34px,calc(2.1vw+26px),68px)] leading-[1.03] font-semibold tracking-[-0.025em] text-balance">
+                {section.heading}
+              </h2>
+            )}
+            {section.body && section.body.length > 0 && (
+              <div className="mt-[clamp(20px,2vw,40px)] max-w-[44ch]">
+                <PortableText value={section.body} components={cardText} />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div>
       <SectionHeading label={section.label} heading={section.heading} className="mb-[clamp(32px,2.6vw,56px)]" />
@@ -70,22 +107,21 @@ export function PromiseList({ section }: { section: PromiseListSection }) {
   return (
     <div>
       {heading}
-      <ul className="grid gap-gap px-gutter md:grid-cols-2">
+      {/* Three or four in one row on desktop, two by two on tablets, one below the other on phones. */}
+      <ul className={cn("grid gap-gap px-gutter sm:grid-cols-2", items.length === 3 ? "lg:grid-cols-3" : "lg:grid-cols-4")}>
         {items.map((item, i) => (
-          <li
-            key={`${i}-${item}`}
-            data-reveal
-            className="flex min-h-[clamp(220px,calc(10.5vw+180px),380px)] flex-col justify-between overflow-hidden rounded-card bg-coal text-white"
-          >
+          <li key={`${i}-${item}`} data-reveal className="on-dark flex flex-col overflow-hidden rounded-card bg-coal text-white">
             {photos[i] && (
-              <div className="relative aspect-[16/9]">
-                <Media image={photos[i]} sizes="(min-width: 768px) 48vw, 100vw" lowPriority />
+              <div className="relative aspect-[4/3]">
+                <Media image={photos[i]} sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" lowPriority />
               </div>
             )}
-            <span className="px-[clamp(24px,calc(1.9vw+17px),58px)] pt-[clamp(24px,calc(1.9vw+17px),58px)] text-base text-white/55 tabular-nums">{String(i + 1).padStart(2, "0")}</span>
-            <p className="mt-10 max-w-[14ch] px-[clamp(24px,calc(1.9vw+17px),58px)] pb-[clamp(24px,calc(1.9vw+17px),58px)] text-[length:clamp(30px,calc(1.37vw+24.9px),51px)] font-semibold leading-[1.06] tracking-[-0.015em] text-balance">
-              {item}
-            </p>
+            <div className="flex grow flex-col p-[clamp(20px,calc(1vw+16px),36px)]">
+              <span className="text-base text-white/55 tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+              <p className="mt-auto pt-[clamp(28px,3vw,56px)] text-[length:clamp(24px,calc(0.7vw+20px),34px)] leading-[1.1] font-semibold tracking-[-0.015em] text-balance">
+                {item}
+              </p>
+            </div>
           </li>
         ))}
       </ul>
