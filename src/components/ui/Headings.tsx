@@ -112,8 +112,10 @@ export function GiantHeading({
         ) : (
           <Label className="mb-[clamp(20px,calc(2.29vw+11.4px),55px)]">{label}</Label>
         ))}
-      {/* Whole words only: words wrap between each other, never inside (see giantSize). */}
-      <Tag className={cn(size.className, "w-full font-bold uppercase text-balance")} style={size.style}>
+      {/* Whole words only: words wrap between each other, never inside (see giantSize).
+          Lines are balanced from tablets up; on phones they wrap plainly, because
+          iPhone Safari's balancing can break a short title into one word per line. */}
+      <Tag className={cn(size.className, "w-full font-bold uppercase sm:text-balance")} style={size.style}>
         {title}
       </Tag>
       {text && (
