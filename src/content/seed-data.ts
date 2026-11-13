@@ -942,7 +942,7 @@ type CaseDetails = {
  */
 const DESIGNED_CARDS: Record<string, string> = {
   "surgo-health": "Hands holding the Surgo Health index on a tablet, on a tomato red backdrop",
-  "care-connect": "Hands holding the Care Connect intake board on a tablet, on a sky blue backdrop",
+  "care-connect": "Hands holding a tablet with a Care Connect patient review: the patient, a fit score of 92 and a readmission risk gauge",
   "rxlive": "A hand holding the RxLive worklist on a phone, on a sage backdrop",
   "sifio-health": "The Sifio Health app on a phone standing on a stone block, on a sage backdrop",
   "meetingful": "The Meetingful dashboard on a laptop, on a butter yellow backdrop",
