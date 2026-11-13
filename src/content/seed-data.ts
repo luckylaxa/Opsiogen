@@ -91,15 +91,15 @@ const PRICING: Pair = [
 /** Colourful thumbnails for the service cards (public/services/<slug>/card.jpg). */
 const CARD_ALT: Record<string, string> = {
   "ai-websites": "A coffee exporter's website on a laptop, on a green armchair",
-  "ai-product-design": "A hand holding an iPhone with a savings app, in front of green plants",
-  "ai-mvps-business-apps": "A woman pinning notes to a wall of app sketches",
-  "ai-automation": "A person at a desk watching a workflow run on a laptop: new enquiry, quote sent, call booked",
-  "ai-social-media-marketing": "A hand holding an iPhone showing a bakery's social post",
+  "ai-product-design": "A tablet showing a design system: colours, type, buttons and two app screens, on a teal desk",
+  "ai-mvps-business-apps": "A phone with a savings app, leaning on a red velvet cushion",
+  "ai-automation": "A monitor showing a workflow: new enquiry, quote sent, call booked, against a plum wall",
+  "ai-social-media-marketing": "A phone with a bakery's social post, leaning on a brown corduroy sofa",
   "digital-marketing": "Three ads for an e-bike brand on a blue background",
-  "ai-creative-subscription": "A hand holding an iPhone with a yoga studio's ad: Slow down. Breathe out.",
+  "ai-creative-subscription": "A yoga studio's poster and a matching phone ad, on a tan leather sofa",
   "ai-print-collateral": "An open hotel brochure with a houseboat photo, on dark green fabric",
-  "ai-brand-services": "A bicycle brand's billboard on a grey stone wall",
-  "ai-video-production": "A laptop on a wooden desk showing a video edit: a prompt, the preview and a timeline with captions",
+  "ai-brand-services": "Business cards, a notebook and a swing tag for a cycle brand, on dark slate",
+  "ai-video-production": "A still from a food film: an ice cream cone tumbling through the air against a pink backdrop",
 };
 
 export const SERVICES: Service[] = [

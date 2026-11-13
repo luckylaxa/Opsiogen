@@ -10,7 +10,7 @@ const photo = (url: string, alt: string): Img => ({ url, width: 1600, height: 12
 /** The call to action banner: its subject sits on the right, text goes on the left. */
 export const CTA_IMAGES: Img[] = [
   {
-    url: "/cta/cta-banner.jpg",
+    url: "/cta/cta-banner-2.jpg",
     width: 2400,
     height: 1350,
     alt: "",
