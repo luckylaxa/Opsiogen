@@ -7,9 +7,9 @@ import { cn } from "@/lib/utils";
 
 /**
  * Shared call to action, edited once in Site settings: one wide photo banner.
- * The card takes the photo's own shape, so the whole picture shows. From 768px
- * the heading sits over the photo's plain left side under a dark shade; on
- * phones the photo sits on top, uncropped, with the heading below it.
+ * From 768px the photo fills a 21:10 card, trimmed a little at top and bottom,
+ * and the heading sits over its plain left side under a dark shade; on phones
+ * the photo sits on top, uncropped, with the heading below it.
  * - single: the call to action's button.
  * - dual: the same banner with a second button to Services.
  */
@@ -23,7 +23,7 @@ export async function CallToAction({ cta, variant = "single" }: { cta: SiteSetti
   }
   const image = CTA_IMAGES[0];
 
-  // The card takes the photo's own shape, so the whole picture shows, uncropped.
+  // Phones show the whole photo in its own shape; wider screens use a slightly shorter card.
   const ratio = image ? ({ "--cta-ratio": `${image.width} / ${image.height}` } as React.CSSProperties) : undefined;
 
   return (
@@ -34,7 +34,7 @@ export async function CallToAction({ cta, variant = "single" }: { cta: SiteSetti
         className={cn(
           "on-dark relative overflow-hidden rounded-card bg-coal text-white md:flex md:flex-col md:justify-center",
           image
-            ? "md:aspect-(--cta-ratio)"
+            ? "md:aspect-[21/10]"
             : "flex min-h-[clamp(520px,calc(14vw+460px),660px)] flex-col justify-end md:min-h-[clamp(420px,30vw,620px)]",
         )}
       >
