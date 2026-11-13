@@ -82,11 +82,11 @@
     --header-h: clamp(64px, calc(1.57vw + 58.1px), 88px);
     /*
      * "Fresh spectrum": the brightest highlights of the logo O in ring order.
-     * Hover states and the logo only, never a fill. The same on
+     * The logo only, never a fill and never a hover state. The same on
      * black and white; OKLCH interpolation where the browser supports it.
      */
     --gradient-brand: linear-gradient(120deg, #d8fa01 0%, #01f14c 14%, #00ecfd 29%, #01a5e2 43%, #9b1cf0 57%, #ff2a1a 71%, #fe9102 86%, #feb702 100%);
-    /* Hover on small text: the spectrum on dark grounds, Forest on light ones (see .link-accent). */
+    /* Hover on text: one colour. Forest on light grounds, Mint on dark ones (see .link-accent). */
     --gradient-hover: linear-gradient(#006e4e, #006e4e);
     --icon-hover: #006e4e;
   }
@@ -97,8 +97,8 @@
   }
   [data-theme="dark"],
   .on-dark {
-    --gradient-hover: var(--gradient-brand);
-    --icon-hover: url(#brand-gradient);
+    --gradient-hover: linear-gradient(#45e0a8, #45e0a8);
+    --icon-hover: #45e0a8;
   }
   .theme-light {
     --gradient-hover: linear-gradient(#006e4e, #006e4e);
@@ -234,16 +234,15 @@
   }
 
   /* Accent words and big numbers: plain ink (white on dark, black on light).
-     The spectrum stays in the logo and on hover only. */
+     The spectrum stays in the logo only. */
   .text-gradient {
     color: inherit;
   }
 
   /*
-   * Hover colour: links and menu items take --gradient-hover, the brand
-   * spectrum on dark grounds and Forest on light ones (the spectrum's pale
-   * stops can't carry small text on white); button labels always take the
-   * spectrum. Only the letters change, so underlines and icons keep their colour.
+   * Hover colour: links and menu items take one colour, Forest on light
+   * grounds and Mint on dark ones. Only the letters change, so underlines
+   * and icons keep their colour. Buttons change their fill instead.
    */
   .link-accent,
   .link-underline,
@@ -266,18 +265,7 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
-  /* Button labels take the full spectrum on hover in both themes, on any fill. */
-  .btn:hover .btn-label,
-  .btn:focus-visible .btn-label,
-  .group:hover .btn .btn-label,
-  .group:focus-visible .btn .btn-label {
-    background-image: var(--gradient-brand);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  /* Icon links (social): the line drawing takes the spectrum on dark grounds, Forest on light. */
+  /* Icon links (social): the line drawing takes Mint on dark grounds, Forest on light. */
   .icon-grad:hover svg,
   .icon-grad:focus-visible svg {
     stroke: var(--icon-hover);
