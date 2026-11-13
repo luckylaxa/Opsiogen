@@ -14,7 +14,7 @@ export const CTA_IMAGES: Img[] = [
     width: 1670,
     height: 942,
     alt: "",
-    hotspot: { x: 0.74, y: 0.3 },
+    hotspot: { x: 0.74, y: 0.12 },
   },
 ];
 
