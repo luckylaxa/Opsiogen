@@ -113,6 +113,7 @@ export const PROJECT_QUERY = defineQuery(`*[_type == "project" && slug.current =
     "lqip": asset->metadata.lqip,
     alt,
     caption,
+    heading,
     "hotspot": hotspot{x, y},
     "phone": phone{
       "url": asset->url,

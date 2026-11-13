@@ -444,7 +444,7 @@ async function run() {
       flowRefs: (string | null)[] | null;
     }[]
   >(
-    `*[_type == "project" && _id in $ids]{ _id, summary, tagline, "services": services[]->slug.current, "storyCount": count(story), "files": gallery[].asset->originalFilename, "images": gallery[]{ "ref": asset._ref, "x": hotspot.x, "y": hotspot.y, "phone": phone.asset._ref }, "coverRef": cover.asset._ref, "coverFile": cover.asset->originalFilename, "cardRef": cardImage.asset._ref, "cardFile": cardImage.asset->originalFilename, "flowFile": flow.video.asset->originalFilename, "flowRefs": [flow.video.asset._ref, flow.videoWebm.asset._ref, flow.phone.asset._ref, flow.phoneWebm.asset._ref, flow.poster.asset._ref, flow.posterPhone.asset._ref] }`,
+    `*[_type == "project" && _id in $ids]{ _id, summary, tagline, "services": services[]->slug.current, "storyCount": count(story), "files": gallery[].asset->originalFilename, "images": gallery[]{ "ref": asset._ref, "x": hotspot.x, "y": hotspot.y, "phone": phone.asset._ref, heading }, "coverRef": cover.asset._ref, "coverFile": cover.asset->originalFilename, "cardRef": cardImage.asset._ref, "cardFile": cardImage.asset->originalFilename, "flowFile": flow.video.asset->originalFilename, "flowRefs": [flow.video.asset._ref, flow.videoWebm.asset._ref, flow.phone.asset._ref, flow.phoneWebm.asset._ref, flow.poster.asset._ref, flow.posterPhone.asset._ref] }`,
     { ids: PROJECTS.map((p) => p._id) },
   );
   for (const p of PROJECTS) {
@@ -475,7 +475,7 @@ async function run() {
       const phone = g.phone?.url
         ? { phone: { _type: "image", asset: { _type: "reference", _ref: await upload("image", g.phone.url) } } }
         : {};
-      gallery.push({ _key: g._key, ...(await image(g.url, g.alt, { size: g.size, ...hotspot, ...phone })) });
+      gallery.push({ _key: g._key, ...(await image(g.url, g.alt, { size: g.size, ...hotspot, ...phone })), ...(g.heading ? { heading: g.heading } : {}) });
     }
     const services = p.services.map((s) => ({
       _type: "reference",
@@ -517,17 +517,19 @@ async function run() {
     const files = existing.files ?? [];
     // Same files, focal points and phone versions (asset ids follow the file's
     // content) mean nothing to do. Compared as tuples: the API may return keys in any order.
-    const tuple = (i: { ref: string | null; x: number | null; y: number | null; phone?: string | null }) => [
+    const tuple = (i: { ref: string | null; x: number | null; y: number | null; phone?: string | null; heading?: string | null }) => [
       i.ref,
       i.x ?? null,
       i.y ?? null,
       i.phone ?? null,
+      i.heading ?? null,
     ];
     const images = gallery.map((g, i) => ({
       ref: g.asset._ref,
       x: p.gallery[i].hotspot?.x ?? null,
       y: p.gallery[i].hotspot?.y ?? null,
       phone: (g as { phone?: { asset: { _ref: string } } }).phone?.asset._ref ?? null,
+      heading: p.gallery[i].heading ?? null,
     }));
     if (
       gallery.length &&

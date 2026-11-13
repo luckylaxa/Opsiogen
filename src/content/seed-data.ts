@@ -1139,7 +1139,7 @@ function makeProject(order: number, p: ProjectInput): Project {
     story: (STORIES[p.slug] ?? []).map(([title, text], i) => ({ _key: `s${i + 1}`, title, text })),
     result: null,
     liveUrl: p.liveUrl ?? null,
-    gallery: GALLERIES[p.slug] ?? SAMPLE_GALLERY,
+    gallery: arrange(p.slug, GALLERIES[p.slug] ?? SAMPLE_GALLERY).map((g) => ({ ...g, heading: GROUP_HEADINGS[g._key] ?? null })),
     flow: FLOWS.includes(p.slug)
       ? {
           heading: FLOW_HEADINGS[p.slug] ?? null,
@@ -1260,6 +1260,24 @@ const workGallery = (
   })),
   ];
 };
+
+/** Headings that start a new group of work, by the key of the group's first image. */
+const GROUP_HEADINGS: Record<string, string> = {
+  "cabot-1": "Website",
+  "cabotbrand-1": "Brand",
+  "sifio-1": "Web app",
+  "sifioweb-hero": "Website",
+};
+
+/** How many images from the end of a gallery move up to follow the first one. */
+const LEAD_WITH_LAST: Record<string, number> = { "rohde-schwarz": 5 };
+
+function arrange<T>(slug: string, gallery: T[]): T[] {
+  const n = LEAD_WITH_LAST[slug];
+  if (!n || gallery.length <= n + 1) return gallery;
+  const [first, ...rest] = gallery;
+  return [first, ...rest.slice(-n), ...rest.slice(0, -n)];
+}
 
 /** Projects with their real work; the rest show the shared samples. */
 const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {

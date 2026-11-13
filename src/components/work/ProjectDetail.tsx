@@ -235,7 +235,8 @@ export function ProjectDetail({
              image spans the row at 16:9 from tablets up, and an uncropped one at
              its own proportions. An image with a phone version shows that one,
              square, on phones and itself full width from tablets up, and the
-             story's short blocks sit between them there, one after every four or five. */}
+             story's short blocks sit between them, one after every four or five. An image
+             with a heading starts a new group under that heading. */}
       {rest.length > 0 && (
         <section id={`gallery-${inModal ? "pop" : "page"}-${project.slug}`} className="mt-section">
           <div className="mb-[clamp(24px,2.4vw,48px)] grid gap-y-3 px-gutter md:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] md:gap-x-gap">
@@ -252,6 +253,13 @@ export function ProjectDetail({
               const block = wide && (i + 1) % every === 0 && i + 1 < rest.length ? project.story[(i + 1) / every - 1] : undefined;
               return (
                 <Fragment key={img._key}>
+                  {img.heading && (
+                    <li className="col-span-2 pt-[clamp(28px,3.4vw,72px)] first:pt-0">
+                      <BlockHeading className="text-[length:clamp(26px,calc(1.2vw+21.4px),48px)] font-medium leading-[1.1] tracking-[-0.02em]">
+                        {img.heading}
+                      </BlockHeading>
+                    </li>
+                  )}
               <li className={img.size === "half" && !wide ? "col-span-2 md:col-span-1" : "col-span-2"}>
                 <figure
                   className={cn(
@@ -283,7 +291,7 @@ export function ProjectDetail({
                 </figure>
               </li>
                   {block && (
-                    <li data-reveal className="col-span-2 hidden py-[clamp(40px,4vw,80px)] md:grid md:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] md:gap-x-gap">
+                    <li data-reveal className="col-span-2 grid gap-y-3 py-[clamp(28px,4vw,80px)] md:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] md:gap-x-gap">
                       <BlockHeading className="text-small text-mute">{block.title}</BlockHeading>
                       <p className="max-w-[40ch] text-[length:clamp(22px,calc(0.84vw+18.8px),36px)] leading-[1.25] tracking-[-0.015em] text-pretty">
                         {block.text}

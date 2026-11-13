@@ -89,6 +89,8 @@ export type GalleryItem = Img & {
   _key: string;
   size: "full" | "half" | "original";
   caption?: string | null;
+  /** Shown above the image, to start a new group of work. */
+  heading?: string | null;
   phone?: Omit<Img, "alt" | "hotspot"> | null;
 };
 

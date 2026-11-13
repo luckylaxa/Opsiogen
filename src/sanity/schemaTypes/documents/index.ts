@@ -415,6 +415,12 @@ export const project = defineType({
             altField,
             defineField({ name: "caption", type: "string", description: "Optional, shown under the image.", validation: (rule) => rule.max(80) }),
             defineField({
+              name: "heading",
+              type: "string",
+              description: "Optional. A heading shown above this image, to start a new group (for example Website, then Brand).",
+              validation: (rule) => rule.max(40),
+            }),
+            defineField({
               name: "size",
               type: "string",
               options: {
