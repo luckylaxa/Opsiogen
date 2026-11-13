@@ -1849,6 +1849,7 @@ const CASE_STUDIES: ProjectInput[] = [
     services: ["ai-websites"],
     summary:
       "In luxury real estate, a strong identity builds trust with high-value buyers. We created a refined branding and illustration system for Engel & Völkers, used across its website and marketing.",
+    liveUrl: "https://www.engelvoelkers.com/",
   },
   {
     name: "Sifio Health",

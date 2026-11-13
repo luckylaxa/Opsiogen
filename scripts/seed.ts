@@ -518,7 +518,7 @@ async function run() {
         gallery,
       },
       OVERWRITE,
-      ["cardImage", "industry", "year", "location", "tagline", "stats", "flow"],
+      ["cardImage", "industry", "year", "location", "tagline", "stats", "flow", "liveUrl"],
     );
 
     // Add mode: give projects their work mockups and case studies their new
