@@ -96,7 +96,7 @@ const CARD_ALT: Record<string, string> = {
   "ai-automation": "Three steps of an automated workflow: new enquiry, quote sent, call booked",
   "ai-social-media-marketing": "A hand holding an iPhone showing a bakery's social post",
   "digital-marketing": "Three ads for an e-bike brand on a blue background",
-  "ai-creative-subscription": "A yoga studio's brochure and a matching phone ad, on an orange leather sofa",
+  "ai-creative-subscription": "A hand holding an iPhone with a yoga studio's ad: Slow down. Breathe out.",
   "ai-print-collateral": "An open hotel brochure with a houseboat photo, on dark green fabric",
   "ai-brand-services": "A bicycle brand's billboard on a grey stone wall",
   "ai-video-production": "A camera operator filming on a dark set",
