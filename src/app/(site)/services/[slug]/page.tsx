@@ -263,7 +263,7 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
 
       {/* 10. Call to action */}
       <Block>
-        <CallToAction cta={settings.cta} />
+        <CallToAction cta={settings.cta} photo={1} />
       </Block>
     </>
   );

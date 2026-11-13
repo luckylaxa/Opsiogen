@@ -42,7 +42,7 @@ export default async function ProjectPopup({ params }: { params: Promise<{ slug:
     >
       <ProjectDetail project={project} more={more} inModal titleId={titleId} />
       <Block>
-        <CallToAction cta={settings.cta} />
+        <CallToAction cta={settings.cta} photo={1} />
       </Block>
     </ProjectModal>
   );

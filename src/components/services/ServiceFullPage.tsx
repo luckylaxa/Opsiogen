@@ -211,7 +211,7 @@ export function ServiceFullPage({ service, settings, work, process }: Props) {
 
       {/* 9. Call to action */}
       <Block>
-        <CallToAction cta={settings.cta} />
+        <CallToAction cta={settings.cta} photo={1} />
       </Block>
     </>
   );

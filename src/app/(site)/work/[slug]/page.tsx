@@ -58,7 +58,7 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
       />
       <ProjectDetail project={project} more={more} />
       <Block>
-        <CallToAction cta={settings.cta} />
+        <CallToAction cta={settings.cta} photo={1} />
       </Block>
     </>
   );

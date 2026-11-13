@@ -13,7 +13,16 @@ import { cn } from "@/lib/utils";
  * - single: the call to action's button.
  * - dual: the same banner with a second button to Services.
  */
-export async function CallToAction({ cta, variant = "single" }: { cta: SiteSettings["cta"]; variant?: "single" | "dual" }) {
+export async function CallToAction({
+  cta,
+  variant = "single",
+  photo = 0,
+}: {
+  cta: SiteSettings["cta"];
+  variant?: "single" | "dual";
+  /** Which banner photo: 0 on the main pages, 1 on service and case study pages. */
+  photo?: 0 | 1;
+}) {
   let second: { label: string; href: string } | null = null;
   if (variant === "dual") {
     const [settings, servicesPage] = await Promise.all([getSettings(), getPage("services")]);
@@ -21,7 +30,7 @@ export async function CallToAction({ cta, variant = "single" }: { cta: SiteSetti
     const servicesHero = servicesPage?.sections.find((s): s is HeroSection => s._type === "hero");
     if (servicesLink && servicesHero) second = { label: servicesLink.label, href: servicesLink.href };
   }
-  const image = CTA_IMAGES[0];
+  const image = CTA_IMAGES[photo] ?? CTA_IMAGES[0];
 
   // Phones show the whole photo in its own shape; wider screens use a slightly shorter card.
   const ratio = image ? ({ "--cta-ratio": `${image.width} / ${image.height}` } as React.CSSProperties) : undefined;
