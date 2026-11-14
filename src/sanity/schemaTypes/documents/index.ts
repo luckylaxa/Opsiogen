@@ -162,6 +162,11 @@ export const service = defineType({
       group: "content",
       description: "Optional wide image at the top of the service page, 2:1 with the mockups in the middle. Uses the card thumbnail when empty.",
     },
+    {
+      ...imageField("pageImagePhone", "Page top image on phones"),
+      group: "content",
+      description: "Optional 4:3 version of the page top image for phones, so the mockups stay big. Uses the page top image when empty.",
+    },
     defineField({
       name: "shortName",
       title: "Short filter name",

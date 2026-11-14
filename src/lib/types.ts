@@ -56,6 +56,8 @@ export type Service = ServiceRef & ServicePage & {
   card?: Img | null;
   /** A wide 2:1 image for the top of the service page, mockups centred; the card is used when there is none. */
   pageImage?: Img | null;
+  /** A 4:3 version of the page top image for phones. */
+  pageImagePhone?: Img | null;
   tagline: string;
   description: string;
   included: string[];

@@ -143,6 +143,7 @@ const SERVICE = `{
   hero{ "image": image${IMG} },
   "card": card${IMG},
   "pageImage": pageImage${IMG},
+  "pageImagePhone": pageImagePhone${IMG},
   clientsLabel,
   why{ label, heading, accent },
   stats{ label, "items": coalesce(items[]{ _key, value, label }, []) },

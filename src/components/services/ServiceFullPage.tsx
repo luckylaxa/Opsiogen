@@ -67,6 +67,8 @@ export function ServiceFullPage({ service, settings, work, process }: Props) {
                   ? { ...service.pageImage, hotspot: service.pageImage.hotspot ?? { x: 0.5, y: 0.5 } }
                   : { ...service.card, hotspot: service.card.hotspot ?? { x: 0.7, y: 0.72 } }
               }
+              phone={service.pageImage?.url ? service.pageImagePhone : null}
+              phoneBelow={768}
               priority
               sizes="100vw"
             />

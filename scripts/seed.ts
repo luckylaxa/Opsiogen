@@ -60,6 +60,7 @@ const STARTER_SHARE_FILE = "share-default.jpg";
 const SERVICE_FILL_IN = [
   "card",
   "pageImage",
+  "pageImagePhone",
   "statement",
   "benefits",
   "offerings",
@@ -334,9 +335,11 @@ async function run() {
       cardFile: string | null;
       pageRef: string | null;
       pageFile: string | null;
+      phoneRef: string | null;
+      phoneFile: string | null;
     }[]
   >(
-    `*[_type == "service" && _id in $ids]{ _id, tagline, description, included, "offerings": offerings[]{ _key, title, text, "file": image.asset->originalFilename, "ref": image.asset._ref }, "faqKeys": faqs[]._key, "cardRef": card.asset._ref, "cardFile": card.asset->originalFilename, "pageRef": pageImage.asset._ref, "pageFile": pageImage.asset->originalFilename }`,
+    `*[_type == "service" && _id in $ids]{ _id, tagline, description, included, "offerings": offerings[]{ _key, title, text, "file": image.asset->originalFilename, "ref": image.asset._ref }, "faqKeys": faqs[]._key, "cardRef": card.asset._ref, "cardFile": card.asset->originalFilename, "pageRef": pageImage.asset._ref, "pageFile": pageImage.asset->originalFilename, "phoneRef": pageImagePhone.asset._ref, "phoneFile": pageImagePhone.asset->originalFilename }`,
     { ids: SERVICES.map((s) => s._id) },
   );
   for (const s of SERVICES) {
@@ -348,6 +351,7 @@ async function run() {
     const pageFields = await servicePageFields(s);
     const card = s.card?.url ? await image(s.card.url, s.card.alt) : undefined;
     const pageImage = s.pageImage?.url ? await image(s.pageImage.url, s.pageImage.alt) : undefined;
+    const pageImagePhone = s.pageImagePhone?.url ? await image(s.pageImagePhone.url, s.pageImagePhone.alt) : undefined;
     put(
       tx,
       {
@@ -374,6 +378,7 @@ async function run() {
         faqs: s.faqs.map((f) => ({ _type: "faq", _key: f._key ?? key(f.question), question: f.question, answer: f.answer })),
         ...(card ? { card } : {}),
         ...(pageImage ? { pageImage } : {}),
+        ...(pageImagePhone ? { pageImagePhone } : {}),
         ...pageFields,
       },
       OVERWRITE,
@@ -392,6 +397,10 @@ async function run() {
     if (pageImage && existing.pageFile === path.basename(s.pageImage!.url) && existing.pageRef !== pageImage.asset._ref) {
       console.log(`  updating ${s._id}: page image`);
       tx.patch(s._id, (p) => p.set({ pageImage }));
+    }
+    if (pageImagePhone && existing.phoneFile === path.basename(s.pageImagePhone!.url) && existing.phoneRef !== pageImagePhone.asset._ref) {
+      console.log(`  updating ${s._id}: page image on phones`);
+      tx.patch(s._id, (p) => p.set({ pageImagePhone }));
     }
     const rewrite = REWRITTEN[s._id];
     if (rewrite) {
