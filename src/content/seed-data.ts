@@ -90,7 +90,7 @@ const PRICING: Pair = [
 
 /** Colourful thumbnails for the service cards (public/services/<slug>/card.jpg). */
 const CARD_ALT: Record<string, string> = {
-  "ai-websites": "An estate agency's home page in a browser window and on a phone: Find the home that fits your life, over a blurred photo of a house at dusk",
+  "ai-websites": "A laptop in a deep blue studio showing an estate agency's home page: Find the home that fits your life, over a modern house at dusk",
   "ai-product-design": "A tablet showing a design system: colours, type, buttons and two app screens, on a teal desk",
   "ai-mvps-business-apps": "A phone with a savings app, leaning on a red velvet cushion",
   "ai-automation": "A monitor showing a workflow: new enquiry, quote sent, call booked, against a plum wall",
