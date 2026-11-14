@@ -387,6 +387,8 @@ export const SERVICES: Service[] = [
     name: "AI Automation",
     slug: "ai-automation",
     card: img(`/services/ai-automation/card.jpg`, 1600, 1200, CARD_ALT["ai-automation"]),
+    pageImage: img(`/services/ai-automation/page.jpg`, 2400, 1200, "A phone with a request to approve, in front of an enquiry workflow, a card saying 27 hours a week go on work a computer could do, and a Monday report schedule"),
+    pageImagePhone: img(`/services/ai-automation/page-phone.jpg`, 1600, 1200, "A phone with a request to approve, in front of an enquiry workflow, a card saying 27 hours a week go on work a computer could do, and a Monday report schedule"),
     shortName: "Automation",
     group: "build",
     order: 4,
@@ -411,12 +413,12 @@ export const SERVICES: Service[] = [
       ["Looked after", "A monthly care plan keeps every automation running and improving."],
     ]),
     offerings: cards("ai-automation", [
-      ["Process audit", "We map how work gets done and find the tasks worth automating first.", "tile-audit.jpg", "An automation audit on a tablet: five repeat tasks with the hours each could save"],
-      ["Lead and enquiry automation", "Every enquiry captured, sorted and followed up without manual work.", "tile-leads.jpg", "A desktop screen showing a workflow that scores each new enquiry and follows it up"],
-      ["Internal dashboards", "Dashboards and reports that update themselves from the tools you use.", "tile-dashboards.jpg", "A weekly report on a laptop, built and sent automatically, with sales by week"],
-      ["Document and data extraction", "Data pulled from forms, invoices and PDFs into your systems.", "tile-documents.jpg", "A laptop showing a scanned invoice and the fields read from it, ready to file"],
-      ["AI chatbots and voice assistants", "Assistants that answer questions and handle routine requests by chat or voice.", "tile-assistants.jpg", "A tablet showing a staff assistant answering a holiday question from the company handbook"],
-      ["Reports, proposals and approvals", "Documents drafted and approvals routed automatically.", "tile-approvals.jpg", "A phone lock screen with a request to approve a purchase, and Approve and Decline buttons"],
+      ["Process audit", "We map how work gets done and find the tasks worth automating first.", "tile-audit.jpg", "An automation audit pulled apart: 27 hours a week of computer work, 22.5 hours that can be given back, and the tasks ranked by hours saved"],
+      ["Lead and enquiry automation", "Every enquiry captured, sorted and followed up without manual work.", "tile-leads.jpg", "Steps of an enquiry workflow, from a new website enquiry to telling sales in chat and offering three call times, on green"],
+      ["Internal dashboards", "Dashboards and reports that update themselves from the tools you use.", "tile-dashboards.jpg", "A weekly sales chart, £48,200 in sales last week and a card that says the report is sent every Monday at 8:00, on amber"],
+      ["Document and data extraction", "Data pulled from forms, invoices and PDFs into your systems.", "tile-documents.jpg", "A scanned invoice with its fields highlighted, beside a panel of what was read from it and a Looks right, file it button"],
+      ["AI chatbots and voice assistants", "Assistants that answer questions and handle routine requests by chat or voice.", "tile-assistants.jpg", "A staff assistant chat: how many holiday days can I carry over, the answer from the handbook, and who approves it, on pink"],
+      ["Reports, proposals and approvals", "Documents drafted and approvals routed automatically.", "tile-approvals.jpg", "A phone lock screen asking to approve £4,800 for four laptops, beside the request and its approval steps"],
     ]),
     faqs: faqs([
       [
