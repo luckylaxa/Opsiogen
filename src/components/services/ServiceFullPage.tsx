@@ -61,7 +61,15 @@ export function ServiceFullPage({ service, settings, work, process }: Props) {
         {service.card?.url ? (
           // The service's own thumbnail, as on the Services page: 4:3 on phones, wider from tablets up.
           <div className="relative mx-edge mt-[clamp(48px,calc(2.88vw+37.2px),92px)] aspect-[4/3] overflow-hidden rounded-card bg-night md:aspect-[2/1]">
-            <Media image={{ ...service.card, hotspot: service.card.hotspot ?? { x: 0.7, y: 0.72 } }} priority sizes="100vw" />
+            <Media
+              image={
+                service.pageImage?.url
+                  ? { ...service.pageImage, hotspot: service.pageImage.hotspot ?? { x: 0.5, y: 0.5 } }
+                  : { ...service.card, hotspot: service.card.hotspot ?? { x: 0.7, y: 0.72 } }
+              }
+              priority
+              sizes="100vw"
+            />
           </div>
         ) : (
           service.hero?.image?.url && (

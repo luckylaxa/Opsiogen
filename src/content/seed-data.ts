@@ -108,6 +108,7 @@ export const SERVICES: Service[] = [
     name: "AI Websites & Revamps",
     slug: "ai-websites",
     card: img(`/services/ai-websites/card.jpg`, 1600, 1200, CARD_ALT["ai-websites"]),
+    pageImage: img(`/services/ai-websites/page.jpg`, 2400, 1200, "An estate agency's home page in a browser window and on a phone: Find the home that fits your life, on gold"),
     shortName: "Websites",
     group: "build",
     order: 1,

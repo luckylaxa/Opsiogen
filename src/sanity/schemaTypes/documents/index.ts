@@ -157,6 +157,11 @@ export const service = defineType({
       group: "content",
       description: "A colourful thumbnail for the service cards on Home and Services. 4:3. Uses the page's hero image when empty.",
     },
+    {
+      ...imageField("pageImage", "Page top image"),
+      group: "content",
+      description: "Optional wide image at the top of the service page, 2:1 with the mockups in the middle. Uses the card thumbnail when empty.",
+    },
     defineField({
       name: "shortName",
       title: "Short filter name",

@@ -54,6 +54,8 @@ export type Service = ServiceRef & ServicePage & {
   order: number;
   /** A colourful thumbnail for service cards; the hero image is used when there is none. */
   card?: Img | null;
+  /** A wide 2:1 image for the top of the service page, mockups centred; the card is used when there is none. */
+  pageImage?: Img | null;
   tagline: string;
   description: string;
   included: string[];
