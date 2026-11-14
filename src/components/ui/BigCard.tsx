@@ -75,10 +75,10 @@ export function BigCard({
             priority={priority}
             className="transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-[1.04]"
           />
-          {/* A light shade at the top only, under the text. */}
+          {/* A light shade at the top only, under the text, so bright card colours stay bright. */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgb(0_0_0/0.62)_0%,rgb(0_0_0/0.34)_26%,rgb(0_0_0/0)_52%)]"
+            className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgb(0_0_0/0.46)_0%,rgb(0_0_0/0.2)_24%,rgb(0_0_0/0)_46%)]"
           />
         </>
       )}
