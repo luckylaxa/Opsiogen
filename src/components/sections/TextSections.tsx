@@ -29,16 +29,26 @@ const cardText: PortableTextComponents = {
 };
 
 export function ShortText({ section }: { section: ShortTextSection }) {
-  const photo = CARD_IMAGES[section._key];
-  // With a photo: one big dark card, the photo beside the text (above it on phones).
-  if (photo) {
+  const photos = CARD_IMAGES[section._key] ?? [];
+  // With photos: a photo card each, side by side, and the text on its own dark card (below them on phones).
+  if (photos.length > 0) {
     return (
       <div className="px-gutter">
-        <div data-reveal className="on-dark grid overflow-hidden rounded-card bg-coal text-white lg:grid-cols-2">
-          <div className="relative aspect-[4/3] lg:aspect-auto lg:min-h-[clamp(460px,44vw,760px)]">
-            <Media image={photo} sizes="(min-width: 1024px) 50vw, 100vw" lowPriority />
+        <div data-reveal className="grid gap-gap lg:grid-cols-2">
+          <div className={cn("grid gap-gap", photos.length > 1 ? "grid-cols-2" : "grid-cols-1")}>
+            {photos.map((photo) => (
+              <div
+                key={photo.url}
+                className={cn(
+                  "relative overflow-hidden rounded-card bg-coal lg:aspect-auto lg:min-h-[clamp(460px,44vw,760px)]",
+                  photos.length > 1 ? "aspect-[3/4]" : "aspect-[4/3]",
+                )}
+              >
+                <Media image={photo} sizes={photos.length > 1 ? "(min-width: 1024px) 25vw, 50vw" : "(min-width: 1024px) 50vw, 100vw"} lowPriority />
+              </div>
+            ))}
           </div>
-          <div className="flex flex-col justify-center p-[clamp(24px,calc(2.9vw+13px),80px)]">
+          <div className="on-dark flex flex-col justify-center rounded-card bg-coal p-[clamp(24px,calc(2.9vw+13px),80px)] text-white">
             {section.label && <p className="text-base text-white/55">{section.label}</p>}
             {section.heading && (
               <h2 className="mt-[clamp(12px,1.2vw,24px)] max-w-[13ch] text-[length:clamp(34px,calc(2.1vw+26px),68px)] leading-[1.03] font-semibold tracking-[-0.025em] text-balance">

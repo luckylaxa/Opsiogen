@@ -1914,7 +1914,7 @@ const CASE_STUDIES: ProjectInput[] = [
     industry: "Luxury lifestyle",
     services: ["ai-websites"],
     summary:
-      "Carlton Noble is a luxury lifestyle brand for curated travel, bespoke events and high-end hospitality. We designed a website as refined as the experiences it offers.",
+      "Carlton Noble is a luxury lifestyle brand for curated travel, bespoke events and high-end hospitality. We designed a website as refined as the experiences it offers.",    liveUrl: "https://www.carltonnoble.com/",
   },
 ];
 

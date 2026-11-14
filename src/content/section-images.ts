@@ -41,9 +41,15 @@ export const LIST_IMAGES: Record<string, Img[]> = {
   ],
 };
 
-/** A text section shown as a big card with a photo, by section key (About us on the About page). */
-export const CARD_IMAGES: Record<string, Img> = {
-  about: { url: "/about/studio.jpg", width: 1600, height: 1600, alt: "A studio lounge with a green sofa, a laptop and coffee on the table" },
+/**
+ * A text section shown as cards: its photos side by side, then the text (About us on the About page).
+ * The About photos are the two call to action photos, each framed on its person.
+ */
+export const CARD_IMAGES: Record<string, Img[]> = {
+  about: [
+    { ...CTA_IMAGES[0], alt: "A man in a black jacket and sunglasses on a green sofa, against a warm wood wall", hotspot: { x: 0.84, y: 0.3 } },
+    { ...CTA_IMAGES[1], alt: "A man in a cream knitted shirt beside a green armchair, against a warm wood wall", hotspot: { x: 0.9, y: 0.2 } },
+  ],
 };
 
 /**
