@@ -135,7 +135,7 @@ export const SERVICES: Service[] = [
         _key: "o1",
         title: "New websites",
         text: "Designed around your offer and built to turn visits into enquiries.",
-        image: img(`${WEB}/tile-new.jpg`, 1600, 1200, "A laptop on a wooden table between two plants, showing a villa rental home page: The art of arriving, over an infinity pool at sunset"),
+        image: img(`${WEB}/tile-new.jpg`, 1600, 1200, "A laptop in a dark studio, its screen lit with a villa rental home page: The art of arriving, over an infinity pool at sunset"),
       },
       {
         _key: "o2",
