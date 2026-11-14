@@ -308,6 +308,8 @@ export const SERVICES: Service[] = [
     name: "AI MVPs & Business Apps",
     slug: "ai-mvps-business-apps",
     card: img(`/services/ai-mvps-business-apps/card.jpg`, 1600, 1200, CARD_ALT["ai-mvps-business-apps"]),
+    pageImage: img(`/services/ai-mvps-business-apps/page.jpg`, 2400, 1200, "An ordering app on a phone surrounded by its other screens: the next delivery, 184 orders today, a ready order and a booked delivery slot, on coral"),
+    pageImagePhone: img(`/services/ai-mvps-business-apps/page-phone.jpg`, 1600, 1200, "An ordering app on a phone surrounded by its other screens: the next delivery, 184 orders today, a ready order and a booked delivery slot, on coral"),
     shortName: "MVPs & Apps",
     group: "build",
     order: 3,
@@ -331,12 +333,12 @@ export const SERVICES: Service[] = [
       ["Yours to keep", "You own everything we build."],
     ]),
     offerings: cards("ai-mvps-business-apps", [
-      ["MVPs and prototypes", "A working first version to test with users and investors.", "tile-mvp.jpg", "A wholesale ordering app on a phone: Thursday's order with five products and a Review order button"],
-      ["AI-powered features", "Smart search, chat, summaries and forms built into your product.", "tile-ai.jpg", "A phone showing an order assistant that turns one sentence into a full order to confirm"],
-      ["Customer and partner portals", "One place for customers and partners to log in, track and get things done.", "tile-portal.jpg", "A customer portal on a laptop: the next delivery, an invoice to pay and recent orders"],
-      ["Dashboards", "Live views of the numbers that matter, in one place.", "tile-dashboard.jpg", "An operations dashboard on a desktop screen: today's orders, revenue, routes and orders by hour"],
-      ["Booking and intake systems", "Online booking and intake that feed straight into your workflow.", "tile-booking.jpg", "A delivery booking screen on a tablet: a month calendar and two-hour time slots"],
-      ["Internal tools and trackers", "Simple tools that replace spreadsheets and manual work.", "tile-internal.jpg", "A warehouse picking screen on a laptop: an order's items being ticked off, five of nine picked"],
+      ["MVPs and prototypes", "A working first version to test with users and investors.", "tile-mvp.jpg", "A wholesale ordering app on a phone beside the first-release plan, Reorder your usuals to Order confirmation, and an eight-week timeline, on coral"],
+      ["AI-powered features", "Smart search, chat, summaries and forms built into your product.", "tile-ai.jpg", "A chat with an order assistant: Same as last Thursday, but double the oat milk and no eggs, answered with a ready order to confirm, on purple"],
+      ["Customer and partner portals", "One place for customers and partners to log in, track and get things done.", "tile-portal.jpg", "Three customer portal cards pulled apart: the next delivery, an invoice for £482.60 with a Pay now button under the cursor, and this month’s spend, on teal"],
+      ["Dashboards", "Live views of the numbers that matter, in one place.", "tile-dashboard.jpg", "An orders-by-hour chart with the busiest hour in coral, and a card showing 184 orders today, on dark slate"],
+      ["Booking and intake systems", "Online booking and intake that feed straight into your workflow.", "tile-booking.jpg", "A delivery calendar with the 15th chosen, and a dark card for Wed 15 April, 8:00 to 10:00 am with a Confirm slot button, on amber"],
+      ["Internal tools and trackers", "Simple tools that replace spreadsheets and manual work.", "tile-internal.jpg", "A tilted tablet showing a warehouse picking list, three of the items ticked off, on green"],
     ]),
     faqs: faqs([
       [
