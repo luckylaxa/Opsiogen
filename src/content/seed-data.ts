@@ -135,7 +135,7 @@ export const SERVICES: Service[] = [
         _key: "o1",
         title: "New websites",
         text: "Designed around your offer and built to turn visits into enquiries.",
-        image: img(`${WEB}/tile-new.jpg`, 1600, 1200, "A villa rental home page in a browser window on teal: The art of arriving, with a card for Villa Ora, Positano and a cursor on Book this villa"),
+        image: img(`${WEB}/tile-new.jpg`, 1600, 1200, "A laptop in a dark studio, its screen lit with a villa rental home page: The art of arriving, over an infinity pool at sunset"),
       },
       {
         _key: "o2",
@@ -147,7 +147,7 @@ export const SERVICES: Service[] = [
         _key: "o3",
         title: "Landing pages",
         text: "Focused pages for campaigns, launches and lead generation.",
-        image: img(`${WEB}/tile-landing.jpg`, 1600, 1200, "A phone tilted on ochre, showing a skincare landing page: a serum bottle and the line Glow, bottled, with a note saying Added to bag"),
+        image: img(`${WEB}/tile-landing.jpg`, 1600, 1200, "A hand holding a phone with a skincare landing page: a serum bottle, the line Glow, bottled, and an Add to bag button"),
       },
       {
         _key: "o4",
@@ -159,7 +159,7 @@ export const SERVICES: Service[] = [
         _key: "o5",
         title: "Corporate and portfolio sites",
         text: "A clear, credible home for your business and your work.",
-        image: img(`${WEB}/tile-corporate.jpg`, 1600, 1200, "An architecture studio's website in a browser window on slate grey: Buildings that belong, with a project card for Hallam Arts Centre and a cursor on Start a project"),
+        image: img(`${WEB}/tile-corporate.jpg`, 1600, 1200, "A hand holding up a tablet with an architecture studio's website: Buildings that belong, above a photo of a concrete arts centre"),
       },
       {
         _key: "o6",
