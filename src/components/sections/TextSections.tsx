@@ -44,7 +44,7 @@ export function ShortText({ section }: { section: ShortTextSection }) {
                   photos.length > 1 ? "aspect-[3/4]" : "aspect-[4/3]",
                 )}
               >
-                <Media image={photo} sizes={photos.length > 1 ? "(min-width: 1024px) 25vw, 50vw" : "(min-width: 1024px) 50vw, 100vw"} lowPriority />
+                <Media image={photo} sizes={photos.length > 1 ? "(min-width: 1024px) 33vw, 50vw" : "(min-width: 1024px) 50vw, 100vw"} lowPriority />
               </div>
             ))}
           </div>

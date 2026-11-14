@@ -43,12 +43,12 @@ export const LIST_IMAGES: Record<string, Img[]> = {
 
 /**
  * A text section shown as cards: its photos side by side, then the text (About us on the About page).
- * The About photos are the two call to action photos, each framed on its person.
+ * The About photos are tall crops of the two call to action photos, each framed on its person.
  */
 export const CARD_IMAGES: Record<string, Img[]> = {
   about: [
-    { ...CTA_IMAGES[0], alt: "A man in a black jacket and sunglasses on a green sofa, against a warm wood wall", hotspot: { x: 0.84, y: 0.3 } },
-    { ...CTA_IMAGES[1], alt: "A man in a cream knitted shirt beside a green armchair, against a warm wood wall", hotspot: { x: 0.9, y: 0.2 } },
+    { url: "/about/portrait-1.jpg", width: 706, height: 942, alt: "A man in a black jacket and sunglasses on a green sofa, against a warm wood wall", hotspot: { x: 0.84, y: 0.3 } },
+    { url: "/about/portrait-2.jpg", width: 705, height: 940, alt: "A man in a cream knitted shirt beside a green armchair, against a warm wood wall", hotspot: { x: 0.9, y: 0.2 } },
   ],
 };
 
