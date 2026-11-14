@@ -1,4 +1,5 @@
 import { PortableText, type PortableTextComponents } from "next-sanity";
+import { SocialLinks } from "@/components/site/SocialLinks";
 import { Media } from "@/components/ui/Media";
 import { CARD_IMAGES, LIST_IMAGES } from "@/content/section-images";
 import type { PromiseListSection, ShortTextSection } from "@/lib/types";
@@ -45,6 +46,23 @@ export function ShortText({ section }: { section: ShortTextSection }) {
                 )}
               >
                 <Media image={photo} sizes={photos.length > 1 ? "(min-width: 1024px) 33vw, 50vw" : "(min-width: 1024px) 50vw, 100vw"} lowPriority />
+                {(photo.name || photo.linkedin) && (
+                  <div className="on-dark absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 bg-[linear-gradient(0deg,color-mix(in_srgb,var(--color-coal)_94%,transparent)_0%,color-mix(in_srgb,var(--color-coal)_70%,transparent)_45%,transparent_100%)] px-[clamp(14px,1.6vw,28px)] pt-[clamp(56px,7vw,120px)] pb-[clamp(14px,1.6vw,28px)] text-white">
+                    <div className="min-w-0">
+                      {photo.name && (
+                        <p className="text-[length:clamp(16px,calc(0.7vw+13px),26px)] leading-[1.1] font-semibold tracking-[-0.02em]">{photo.name}</p>
+                      )}
+                      {photo.role && <p className="mt-1 text-small text-white/70">{photo.role}</p>}
+                    </div>
+                    {photo.linkedin && (
+                      <SocialLinks
+                        onDark
+                        className="shrink-0"
+                        items={[{ label: photo.name ? `${photo.name} on LinkedIn` : "LinkedIn", href: photo.linkedin }]}
+                      />
+                    )}
+                  </div>
+                )}
               </div>
             ))}
           </div>

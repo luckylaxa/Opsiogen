@@ -41,14 +41,17 @@ export const LIST_IMAGES: Record<string, Img[]> = {
   ],
 };
 
+/** A photo card that can name its person: the name, designation and LinkedIn link show over the photo's foot. */
+export type CardPhoto = Img & { name?: string; role?: string; linkedin?: string };
+
 /**
  * A text section shown as cards: its photos side by side, then the text (About us on the About page).
- * The About photos are tall crops of the two call to action photos, each framed on its person.
+ * The About photos are half-body crops of the two call to action photos, with the heads the same size.
  */
-export const CARD_IMAGES: Record<string, Img[]> = {
+export const CARD_IMAGES: Record<string, CardPhoto[]> = {
   about: [
     { url: "/about/portrait-1.jpg", width: 706, height: 942, alt: "A man in a black jacket and sunglasses on a green sofa, against a warm wood wall", hotspot: { x: 0.84, y: 0.3 } },
-    { url: "/about/portrait-2.jpg", width: 705, height: 940, alt: "A man in a cream knitted shirt beside a green armchair, against a warm wood wall", hotspot: { x: 0.9, y: 0.2 } },
+    { url: "/about/portrait-2.jpg", width: 926, height: 1234, alt: "A man in a cream knitted shirt holding his sunglasses, against a warm wood wall", hotspot: { x: 0.5, y: 0.3 } },
   ],
 };
 
