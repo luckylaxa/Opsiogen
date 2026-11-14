@@ -90,7 +90,7 @@ const PRICING: Pair = [
 
 /** Colourful thumbnails for the service cards (public/services/<slug>/card.jpg). */
 const CARD_ALT: Record<string, string> = {
-  "ai-websites": "A coffee exporter's website on a laptop, on a green armchair",
+  "ai-websites": "An estate agency's home page on a wide screen: Find the home that fits your life, over a photo of a modern house at dusk",
   "ai-product-design": "A tablet showing a design system: colours, type, buttons and two app screens, on a teal desk",
   "ai-mvps-business-apps": "A phone with a savings app, leaning on a red velvet cushion",
   "ai-automation": "A monitor showing a workflow: new enquiry, quote sent, call booked, against a plum wall",
@@ -135,37 +135,37 @@ export const SERVICES: Service[] = [
         _key: "o1",
         title: "New websites",
         text: "Designed around your offer and built to turn visits into enquiries.",
-        image: img(`${WEB}/tile-new.jpg`, 1600, 1200, "A coffee roaster's home page on a laptop: Coffee that tastes of where it grew, beside a photo of roasted beans"),
+        image: img(`${WEB}/tile-new.jpg`, 1600, 1200, "A villa rental home page on a laptop: The art of arriving, over a photo of an infinity pool at sunset"),
       },
       {
         _key: "o2",
         title: "Website revamps",
         text: "Outdated sites rebuilt to look current, load fast and work on every screen.",
-        image: img(`${WEB}/tile-revamp.jpg`, 1600, 1200, "A desktop screen split in two: a dated coffee company website on the left and its redesign on the right"),
+        image: img(`${WEB}/tile-revamp.jpg`, 1600, 1200, "A wide screen split in two: an estate agency's dated website on the left and its redesign, with a large house photo, on the right"),
       },
       {
         _key: "o3",
         title: "Landing pages",
         text: "Focused pages for campaigns, launches and lead generation.",
-        image: img(`${WEB}/tile-landing.jpg`, 1600, 1200, "A coffee subscription landing page on a phone, with three plans and a Start my subscription button"),
+        image: img(`${WEB}/tile-landing.jpg`, 1600, 1200, "A skincare landing page on a phone: a serum bottle, the line Glow, bottled, a price and an Add to bag button"),
       },
       {
         _key: "o4",
         title: "SaaS and product sites",
         text: "Sites that explain your product clearly and lead to sign-ups and demos.",
-        image: img(`${WEB}/tile-saas.jpg`, 1600, 1200, "A money app's website on a laptop: Know where your money goes, with a preview of the app"),
+        image: img(`${WEB}/tile-saas.jpg`, 1600, 1200, "A software product's website on a laptop: Every order, every van, one screen, above a preview of its dashboard"),
       },
       {
         _key: "o5",
         title: "Corporate and portfolio sites",
         text: "A clear, credible home for your business and your work.",
-        image: img(`${WEB}/tile-corporate.jpg`, 1600, 1200, "An accountancy firm's website on a tablet, with a photo of its office and four services"),
+        image: img(`${WEB}/tile-corporate.jpg`, 1600, 1200, "An architecture studio's website on a tablet: Buildings that belong, above a photo of a concrete arts centre"),
       },
       {
         _key: "o6",
         title: "Easy-to-use CMS",
         text: "Change text, pages and images yourself, without waiting on developers.",
-        image: img(`${WEB}/tile-cms.jpg`, 1600, 1200, "A content editor on a tablet: a journal post with its title, cover image and a Publish button"),
+        image: img(`${WEB}/tile-cms.jpg`, 1600, 1200, "A restaurant's home page being edited on a tablet: the heading is selected, with fields for text and photo and a Publish changes button"),
       },
     ],
     faqs: faqs([
