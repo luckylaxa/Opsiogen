@@ -52,6 +52,10 @@ experiment on the live site. Mistakes cost the owner money and trust.
 
 - Generator: ElevenLabs `creative_generate_image`, model `gpt-image-2.6-sunburst`,
   `generations_count: 1`, ~191 credits per image. Runway is not connected to this session.
+- Check the real balance first with `account_get_usage` (character_limit − character_count)
+  and quote that number. Do not estimate the balance from your own count.
+- Per-page prompts live in `design/tiles/prompts/<slug>.md` so the owner can also run them
+  in Runway and upload the results.
 - **Ask before spending.** State the number of images, the credits and the balance left,
   and wait for a yes. Never generate test images, never retry a finished generation, never
   regenerate because of a mistake you could have caught by checking first.
@@ -116,7 +120,12 @@ experiment on the live site. Mistakes cost the owner money and trust.
 
 ## 7. Pages and status
 
-- Done in this style: Product design (`ai-product-design`) scenes in
-  `design/tiles/scenes/ai-product-design/` (q-*.png are the approved final compositions).
+- Product design (`ai-product-design`): `r-green.png` done and approved composition
+  (Product design tile, laptop big under the text). Still needed: r-blue, r-hand, r-sage,
+  r-walnut (prompts in `design/tiles/prompts/ai-product-design.md`). q-*.png and s-*.png
+  are rejected (devices too small / soft).
+- Code ready but not live: `BigCard` top layout with no shade or panel. Still to do with it:
+  phone cards at 4:5 and offer-image hotspot x=1, y=0.8 (anchored right), publish together
+  with the new tiles.
 - To do, one page at a time, with approval for credits each time: MVPs and business apps,
   Automation, Social media, Digital marketing, Video, Creative subscription.
