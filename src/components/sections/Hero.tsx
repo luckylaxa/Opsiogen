@@ -13,8 +13,8 @@ export function Hero({ section, full, children }: { section: HeroSection; full?:
   return (
     <div
       className={cn(
-        "-mt-[var(--header-h)] bg-band pt-[calc(var(--header-h)+clamp(40px,calc(1.57vw+34px),64px))]",
-        children ? "pb-[clamp(40px,calc(2.3vw+31.4px),76px)]" : "pb-[clamp(72px,calc(5.24vw+52.3px),132px)]",
+        "-mt-[var(--header-h)] bg-band pt-[calc(var(--header-h)+clamp(64px,calc(3.14vw+52px),112px))]",
+        children ? "pb-[clamp(40px,calc(2.3vw+31.4px),76px)]" : "pb-[clamp(104px,calc(7.07vw+77.6px),196px)]",
       )}
     >
       <GiantHeading
@@ -25,7 +25,7 @@ export function Hero({ section, full, children }: { section: HeroSection; full?:
         accent={section.accent}
         text={section.text}
         // Full screen: the heading fills the first screen, centred above the floating bar.
-        className={full ? "min-h-[calc(100svh-var(--header-h)-clamp(40px,calc(1.57vw+34px),64px))] justify-center pb-[clamp(96px,12vh,160px)]" : undefined}
+        className={full ? "min-h-[calc(100svh-var(--header-h)-clamp(64px,calc(3.14vw+52px),112px))] justify-center pb-[clamp(96px,12vh,160px)]" : undefined}
       >
         {section.button?.href && section.button.label && (
           <ButtonLink href={section.button.href} className="mt-[clamp(28px,calc(1.7vw+21.6px),54px)]">
