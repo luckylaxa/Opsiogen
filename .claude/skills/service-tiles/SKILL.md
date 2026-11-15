@@ -136,5 +136,13 @@ experiment on the live site. Mistakes cost the owner money and trust.
   vw-sized phone text. Only pages listed in `PLAIN_TILES` (`src/components/services/ServiceFullPage.tsx`)
   get it; every other page keeps the earlier approved card (shade, hotspot 0.74/0.8). Add a slug
   only when that page's tiles are remade in this style.
+- **MVPs and business apps: done (16 Nov).** Scenes `design/tiles/scenes/ai-mvps-business-apps/n-*.png`,
+  tiles built with `design/tiles/py/tile3.py` (device box, width share `fw` 0.47-0.54 for laptops,
+  tablets and monitors, 0.23-0.30 for phones; right edge `fr` 0.80-0.97; top `ft` 0.36-0.50), so the
+  device is whole in the tall phone card (right 58% of the tile). Prompts: ask for plain, even,
+  DARK backgrounds and a device about one third of the frame width; light walls need `dark`.
+  Watch the bottom pad: a mirror longer than the gap under the device shows a reflected sliver.
+  Clear `.next/dev/cache/images` before checking new tiles locally.
+- Print and Brand tiles already pass in the plain style (no credits needed).
 - To do, one page at a time, with approval for credits each time: MVPs and business apps,
   Automation, Social media, Digital marketing, Video, Creative subscription.
