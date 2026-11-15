@@ -6,7 +6,7 @@ import { buttonClass } from "@/components/ui/Button";
 import { BigCard } from "@/components/ui/BigCard";
 import { ArrowRight } from "@/components/ui/Icons";
 import { cn, GROUP_LABELS, initials } from "@/lib/utils";
-import { TILE_FOCUS } from "@/content/tile-focus";
+import { PHONE_CARDS, TILE_FOCUS } from "@/content/tile-focus";
 
 /** The card picture anchored across its width where one is set (phones show a narrow, tall slice). */
 const focusOn = (img: Img | null | undefined, x?: number) =>
@@ -182,6 +182,7 @@ function ServiceCards({
               layout="top"
               badge={initials(s.shortName)}
               image={focusOn(s.card ?? s.hero?.image ?? covers.get(s.slug)?.cover, TILE_FOCUS[s.slug])}
+              imagePhone={PHONE_CARDS[s.slug]}
               priority={lead && i < 2}
               title={s.name}
               titleAs={titleAs}

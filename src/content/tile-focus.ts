@@ -6,7 +6,6 @@
  * Pictures not listed keep their default anchor.
  */
 export const TILE_FOCUS: Record<string, number> = {
-  "ai-websites": 1,
   "ai-product-design": 1,
   "ai-mvps-business-apps": 0.85,
   "ai-automation": 1,
@@ -31,4 +30,12 @@ export const TILE_FOCUS: Record<string, number> = {
   "ai-video-production/Motion graphics and animation": 0.9,
   "ai-video-production/AI video": 0.6,
   "ai-video-production/Concepts and scripts": 1,
+};
+
+/**
+ * A tall version of a service card made for phones, where the picture would otherwise be
+ * cut on both sides (a flat layout recomposed from the same picture, nothing generated).
+ */
+export const PHONE_CARDS: Record<string, { url: string; width: number; height: number }> = {
+  "ai-websites": { url: "/services/ai-websites/card-phone.jpg", width: 1074, height: 1380 },
 };
