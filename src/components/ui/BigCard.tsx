@@ -34,7 +34,7 @@ type Props = {
   layout?: "bottom" | "top";
   /**
    * Top layout, service page tiles: one picture with the text straight on it (no shade), and a
-   * 4:3 card on phones (the picture's own shape) with text sized to the screen width.
+   * text sized to the screen width on phones (the 10:9 phone card keeps the device, anchored right).
    */
   plain?: boolean;
   /** Cursor over the card: the View disc for work, the ring for everything else. */
@@ -166,8 +166,9 @@ export function BigCard({
     layout === "top"
       ? cn(
           "p-[clamp(20px,2.3vw,44px)] sm:aspect-[4/3] lg:aspect-auto",
-          // Plain tiles keep the picture's own 4:3 shape on phones, so nothing is cropped.
-          plain ? "aspect-[4/3] max-sm:p-[4.2vw]" : "aspect-[10/9]",
+          // Phones: 10:9 like every top card. Plain tiles crop from the right, where the device sits.
+          "aspect-[10/9]",
+          plain && "max-sm:p-[4.2vw]",
         )
       : "min-h-[460px] p-[clamp(24px,3.05vw,58px)] sm:min-h-[540px]",
     className,

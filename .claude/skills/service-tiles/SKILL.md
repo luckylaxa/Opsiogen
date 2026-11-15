@@ -124,9 +124,11 @@ experiment on the live site. Mistakes cost the owner money and trust.
   final tiles `tile-*.jpg` beside them. Tile settings used: laptops `fill=(0.38, 0.92–0.95)` (handoff `extend=40`);
   phones `fill=(0.36, 0.86–0.97)` with `extend=130–170` (mirrored planks or linen above, sharp)
   and `aspect=0.462` for a phone cut by the bottom edge.
-- Phones show the whole 4:3 picture (never crop it: a 4:5 card cut the laptops). Phone text is
-  sized to the screen width (title 5.8vw, description 3.5vw) and ends at 32% of the card on
-  every phone (SE to Pro Max); desktop text ends at 30%. Device tops (lid or phone edge) must
+- Card sizes stay as the owner set them: 10:9 on phones, 4:3 from 640px. Do not change card
+  sizes. Phones crop the 4:3 tile to 10:9 from the right (hotspot x=1, y=1), so the device must
+  sit fully inside the right 83% of the tile (check every tile at 10:9 before publishing). Phone text is
+  sized to the screen width (title 5.8vw, description 3.5vw) and ends at about 27% of the 10:9
+  card on every phone; desktop text ends at 30%. Device tops (lid or phone edge) must
   be at 35–38%. Measure with Playwright on several phones before publishing.
 - Do not `extend` backgrounds with diagonal patterns (window shadows): the seam shows.
 - Card code: `BigCard` `plain` (service tiles): no shade, 4:3 on phones too, vw-sized phone text.
