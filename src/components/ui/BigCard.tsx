@@ -167,8 +167,8 @@ export function BigCard({
     layout === "top"
       ? cn(
           "p-[clamp(20px,2.3vw,44px)] sm:aspect-[4/3] lg:aspect-auto",
-          // Phones: 10:9 like every top card. Plain tiles crop from the right, where the device sits.
-          "aspect-[10/9]",
+          // Phones: the same height as the work cards (460px), so every big card on a phone matches.
+          "max-sm:min-h-[460px]",
           plain && "max-sm:p-[4.2vw]",
         )
       : "min-h-[460px] p-[clamp(24px,3.05vw,58px)] sm:min-h-[540px]",

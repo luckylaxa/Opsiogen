@@ -1,11 +1,16 @@
 import Link from "next/link";
-import type { ProjectCard, Service, ServicesListSection } from "@/lib/types";
+import type { Img, ProjectCard, Service, ServicesListSection } from "@/lib/types";
 import { getProjects, getServices } from "@/lib/data";
 import { GiantHeading, SectionHeading } from "@/components/ui/Headings";
 import { buttonClass } from "@/components/ui/Button";
 import { BigCard } from "@/components/ui/BigCard";
 import { ArrowRight } from "@/components/ui/Icons";
 import { cn, GROUP_LABELS, initials } from "@/lib/utils";
+import { TILE_FOCUS } from "@/content/tile-focus";
+
+/** The card picture anchored across its width where one is set (phones show a narrow, tall slice). */
+const focusOn = (img: Img | null | undefined, x?: number) =>
+  img && x !== undefined ? { ...img, hotspot: { x, y: img.hotspot?.y ?? 0.5 } } : img;
 
 const GROUPS = ["build", "grow", "create"] as const;
 
@@ -176,7 +181,7 @@ function ServiceCards({
               href={`/services/${s.slug}`}
               layout="top"
               badge={initials(s.shortName)}
-              image={s.card ?? s.hero?.image ?? covers.get(s.slug)?.cover}
+              image={focusOn(s.card ?? s.hero?.image ?? covers.get(s.slug)?.cover, TILE_FOCUS[s.slug])}
               priority={lead && i < 2}
               title={s.name}
               titleAs={titleAs}

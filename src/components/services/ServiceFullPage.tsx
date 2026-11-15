@@ -8,6 +8,7 @@ import { Media } from "@/components/ui/Media";
 import { Block } from "@/components/sections/SectionRenderer";
 import { CallToAction } from "@/components/sections/CallToAction";
 import { WorkGrid } from "@/components/work/WorkGrid";
+import { TILE_FOCUS } from "@/content/tile-focus";
 
 type Props = {
   service: Service;
@@ -18,6 +19,9 @@ type Props = {
 };
 
 const pad = (n: number) => String(n).padStart(2, "0");
+
+/** The anchor with its across-the-width position replaced, where one is set for phones' tall cards. */
+const focus = (h: { x: number; y: number }, x?: number) => (x === undefined ? h : { ...h, x });
 
 /** Services with a hero image use the full page. */
 /** Service pages whose What we do tiles were made in the plain style (see the service-tiles skill). */
@@ -89,7 +93,7 @@ export function ServiceFullPage({ service, settings, work }: Props) {
                   // Pages remade in the plain style: one picture, no shade, crops anchored at the device
                   // (bottom right). Other pages keep the earlier card exactly as approved.
                   plain={plain}
-                  image={o.image ? { ...o.image, hotspot: o.image.hotspot ?? (plain ? { x: 1, y: 1 } : { x: 0.74, y: 0.8 }) } : o.image}
+                  image={o.image ? { ...o.image, hotspot: focus(o.image.hotspot ?? (plain ? { x: 1, y: 1 } : { x: 0.74, y: 0.8 }), TILE_FOCUS[`${service.slug}/${o.title}`]) } : o.image}
                   title={o.title}
                   footLeft={o.text}
                 />
