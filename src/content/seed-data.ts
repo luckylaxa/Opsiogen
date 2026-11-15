@@ -347,12 +347,12 @@ export const SERVICES: Service[] = [
       ["Yours to keep", "You own everything we build."],
     ]),
     offerings: cards("ai-mvps-business-apps", [
-      ["MVPs and prototypes", "A working first version to test with users and investors.", "tile-mvp.jpg", "A hand holding a phone over a dark wooden desk, showing a wholesale ordering app: Thursday order with five products and a Review order button"],
-      ["AI-powered features", "Smart search, chat, summaries and forms built into your product.", "tile-ai.jpg", "A hand holding up a tablet against purple, showing an order assistant: An order in one sentence"],
-      ["Customer and partner portals", "One place for customers and partners to log in, track and get things done.", "tile-portal.jpg", "A laptop on a table by a bright window showing a customer portal: the next delivery, an invoice for £482.60 and recent orders"],
-      ["Dashboards", "Live views of the numbers that matter, in one place.", "tile-dashboard.jpg", "A laptop on a wooden table showing an operations dashboard: today’s orders, revenue, routes and orders by hour"],
-      ["Booking and intake systems", "Online booking and intake that feed straight into your workflow.", "tile-booking.jpg", "A hand holding a tablet against amber, showing a delivery calendar with the 15th chosen and two-hour time slots"],
-      ["Internal tools and trackers", "Simple tools that replace spreadsheets and manual work.", "tile-internal.jpg", "A tilted tablet showing a warehouse picking list, three of the items ticked off, on green"],
+      ["MVPs and prototypes", "A working first version to test with users and investors.", "tile-mvp.jpg", "An open space-grey laptop on a walnut table against a terracotta wall, showing a reorder screen for a café supplier"],
+      ["AI-powered features", "Smart search, chat, summaries and forms built into your product.", "tile-ai.jpg", "Two hands hold a tablet against a violet wall, showing an order assistant that turns one sentence into an order"],
+      ["Customer and partner portals", "One place for customers and partners to log in, track and get things done.", "tile-portal.jpg", "A silver laptop on an oak desk against a warm brown wall, showing a customer portal with recent orders"],
+      ["Dashboards", "Live views of the numbers that matter, in one place.", "tile-dashboard.jpg", "A slim monitor on a walnut desk against a slate-blue wall, showing a live delivery dashboard"],
+      ["Booking and intake systems", "Online booking and intake that feed straight into your workflow.", "tile-booking.jpg", "A phone lying on ochre linen, showing a delivery booking calendar with a time slot chosen"],
+      ["Internal tools and trackers", "Simple tools that replace spreadsheets and manual work.", "tile-internal.jpg", "A hand holds a phone against a deep green wall, showing a picking list with items ticked off"],
     ]),
     faqs: [
       ...aiFaqs([
