@@ -258,12 +258,12 @@ export const SERVICES: Service[] = [
       ["Designer-led AI", "AI speeds up research, flows and screens. Our designers make every decision count."],
     ]),
     offerings: cards("ai-product-design", [
-      ["Product design", "New SaaS, web and mobile products, from flows to polished screens.", "tile-product.jpg", "Two phones tilted on deep green showing a money app: what is left to spend this month, with an On track chip"],
+      ["Product design", "New SaaS, web and mobile products, from flows to polished screens.", "tile-product.jpg", "A phone in a green case lying on a sunny wooden desk beside a laptop and a pen, showing a money app: £1,284.50 left to spend this month"],
       ["UX audits", "We find where people get stuck and rank the fixes.", "tile-audit.jpg", "An old banking app with numbered red pins, and two finding cards pulled out beside it: Three balances, no answer and The advert is the loudest thing"],
-      ["Redesign and iteration", "Live products made simpler, one release at a time.", "tile-redesign.jpg", "A cluttered banking screen and its simpler redesign side by side, split by a slider handle, on terracotta"],
-      ["Prototypes and validation", "Clickable prototypes to test ideas before you build.", "tile-prototype.jpg", "Two prototype screens for creating a savings pot, What are you saving for? and How much do you need?, with a cursor, on purple"],
+      ["Redesign and iteration", "Live products made simpler, one release at a time.", "tile-redesign.jpg", "A laptop on an office desk showing a cluttered banking screen beside its simpler redesign and the results after eight weeks"],
+      ["Prototypes and validation", "Clickable prototypes to test ideas before you build.", "tile-prototype.jpg", "A white phone resting on a soft mint blanket, showing a prototype screen: What are you saving for?, with New bike chosen"],
       ["Design systems", "Components, colours and rules that keep every screen consistent.", "tile-system.jpg", "A large Continue button selected as Button / Primary, a dark version below and four colour swatches, on green"],
-      ["Developer-ready handoff", "Specs, assets and annotated screens your developers can build from.", "tile-handoff.jpg", "A balance card marked with spacing redlines beside a dark spec panel of sizes, colours and code"],
+      ["Developer-ready handoff", "Specs, assets and annotated screens your developers can build from.", "tile-handoff.jpg", "A laptop seen from above on an oak table, showing a balance card with spacing marks beside a panel of sizes, colours and code"],
     ]),
     faqs: [
       ...aiFaqs([
