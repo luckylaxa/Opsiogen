@@ -101,7 +101,8 @@ export function BigCard({
         {footLeft && (
           <div
             className={cn(
-              "mt-[clamp(8px,0.7vw,14px)] text-base text-white/90 text-pretty",
+              "mt-[clamp(8px,0.7vw,14px)] text-base text-pretty",
+              plain ? "text-white/90" : "text-white/85",
               plain && "max-sm:mt-[1.4vw] max-sm:text-[3.5vw] max-sm:leading-[1.4]",
             )}
           >

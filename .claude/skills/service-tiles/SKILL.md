@@ -131,6 +131,9 @@ experiment on the live site. Mistakes cost the owner money and trust.
   card on every phone; desktop text ends at 30%. Device tops (lid or phone edge) must
   be at 35–38%. Measure with Playwright on several phones before publishing.
 - Do not `extend` backgrounds with diagonal patterns (window shadows): the seam shows.
-- Card code: `BigCard` `plain` (service tiles): no shade, 4:3 on phones too, vw-sized phone text.
+- Card code: `BigCard` `plain` (service tiles): no shade, 10:9 on phones, crop from the bottom right,
+  vw-sized phone text. Only pages listed in `PLAIN_TILES` (`src/components/services/ServiceFullPage.tsx`)
+  get it; every other page keeps the earlier approved card (shade, hotspot 0.74/0.8). Add a slug
+  only when that page's tiles are remade in this style.
 - To do, one page at a time, with approval for credits each time: MVPs and business apps,
   Automation, Social media, Digital marketing, Video, Creative subscription.

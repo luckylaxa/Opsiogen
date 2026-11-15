@@ -20,6 +20,9 @@ type Props = {
 const pad = (n: number) => String(n).padStart(2, "0");
 
 /** Services with a hero image use the full page. */
+/** Service pages whose What we do tiles were made in the plain style (see the service-tiles skill). */
+const PLAIN_TILES = new Set(["ai-product-design"]);
+
 export const hasFullPage = (service: Service) => Boolean(service.hero?.image?.url);
 
 /**
@@ -30,6 +33,7 @@ export const hasFullPage = (service: Service) => Boolean(service.hero?.image?.ur
  */
 export function ServiceFullPage({ service, settings, work }: Props) {
   const cards = service.offerings;
+  const plain = PLAIN_TILES.has(service.slug);
   const contact = `/contact?service=${encodeURIComponent(service.slug)}`;
   const showWork = work.slice(0, 4);
 
@@ -81,10 +85,11 @@ export function ServiceFullPage({ service, settings, work }: Props) {
               <li key={o._key ?? o.title}>
                 <BigCard
                   badge={pad(i + 1)}
-                  // One picture, the text straight on it; the device sits low and right, so crops anchor there.
                   layout="top"
-                  plain
-                  image={o.image ? { ...o.image, hotspot: o.image.hotspot ?? { x: 1, y: 1 } } : o.image}
+                  // Pages remade in the plain style: one picture, no shade, crops anchored at the device
+                  // (bottom right). Other pages keep the earlier card exactly as approved.
+                  plain={plain}
+                  image={o.image ? { ...o.image, hotspot: o.image.hotspot ?? (plain ? { x: 1, y: 1 } : { x: 0.74, y: 0.8 }) } : o.image}
                   title={o.title}
                   footLeft={o.text}
                 />
