@@ -32,6 +32,8 @@ type Props = {
    * line at the top left, straight on the image, whose subject sits low.
    */
   layout?: "bottom" | "top";
+  /** Top layout only: below 640px put the text above the picture instead of over it, so it never covers the subject. */
+  stackOnPhone?: boolean;
   /** Cursor over the card: the View disc for work, the ring for everything else. */
   cursor?: "view" | "link";
   className?: string;
@@ -62,31 +64,42 @@ export function BigCard({
   priority,
   cursor = "link",
   layout = "bottom",
+  stackOnPhone = false,
   className,
 }: Props) {
+  const picture = image && (
+    <>
+      <Media
+        image={image}
+        phone={imagePhone}
+        sizes={imageSizes}
+        priority={priority}
+        className="transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-[1.04]"
+      />
+      {/* A light shade at the top only, under the text, so bright card colours stay bright. */}
+      <div
+        aria-hidden="true"
+        className={cn(
+          "pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgb(0_0_0/0.46)_0%,rgb(0_0_0/0.2)_24%,rgb(0_0_0/0)_46%)]",
+          stackOnPhone && "hidden sm:block",
+        )}
+      />
+    </>
+  );
   const top = (
     <>
-      {image && (
-        <>
-          <Media
-            image={image}
-            phone={imagePhone}
-            sizes={imageSizes}
-            priority={priority}
-            className="transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-[1.04]"
-          />
-          {/* A light shade at the top only, under the text, so bright card colours stay bright. */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgb(0_0_0/0.46)_0%,rgb(0_0_0/0.2)_24%,rgb(0_0_0/0)_46%)]"
-          />
-        </>
-      )}
-      <div className="relative max-w-[26ch]">
+      {!stackOnPhone && picture}
+      <div className="relative z-[1] max-w-[26ch]">
         <Title className="text-[length:clamp(24px,2.1vw,40px)] leading-[1.1] font-medium tracking-[-0.015em] text-balance">{title}</Title>
         {footLeft && <div className="mt-[clamp(8px,0.7vw,14px)] text-base text-white/85 text-pretty">{footLeft}</div>}
       </div>
-      {footRight && <div className="relative mt-auto pt-4 text-base">{footRight}</div>}
+      {footRight && <div className="relative z-[1] mt-auto pt-4 text-base">{footRight}</div>}
+      {/* Phones: the picture sits under the text at its own 4:3 shape. Wider: it fills the card behind the text. */}
+      {stackOnPhone && picture && (
+        <div className="relative -mx-5 -mb-5 mt-5 aspect-[4/3] overflow-hidden sm:absolute sm:inset-0 sm:m-0 sm:aspect-auto">
+          {picture}
+        </div>
+      )}
     </>
   );
   const body = layout === "top" ? top : (
@@ -141,7 +154,7 @@ export function BigCard({
     "on-dark group relative flex h-full flex-col overflow-hidden rounded-card bg-coal text-white lg:min-h-[calc((100cqw-var(--spacing-gap))*0.397)]",
     // Top layout keeps the card near the photo's own shape, so its subject is never cropped away.
     layout === "top"
-      ? "aspect-[10/9] p-[clamp(20px,2.3vw,44px)] sm:aspect-[4/3] lg:aspect-auto"
+      ? cn("p-[clamp(20px,2.3vw,44px)] sm:aspect-[4/3] lg:aspect-auto", !stackOnPhone && "aspect-[10/9]")
       : "min-h-[460px] p-[clamp(24px,3.05vw,58px)] sm:min-h-[540px]",
     className,
   );

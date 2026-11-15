@@ -83,6 +83,7 @@ export function ServiceFullPage({ service, settings, work }: Props) {
                   badge={pad(i + 1)}
                   // Like the home page's service cards: title on top, and the picture's subject low and to the right.
                   layout="top"
+                  stackOnPhone
                   image={o.image ? { ...o.image, hotspot: o.image.hotspot ?? { x: 0.74, y: 0.8 } } : o.image}
                   title={o.title}
                   footLeft={o.text}
