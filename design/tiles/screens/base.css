@@ -1,0 +1,5 @@
+@font-face{font-family:Outfit;src:url(../../../src/fonts/Outfit-Variable.woff2);font-weight:100 900}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Outfit;overflow:hidden;-webkit-font-smoothing:antialiased}
+.mono{font-family:'JetBrains Mono';letter-spacing:.08em;text-transform:uppercase}
+.row{display:flex;align-items:center}

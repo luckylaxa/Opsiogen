@@ -14,6 +14,11 @@ Launch to-dos live in `LAUNCH-CHECKLIST.md`.
 - The 7-day timeline is only for basic websites.
 - Short text, no invented claims or numbers. Don't copy reference sites.
 
+## Service page tiles and images
+Follow `.claude/skills/service-tiles/SKILL.md` for every service tile, mockup or page-top image:
+one sharp photo per card with the text straight on it (no panel, shade, gradient or blur anywhere),
+modern devices low and right, our own screens, and the owner's approval before spending image credits.
+
 ## SEO (every page)
 - Server-rendered. Metadata from `buildMetadata()` (`src/lib/metadata.ts`) with
   the page's `path` (gives the canonical) and `fallback: settings.seo.description`.

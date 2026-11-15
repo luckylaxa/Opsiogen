@@ -1,0 +1,29 @@
+<!doctype html><meta charset=utf-8><link rel=stylesheet href=base.css><style>
+body{width:1440px;height:900px;background:#f7f4fb;color:#1d1530;display:flex}
+.side{width:220px;background:#2a1748;color:#cfc4e6;padding:30px 22px;font-size:17px}
+.brand{display:flex;align-items:center;gap:10px;color:#fff;font-size:23px;font-weight:600}.brand i{width:28px;height:28px;border-radius:8px;background:#f2a33a;display:block}
+.side ul{margin-top:40px}.side li{list-style:none;padding:12px 14px;border-radius:10px;margin-top:6px}.side .on{background:#3d2763;color:#fff}
+.main{flex:1;padding:34px 40px}
+.top{display:flex;justify-content:space-between;align-items:center}.top h1{font-size:36px;font-weight:600;letter-spacing:-.02em}
+.live{font-size:14px;color:#2f9e6a;font-weight:600}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:24px}
+.k{background:#fff;border-radius:18px;padding:18px 20px;border:1px solid #ece6f6}.k small{font-size:11.5px;color:#7d7393}.k b{display:block;font-size:38px;font-weight:600;letter-spacing:-.02em;margin-top:6px}.k i{font-style:normal;font-size:14px;color:#2f9e6a;font-weight:600}
+.grid{display:grid;grid-template-columns:1.5fr 1fr;gap:16px;margin-top:16px}
+.card{background:#fff;border-radius:18px;padding:22px 24px;border:1px solid #ece6f6}.card h3{font-size:18px;font-weight:600;display:flex;justify-content:space-between}.card h3 small{font-size:12px;color:#7d7393;font-weight:500}
+.bars{display:flex;align-items:flex-end;gap:16px;height:250px;margin-top:22px;border-bottom:2px solid #eee8f5}
+.bars div{flex:1;border-radius:9px 9px 0 0;background:#d9cdef}.bars .hi{background:#5b3a8c}
+.lab{display:flex;gap:16px;margin-top:8px}.lab span{flex:1;text-align:center;font-size:12.5px;color:#7d7393}
+.sch{background:#2a1748;color:#fff;border-radius:18px;padding:22px 24px}.sch small{color:#f2a33a;font-size:12px}.sch b{display:block;font-size:26px;margin-top:10px;font-weight:600}.sch p{color:#cfc4e6;font-size:15px;margin-top:8px;line-height:1.4}
+.t{margin-top:16px}.t div{display:flex;justify-content:space-between;font-size:15px;padding:11px 0;border-bottom:1px solid #f0ebf7}.t em{font-style:normal;font-size:12.5px;background:#e3f4ea;color:#21794d;border-radius:99px;padding:3px 10px}
+</style><body>
+<div class=side><div class=brand><i></i>Flowdesk</div><ul><li class=on>Dashboards</li><li>Automations</li><li>Approvals</li><li>Documents</li><li>Reports</li></ul></div>
+<div class=main>
+<div class=top><h1>Sales this week</h1><span class=live>● Updated 2 minutes ago</span></div>
+<div class=kpis><div class=k><small class=mono>Sales last week</small><b>£48,200</b><i>↑ 9%</i></div><div class=k><small class=mono>Orders</small><b>312</b><i>↑ 6%</i></div><div class=k><small class=mono>Avg order</small><b>£154</b><i>↑ 3%</i></div><div class=k><small class=mono>Unpaid invoices</small><b>7</b><i style="color:#c0583a">2 overdue</i></div></div>
+<div class=grid>
+<div class=card><h3>Sales by week <small>Pulled from your tools, every hour</small></h3>
+<div class=bars><div style="height:44%"></div><div style="height:52%"></div><div style="height:48%"></div><div style="height:61%"></div><div style="height:57%"></div><div style="height:70%"></div><div style="height:66%"></div><div class=hi style="height:88%"></div></div>
+<div class=lab><span>W1</span><span>W2</span><span>W3</span><span>W4</span><span>W5</span><span>W6</span><span>W7</span><span>W8</span></div></div>
+<div><div class=sch><small class=mono>Scheduled</small><b>Every Monday at 8:00</b><p>Sent to the leadership group with a short written summary.</p></div>
+<div class="card t" style="margin-top:16px;padding:16px 22px"><div><span>Weekly sales report</span><em>Sent</em></div><div><span>Stock below reorder</span><em>Sent</em></div><div style="border:0"><span>Cash forecast</span><em>Sent</em></div></div></div>
+</div></div></body>
