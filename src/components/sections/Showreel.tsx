@@ -113,7 +113,7 @@ export function Showreel({ section, className }: { section: ShowreelSection; cla
             type="button"
             onClick={toggle}
             aria-label={playing ? "Pause video" : "Play video"}
-            className="absolute right-[clamp(16px,2.4vw,46px)] bottom-[clamp(16px,2.4vw,46px)] grid size-[clamp(52px,3.6vw,68px)] place-items-center rounded-[8px] border border-white/20 bg-black/40 backdrop-blur-md transition-colors duration-300 hover:border-white/50 hover:bg-black/60"
+            className="absolute right-[clamp(16px,2.4vw,46px)] bottom-[clamp(16px,2.4vw,46px)] grid size-[clamp(52px,3.6vw,68px)] place-items-center rounded-[8px] border border-white/20 bg-black/70 transition-colors duration-300 hover:border-white/50 hover:bg-black/60"
           >
             <svg viewBox="0 0 24 24" aria-hidden="true" className="size-[40%] fill-current">
               {playing ? <path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" /> : <path d="M8 5.5v13l11-6.5z" />}

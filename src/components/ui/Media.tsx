@@ -25,8 +25,8 @@ const objectPosition = (img: Img) =>
 
 /**
  * next/image wrapper for CMS and placeholder images. CMS images come straight
- * from Sanity's CDN at the size each screen needs; until one arrives, its tiny
- * preview (lqip) fills the box instead of an empty frame.
+ * from Sanity's CDN at the size each screen needs; until one arrives, the box
+ * shows one flat colour taken from the image's tiny preview (never a blur).
  */
 export function Media({ image, sizes, className, priority, eager, lowPriority, fill = true, phone, phoneBelow = 640 }: Props) {
   const alt = image.alt || "";
@@ -37,21 +37,24 @@ export function Media({ image, sizes, className, priority, eager, lowPriority, f
       : lowPriority
         ? { loading: "lazy" as const, fetchPriority: "low" as const }
         : {};
-  const props = (src: string, lqip?: string | null) =>
+  // A flat colour while loading: the preview stretched so far that one pixel fills the box. Opaque (JPEG) only.
+  const flat = (src: string, lqip?: string | null) =>
+    lqip && /\.jpe?g(\?|$)/i.test(src)
+      ? { backgroundImage: `url(${lqip})`, backgroundSize: "100000% 100000%", backgroundPosition: "50% 50%" }
+      : {};
+  const props = (src: string) =>
     getImageProps({
       src,
       alt,
       sizes,
       loader: loaderFor(src),
       ...(fill ? { fill: true } : { width: image.width, height: image.height }),
-      // The preview stays behind the loaded image, so only opaque (JPEG) ones get it.
-      ...(lqip && /\.jpe?g(\?|$)/i.test(src) ? { placeholder: "blur" as const, blurDataURL: lqip } : {}),
       ...load,
     }).props;
 
   if (fill && phone?.url) {
     const wide = props(image.url);
-    const narrow = props(phone.url, phone.lqip ?? image.lqip);
+    const narrow = props(phone.url);
     return (
       <picture>
         <source media={`(min-width: ${phoneBelow}px)`} srcSet={wide.srcSet} sizes={sizes} />
@@ -59,19 +62,19 @@ export function Media({ image, sizes, className, priority, eager, lowPriority, f
           {...narrow}
           alt={alt}
           className={cn("object-cover", className)}
-          style={{ ...narrow.style, objectPosition: objectPosition(image) }}
+          style={{ ...narrow.style, ...flat(phone.url, phone.lqip ?? image.lqip), objectPosition: objectPosition(image) }}
         />
       </picture>
     );
   }
-  const own = props(image.url, image.lqip);
+  const own = props(image.url);
   return (
     // eslint-disable-next-line @next/next/no-img-element -- getImageProps already sized and optimised it
     <img
       {...own}
       alt={alt}
       className={cn(fill ? "object-cover" : "h-auto w-full", className)}
-      style={{ ...own.style, objectPosition: fill ? objectPosition(image) : undefined }}
+      style={{ ...own.style, ...flat(image.url, image.lqip), objectPosition: fill ? objectPosition(image) : undefined }}
     />
   );
 }

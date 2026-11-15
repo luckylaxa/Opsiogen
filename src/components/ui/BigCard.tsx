@@ -131,7 +131,7 @@ export function BigCard({
       )}
       <span
         aria-hidden="true"
-        className="relative grid size-[clamp(40px,3.42vw,65px)] shrink-0 place-items-center rounded-full bg-black/45 text-[length:clamp(13px,1.05vw,20px)] font-semibold backdrop-blur-sm"
+        className="relative grid size-[clamp(40px,3.42vw,65px)] shrink-0 place-items-center rounded-full bg-black/60 text-[length:clamp(13px,1.05vw,20px)] font-semibold"
       >
         {badge}
       </span>

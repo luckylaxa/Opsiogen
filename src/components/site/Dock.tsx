@@ -107,7 +107,7 @@ export function Dock({ menu, button }: { menu: LinkItem[]; button: LinkItem }) {
       <div className="pointer-events-none fixed inset-x-0 bottom-[calc(12px+env(safe-area-inset-bottom))] z-40 px-3 md:hidden">
         <nav
           aria-label="Quick links"
-          className="on-dark dock-in pointer-events-auto relative overflow-hidden rounded-[8px] border border-white/10 bg-[rgb(10_9_13/0.9)] text-white shadow-[0_18px_50px_-16px_rgb(0_0_0/0.6)] backdrop-blur-xl"
+          className="on-dark dock-in pointer-events-auto relative overflow-hidden rounded-[8px] border border-white/10 bg-[rgb(10_9_13)] text-white shadow-[0_18px_50px_-16px_rgb(0_0_0/0.6)]"
         >
           <ul className="flex h-[68px] items-stretch px-1">
             <li className="flex flex-1">
@@ -153,7 +153,7 @@ export function Dock({ menu, button }: { menu: LinkItem[]; button: LinkItem }) {
       <div className="pointer-events-none fixed inset-x-0 bottom-[clamp(12px,calc(1.7vw+5.6px),38px)] z-40 hidden justify-center px-3 md:flex">
         <nav
           aria-label="Quick links"
-          className="on-dark dock-in pointer-events-auto relative flex h-[var(--dock-size)] items-stretch gap-[var(--dock-pad)] overflow-hidden rounded-[8px] border border-white/10 bg-[rgb(10_9_13/0.88)] p-[var(--dock-pad)] text-white shadow-[0_18px_50px_-16px_rgb(0_0_0/0.6)] backdrop-blur-xl [--dock-pad:clamp(4px,0.32vw,6px)] [--dock-size:clamp(46px,calc(1.9vw+39px),75px)]"
+          className="on-dark dock-in pointer-events-auto relative flex h-[var(--dock-size)] items-stretch gap-[var(--dock-pad)] overflow-hidden rounded-[8px] border border-white/10 bg-[rgb(10_9_13)] p-[var(--dock-pad)] text-white shadow-[0_18px_50px_-16px_rgb(0_0_0/0.6)] [--dock-pad:clamp(4px,0.32vw,6px)] [--dock-size:clamp(46px,calc(1.9vw+39px),75px)]"
         >
           <Link
             href="/"

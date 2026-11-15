@@ -149,7 +149,7 @@ export function ProjectModal({
       }}
     >
       <div ref={scroller} className="h-full overflow-y-auto overscroll-contain">
-        <div className="sticky top-0 z-10 border-b border-line bg-page/85 backdrop-blur-xl">
+        <div className="sticky top-0 z-10 border-b border-line bg-page">
           <div className="flex h-[var(--header-h)] items-center justify-between gap-4 px-gutter">
             <p className="flex min-w-0 items-baseline gap-3 text-base">
               <span className="shrink-0 tabular-nums">
