@@ -9,8 +9,28 @@ from PIL import Image, ImageDraw, ImageFilter
 OUT = (1600, 1200)
 def expand(q, px):
     c = np.mean(q, 0); return [tuple(c + (np.array(p) - c) * (1 + px / np.linalg.norm(np.array(p) - c))) for p in q]
-def tile(scene, art, out, fill=(0.40, 0.90), radius=0, restore=95):
+def full_quad(q, H, aspect):
+    # A screen cut by the bottom edge: keep the true (uncut) edge and rebuild the cut corners at
+    # the screen's real length (width / aspect) along its own sides.
+    q = [np.array(p, float) for p in q]
+    cut = [i for i, p in enumerate(q) if p[1] >= H - 3]
+    if len(cut) != 2: return [tuple(p) for p in q]
+    keep = [i for i in range(4) if i not in cut]
+    a, b = q[keep[0]], q[keep[1]]
+    length = np.linalg.norm(b - a) / aspect
+    out = list(q)
+    for k in keep:
+        nb = [c for c in cut if abs(c - k) in (1, 3)][0]
+        d = q[nb] - q[k]; out[nb] = q[k] + d / np.linalg.norm(d) * length
+    return [tuple(p) for p in out]
+def tile(scene, art, out, fill=(0.40, 0.90), radius=0, restore=95, aspect=None, extend=0):
     im = Image.open(scene).convert('RGB'); W, H = im.size; q, _ = find_quad(scene)
+    if aspect: q = full_quad(q, H, aspect)
+    if extend:
+        # Continue the background upward by mirroring its top band (sharp, no blur), so the
+        # device sits lower in the tile. Only for plain, even backgrounds (planks, linen, walls).
+        a = np.array(im); top = a[:extend][::-1]
+        im = Image.fromarray(np.concatenate([top, a], 0)); q = [(x, y + extend) for x, y in q]; H += extend
     top, right = fill; sy = min(v[1] for v in q); sx = max(v[0] for v in q)
     h = min(H, (H - sy) / (1 - top)); w = h * 4 / 3
     if w > W: w = W; h = w * 3 / 4

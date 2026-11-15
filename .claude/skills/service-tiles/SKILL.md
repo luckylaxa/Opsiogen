@@ -120,13 +120,14 @@ experiment on the live site. Mistakes cost the owner money and trust.
 
 ## 7. Pages and status
 
-- Product design (`ai-product-design`): `r-green.png` done and approved composition
-  (Product design tile, laptop big under the text). Still needed: r-blue, r-hand, r-sage,
-  r-walnut (prompts in `design/tiles/prompts/ai-product-design.md`). q-*.png and s-*.png
-  are rejected (devices too small / soft).
-- Code ready but not live, saved as `design/tiles/no-shade-cards.patch` (apply with
-  `git apply`): `BigCard` top layout with no shade or panel. Still to do with it:
-  phone cards at 4:5 and offer-image hotspot x=1, y=0.8 (anchored right), publish together
-  with the new tiles.
+- **Product design (`ai-product-design`): done.** Scenes `design/tiles/scenes/ai-product-design/r-*.png`,
+  final tiles `tile-*.jpg` beside them. Tile settings used: laptops `fill=(0.33–0.34, 0.92–0.95)`;
+  phones `fill=(0.36, 0.86–0.97)` with `extend=130–170` (mirrored planks or linen above, sharp)
+  and `aspect=0.462` for a phone cut by the bottom edge.
+- Measured real text height (live page): text ends at 30% of the card on desktop and 22% on
+  phones (4:5 cards). Devices must start below those lines; 33–36% is right.
+- Do not `extend` backgrounds with diagonal patterns (window shadows): the seam shows.
+- Card code: `BigCard` `plain` (service tiles): no shade, 4:5 on phones; image hotspot defaults
+  to x=1, y=1 so crops keep the device at bottom right.
 - To do, one page at a time, with approval for credits each time: MVPs and business apps,
   Automation, Social media, Digital marketing, Video, Creative subscription.

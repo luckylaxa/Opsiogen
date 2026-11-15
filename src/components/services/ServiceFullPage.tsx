@@ -81,10 +81,10 @@ export function ServiceFullPage({ service, settings, work }: Props) {
               <li key={o._key ?? o.title}>
                 <BigCard
                   badge={pad(i + 1)}
-                  // Like the home page's service cards: title on top, and the picture's subject low and to the right.
+                  // One picture, the text straight on it; the device sits low and right, so crops anchor there.
                   layout="top"
-                  stackOnPhone
-                  image={o.image ? { ...o.image, hotspot: o.image.hotspot ?? { x: 0.74, y: 0.8 } } : o.image}
+                  plain
+                  image={o.image ? { ...o.image, hotspot: o.image.hotspot ?? { x: 1, y: 1 } } : o.image}
                   title={o.title}
                   footLeft={o.text}
                 />
