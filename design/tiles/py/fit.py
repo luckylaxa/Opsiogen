@@ -27,3 +27,13 @@ def fit_quad(mask):
         (p1, d1), (p2, d2) = lines[i - 1], lines[i]
         A = np.array([d1, -d2]).T; t = np.linalg.solve(A, p2 - p1); Q.append(p1 + t[0] * d1)
     return [tuple(q) for q in Q]
+def soft_mask(rgb, thr=225):
+    """The screen as a smooth 0-255 alpha: full on the white screen, fading with the photo's own
+    edge pixels into the bezel, so the design meets the frame as softly as the photo did."""
+    import cv2
+    hard = screen_mask(rgb, thr)
+    lum = rgb.min(axis=2).astype(float)
+    near = cv2.dilate(hard, np.ones((5, 5), np.uint8)) > 0
+    a = np.clip((lum - 60) / (215 - 60), 0, 1) * near
+    a[hard > 0] = 1.0
+    return (a * 255).astype('uint8'), hard

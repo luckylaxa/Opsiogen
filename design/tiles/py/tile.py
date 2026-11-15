@@ -3,8 +3,10 @@ fill=(top, right): the screen's top edge lands at `top` of the tile height, its 
 `right` of the width; the crop runs to the bottom of the scene. No blur anywhere."""
 import sys, os, numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from comp import place
+from comp import place, coeffs
 from quad import find_quad
+from fit import screen_mask, fit_quad, soft_mask
+import cv2
 from PIL import Image, ImageDraw, ImageFilter
 OUT = (1600, 1200)
 def expand(q, px):
@@ -24,13 +26,15 @@ def full_quad(q, H, aspect):
         d = q[nb] - q[k]; out[nb] = q[k] + d / np.linalg.norm(d) * length
     return [tuple(p) for p in out]
 def tile(scene, art, out, fill=(0.40, 0.90), radius=0, restore=95, aspect=None, extend=0):
-    im = Image.open(scene).convert('RGB'); W, H = im.size; q, _ = find_quad(scene)
+    im = Image.open(scene).convert('RGB'); W, H = im.size
+    src = np.array(im); smask, hard = soft_mask(src); q = fit_quad(hard)
     if aspect: q = full_quad(q, H, aspect)
     if extend:
         # Continue the background upward by mirroring its top band (sharp, no blur), so the
         # device sits lower in the tile. Only for plain, even backgrounds (planks, linen, walls).
         a = np.array(im); top = a[:extend][::-1]
         im = Image.fromarray(np.concatenate([top, a], 0)); q = [(x, y + extend) for x, y in q]; H += extend
+        smask = np.concatenate([np.zeros((extend, W), 'uint8'), smask], 0)
     top, right = fill; sy = min(v[1] for v in q); sx = max(v[0] for v in q)
     h = min(H, (H - sy) / (1 - top)); w = h * 4 / 3
     if w > W: w = W; h = w * 3 / 4
@@ -39,10 +43,11 @@ def tile(scene, art, out, fill=(0.40, 0.90), radius=0, restore=95, aspect=None, 
     crop = im.crop((round(x0), round(y0), round(x0 + w), round(y0 + h))).resize(OUT, Image.LANCZOS)
     crop = crop.filter(ImageFilter.UnsharpMask(1.4, 60, 2))
     qq = [((x - x0) * k, (y - y0) * k) for x, y in q]
-    orig = np.array(crop).astype(float)
-    p = place(crop, Image.open(art).convert('RGBA'), expand(qq, 1.5 * k), radius=radius, glass=0.03, ss=2)
-    pa = np.array(p).astype(float)
-    m = Image.new('L', OUT, 0); ImageDraw.Draw(m).polygon([tuple(v) for v in expand(qq, 3 * k)], fill=255); m = np.array(m) > 0
-    sel = m & (orig.mean(2) < restore); pa[sel] = orig[sel]
+    box_ = (round(x0), round(y0), round(x0 + w), round(y0 + h))
+    alpha = np.array(Image.fromarray(smask).crop(box_).resize(OUT, Image.LANCZOS)).astype(float) / 255
+    a = Image.open(art).convert('RGBA'); aw, ah = a.size; ss = 2
+    wp = a.transform((OUT[0] * ss, OUT[1] * ss), Image.PERSPECTIVE, coeffs([(x * ss, y * ss) for x, y in expand(qq, 2 * k)], [(0, 0), (aw, 0), (aw, ah), (0, ah)]), Image.BICUBIC).resize(OUT, Image.LANCZOS)
+    wa = np.array(wp).astype(float); al = (alpha * wa[..., 3] / 255)[..., None]
+    pa = np.array(crop).astype(float) * (1 - al) + wa[..., :3] * al
     Image.fromarray(np.clip(pa, 0, 255).astype('uint8')).save(out, quality=92)
     print(out, 'scale', round(k, 2))

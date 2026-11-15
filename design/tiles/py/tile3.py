@@ -6,7 +6,7 @@ Plain backgrounds are continued by mirroring where the crop runs past the scene 
 import sys, os, numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from comp import place, coeffs
-from fit import screen_mask, fit_quad
+from fit import screen_mask, fit_quad, soft_mask
 from quad import find_quad
 from PIL import Image, ImageDraw, ImageFilter
 OUT = (1600, 1200)
@@ -15,8 +15,8 @@ def expand(q, px):
 def tile3(scene, art, out, box, fw=0.54, fr=0.97, ft=0.44, radius=0, dark=1.0, artcrop=None, restore=95, quad=None):
     src = np.array(Image.open(scene).convert('RGB'))
     im = src.astype(float); H, W = im.shape[:2]
-    smask = screen_mask(src)                      # the screen's real shape
-    q = quad or fit_quad(smask)
+    smask, hard = soft_mask(src)                 # the screen's real shape, soft-edged
+    q = quad or fit_quad(hard)
     x1, y1, x2, y2 = box
     w = (x2 - x1) / fw; h = w * 3 / 4
     x0 = x2 - fr * w; y0 = y1 - ft * h
@@ -32,10 +32,6 @@ def tile3(scene, art, out, box, fw=0.54, fr=0.97, ft=0.44, radius=0, dark=1.0, a
     crop = crop.filter(ImageFilter.UnsharpMask(1.2, 50, 2))
     # screen mask in tile space, grown by one scene pixel so the design meets the bezel
     import cv2
-    # take in the soft grey ring between the white screen and the black bezel (not the bezel itself)
-    lum = np.pad(src.min(axis=2), ((pt, pb), (pl, pr)), mode='symmetric')
-    mk = (cv2.dilate(mk, np.ones((5, 5), np.uint8)) > 0) & (lum > 70)
-    mk = (mk * 255).astype('uint8')
     alpha = np.array(Image.fromarray(mk).crop(box_).resize(OUT, Image.LANCZOS)).astype(float) / 255
     k = OUT[0] / w
     qq = [((x - box_[0]) * k, (y - box_[1]) * k) for x, y in q]
