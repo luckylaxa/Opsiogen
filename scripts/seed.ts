@@ -443,16 +443,20 @@ async function run() {
       if ((current.file && OLD_CARD_IMAGE.test(current.file)) || remade) tx.patch(s._id, (p) => p.set({ [path]: fields.image }));
       else tx.patch(s._id, (p) => p.setIfMissing({ [path]: fields.image }));
     }
-    const newFaqs = s.faqs.filter((f) => f._key && !(existing.faqKeys ?? []).includes(f._key));
-    if (newFaqs.length) {
-      console.log(`  adding ${newFaqs.length} questions to ${s._id}`);
-      tx.patch(s._id, (p) =>
-        p.setIfMissing({ faqs: [] }).insert(
-          "after",
-          "faqs[-1]",
-          newFaqs.map((f) => ({ _type: "faq", _key: f._key, question: f.question, answer: f.answer })),
-        ),
-      );
+    const have = existing.faqKeys ?? [];
+    const asFaq = (f: (typeof s.faqs)[number]) => ({ _type: "faq", _key: f._key, question: f.question, answer: f.answer });
+    // New questions listed before every existing one (the AI questions) go first; the rest go last.
+    const firstKept = s.faqs.findIndex((f) => f._key && have.includes(f._key));
+    const newFaqs = s.faqs.filter((f) => f._key && !have.includes(f._key));
+    const leading = have.length && firstKept > 0 ? s.faqs.slice(0, firstKept).filter((f) => f._key && !have.includes(f._key)) : [];
+    const trailing = newFaqs.filter((f) => !leading.includes(f));
+    if (leading.length) {
+      console.log(`  adding ${leading.length} questions to the top of ${s._id}`);
+      tx.patch(s._id, (p) => p.insert("before", "faqs[0]", leading.map(asFaq)));
+    }
+    if (trailing.length) {
+      console.log(`  adding ${trailing.length} questions to ${s._id}`);
+      tx.patch(s._id, (p) => p.setIfMissing({ faqs: [] }).insert("after", "faqs[-1]", trailing.map(asFaq)));
     }
   }
 

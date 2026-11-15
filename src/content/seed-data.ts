@@ -67,6 +67,8 @@ const img = (url: string, width: number, height: number, alt: string) => ({ url,
 const WEB = "/services/ai-websites";
 const benefits = (items: Pair[]) => items.map(([title, text], i) => ({ _key: `b${i + 1}`, title, text }));
 const faqs = (items: Pair[]) => items.map(([question, answer], i) => ({ _key: `q${i + 1}`, question, answer }));
+/** Questions people have about AI, shown first in a service's questions. */
+const aiFaqs = (items: Pair[]) => items.map(([question, answer], i) => ({ _key: `ai${i + 1}`, question, answer }));
 /** What we do cards, each with its image from public/services/<slug>. */
 const cards = (slug: string, items: [title: string, text: string, file: string, alt: string][]) =>
   items.map(([title, text, file, alt], i) => ({
@@ -170,25 +172,31 @@ export const SERVICES: Service[] = [
         image: img(`${WEB}/tile-cms.jpg`, 1600, 1200, "A restaurant's home page being edited: the heading Dinner, by the fire is selected, beside a panel with fields and a Publish changes button, on purple"),
       },
     ],
-    faqs: faqs([
-      [
-        "How fast can my website go live?",
-        "Basic websites go live in 7 days. Larger sites take longer, and we agree the timeline with you before we start.",
-      ],
-      [
-        "Can I update the site myself?",
-        "Yes. Every site comes with an easy-to-use CMS, so you can edit text, pages and images without a developer.",
-      ],
-      ["Can you revamp my current site?", "Yes. We redesign and rebuild outdated sites and keep the content that still works."],
-      PRICING,
-      OWNERSHIP,
-      ["Will my site work on phones?", "Yes. Every site is designed and tested for phones, tablets and desktops."],
-      ["Can you write the copy?", "Yes. We write clear, conversion-focused copy, or polish the copy you have."],
-      [
-        "What do you need from us to start?",
-        "Your goals, any content you already have and access to your domain. We guide you through the rest.",
-      ],
-    ]),
+    faqs: [
+      ...aiFaqs([
+        ["Will an AI-built site look like everyone else's?", "No. AI speeds up the build. Our designers shape every page around your brand and your customers."],
+        ["Will people find it on Google and in AI search?", "We build every page with clear headings, fast loading and proper page details, so search engines and AI assistants can read it."],
+      ]),
+      ...faqs([
+        [
+          "How fast can my website go live?",
+          "Basic websites go live in 7 days. Larger sites take longer, and we agree the timeline with you before we start.",
+        ],
+        [
+          "Can I update the site myself?",
+          "Yes. Every site comes with an easy-to-use CMS, so you can edit text, pages and images without a developer.",
+        ],
+        ["Can you revamp my current site?", "Yes. We redesign and rebuild outdated sites and keep the content that still works."],
+        PRICING,
+        OWNERSHIP,
+        ["Will my site work on phones?", "Yes. Every site is designed and tested for phones, tablets and desktops."],
+        ["Can you write the copy?", "Yes. We write clear, conversion-focused copy, or polish the copy you have."],
+        [
+          "What do you need from us to start?",
+          "Your goals, any content you already have and access to your domain. We guide you through the rest.",
+        ],
+      ]),
+    ],
     hero: { image: img(`${WEB}/hero.png`, 1600, 1120, "Laptop and phone showing Opsiogen web pages") },
     clientsLabel: "Websites we’ve built for",
     why: {
@@ -257,28 +265,34 @@ export const SERVICES: Service[] = [
       ["Design systems", "Components, colours and rules that keep every screen consistent.", "tile-system.jpg", "A large Continue button selected as Button / Primary, a dark version below and four colour swatches, on green"],
       ["Developer-ready handoff", "Specs, assets and annotated screens your developers can build from.", "tile-handoff.jpg", "A balance card marked with spacing redlines beside a dark spec panel of sizes, colours and code"],
     ]),
-    faqs: faqs([
-      ["Do you work on existing products?", "Yes. We audit and redesign live products as well as design new ones."],
-      [
-        "Can you build a design system for us?",
-        "Yes. We create the components, styles and rules your designers and developers share, so the product stays consistent from MVP to enterprise.",
-      ],
-      [
-        "How do you use AI in product design?",
-        "AI speeds up research, flows and screens. Our designers make every decision count.",
-      ],
-      OWNERSHIP,
-      ["Do you design mobile apps?", "Yes. We design apps for phones and tablets, as well as web products."],
-      [
-        "Can you work with our developers?",
-        "Yes. We hand over specs, assets and annotated screens, and stay on hand while they build.",
-      ],
-      [
-        "We already have a design system. Can you improve it?",
-        "Yes. We audit what you have, fill the gaps and document it so your team can keep it up to date.",
-      ],
-      PRICING,
-    ]),
+    faqs: [
+      ...aiFaqs([
+        ["Will AI make our product feel generic?", "No. AI speeds up research and early screens. Our designers make every decision from what your users need."],
+        ["Can you design AI features into our product?", "Yes. We design chat, search and assistant features so people understand what the AI does and stay in control."],
+      ]),
+      ...faqs([
+        ["Do you work on existing products?", "Yes. We audit and redesign live products as well as design new ones."],
+        [
+          "Can you build a design system for us?",
+          "Yes. We create the components, styles and rules your designers and developers share, so the product stays consistent from MVP to enterprise.",
+        ],
+        [
+          "How do you use AI in product design?",
+          "AI speeds up research, flows and screens. Our designers make every decision count.",
+        ],
+        OWNERSHIP,
+        ["Do you design mobile apps?", "Yes. We design apps for phones and tablets, as well as web products."],
+        [
+          "Can you work with our developers?",
+          "Yes. We hand over specs, assets and annotated screens, and stay on hand while they build.",
+        ],
+        [
+          "We already have a design system. Can you improve it?",
+          "Yes. We audit what you have, fill the gaps and document it so your team can keep it up to date.",
+        ],
+        PRICING,
+      ]),
+    ],
     hero: heroImage("ai-product-design", "A product dashboard, an app and a design system sheet"),
     clientsLabel: "Products we’ve designed for",
     why: { label: "Why it matters", heading: "People don’t read manuals. Your product has to make sense.", accent: "sense" },
@@ -340,24 +354,29 @@ export const SERVICES: Service[] = [
       ["Booking and intake systems", "Online booking and intake that feed straight into your workflow.", "tile-booking.jpg", "A delivery calendar with the 15th chosen, and a dark card for Wed 15 April, 8:00 to 10:00 am with a Confirm slot button, on amber"],
       ["Internal tools and trackers", "Simple tools that replace spreadsheets and manual work.", "tile-internal.jpg", "A tilted tablet showing a warehouse picking list, three of the items ticked off, on green"],
     ]),
-    faqs: faqs([
-      [
-        "How fast can you build an MVP?",
-        "We take you from idea to working product in weeks, and agree the scope and timeline before we start.",
-      ],
-      ["Can the MVP grow into a full product?", "Yes. We build the first version so it can grow with your users and your business."],
-      ["Do we need our own developers?", "No. We design, build and launch, then support the product after launch."],
-      OWNERSHIP,
-      [
-        "What can you build?",
-        "MVPs, customer portals, dashboards, booking systems, internal tools, and AI features inside your product.",
-      ],
-      [
-        "Can you add AI to software we already have?",
-        "Yes. We add features such as smart search, chat and summaries to products you already use.",
-      ],
-      PRICING,
-    ]),
+    faqs: [
+      ...aiFaqs([
+        ["How do you keep AI features reliable?", "A person stays in charge of the steps that matter, like confirming an order, and we test AI features with real examples before launch."],
+      ]),
+      ...faqs([
+        [
+          "How fast can you build an MVP?",
+          "We take you from idea to working product in weeks, and agree the scope and timeline before we start.",
+        ],
+        ["Can the MVP grow into a full product?", "Yes. We build the first version so it can grow with your users and your business."],
+        ["Do we need our own developers?", "No. We design, build and launch, then support the product after launch."],
+        OWNERSHIP,
+        [
+          "What can you build?",
+          "MVPs, customer portals, dashboards, booking systems, internal tools, and AI features inside your product.",
+        ],
+        [
+          "Can you add AI to software we already have?",
+          "Yes. We add features such as smart search, chat and summaries to products you already use.",
+        ],
+        PRICING,
+      ]),
+    ],
     hero: heroImage("ai-mvps-business-apps", "A customer portal on a laptop and a booking app on a phone"),
     clientsLabel: "Built for",
     why: { label: "Why it matters", heading: "The fastest way to test an idea is to put it in people’s hands.", accent: "hands" },
@@ -420,28 +439,33 @@ export const SERVICES: Service[] = [
       ["AI chatbots and voice assistants", "Assistants that answer questions and handle routine requests by chat or voice.", "tile-assistants.jpg", "A staff assistant chat: how many holiday days can I carry over, the answer from the handbook, and who approves it, on pink"],
       ["Reports, proposals and approvals", "Documents drafted and approvals routed automatically.", "tile-approvals.jpg", "A phone lock screen asking to approve £4,800 for four laptops, beside the request and its approval steps"],
     ]),
-    faqs: faqs([
-      [
-        "What can be automated?",
-        "Repetitive, rule-based work such as data entry, follow-ups, reports, approvals and document handling. A process audit shows where to start.",
-      ],
-      [
-        "Will it work with the tools we use?",
-        "We connect the tools you already have wherever they allow it, so your people don’t have to switch.",
-      ],
-      ["What happens after launch?", "The monthly care plan keeps your automations running and improving."],
-      OWNERSHIP,
-      ["Do we need technical staff?", "No. We build, run and look after the automations. Your team just uses them."],
-      [
-        "Can you build an AI voice assistant?",
-        "Yes. We build assistants that answer calls and questions, and hand over to your team when needed.",
-      ],
-      [
-        "How do we know what to automate first?",
-        "The process audit ranks tasks by time saved and effort, so you start where it pays back fastest.",
-      ],
-      PRICING,
-    ]),
+    faqs: [
+      ...aiFaqs([
+        ["Will automation replace our people?", "No. It takes repetitive work off their desks, and people still approve the decisions that matter."],
+      ]),
+      ...faqs([
+        [
+          "What can be automated?",
+          "Repetitive, rule-based work such as data entry, follow-ups, reports, approvals and document handling. A process audit shows where to start.",
+        ],
+        [
+          "Will it work with the tools we use?",
+          "We connect the tools you already have wherever they allow it, so your people don’t have to switch.",
+        ],
+        ["What happens after launch?", "The monthly care plan keeps your automations running and improving."],
+        OWNERSHIP,
+        ["Do we need technical staff?", "No. We build, run and look after the automations. Your team just uses them."],
+        [
+          "Can you build an AI voice assistant?",
+          "Yes. We build assistants that answer calls and questions, and hand over to your team when needed.",
+        ],
+        [
+          "How do we know what to automate first?",
+          "The process audit ranks tasks by time saved and effort, so you start where it pays back fastest.",
+        ],
+        PRICING,
+      ]),
+    ],
     hero: heroImage("ai-automation", "An automated enquiry flow on a laptop and an AI assistant on a phone"),
     clientsLabel: "Automations built for",
     why: { label: "Why it matters", heading: "Your team wasn’t hired to copy and paste.", accent: "copy and paste" },
@@ -503,22 +527,27 @@ export const SERVICES: Service[] = [
       ["Campaign concepts", "One big idea for a launch or season, ready for every format.", "tile-campaign.jpg", "A bakery campaign, Friday is loaf day, as a printed poster and on a phone, on a leather sofa"],
       ["Publishing and reporting", "We publish to your calendar and report on what worked.", "tile-reporting.jpg", "A bakery’s weekly reach chart with 312 orders from social and its top posts pulled out beside it, on teal"],
     ]),
-    faqs: faqs([
-      ["How much content do we get?", "It depends on your plan. We agree the monthly output with you before we start."],
-      [
-        "Will it sound like us?",
-        "Yes. We work from your brand voice and guidelines, and you approve the calendar before anything goes live.",
-      ],
-      ["Do you publish for us?", "Yes. We schedule and publish your content, then report on performance every month."],
-      [
-        "Do you make paid social ads?",
-        "Yes. We design ads and variations for testing. Our Digital Marketing service can run the campaigns too.",
-      ],
-      ["Which channels do you cover?", "All the main social channels. Every post is sized and written for the channel it runs on."],
-      ["Can you make video without a shoot?", "Yes. Many reels are made with motion graphics and AI, with no filming needed."],
-      PRICING,
-      OWNERSHIP,
-    ]),
+    faqs: [
+      ...aiFaqs([
+        ["Will AI-made content feel generic?", "No. AI speeds up drafts and variations. Our designers and writers shape every post to your voice, and you approve it first."],
+      ]),
+      ...faqs([
+        ["How much content do we get?", "It depends on your plan. We agree the monthly output with you before we start."],
+        [
+          "Will it sound like us?",
+          "Yes. We work from your brand voice and guidelines, and you approve the calendar before anything goes live.",
+        ],
+        ["Do you publish for us?", "Yes. We schedule and publish your content, then report on performance every month."],
+        [
+          "Do you make paid social ads?",
+          "Yes. We design ads and variations for testing. Our Digital Marketing service can run the campaigns too.",
+        ],
+        ["Which channels do you cover?", "All the main social channels. Every post is sized and written for the channel it runs on."],
+        ["Can you make video without a shoot?", "Yes. Many reels are made with motion graphics and AI, with no filming needed."],
+        PRICING,
+        OWNERSHIP,
+      ]),
+    ],
     hero: heroImage("ai-social-media-marketing", "Three phones showing social posts and a short video"),
     clientsLabel: "Social content for",
     why: { label: "Why it matters", heading: "Social rewards the brands that show up.", accent: "show up" },
@@ -581,25 +610,30 @@ export const SERVICES: Service[] = [
       ["Email and retargeting", "Follow-ups that bring people back when they’re ready to buy.", "tile-email.jpg", "A follow-up email, Still thinking it over?, above a seven-day plan that brings 1 in 6 people back to book"],
       ["Analytics and reporting", "Clear tracking of leads, sales and return on ad spend.", "tile-analytics.jpg", "A visit-to-sale funnel from 24,600 visits to 64 bikes sold, beside a card showing a 5.2× return on ad spend"],
     ]),
-    faqs: faqs([
-      ["What do you measure?", "What matters to your business: enquiries, leads and return on ad spend."],
-      ["Can you take over our current campaigns?", "Yes. We review what’s running, keep what works and fix what doesn’t."],
-      PRICING,
-      ["Do you run the campaigns for us?", "Yes. We plan, launch and manage your campaigns, and keep improving them."],
-      [
-        "How soon will we see results?",
-        "Paid campaigns bring traffic as soon as they go live. SEO builds over months. We agree goals and reporting before we start.",
-      ],
-      [
-        "Do you write the ads and build the landing pages?",
-        "Yes. We write and design the ads, and build landing pages made to turn clicks into enquiries.",
-      ],
-      [
-        "Which channels do you use?",
-        "The search and social channels where your customers are, chosen with you for your goals and budget.",
-      ],
-      ["Who owns the ad accounts and data?", "You do. Your accounts, analytics and data stay yours."],
-    ]),
+    faqs: [
+      ...aiFaqs([
+        ["Does SEO still matter now that people search with AI?", "Yes. Clear, useful pages with good structure help you show up in search results and in AI answers."],
+      ]),
+      ...faqs([
+        ["What do you measure?", "What matters to your business: enquiries, leads and return on ad spend."],
+        ["Can you take over our current campaigns?", "Yes. We review what’s running, keep what works and fix what doesn’t."],
+        PRICING,
+        ["Do you run the campaigns for us?", "Yes. We plan, launch and manage your campaigns, and keep improving them."],
+        [
+          "How soon will we see results?",
+          "Paid campaigns bring traffic as soon as they go live. SEO builds over months. We agree goals and reporting before we start.",
+        ],
+        [
+          "Do you write the ads and build the landing pages?",
+          "Yes. We write and design the ads, and build landing pages made to turn clicks into enquiries.",
+        ],
+        [
+          "Which channels do you use?",
+          "The search and social channels where your customers are, chosen with you for your goals and budget.",
+        ],
+        ["Who owns the ad accounts and data?", "You do. Your accounts, analytics and data stay yours."],
+      ]),
+    ],
     hero: heroImage("digital-marketing", "A campaign dashboard on a laptop, a sponsored post on a phone and new lead alerts"),
     clientsLabel: "Campaigns for",
     why: { label: "Why it matters", heading: "Clicks don’t pay the bills. Enquiries do.", accent: "Enquiries do" },
@@ -661,27 +695,32 @@ export const SERVICES: Service[] = [
       ["AI imagery and video", "Original visuals made with AI and finished by designers.", "tile-ai.jpg", "A prompt for a quiet sunrise studio and four generated images, one chosen, on warm sand"],
       ["Email and landing pages", "Designs for campaigns, newsletters, launches and reports.", "tile-email.jpg", "A yoga studio’s newsletter, Your week, a little slower., in front of its landing page, Seven days. Seven classes."],
     ]),
-    faqs: faqs([
-      [
-        "How does the subscription work?",
-        "One flat monthly fee. Send requests any time and we deliver on-brand work fast.",
-      ],
-      [
-        "Why not hire in-house?",
-        "You get dedicated creative support without hiring, or briefing a new agency for every project.",
-      ],
-      OWNERSHIP,
-      [
-        "What can we ask for?",
-        "Ads, decks, brand assets, motion, AI visuals, email and landing pages. If it’s creative, ask.",
-      ],
-      [
-        "How fast is turnaround?",
-        "Fast. Smaller requests come back quickest, and bigger projects get a clear timeline before we start.",
-      ],
-      ["Will the work match our brand?", "Yes. We work from your guidelines and templates, so everything looks like you."],
-      PRICING,
-    ]),
+    faqs: [
+      ...aiFaqs([
+        ["Will the work look AI-made?", "No. AI speeds up first drafts and variations. Designers finish every piece to your brand."],
+      ]),
+      ...faqs([
+        [
+          "How does the subscription work?",
+          "One flat monthly fee. Send requests any time and we deliver on-brand work fast.",
+        ],
+        [
+          "Why not hire in-house?",
+          "You get dedicated creative support without hiring, or briefing a new agency for every project.",
+        ],
+        OWNERSHIP,
+        [
+          "What can we ask for?",
+          "Ads, decks, brand assets, motion, AI visuals, email and landing pages. If it’s creative, ask.",
+        ],
+        [
+          "How fast is turnaround?",
+          "Fast. Smaller requests come back quickest, and bigger projects get a clear timeline before we start.",
+        ],
+        ["Will the work match our brand?", "Yes. We work from your guidelines and templates, so everything looks like you."],
+        PRICING,
+      ]),
+    ],
     hero: heroImage("ai-creative-subscription", "A presentation slide, a poster, ads, a social post and a story"),
     clientsLabel: "Creative for",
     why: { label: "Why it matters", heading: "Say yes to every project, without adding headcount.", accent: "headcount" },
@@ -895,18 +934,23 @@ export const SERVICES: Service[] = [
       ["AI video", "Visuals, voiceovers and scenes made with AI and finished by designers.", "tile-ai.jpg", "An AI video prompt for a pistachio scoop, four generated takes with one chosen, and a voiceover track, on indigo"],
       ["Concepts and scripts", "Ideas, scripts and storyboards, before a single frame is made.", "tile-concepts.jpg", "A six-frame storyboard and a script for an ice cream ad, lying on a sofa beside a pencil"],
     ]),
-    faqs: faqs([
-      ["Do we need to film anything?", "Not always. Many videos are made with motion graphics and AI, with no shoot needed."],
-      ["Which formats do you deliver?", "Every size you need, wide, square and vertical, ready to publish."],
-      OWNERSHIP,
-      ["Can you write the script?", "Yes. We write scripts and storyboards, or polish the ones you have."],
-      ["Do you add voiceovers and music?", "Yes. Voiceovers, music and subtitles are part of the edit."],
-      [
-        "How do you use AI in video?",
-        "AI speeds up scripts, visuals and edits. Our designers check every frame against your brand.",
-      ],
-      PRICING,
-    ]),
+    faqs: [
+      ...aiFaqs([
+        ["Will AI video look fake?", "We use AI where it looks right, such as motion graphics, backgrounds and variations, and a designer checks every frame."],
+      ]),
+      ...faqs([
+        ["Do we need to film anything?", "Not always. Many videos are made with motion graphics and AI, with no shoot needed."],
+        ["Which formats do you deliver?", "Every size you need, wide, square and vertical, ready to publish."],
+        OWNERSHIP,
+        ["Can you write the script?", "Yes. We write scripts and storyboards, or polish the ones you have."],
+        ["Do you add voiceovers and music?", "Yes. Voiceovers, music and subtitles are part of the edit."],
+        [
+          "How do you use AI in video?",
+          "AI speeds up scripts, visuals and edits. Our designers check every frame against your brand.",
+        ],
+        PRICING,
+      ]),
+    ],
     hero: heroImage("ai-video-production", "A video editor on a laptop and a vertical video on a phone"),
     clientsLabel: "Video for",
     why: { label: "Why it matters", heading: "Video says in seconds what a page of text can’t.", accent: "seconds" },
