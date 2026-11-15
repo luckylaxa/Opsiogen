@@ -347,12 +347,12 @@ export const SERVICES: Service[] = [
       ["Yours to keep", "You own everything we build."],
     ]),
     offerings: cards("ai-mvps-business-apps", [
-      ["MVPs and prototypes", "A working first version to test with users and investors.", "tile-mvp.jpg", "An open space-grey laptop on a walnut table against a terracotta wall, showing a reorder screen for a café supplier"],
-      ["AI-powered features", "Smart search, chat, summaries and forms built into your product.", "tile-ai.jpg", "Two hands hold a tablet against a violet wall, showing an order assistant that turns one sentence into an order"],
-      ["Customer and partner portals", "One place for customers and partners to log in, track and get things done.", "tile-portal.jpg", "A silver laptop on an oak desk against a warm brown wall, showing a customer portal with recent orders"],
-      ["Dashboards", "Live views of the numbers that matter, in one place.", "tile-dashboard.jpg", "A slim monitor on a walnut desk against a slate-blue wall, showing a live delivery dashboard"],
-      ["Booking and intake systems", "Online booking and intake that feed straight into your workflow.", "tile-booking.jpg", "A phone lying on ochre linen, showing a delivery booking calendar with a time slot chosen"],
-      ["Internal tools and trackers", "Simple tools that replace spreadsheets and manual work.", "tile-internal.jpg", "A hand holds a phone against a deep green wall, showing a picking list with items ticked off"],
+      ["MVPs and prototypes", "A working first version to test with users and investors.", "tile-mvp.jpg", "A laptop on deep terracotta, showing an app plan for a café supplier: launch with the one thing cafés do every day, reorder"],
+      ["AI-powered features", "Smart search, chat, summaries and forms built into your product.", "tile-ai.jpg", "A tablet on violet, showing an order assistant that turns one sentence into a confirmed order"],
+      ["Customer and partner portals", "One place for customers and partners to log in, track and get things done.", "tile-portal.jpg", "A browser window on warm brown, showing a customer portal with the next delivery, invoices and recent orders"],
+      ["Dashboards", "Live views of the numbers that matter, in one place.", "tile-dashboard.jpg", "A desktop display on slate blue, showing a live depot dashboard with orders, revenue and routes"],
+      ["Booking and intake systems", "Online booking and intake that feed straight into your workflow.", "tile-booking.jpg", "A phone on burnt orange, showing a delivery booking calendar, with a card confirming Wednesday 15 April, 8 to 10 am"],
+      ["Internal tools and trackers", "Simple tools that replace spreadsheets and manual work.", "tile-internal.jpg", "A tablet on deep green, showing a picking list for Harbour Café with five of eight items ticked"],
     ]),
     faqs: [
       ...aiFaqs([

@@ -8,7 +8,7 @@ import { Media } from "@/components/ui/Media";
 import { Block } from "@/components/sections/SectionRenderer";
 import { CallToAction } from "@/components/sections/CallToAction";
 import { WorkGrid } from "@/components/work/WorkGrid";
-import { TILE_FOCUS } from "@/content/tile-focus";
+import { TILE_FOCUS, TILE_PHONES } from "@/content/tile-focus";
 
 type Props = {
   service: Service;
@@ -94,6 +94,7 @@ export function ServiceFullPage({ service, settings, work }: Props) {
                   // (bottom right). Other pages keep the earlier card exactly as approved.
                   plain={plain}
                   image={o.image ? { ...o.image, hotspot: focus(o.image.hotspot ?? (plain ? { x: 1, y: 1 } : { x: 0.74, y: 0.8 }), TILE_FOCUS[`${service.slug}/${o.title}`]) } : o.image}
+                  imagePhone={TILE_PHONES[`${service.slug}/${o.title}`] ? { url: TILE_PHONES[`${service.slug}/${o.title}`], width: 1074, height: 1380 } : null}
                   title={o.title}
                   footLeft={o.text}
                 />

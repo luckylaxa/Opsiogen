@@ -39,3 +39,20 @@ export const TILE_FOCUS: Record<string, number> = {
 export const PHONE_CARDS: Record<string, { url: string; width: number; height: number }> = {
   "ai-websites": { url: "/services/ai-websites/card-phone.jpg", width: 1074, height: 1380 },
 };
+
+/**
+ * Tall phone versions of What we do tiles (1074 x 1380, the device whole and straight-on), keyed
+ * by "slug/tile title". Pages listed here show these below 640px instead of a slice of the 4:3 tile.
+ */
+const tilePhones = (slug: string, tiles: Record<string, string>) =>
+  Object.fromEntries(Object.entries(tiles).map(([title, file]) => [`${slug}/${title}`, `/services/${slug}/${file}-phone.jpg`]));
+export const TILE_PHONES: Record<string, string> = {
+  ...tilePhones("ai-mvps-business-apps", {
+    "MVPs and prototypes": "tile-mvp",
+    "AI-powered features": "tile-ai",
+    "Customer and partner portals": "tile-portal",
+    Dashboards: "tile-dashboard",
+    "Booking and intake systems": "tile-booking",
+    "Internal tools and trackers": "tile-internal",
+  }),
+};
