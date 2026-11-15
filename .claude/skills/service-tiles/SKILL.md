@@ -121,13 +121,14 @@ experiment on the live site. Mistakes cost the owner money and trust.
 ## 7. Pages and status
 
 - **Product design (`ai-product-design`): done.** Scenes `design/tiles/scenes/ai-product-design/r-*.png`,
-  final tiles `tile-*.jpg` beside them. Tile settings used: laptops `fill=(0.33–0.34, 0.92–0.95)`;
+  final tiles `tile-*.jpg` beside them. Tile settings used: laptops `fill=(0.38, 0.92–0.95)` (handoff `extend=40`);
   phones `fill=(0.36, 0.86–0.97)` with `extend=130–170` (mirrored planks or linen above, sharp)
   and `aspect=0.462` for a phone cut by the bottom edge.
-- Measured real text height (live page): text ends at 30% of the card on desktop and 22% on
-  phones (4:5 cards). Devices must start below those lines; 33–36% is right.
+- Phones show the whole 4:3 picture (never crop it: a 4:5 card cut the laptops). Phone text is
+  sized to the screen width (title 5.8vw, description 3.5vw) and ends at 32% of the card on
+  every phone (SE to Pro Max); desktop text ends at 30%. Device tops (lid or phone edge) must
+  be at 35–38%. Measure with Playwright on several phones before publishing.
 - Do not `extend` backgrounds with diagonal patterns (window shadows): the seam shows.
-- Card code: `BigCard` `plain` (service tiles): no shade, 4:5 on phones; image hotspot defaults
-  to x=1, y=1 so crops keep the device at bottom right.
+- Card code: `BigCard` `plain` (service tiles): no shade, 4:3 on phones too, vw-sized phone text.
 - To do, one page at a time, with approval for credits each time: MVPs and business apps,
   Automation, Social media, Digital marketing, Video, Creative subscription.

@@ -34,7 +34,7 @@ type Props = {
   layout?: "bottom" | "top";
   /**
    * Top layout, service page tiles: one picture with the text straight on it (no shade), and a
-   * taller 4:5 card on phones so the device below the text keeps its size.
+   * 4:3 card on phones (the picture's own shape) with text sized to the screen width.
    */
   plain?: boolean;
   /** Cursor over the card: the View disc for work, the ring for everything else. */
@@ -88,9 +88,26 @@ export function BigCard({
           className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgb(0_0_0/0.46)_0%,rgb(0_0_0/0.2)_24%,rgb(0_0_0/0)_46%)]"
         />
       )}
-      <div className="relative max-w-[26ch]">
-        <Title className="text-[length:clamp(24px,2.1vw,40px)] leading-[1.1] font-medium tracking-[-0.015em] text-balance">{title}</Title>
-        {footLeft && <div className="mt-[clamp(8px,0.7vw,14px)] text-base text-white/90 text-pretty">{footLeft}</div>}
+      {/* Plain tiles on phones: text sized to the screen width, so it always ends above the device. */}
+      <div className={cn("relative", plain ? "max-sm:max-w-none sm:max-w-[26ch]" : "max-w-[26ch]")}>
+        <Title
+          className={cn(
+            "text-[length:clamp(24px,2.1vw,40px)] leading-[1.1] font-medium tracking-[-0.015em] text-balance",
+            plain && "max-sm:text-[5.8vw]",
+          )}
+        >
+          {title}
+        </Title>
+        {footLeft && (
+          <div
+            className={cn(
+              "mt-[clamp(8px,0.7vw,14px)] text-base text-white/90 text-pretty",
+              plain && "max-sm:mt-[1.4vw] max-sm:text-[3.5vw] max-sm:leading-[1.4]",
+            )}
+          >
+            {footLeft}
+          </div>
+        )}
       </div>
       {footRight && <div className="relative mt-auto pt-4 text-base">{footRight}</div>}
     </>
@@ -147,7 +164,11 @@ export function BigCard({
     "on-dark group relative flex h-full flex-col overflow-hidden rounded-card bg-coal text-white lg:min-h-[calc((100cqw-var(--spacing-gap))*0.397)]",
     // Top layout keeps the card near the photo's own shape, so its subject is never cropped away.
     layout === "top"
-      ? cn("p-[clamp(20px,2.3vw,44px)] sm:aspect-[4/3] lg:aspect-auto", plain ? "aspect-[4/5]" : "aspect-[10/9]")
+      ? cn(
+          "p-[clamp(20px,2.3vw,44px)] sm:aspect-[4/3] lg:aspect-auto",
+          // Plain tiles keep the picture's own 4:3 shape on phones, so nothing is cropped.
+          plain ? "aspect-[4/3] max-sm:p-[4.2vw]" : "aspect-[10/9]",
+        )
       : "min-h-[460px] p-[clamp(24px,3.05vw,58px)] sm:min-h-[540px]",
     className,
   );
