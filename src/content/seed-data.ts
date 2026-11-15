@@ -259,7 +259,7 @@ export const SERVICES: Service[] = [
     ]),
     offerings: cards("ai-product-design", [
       ["Product design", "New SaaS, web and mobile products, from flows to polished screens.", "tile-product.jpg", "A close-up of a phone in a green case on a sunny wooden desk, showing a money app: £1,284.50 left to spend this month"],
-      ["UX audits", "We find where people get stuck and rank the fixes.", "tile-audit.jpg", "An old banking app with numbered red pins, and two finding cards pulled out beside it: Three balances, no answer and The advert is the loudest thing"],
+      ["UX audits", "We find where people get stuck and rank the fixes.", "tile-audit.jpg", "A laptop on a green velvet sofa showing a cluttered banking dashboard, with numbered pins on its three balances and its loud advert"],
       ["Redesign and iteration", "Live products made simpler, one release at a time.", "tile-redesign.jpg", "A laptop on an office desk showing a cluttered banking screen beside its simpler redesign and the results after eight weeks"],
       ["Prototypes and validation", "Clickable prototypes to test ideas before you build.", "tile-prototype.jpg", "A hand holding a phone in a sunlit office, showing a prototype screen: What are you saving for?, with New bike chosen"],
       ["Design systems", "Components, colours and rules that keep every screen consistent.", "tile-system.jpg", "A large Continue button selected as Button / Primary, a dark version below and four colour swatches, on green"],
@@ -349,7 +349,7 @@ export const SERVICES: Service[] = [
     offerings: cards("ai-mvps-business-apps", [
       ["MVPs and prototypes", "A working first version to test with users and investors.", "tile-mvp.jpg", "A hand holding a phone over a dark wooden desk, showing a wholesale ordering app: Thursday order with five products and a Review order button"],
       ["AI-powered features", "Smart search, chat, summaries and forms built into your product.", "tile-ai.jpg", "A hand holding up a tablet against purple, showing an order assistant: An order in one sentence"],
-      ["Customer and partner portals", "One place for customers and partners to log in, track and get things done.", "tile-portal.jpg", "A laptop on a wooden desk showing a customer portal: the next delivery, an invoice for £482.60 and recent orders"],
+      ["Customer and partner portals", "One place for customers and partners to log in, track and get things done.", "tile-portal.jpg", "A laptop on a table by a bright window showing a customer portal: the next delivery, an invoice for £482.60 and recent orders"],
       ["Dashboards", "Live views of the numbers that matter, in one place.", "tile-dashboard.jpg", "A laptop on a wooden table showing an operations dashboard: today’s orders, revenue, routes and orders by hour"],
       ["Booking and intake systems", "Online booking and intake that feed straight into your workflow.", "tile-booking.jpg", "A hand holding a tablet against amber, showing a delivery calendar with the 15th chosen and two-hour time slots"],
       ["Internal tools and trackers", "Simple tools that replace spreadsheets and manual work.", "tile-internal.jpg", "A tilted tablet showing a warehouse picking list, three of the items ticked off, on green"],
@@ -432,11 +432,11 @@ export const SERVICES: Service[] = [
       ["Looked after", "A monthly care plan keeps every automation running and improving."],
     ]),
     offerings: cards("ai-automation", [
-      ["Process audit", "We map how work gets done and find the tasks worth automating first.", "tile-audit.jpg", "An automation audit pulled apart: 27 hours a week of computer work, 22.5 hours that can be given back, and the tasks ranked by hours saved"],
-      ["Lead and enquiry automation", "Every enquiry captured, sorted and followed up without manual work.", "tile-leads.jpg", "Steps of an enquiry workflow, from a new website enquiry to telling sales in chat and offering three call times, on green"],
-      ["Internal dashboards", "Dashboards and reports that update themselves from the tools you use.", "tile-dashboards.jpg", "A weekly sales chart, £48,200 in sales last week and a card that says the report is sent every Monday at 8:00, on amber"],
+      ["Process audit", "We map how work gets done and find the tasks worth automating first.", "tile-audit.jpg", "A wall covered in sticky notes from a workshop mapping how work gets done"],
+      ["Lead and enquiry automation", "Every enquiry captured, sorted and followed up without manual work.", "tile-leads.jpg", "A hand holding a phone in an office, its lock screen showing a new enquiry sorted as a hot lead, a follow-up sent and a call booked"],
+      ["Internal dashboards", "Dashboards and reports that update themselves from the tools you use.", "tile-dashboards.jpg", "A laptop on a desk showing a sales dashboard: £48,200 last week, sales by week and a report scheduled for Monday at 8:00"],
       ["Document and data extraction", "Data pulled from forms, invoices and PDFs into your systems.", "tile-documents.jpg", "A hand holding a tablet against blue, showing an invoice being read automatically and the fields found, with Looks right, file it"],
-      ["AI chatbots and voice assistants", "Assistants that answer questions and handle routine requests by chat or voice.", "tile-assistants.jpg", "A staff assistant chat: how many holiday days can I carry over, the answer from the handbook, and who approves it, on pink"],
+      ["AI chatbots and voice assistants", "Assistants that answer questions and handle routine requests by chat or voice.", "tile-assistants.jpg", "A phone on a soft mint blanket showing an assistant answering a question about holiday days, with the handbook pages it used"],
       ["Reports, proposals and approvals", "Documents drafted and approvals routed automatically.", "tile-approvals.jpg", "A hand holding a phone over a dark desk, its lock screen asking to approve £4,800 for four laptops"],
     ]),
     faqs: [
@@ -525,7 +525,7 @@ export const SERVICES: Service[] = [
       ["Reels and short video", "Short, vertical video that keeps your brand in the feed.", "tile-reels.jpg", "A phone playing a bakery reel, Fresh out at seven, beside a second reel card, The crumb shot, on dark brown"],
       ["Paid social creative", "Ad designs and variations, made to test and improve.", "tile-paid.jpg", "Three versions of one bakery ad fanned out with their results, the third, Friday is loaf day, marked as the winner"],
       ["Campaign concepts", "One big idea for a launch or season, ready for every format.", "tile-campaign.jpg", "A bakery campaign, Friday is loaf day, as a printed poster and on a phone, on a leather sofa"],
-      ["Publishing and reporting", "We publish to your calendar and report on what worked.", "tile-reporting.jpg", "A laptop on a wooden desk showing a bakery’s April social report: reach, engagement, orders and weekly reach"],
+      ["Publishing and reporting", "We publish to your calendar and report on what worked.", "tile-reporting.jpg", "A laptop on a table by a window showing a bakery’s April report: reach, engagement and top posts"],
     ]),
     faqs: [
       ...aiFaqs([
@@ -604,11 +604,11 @@ export const SERVICES: Service[] = [
     ]),
     offerings: cards("digital-marketing", [
       ["Paid social ads", "Campaigns aimed at the people most likely to buy.", "tile-social.jpg", "A close-up of a phone in a green case on a wooden desk, showing a sponsored post for an electric bike: Hills, flattened."],
-      ["Search ads", "Be found at the moment customers search for what you offer.", "tile-search.jpg", "A search for electric bike for commuting, and the sponsored result for the bike shop with a cursor on Book a test ride"],
+      ["Search ads", "Be found at the moment customers search for what you offer.", "tile-search.jpg", "A hand holding a phone showing search results with a sponsored listing for electric bikes: Hills, Flattened"],
       ["SEO", "Better search visibility through content, structure and technical fixes.", "tile-seo.jpg", "A laptop seen from above on an oak table, showing a search visibility report with 18,420 visits and a page score of 92"],
       ["Lead generation campaigns", "Campaigns and landing pages built to bring in enquiries.", "tile-leads.jpg", "A laptop on an office desk showing a landing page with a form to book an electric bike test ride"],
       ["Email and retargeting", "Follow-ups that bring people back when they’re ready to buy.", "tile-email.jpg", "A hand holding a tablet against warm sand, showing a follow-up email: Still thinking it over?"],
-      ["Analytics and reporting", "Clear tracking of leads, sales and return on ad spend.", "tile-analytics.jpg", "A visit-to-sale funnel from 24,600 visits to 64 bikes sold, beside a card showing a 5.2× return on ad spend"],
+      ["Analytics and reporting", "Clear tracking of leads, sales and return on ad spend.", "tile-analytics.jpg", "A laptop and a phone seen from above on a sunlit desk: the laptop shows a campaign dashboard from visit to sale, with a return on ad spend of 5.2×"],
     ]),
     faqs: [
       ...aiFaqs([
@@ -689,10 +689,10 @@ export const SERVICES: Service[] = [
     ]),
     offerings: cards("ai-creative-subscription", [
       ["Ad creatives", "Static and animated ads sized for every channel.", "tile-ads.jpg", "A yoga studio ad, Slow down. Start here., as a printed poster and on a phone, on a leather sofa"],
-      ["Presentations and pitch decks", "Decks that make your story clear and convincing.", "tile-decks.jpg", "A laptop on a wooden desk showing the opening slide of a pitch deck: A calmer week for your team"],
-      ["Brand assets and templates", "Templates, icons, illustrations and everyday brand materials.", "tile-assets.jpg", "A yoga studio’s icon and pattern sheet with a weekly timetable and a class pass, on sage"],
-      ["Motion graphics", "Animated graphics for social, ads and product stories.", "tile-motion.jpg", "A logo animation storyboard: four frames of an arch growing into the studio mark, above a timeline"],
-      ["AI imagery and video", "Original visuals made with AI and finished by designers.", "tile-ai.jpg", "A prompt for a quiet sunrise studio and four generated images, one chosen, on warm sand"],
+      ["Presentations and pitch decks", "Decks that make your story clear and convincing.", "tile-decks.jpg", "A laptop on a table by a window showing the opening slide of a pitch deck: A calmer week for your team"],
+      ["Brand assets and templates", "Templates, icons, illustrations and everyday brand materials.", "tile-assets.jpg", "A billboard on a city rooftop showing a yoga studio poster: Slow down. Start here."],
+      ["Motion graphics", "Animated graphics for social, ads and product stories.", "tile-motion.jpg", "A curved monitor on a desk in a dark room showing a logo reveal in four frames on a timeline"],
+      ["AI imagery and video", "Original visuals made with AI and finished by designers.", "tile-ai.jpg", "A hand holding a phone at night, framing an image of a clay-coloured arch at sunrise made from a short prompt"],
       ["Email and landing pages", "Designs for campaigns, newsletters, launches and reports.", "tile-email.jpg", "A hand holding a tablet against olive green, showing a yoga studio’s landing page: Seven days. Seven classes."],
     ]),
     faqs: [
@@ -929,9 +929,9 @@ export const SERVICES: Service[] = [
     offerings: cards("ai-video-production", [
       ["Explainer and product videos", "Short videos that show what you do and why it matters.", "tile-explainer.jpg", "A laptop on a wooden table playing an explainer video: How we make a scoop"],
       ["Social video and reels", "Vertical, fast-paced video made for social channels.", "tile-social.jpg", "A hand holding a phone over a dark desk, playing a vertical ice cream video: Two scoops. No rules."],
-      ["Video ads", "Ads cut to the length and format of every placement.", "tile-ads.jpg", "A hand holding up a tablet against plum, showing an ice cream ad’s end card: Two scoops. No rules."],
-      ["Motion graphics and animation", "Animated stories, titles and data that make ideas easy to follow.", "tile-motion.jpg", "Four storyboard frames stepping up as a scoop drops onto a cone, above an animation timeline, on orange"],
-      ["AI video", "Visuals, voiceovers and scenes made with AI and finished by designers.", "tile-ai.jpg", "An AI video prompt for a pistachio scoop, four generated takes with one chosen, and a voiceover track, on indigo"],
+      ["Video ads", "Ads cut to the length and format of every placement.", "tile-ads.jpg", "A billboard against the sky showing an ice cream advert: Two scoops. No rules."],
+      ["Motion graphics and animation", "Animated stories, titles and data that make ideas easy to follow.", "tile-motion.jpg", "A person in headphones at a monitor in a dark room, animating an ice cream title on a timeline"],
+      ["AI video", "Visuals, voiceovers and scenes made with AI and finished by designers.", "tile-ai.jpg", "A cinema screen above a stage showing an ice cream brand film with floating cones"],
       ["Concepts and scripts", "Ideas, scripts and storyboards, before a single frame is made.", "tile-concepts.jpg", "A six-frame storyboard and a script for an ice cream ad, lying on a sofa beside a pencil"],
     ]),
     faqs: [
