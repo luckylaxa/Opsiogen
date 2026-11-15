@@ -6,7 +6,7 @@ from PIL import Image, ImageDraw, ImageFilter
 OUT=(1600,1200); TEXT=(0,0,960,450)
 def expand(q,px):
     c=np.mean(q,0); return [tuple(c+(np.array(p)-c)*(1+px/np.linalg.norm(np.array(p)-c))) for p in q]
-def build(scene, art, out, aspect=None, radius=0, anchor='top', xoff=None, padtop=0, flipit=False, restore=95):
+def build(scene, art, out, aspect=None, radius=0, anchor='top', xoff=None, padtop=0, flipit=False, restore=95, fill=None):
     im=Image.open(scene).convert('RGB'); q,_=find_quad(scene)
     if flipit:
         im=im.transpose(Image.FLIP_LEFT_RIGHT); W=im.width; tl,tr,br,bl=q; f=lambda p:(W-1-p[0],p[1]); q=[f(tr),f(tl),f(bl),f(br)]
@@ -32,6 +32,15 @@ def build(scene, art, out, aspect=None, radius=0, anchor='top', xoff=None, padto
         for i in range(20): t=i/20; full[padtop+i]=(full[padtop+i]*t+inp[padtop+i]*(1-t)).astype('uint8')
         p=Image.fromarray(full); q=[(x,y+padtop) for x,y in q]
     W,H=p.size
+    if fill:
+        # fill=(top, right): the screen's top edge lands at `top` of the tile height and its right
+        # edge at `right` of the width; the crop runs to the bottom of the scene. No blur, no padding.
+        top,right=fill; sy=min(v[1] for v in q); sx=max(v[0] for v in q)
+        h=int((H-sy)/(1-top)); h=min(h,H); w=int(h*4/3)
+        if w>W: w=W; h=int(w*3/4)
+        y0=H-h; x0=int(min(max(0,sx-right*w),W-w))
+        p.crop((x0,y0,x0+w,y0+h)).resize(OUT,Image.LANCZOS).save(out,quality=90)
+        print(out,'fill',x0,y0,w,h); return
     best=None
     for x0 in range(0,max(1,W-OUT[0])+1,10):
         for y0 in ([0] if H==OUT[1] else range(0,H-OUT[1]+1,10)):

@@ -36,8 +36,10 @@ experiment on the live site. Mistakes cost the owner money and trust.
 ## 2. Composition (so the text never covers the device)
 
 - Tile file: 1600 × 1200 (4:3), JPEG.
-- **The device sits entirely in the bottom-right quarter.** The top half and the left
-  half are empty background. The empty area must be mid to dark so white text reads
+- **The device is big:** its top edge at about 33–38% of the height, filling the right
+  55–60% of the width down to the bottom edge (cropped by the bottom edge is fine, never
+  the screen). Above it and to its left: empty background. Do NOT ask for the device "in
+  the bottom-right quarter": that made devices tiny and left a big empty gap under the text. The empty area must be mid to dark so white text reads
   without any shade.
 - Desktop shows the full 4:3 image; text covers roughly the top-left 60% × 38%.
 - Phones (below 640px) show a taller crop (planned 4:5, anchored right and bottom), so
@@ -63,17 +65,24 @@ experiment on the live site. Mistakes cost the owner money and trust.
   > velvet armchair]. [DEVICE: an open space-grey laptop, screen facing [left/right] at a
   > three-quarter angle | a right hand holds the latest iPhone Pro (natural titanium frame,
   > very thin even black bezels, small pill-shaped Dynamic Island, no notch) upright].
-  > Composition rule: the [device] sits entirely in the bottom-right quarter of the frame;
-  > the whole top half and the whole left half are an empty, flat, evenly lit, matte
-  > [deep colour] [wall/surface]. The screen is completely blank, flat pure white, evenly
+  > Composition rule: the [device] is large: its top edge sits at one third of the frame
+  > height and it fills the right 55% of the frame width down to the bottom edge, with
+  > nothing in front of the screen; the top third and the left 45% of the frame are an
+  > empty, flat, evenly lit, matte [deep colour] [wall/surface]. The screen is completely blank, flat pure white, evenly
   > lit, no content, no reflections. No people's faces, no text, no logos.
 
-- Look at every downloaded scene before using it. If the device is too small, crop
-  tighter from the bottom right (zoom up to 1.3) while keeping the top ~40% empty.
+- Scenes come out 1280 × 720. Never crop in more than about 1.4× to enlarge a device: the
+  photo turns soft and blocky. Upscaling (Topaz) costs ~485 credits an image, more than a
+  new scene, so get the composition right in the prompt instead.
+- Nothing may sit in front of a screen (a chair arm across a laptop screen breaks the
+  screen overlay).
+- Look at every downloaded scene before using it.
 
 ## 4. Putting our screens on (no AI involved)
 
-- `design/tiles/py/comp2.py` → `build(scene, art, out, aspect=None, radius=0, xoff=None)`
+- `design/tiles/py/tile.py` → `tile(scene, art, out, fill=(top, right), radius=0)` crops the
+  scene first, then puts the screen on at full resolution (use this). Older:
+  `design/tiles/py/comp2.py` → `build(scene, art, out, aspect=None, radius=0, xoff=None)`
   finds the white screen, warps the design onto it in perspective, keeps the device's
   dark bezel on top, and crops 4:3. Phones: `radius=34`–`60` for screen corners.
 - No softening, no blur, no inpainting (the `padtop` option blurs; do not use it).
@@ -96,7 +105,8 @@ experiment on the live site. Mistakes cost the owner money and trust.
 ## 6. Mistakes already made (do not repeat)
 
 - Same layout for every tile; flat floating cards with cut text; empty charts.
-- Text running over phones and laptops; old notched phones; tiny devices.
+- Text running over phones and laptops; old notched phones; tiny devices; a big empty gap
+  between the text and the device; soft, over-enlarged photos.
 - On phones: a black box, then a blurred band, then a colour panel under the text. The
   owner wants none of these: one image, text on it.
 - Blur of any kind: image loading placeholders, frosted menus, out-of-focus scenes,
