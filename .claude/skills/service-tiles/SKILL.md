@@ -124,7 +124,8 @@ experiment on the live site. Mistakes cost the owner money and trust.
   (Product design tile, laptop big under the text). Still needed: r-blue, r-hand, r-sage,
   r-walnut (prompts in `design/tiles/prompts/ai-product-design.md`). q-*.png and s-*.png
   are rejected (devices too small / soft).
-- Code ready but not live: `BigCard` top layout with no shade or panel. Still to do with it:
+- Code ready but not live, saved as `design/tiles/no-shade-cards.patch` (apply with
+  `git apply`): `BigCard` top layout with no shade or panel. Still to do with it:
   phone cards at 4:5 and offer-image hotspot x=1, y=0.8 (anchored right), publish together
   with the new tiles.
 - To do, one page at a time, with approval for credits each time: MVPs and business apps,
