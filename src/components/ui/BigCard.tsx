@@ -94,20 +94,18 @@ export function BigCard({
         {footLeft && <div className="mt-[clamp(8px,0.7vw,14px)] text-base text-white/85 text-pretty">{footLeft}</div>}
       </div>
       {footRight && <div className="relative z-[1] mt-auto pt-4 text-base">{footRight}</div>}
-      {/* Phones: the picture sits under the text at its own 4:3 shape and fades up into a flat field of
-          its own top-left colour behind the text, so the card reads as one scene. Wider: it fills the card. */}
+      {/* Phones: the picture sits under the text at its own 4:3 shape and continues up behind the text as
+          its own top-edge colour, so the card reads as one scene. Wider: it fills the card. */}
       {stackOnPhone && image?.lqip && (
-        // The picture's own top-left colour, taken from its tiny preview and stretched to a flat field.
+        // The picture's own top edge, stretched straight up behind the text, so the panel meets the photo cleanly.
         <div
           aria-hidden="true"
           className="absolute inset-0 sm:hidden"
-          style={{ backgroundImage: `url(${image.lqip})`, backgroundSize: "4000% 4000%", backgroundPosition: "0 0" }}
-        >
-          <div className="absolute inset-0 bg-black/15" />
-        </div>
+          style={{ backgroundImage: `url(${image.lqip})`, backgroundSize: "100% 100000%", backgroundPosition: "top" }}
+        />
       )}
       {stackOnPhone && picture && (
-        <div className="relative -mx-5 -mb-5 mt-2 aspect-[4/3] overflow-hidden max-sm:[mask-image:linear-gradient(to_bottom,transparent,black_22%)] sm:absolute sm:inset-0 sm:m-0 sm:aspect-auto">
+        <div className="relative -mx-5 -mb-5 mt-2 aspect-[4/3] overflow-hidden sm:absolute sm:inset-0 sm:m-0 sm:aspect-auto">
           {picture}
         </div>
       )}
