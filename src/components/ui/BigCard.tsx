@@ -94,14 +94,14 @@ export function BigCard({
         {footLeft && <div className="mt-[clamp(8px,0.7vw,14px)] text-base text-white/85 text-pretty">{footLeft}</div>}
       </div>
       {footRight && <div className="relative z-[1] mt-auto pt-4 text-base">{footRight}</div>}
-      {/* Phones: the picture sits under the text at its own 4:3 shape and continues up behind the text as
-          its own top-edge colour, so the card reads as one scene. Wider: it fills the card. */}
+      {/* Phones: the picture sits under the text at its own 4:3 shape and sits on a flat panel of
+          its own top-left colour, so the card reads as one piece. Wider: it fills the card. */}
       {stackOnPhone && image?.lqip && (
-        // The picture's own top edge, stretched straight up behind the text, so the panel meets the photo cleanly.
+        // One flat colour: the picture's own top-left corner, taken from its tiny preview.
         <div
           aria-hidden="true"
           className="absolute inset-0 sm:hidden"
-          style={{ backgroundImage: `url(${image.lqip})`, backgroundSize: "100% 100000%", backgroundPosition: "top" }}
+          style={{ backgroundImage: `url(${image.lqip})`, backgroundSize: "100000% 100000%", backgroundPosition: "0 0" }}
         />
       )}
       {stackOnPhone && picture && (
