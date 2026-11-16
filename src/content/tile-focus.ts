@@ -13,8 +13,6 @@ export const TILE_FOCUS: Record<string, number> = {
   "ai-print-collateral": 0.85,
   "ai-brand-services": 0.7,
   "ai-websites/Website revamps": 1,
-  "ai-print-collateral/Brochures and catalogues": 1,
-  "ai-print-collateral/Event collateral and booths": 0.85,
   "ai-brand-services/Brand strategy and messaging": 1,
   "ai-brand-services/Logo and visual identity": 1,
   "ai-brand-services/Brand refresh": 1,
@@ -82,6 +80,14 @@ export const TILE_PHONES: Record<string, string> = {
     "Prototypes and validation": "tile-prototype",
     "Design systems": "tile-system",
     "Developer-ready handoff": "tile-handoff",
+  }),
+  ...tilePhones("ai-print-collateral", {
+    "Brochures and catalogues": "tile-brochures",
+    "Posters, flyers and print ads": "tile-posters",
+    Stationery: "tile-stationery",
+    "Packaging and labels": "tile-packaging",
+    "Merchandise and apparel": "tile-merch",
+    "Event collateral and booths": "tile-events",
   }),
   ...tilePhones("ai-mvps-business-apps", {
     "MVPs and prototypes": "tile-mvp",
