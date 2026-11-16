@@ -1,0 +1,122 @@
+---
+name: showreel
+description: Create the Opsiogen showreel video (the 60-second "our work in motion" film for the Work page) from the script and plan Lucky saved on 16 Nov 2026. Use when asked to create, build, render, update or re-cut the showreel, or for its storyboard or music.
+---
+
+# Opsiogen showreel: the saved script and plan
+
+Lucky reviewed this script and plan on 16 Nov 2026 and said: "Save this. When I ask to create
+showreel you can create it." So when he asks for the showreel, build it from this file. Do not
+rewrite the concept or ask him to approve the script again.
+
+## Before building (check these first)
+
+1. **Afthab's work goes in first.** Lucky said: "we have to put afthab work as well before video
+   creation." If it is not in the repo or the Figma files yet, ask where it is (a Figma link or
+   files) and which chapter it belongs in. Do not start the video without it unless he says so.
+2. **Credits need approval.** The build below needs no image or video credits. Music and any AI
+   motion shot do: quote the cost and wait for a yes. He approves spend per request and wants
+   `generations_count` 1.
+3. **Storyboard before render.** Send one still per shot for approval, then the music options,
+   then build.
+4. Open points he has not answered (use the default until he does):
+   - Client names or logos on the end card: **leave out** (site rule: client names stay inside
+     their own case studies).
+   - Made-up brands (Torvi, Oriel and the other samples): shown as our design work, **never
+     labelled as clients**.
+
+## Reference (pace and energy only, never copied)
+
+The "Superside Showreel 2025" on superside.com/our-work, about 65 seconds:
+- A new shot every half second to one second.
+- Six seconds of large moving text on one flat colour to open.
+- Five single-word chapter cards that split the work into groups.
+- Phones, post grids, illustration, film, billboards and brand systems, never two similar shots
+  in a row.
+- One closing line, client names cycling, then the logo.
+
+Lucky's rule: "dont copy same. it will look like copied." Keep our own words, layout, colours
+and structure. Do not reuse their chapter words, their closing line or their lime-on-green look.
+
+## Concept
+
+One sentence that builds through the film, each part opening a chapter of our work:
+
+**You bring the idea. We design it. We build it. We brand it. We launch it.**
+
+Our colours, the Outfit font (`src/fonts`), and the Opsiogen logo (`src/assets/opsiogen-logo-on-dark.png`,
+`opsiogen-logo-on-light.png`, `opsiogen-mark.png`).
+
+## Script (60 seconds, 1920 x 1080, 30 fps)
+
+| Time | Words on screen | What we see |
+|---|---|---|
+| 0:00-0:05 | "You bring the idea." then "We take it from here." | Dark screen, large type, the Opsiogen ribbon mark draws in |
+| 0:05-0:07 | none | Six very fast flashes, one from each chapter, as a teaser |
+| 0:07-0:09 | "We design it." | Full-screen word card |
+| 0:09-0:20 | none | App and product screens: Oh My Glam's lipstick try-on, the health and meeting products, phones side by side, taps changing the screen |
+| 0:20-0:22 | "We build it." | Word card |
+| 0:22-0:33 | none | Websites scrolling in laptops and phones: Cabot, BigTapp, Carlton Noble and others, the Oriel laptop shot, dashboards and booking screens |
+| 0:33-0:35 | "We brand it." | Word card |
+| 0:35-0:46 | none | The Torvi story in five quick beats (logo drawn, colours, guidelines, posts, rider on the bike), then the SandLogic bottle, packaging, stationery and the Norsecom booth |
+| 0:46-0:48 | "We launch it." | Word card |
+| 0:48-0:56 | none | Social post grids, ad versions, posters, email and video frames, cut fastest of all |
+| 0:56-1:00 | "Your idea. Designed. Built. Branded. Launched." then the logo and "Let's make yours." | Every cover pulls back into one wall, then the logo on dark |
+
+Fix the exact client shot list in the storyboard from each case study's category (check
+`src/content/seed-data.ts`); only the placements named above are decided.
+
+## Copy rules (from CLAUDE.md, they apply to every word on screen)
+
+- Write as "we". Never "team", never "Fineart".
+- No company names except clients, no tool or platform names, no free offers.
+- No invented claims or numbers. The 7-day timeline is only for basic websites, so no "in days"
+  line over the whole reel.
+
+## Where the shots come from
+
+- Case studies: `public/work/<client>/` (gallery mockups, and `<client>-flow.mp4` /
+  `-flow-phone.mp4` screen walkthroughs, about 17 seconds each).
+- Service tiles and covers: `public/services/<slug>/` (`tile-*.jpg`, `page.jpg`, `card.jpg`).
+- Source designs: `design/tiles/out/` (for example `figma-brand/` for Torvi with its rider and
+  bike cutouts in `ai/`, `figma-print/`, `websites/site-oriel.png`).
+- Figma: tiles file `2IAvyNuE4vcPRiuFT9vwD6` (pages "Brand tiles" and "Torvi · brand"), websites
+  file `c7n5PDvCibn3Fuc6t8Yvo6`. Export frames with `get_screenshot` at full size.
+- Afthab's work: location to be confirmed (see above).
+
+## How to build it
+
+- Every shot from the sources above, animated in code: pans, zooms, sliding grids and moving
+  type on an HTML page, captured frame by frame with the pre-installed Playwright Chromium and
+  joined with ffmpeg. No image or video credits.
+- Mockups keep the owner's rules: realistic, no glitches, no real brand logos on made-up work,
+  no drop shadows on flat mockups.
+- Optional, only if approved: two or three AI motion shots (for example the Torvi rider
+  cycling). Quote credits first.
+- Music: an original instrumental from the ElevenLabs music node (`eleven_music_v2_5`,
+  instrumental, about 60 seconds), cut to the beat. Not a copyrighted song. Quote the cost,
+  give two options.
+- Cut on the beat; chapter cards land on the strong beats.
+
+## What to deliver
+
+1. The 60-second film with sound.
+2. A short silent loop for the Work page, so the page stays fast.
+3. Optional vertical cut for social, only if asked.
+
+## Publishing
+
+The Work page reel is the `showreel` section in `src/content/seed-data.ts`:
+`/work/showreel.mp4`, `/work/showreel.webm` and the poster `/work/showreel.jpg` (1920 x 1080, with
+alt text). The current one is 18 seconds and about 2 MB; keep the page loop near that size.
+Replace the files, update the poster alt, then follow "Staging mode" in CLAUDE.md (typecheck,
+commit, push, Seed Sanity in add mode, deploy through the Vercel API) and check the live Work
+page on desktop and phone.
+
+## Order of work
+
+1. Confirm Afthab's work is in.
+2. Storyboard: one still per shot, for approval.
+3. Music options, with the credit cost.
+4. Build and send for review.
+5. Publish and check live.
