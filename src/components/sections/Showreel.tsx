@@ -83,7 +83,9 @@ export function Showreel({ section, className }: { section: ShowreelSection; cla
         data-reveal
         className="on-dark relative aspect-[4/3] overflow-hidden rounded-card bg-night text-white sm:aspect-video"
       >
-        {poster && <Media image={poster} sizes="(min-width: 1440px) 1440px, 100vw" priority />}
+        {/* On phones the 16:9 poster fills a 4:3 card, so it is shown a third wider than the screen:
+            ask for that width, or the sharper video frame replaces it as the page's main image. */}
+        {poster && <Media image={poster} sizes="(min-width: 1440px) 1440px, (min-width: 640px) 100vw, 134vw" priority />}
         {video && (
           <video
             ref={ref}
