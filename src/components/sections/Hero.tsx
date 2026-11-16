@@ -37,26 +37,27 @@ export function Hero({
           {/* The card ends above the phone's floating bar, and above the fold's edge on larger screens. */}
           <div className="on-dark relative h-[calc(100svh-var(--header-h)-104px)] min-h-[440px] overflow-hidden rounded-card bg-night text-white md:h-[calc(100svh-var(--header-h)-clamp(16px,2vw,32px))] md:min-h-[520px]">
             <Media image={image.image} phone={image.phone} sizes="100vw" priority />
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/40 to-transparent"
-            />
-            <div className="absolute inset-x-0 bottom-0 p-[clamp(20px,calc(2.6vw+10px),56px)]">
+            {/* The words sit in the picture's open sky, the button over the water, so the building stays clear. */}
+            <div className="absolute inset-x-0 top-0 p-[clamp(20px,calc(2.6vw+10px),56px)]">
               {section.label && (
                 <p className="mb-[clamp(14px,1.4vw,24px)] w-fit rounded-[4px] border border-white/35 px-[0.6em] py-[0.15em] text-base text-white">
                   {section.label}
                 </p>
               )}
-              <h1 className="max-w-[13ch] text-[length:clamp(34px,calc(3.6vw+20px),88px)] leading-[0.98] font-bold tracking-[-0.02em] text-balance uppercase">
+              <h1 className="max-w-[13ch] text-[length:clamp(32px,calc(3.3vw+19px),78px)] leading-[0.98] font-bold tracking-[-0.02em] text-balance uppercase md:max-w-[19ch]">
                 {section.heading}
               </h1>
               {section.text && <p className="mt-4 max-w-[38ch] text-lead text-white/85">{section.text}</p>}
-              {section.button?.href && section.button.label && (
-                <ButtonLink href={section.button.href} className="mt-[clamp(20px,calc(1.4vw+14px),36px)]">
-                  {section.button.label}
-                </ButtonLink>
-              )}
             </div>
+            {section.button?.href && section.button.label && (
+              <ButtonLink
+                href={section.button.href}
+                variant="light"
+                className="absolute bottom-[clamp(20px,calc(2.6vw+10px),56px)] left-[clamp(20px,calc(2.6vw+10px),56px)]"
+              >
+                {section.button.label}
+              </ButtonLink>
+            )}
           </div>
         </div>
         {children && <div className="mt-[clamp(48px,calc(2.88vw+37.2px),92px)]">{children}</div>}
