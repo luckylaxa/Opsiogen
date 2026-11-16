@@ -15,6 +15,12 @@ const HERO_IMAGE = {
     alt: "An imagined glass studio on a still lake at dusk, with a glowing rainbow ribbon ring inside",
   },
   phone: { url: "/home/hero-phone.jpg", width: 1000, height: 1440 },
+  eyebrow: "Our AI studio · A virtual tour",
+  wordmark: "Opsiogen",
+  scrollHint: "Scroll to take the tour",
+  note: "This studio is virtual. We built it with AI, like the work inside.",
+  secondButton: { label: "Our services", href: "/services" },
+  stops: 7,
 };
 
 export default function HomePage() {

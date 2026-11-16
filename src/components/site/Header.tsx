@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { SiteSettings } from "@/lib/types";
 import { ButtonLink } from "@/components/ui/Button";
 import { MenuIcon } from "@/components/ui/Icons";
+import { HeaderShell } from "./HeaderShell";
 import { Logo } from "./Logo";
 import { MenuButton } from "./MenuContext";
 import { NavMenu, type MenuGroup } from "./NavMenu";
@@ -23,7 +24,7 @@ export function Header({
   searchItems: SearchItem[];
 }) {
   return (
-    <header className="site-header relative z-30 flex h-[var(--header-h)] items-center px-gutter">
+    <HeaderShell>
       <Link href="/" className="link-fade shrink-0" aria-label={`${settings.siteTitle} home`}>
         <Logo logo={settings.logo} name={settings.siteTitle} priority large />
       </Link>
@@ -43,6 +44,6 @@ export function Header({
           <MenuIcon className="size-6" />
         </MenuButton>
       </div>
-    </header>
+    </HeaderShell>
   );
 }
