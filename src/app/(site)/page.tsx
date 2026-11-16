@@ -6,6 +6,17 @@ export function generateMetadata() {
   return cmsMetadata("home", "/");
 }
 
+/** The home hero picture: an imagined studio (made with AI), not a real place. */
+const HERO_IMAGE = {
+  image: {
+    url: "/home/hero.jpg",
+    width: 2560,
+    height: 1440,
+    alt: "An imagined glass studio on a still lake at dusk, with a glowing rainbow ribbon ring inside",
+  },
+  phone: { url: "/home/hero-phone.jpg", width: 1000, height: 1440 },
+};
+
 export default function HomePage() {
-  return <CmsPage slug="home" layout={{ services: "directory", cta: "dual", heroFull: true }} />;
+  return <CmsPage slug="home" layout={{ services: "directory", cta: "dual", heroFull: true, heroImage: HERO_IMAGE }} />;
 }

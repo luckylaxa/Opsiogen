@@ -1,6 +1,6 @@
 import type { Section } from "@/lib/types";
 import { getSettings } from "@/lib/data";
-import { Hero } from "./Hero";
+import { Hero, type HeroImage } from "./Hero";
 import { FeaturedProject } from "./FeaturedProject";
 import { ProjectGrid } from "./ProjectGrid";
 import { ServicesList } from "./ServicesList";
@@ -23,6 +23,8 @@ export type PageLayout = {
   cta?: "single" | "dual";
   /** The first hero fills the screen (Home). */
   heroFull?: boolean;
+  /** A picture for the first hero (Home). */
+  heroImage?: HeroImage;
 };
 
 /**
@@ -54,8 +56,8 @@ export async function SectionRenderer({
         if (next?._type === "featuredProject") {
           out.push(
             <section key={section._key} data-band>
-              <Hero section={section} full={layout.heroFull && i === 0}>
-                <FeaturedProject project={next.project} priority={!layout.heroFull} />
+              <Hero section={section} full={layout.heroFull && i === 0} image={i === 0 ? layout.heroImage : undefined}>
+                <FeaturedProject project={next.project} priority={!layout.heroFull && !layout.heroImage} />
               </Hero>
             </section>,
           );
@@ -63,7 +65,7 @@ export async function SectionRenderer({
         } else {
           out.push(
             <section key={section._key} data-band>
-              <Hero section={section} full={layout.heroFull && i === 0} />
+              <Hero section={section} full={layout.heroFull && i === 0} image={i === 0 ? layout.heroImage : undefined} />
             </section>,
           );
         }

@@ -44,6 +44,16 @@ Tick items as they are done.
 - Structured data: organisation, website, services, case studies, breadcrumbs and FAQs.
 - Full-width desktop mockups and story text for Sifio Health, Rohde & Schwarz, Surgo Health, Care Connect, RxLive, Meetingful and Oh My Glam.
 
+## Restore points
+
+To go back to one of these, ask Claude to "restore the site to the <date> restore point". Two ways, both keep later work in history:
+the code is put back from the commit and redeployed, or the listed Vercel deployment is promoted again (instant).
+Text and images edited in the Studio are not part of a restore point; the starter content in `src/content` is.
+
+| Date | What it is | Commit | Vercel deployment |
+|---|---|---|---|
+| 17 November 2026 | The site before the lake studio picture went into the home hero | `78173a2` | `dpl_2N9PwFHHn7pkG12SH1VE3G8R5fAR` |
+
 ## Checks run on 16 November 2026 (staging site)
 
 - Lint, types, production build and `npm run audit`: all pass. The Quality check on GitHub is green again (it had been failing on helper scripts in `design/`, now left out of lint).
