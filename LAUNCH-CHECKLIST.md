@@ -1,11 +1,12 @@
 # Launch checklist: what's still pending
 
-Last updated: 4 November 2026. Ask "what's pending" and Claude reads this file.
+Last updated: 16 November 2026. Ask "what's pending" and Claude reads this file.
 Tick items as they are done.
 
 ## Before moving to Hostinger (the site is a staging site until then)
 
-- [ ] Run the full checks in CLAUDE.md: lint, types, build, `npm run audit`, Lighthouse on mobile and desktop.
+- [ ] Run the full checks in CLAUDE.md: lint, types, build, `npm run audit`, Lighthouse on mobile and desktop. (Run on the staging site on 16 November 2026, results below. Run them once more on Hostinger after the move.)
+- [ ] Check phone speed on pagespeed.web.dev for one service page, the Work page and one case study. From the test session these scored 84 to 90 on phone, but that session's network slows the first connection to the image CDN, so the real score should be higher. If it is under 97 there, the fix is to serve each page's main image from the site's own address.
 
 ## When you connect the real domain
 
@@ -41,3 +42,13 @@ Tick items as they are done.
 - Alt text, AVIF images, no layout shift, main content in about 1s.
 - Structured data: organisation, website, services, case studies, breadcrumbs and FAQs.
 - Full-width desktop mockups and story text for Sifio Health, Rohde & Schwarz, Surgo Health, Care Connect, RxLive, Meetingful and Oh My Glam.
+
+## Checks run on 16 November 2026 (staging site)
+
+- Lint, types, production build and `npm run audit`: all pass. The Quality check on GitHub is green again (it had been failing on helper scripts in `design/`, now left out of lint).
+- Audit of the live site: 32 pages, 32 internal links, 201 KB of JavaScript up front (limit 225 KB).
+- Every page in the sitemap, plus /blog/preview and the 404 page, at phone (iPhone 13) and desktop (1440px) widths: no sideways scroll, no broken images, no image without alt text, one H1 each, no script errors.
+- Working parts: phone menu, theme switch, Services menu, search, Work filters and Load more, case-study pop-up, contact form steps and its checks (no enquiry sent), 404 page, keyboard focus, videos.
+- Lighthouse on 12 key pages: accessibility, best practices and SEO 100 on all, phone and desktop. Desktop performance 98 to 100. Phone performance 95 to 99 on Home, Services, About, Contact and Blog; 84 to 90 on service detail pages, Work and case studies (see the unticked item above).
+- Speed fixes made: videos at the top of a page now wait until the page has loaded, and case-study walkthrough posters load at the right size, only for the version shown, and only when near the screen.
+- Not tested: sending a real enquiry (it would save a test entry in the Studio and Resend is not set up yet).
