@@ -35,6 +35,14 @@ export const PHONE_CARDS: Record<string, { url: string; width: number; height: n
 const tilePhones = (slug: string, tiles: Record<string, string>) =>
   Object.fromEntries(Object.entries(tiles).map(([title, file]) => [`${slug}/${title}`, `/services/${slug}/${file}-phone.jpg`]));
 export const TILE_PHONES: Record<string, string> = {
+  ...tilePhones("ai-creative-subscription", {
+    "Ad creatives": "tile-ads",
+    "Presentations and pitch decks": "tile-decks",
+    "Brand assets and templates": "tile-assets",
+    "Motion graphics": "tile-motion",
+    "AI imagery and video": "tile-ai",
+    "Email and landing pages": "tile-email",
+  }),
   ...tilePhones("digital-marketing", {
     "Paid social ads": "tile-social",
     "Search ads": "tile-search",

@@ -688,12 +688,12 @@ export const SERVICES: Service[] = [
       ["No hiring", "Dedicated creative support without adding headcount."],
     ]),
     offerings: cards("ai-creative-subscription", [
-      ["Ad creatives", "Static and animated ads sized for every channel.", "tile-ads.jpg", "A yoga studio ad, Slow down. Start here., as a printed poster and on a phone, on a leather sofa"],
-      ["Presentations and pitch decks", "Decks that make your story clear and convincing.", "tile-decks.jpg", "A laptop on a table by a window showing the opening slide of a pitch deck: A calmer week for your team"],
-      ["Brand assets and templates", "Templates, icons, illustrations and everyday brand materials.", "tile-assets.jpg", "A billboard on a city rooftop showing a yoga studio poster: Slow down. Start here."],
-      ["Motion graphics", "Animated graphics for social, ads and product stories.", "tile-motion.jpg", "A curved monitor on a desk in a dark room showing a logo reveal in four frames on a timeline"],
-      ["AI imagery and video", "Original visuals made with AI and finished by designers.", "tile-ai.jpg", "A hand holding a phone at night, framing an image of a clay-coloured arch at sunrise made from a short prompt"],
-      ["Email and landing pages", "Designs for campaigns, newsletters, launches and reports.", "tile-email.jpg", "A hand holding a tablet against olive green, showing a yoga studio’s landing page: Seven days. Seven classes."],
+      ["Ad creatives", "Static and animated ads sized for every channel.", "tile-ads.jpg", "A delivered request on deep green: a yoga studio ad, Slow down. Start here., in square, story and landscape sizes"],
+      ["Presentations and pitch decks", "Decks that make your story clear and convincing.", "tile-decks.jpg", "A pitch deck request in review on terracotta, showing slide 4 of 18: A calmer week for your team"],
+      ["Brand assets and templates", "Templates, icons, illustrations and everyday brand materials.", "tile-assets.jpg", "A yoga studio's template library on sage: poster, web header, slide, social post, billboard and email header"],
+      ["Motion graphics", "Animated graphics for social, ads and product stories.", "tile-motion.jpg", "A delivered animated logo on charcoal, its frames laid out on a timeline, paused at 6 of 15 seconds"],
+      ["AI imagery and video", "Original visuals made with AI and finished by designers.", "tile-ai.jpg", "Images made with AI for a yoga studio on clay, take 3 chosen, retouched and colour matched"],
+      ["Email and landing pages", "Designs for campaigns, newsletters, launches and reports.", "tile-email.jpg", "A yoga studio's new members landing page in a browser window on olive: Seven days. Seven classes."],
     ]),
     faqs: [
       ...aiFaqs([
