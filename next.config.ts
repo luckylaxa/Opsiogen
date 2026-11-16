@@ -18,9 +18,6 @@ function siteHosts(): string[] {
 const nextConfig: NextConfig = {
   experimental: {
     serverActions: { allowedOrigins: siteHosts() },
-    // The stylesheet is small (Tailwind), so it ships inside each page: a phone
-    // shows the page without first fetching a separate file.
-    inlineCss: true,
   },
   images: {
     formats: ["image/avif", "image/webp"],
