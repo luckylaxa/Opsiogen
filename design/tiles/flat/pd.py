@@ -3,10 +3,10 @@ from PIL import Image
 import os
 A = os.path.abspath('../art')
 def ratio(n): im = Image.open(f'{A}/{n}'); return im.width / im.height
-def fit(n, bx, by, bw, bh, align='right'):
+def fit(n, bx, by, bw, bh, align='right', top=False):
     r = ratio(n); w = min(bw, bh * r); h = w / r
     x = bx + bw - w if align == 'right' else bx + (bw - w) / 2
-    return round(x), round(by + (bh - h)), round(w), round(h)   # bottom-aligned
+    return round(x), round(by if top else by + (bh - h)), round(w), round(h)
 def board(n, x, y, w, h, label, s=1, sel=False):
     hs = ''
     if sel:
@@ -18,17 +18,17 @@ def cursor(x, y, s=1):
     return (f'<svg class=cursor style="left:{x}px;top:{y}px;width:{34*s}px;height:{34*s}px" viewBox="0 0 24 24"><path d="M4 2 L4 19 L8.6 14.8 L11.6 21.4 L14.4 20.2 L11.4 13.7 L17.6 13.4 Z" fill="#111" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>')
 def one(n, label, bg, sel=True, cur=None):
     out = []
-    for name, W, H, box, s in [('', 1600, 1200, (560, 440, 990, 710), 1), ('-phone', 1074, 1380, (40, 600, 994, 730), 1.35)]:
-        x, y, w, h = fit(n, *box)
+    for name, W, H, box, s in [('', 1600, 1200, (560, 450, 990, 700), 1), ('-phone', 1074, 1380, (40, 530, 994, 800), 1.35)]:
+        x, y, w, h = fit(n, *box, top=True)
         body = board(n, x, y, w, h, label, s, sel)
         if cur: body += cursor(x + w * cur[0], y + h * cur[1], s)
         out.append((name, W, H, bg, body))
     return out
 def audit(bg):
     out = []
-    for name, W, H, s, (x, y, w) in [('', 1600, 1200, 1, (1150, 420, 330)), ('-phone', 1074, 1380, 1.3, (560, 560, 380))]:
+    for name, W, H, s, (x, y, w) in [('', 1600, 1200, 1, (1150, 420, 330)), ('-phone', 1074, 1380, 1.3, (560, 520, 380))]:
         h = round(w / 0.462)
-        pins = [(.32, .2, 1), (.7, .52, 2), (.5, .86, 3)]
+        pins = [(.86, .27, 1), (.7, .52, 2), (.5, .86, 3)]
         body = board('home.png', x, y, w, h, 'Home · Audit', s)
         for px, py, n in pins: body += f'<div class=pin style="left:{x + w * px - 20}px;top:{y + h * py - 20}px;transform:scale({s})">{n}</div>'
         notes = [('1 · High', 'Balance sits below two cards. 7 of 8 people looked twice.'), ('2 · Medium', 'The week chart has no labels, so the bars read as decoration.'), ('3 · Low', 'Tab icons under 44 px are easy to miss.')]
@@ -40,9 +40,9 @@ def audit(bg):
 def two(a, la, b, lb, bg):
     out = []
     # desktop: wide board and phone board side by side; phone card: stacked, phone board in front
-    xa, ya, wa, ha = fit(a, 590, 520, 700, 520); xb, yb, wb, hb = fit(b, 1330, 420, 240, 620)
+    xa, ya, wa, ha = fit(a, 590, 470, 700, 520, top=True); xb, yb, wb, hb = fit(b, 1330, 430, 240, 620, top=True)
     out.append(('', 1600, 1200, bg, board(a, xa, ya, wa, ha, la) + board(b, xb, yb, wb, hb, lb, sel=True) + cursor(xb + wb * .6, yb + hb * .32)))
-    xa, ya, wa, ha = fit(a, 40, 560, 760, 560, 'center'); xb, yb, wb, hb = fit(b, 690, 600, 340, 740)
+    xa, ya, wa, ha = fit(a, 40, 530, 760, 560, 'center', top=True); xb, yb, wb, hb = fit(b, 690, 560, 340, 740, top=True)
     out.append(('-phone', 1074, 1380, bg, board(a, 40, ya, wa, ha, la, 1.35) + board(b, xb, yb, wb, hb, lb, 1.35, sel=True)))
     return out
 tiles = {

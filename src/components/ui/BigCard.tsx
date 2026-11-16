@@ -166,10 +166,10 @@ export function BigCard({
     // Top layout keeps the card near the photo's own shape, so its subject is never cropped away.
     layout === "top"
       ? cn(
-          "p-[clamp(20px,2.3vw,44px)] sm:aspect-[4/3] lg:aspect-auto",
+          "p-[clamp(20px,2.3vw,44px)] pt-[clamp(30px,3.6vw,68px)] sm:aspect-[4/3] lg:aspect-auto",
           // Phones: the same height as the work cards (460px), so every big card on a phone matches.
           "max-sm:min-h-[460px]",
-          plain && "max-sm:p-[4.2vw]",
+          plain && "max-sm:p-[4.2vw] max-sm:pt-[8.5vw]",
         )
       : "min-h-[460px] p-[clamp(24px,3.05vw,58px)] sm:min-h-[540px]",
     className,

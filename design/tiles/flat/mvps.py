@@ -16,16 +16,16 @@ def chip(x, y, w, title, sub, s=1):
 D, P = (1600, 1200), (1074, 1380)
 jobs = [
  ('tile-mvp.jpg', *D, '#7a2a1b', mac('o-mvp.png', 560, 430, 1010)),
- ('tile-mvp-phone.jpg', *P, '#7a2a1b', mac('o-mvp.png', 17, 610, 1040)),
+ ('tile-mvp-phone.jpg', *P, '#7a2a1b', mac('o-mvp.png', 17, 500, 1040)),
  ('tile-ai.jpg', *D, '#3b1456', ipad('o-ai.png', 590, 430, 950, 665)),
- ('tile-ai-phone.jpg', *P, '#3b1456', ipad('o-ai.png', 27, 600, 1020, 714)),
+ ('tile-ai-phone.jpg', *P, '#3b1456', ipad('o-ai.png', 27, 500, 1020, 714)),
  ('tile-portal.jpg', *D, '#5a4535', browser('o-portal.png', 580, 440, 960, 640, 'portal.orderly.example')),
- ('tile-portal-phone.jpg', *P, '#5a4535', browser('o-portal.png', 22, 620, 1030, 690, 'portal.orderly.example')),
+ ('tile-portal-phone.jpg', *P, '#5a4535', browser('o-portal.png', 22, 500, 1030, 720, 'portal.orderly.example')),
  ('tile-dashboard.jpg', *D, '#26323f', display('o-dash.png', 600, 410, 930)),
- ('tile-dashboard-phone.jpg', *P, '#26323f', display('o-dash.png', 22, 590, 1030)),
- ('tile-booking.jpg', *D, '#6b3313', iphone('o-book-phone.png', 1040, 400, 410) + chip(640, 820, 380, 'Wed 15 April, 8 to 10 am', 'DELIVERY BOOKED')),
- ('tile-booking-phone.jpg', *P, '#6b3313', iphone('o-book-phone.png', 312, 430, 450)),
- ('tile-internal.jpg', *D, '#0f3a25', ipad('o-pick.png', 960, 400, 590, 788, port=True) + chip(600, 860, 330, '5 of 8 picked', 'HARBOUR CAFÉ · VAN 2')),
- ('tile-internal-phone.jpg', *P, '#0f3a25', ipad('o-pick.png', 202, 450, 670, 895, port=True)),
+ ('tile-dashboard-phone.jpg', *P, '#26323f', display('o-dash.png', 22, 500, 1030)),
+ ('tile-booking.jpg', *D, '#6b3313', iphone('o-book-phone.png', 1060, 370, 380) + chip(640, 820, 380, 'Wed 15 April, 8 to 10 am', 'DELIVERY BOOKED')),
+ ('tile-booking-phone.jpg', *P, '#6b3313', iphone('o-book-phone.png', 322, 470, 430)),
+ ('tile-internal.jpg', *D, '#0f3a25', ipad('o-pick.png', 970, 380, 570, 762, port=True) + chip(600, 860, 330, '5 of 8 picked', 'HARBOUR CAFÉ · VAN 2')),
+ ('tile-internal-phone.jpg', *P, '#0f3a25', ipad('o-pick.png', 202, 470, 670, 880, port=True)),
 ]
 render(jobs, '../out/flat-mvps')
