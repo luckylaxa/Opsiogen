@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import type { ProjectFlow } from "@/lib/types";
+import { afterPageLoad } from "@/lib/afterLoad";
 import { prefersReducedMotion } from "@/lib/motion";
 import { isSanityImage, sanityLoader } from "@/lib/sanityImage";
 
@@ -36,27 +37,39 @@ export function FlowVideo({ flow, label }: { flow: ProjectFlow; label: string })
     );
     videos.forEach((v) => posters.observe(v));
     if (prefersReducedMotion()) return () => posters.disconnect();
+    // Videos now near the screen, and the waits to cancel on the way out.
+    const near = new WeakSet<HTMLVideoElement>();
+    const waits: (() => void)[] = [];
     const io = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           const v = entry.target as HTMLVideoElement;
           // Skip the version hidden at this width.
           if (!entry.isIntersecting || v.offsetParent === null) {
+            near.delete(v);
             v.pause();
             continue;
           }
-          if (v.preload === "none") {
-            for (const s of v.querySelectorAll<HTMLSourceElement>("source[data-src]")) s.src = s.dataset.src!;
-            v.preload = "auto";
-            v.load();
-          }
-          v.play().catch(() => {});
+          near.add(v);
+          // On a short page the video is near from the start: let the page's main image finish first.
+          waits.push(
+            afterPageLoad(() => {
+              if (!near.has(v)) return;
+              if (v.preload === "none") {
+                for (const s of v.querySelectorAll<HTMLSourceElement>("source[data-src]")) s.src = s.dataset.src!;
+                v.preload = "auto";
+                v.load();
+              }
+              v.play().catch(() => {});
+            }),
+          );
         }
       },
       { rootMargin: "300px 0px" },
     );
     videos.forEach((v) => io.observe(v));
     return () => {
+      waits.forEach((cancel) => cancel());
       posters.disconnect();
       io.disconnect();
     };
