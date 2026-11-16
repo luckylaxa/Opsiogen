@@ -258,12 +258,12 @@ export const SERVICES: Service[] = [
       ["Designer-led AI", "AI speeds up research, flows and screens. Our designers make every decision count."],
     ]),
     offerings: cards("ai-product-design", [
-      ["Product design", "New SaaS, web and mobile products, from flows to polished screens.", "tile-product.jpg", "Two design artboards on deep green: a budgeting app home screen on desktop and a new savings pot screen on mobile"],
-      ["UX audits", "We find where people get stuck and rank the fixes.", "tile-audit.jpg", "A mobile home screen on navy with three numbered findings and notes: the balance sits too low, the week chart has no labels, the tab icons are too small"],
-      ["Redesign and iteration", "Live products made simpler, one release at a time.", "tile-redesign.jpg", "An artboard on walnut brown: the redesigned home screen with its results, 3 seconds to find what is left to spend and 41% more weekly visits"],
-      ["Prototypes and validation", "Clickable prototypes to test ideas before you build.", "tile-prototype.jpg", "An artboard on sage: a clickable prototype that creates a savings pot in three taps, four screens joined by arrows"],
-      ["Design systems", "Components, colours and rules that keep every screen consistent.", "tile-system.jpg", "An artboard on green: a design system with colour tokens, type styles, buttons, inputs and spacing"],
-      ["Developer-ready handoff", "Specs, assets and annotated screens your developers can build from.", "tile-handoff.jpg", "An artboard on dark brown: a balance card with its layout, colour, text and code specs, ready for developers"],
+      ["Product design", "New SaaS, web and mobile products, from flows to polished screens.", "tile-product.jpg", "Three phones on teal showing a travel app we designed: a villa stay, explore with a Sicily cove, and a confirmed trip to Mykonos"],
+      ["UX audits", "We find where people get stuck and rank the fixes.", "tile-audit.jpg", "A UX audit on coral: a gym membership checkout with three numbered issues marked, beside the findings report scoring it 58 out of 100"],
+      ["Redesign and iteration", "Live products made simpler, one release at a time.", "tile-redesign.jpg", "A produce ordering web app on green, the cluttered first version behind and the redesigned version in front with one-tap reorder"],
+      ["Prototypes and validation", "Clickable prototypes to test ideas before you build.", "tile-prototype.jpg", "A clickable prototype on blue: clinic booking screens wired together, tested with 8 patients who all booked without help"],
+      ["Design systems", "Components, colours and rules that keep every screen consistent.", "tile-system.jpg", "A design system sheet on indigo: colours, type, buttons in every state, inputs, toggles and components for an energy app"],
+      ["Developer-ready handoff", "Specs, assets and annotated screens your developers can build from.", "tile-handoff.jpg", "A developer handoff on copper: an invoice card with spacing measurements, colour and type tokens and its code, marked ready for dev"],
     ]),
     faqs: [
       ...aiFaqs([

@@ -5,7 +5,24 @@ description: Make the "What we do" tiles and page-top images for an Opsiogen ser
 
 # Service page tiles: the approved way
 
-## 0. Current method (16 Nov, after the owner rejected warped screens)
+## 00. Approved method (16 Nov, Product design page)
+
+The owner liked only the Home service cards and the Websites page tiles, and asked for every
+other page to be redone one at a time: **first show the creative work in Figma, get approval,
+then build the tiles from those Figma designs.**
+
+- Design real, varied product work in Figma first: a different product per tile, each with its
+  own name, fonts and colours (e.g. Wayfare travel app, Kinetic audit, Harvest before/after,
+  Pulse prototype board, Northwind design system, Ledgerly handoff). Real stock photos where a
+  product needs them (Unsplash, uploaded with upload_assets). Send the owner a preview sheet and
+  the Figma link, and wait for approval.
+- Compose the tiles in Figma on a `Tiles` page: vivid diagonal gradient background, clones of
+  the approved screens placed straight-on (iPhone frames, windows, boards), large and bleeding
+  off the right and bottom edges like the Websites tiles. 1600 x 1200 desktop and 1074 x 1380
+  phone versions. Export each tile with get_screenshot (1x is the frame's full size).
+- Product design file: https://www.figma.com/design/2IAvyNuE4vcPRiuFT9vwD6
+
+ (16 Nov, after the owner rejected warped screens)
 
 The owner rejected every tile where a design was warped onto a tilted device in a photo: "the
 screen's totally disordered ... looks like AI ... not acceptable". So:
