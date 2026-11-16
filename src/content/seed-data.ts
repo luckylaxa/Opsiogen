@@ -777,7 +777,7 @@ export const SERVICES: Service[] = [
       ["Brochures and catalogues", "Clear layouts that present your products and services well.", "tile-brochures.jpg", "Logistics company profile: the cover with aerial containers and an open spread, on navy"],
       ["Posters, flyers and print ads", "Bold print for launches, promotions and outdoor.", "tile-posters.jpg", "Wind energy billboard, poster and magazine ad, on green"],
       ["Stationery", "Business cards, letterheads and everyday brand print.", "tile-stationery.jpg", "Law firm folder, letterhead and business cards on sand stone, with a fountain pen"],
-      ["Packaging and labels", "Packaging that stands out on the shelf and meets print specs.", "tile-packaging.jpg", "Three supplement cartons and a bottle, cut out on teal"],
+      ["Packaging and labels", "Packaging that stands out on the shelf and meets print specs.", "tile-packaging.jpg", "Three supplement cartons and a bottle standing on teal plinths"],
       ["Merchandise and apparel", "Branded merch, uniforms, gifts and kits people keep.", "tile-merch.jpg", "Branded notebook, mug, ID card and gift box, and a woman in a branded navy polo"],
       ["Event collateral and booths", "Booths, banners and handouts for exhibitions and events.", "tile-events.jpg", "Exhibition stand for an automation company in a trade hall: header sign, back wall, counter and roll-up banner"],
     ]),
