@@ -6,7 +6,7 @@ Tick items as they are done.
 ## Before moving to Hostinger (the site is a staging site until then)
 
 - [ ] Run the full checks in CLAUDE.md: lint, types, build, `npm run audit`, Lighthouse on mobile and desktop. (Run on the staging site on 16 November 2026, results below. Run them once more on Hostinger after the move.)
-- [ ] Re-check phone speed on pagespeed.web.dev for `/services/ai-websites`, `/work` and `/work/cabot-solutions` (target 97+). On 17 November they scored 90, 95 and 94 on phone and 100 on desktop. Since then each page's main image is served from the site's own address; in the test session that lifted service pages and case studies to 94 to 97, but the Work page still measured 87 to 90 there, although a real browser shows its poster as the main image at about 1.2s. If Work stays under 97, the next step is to give its video the poster directly.
+- [x] Phone speed on pagespeed.web.dev (target 97+), 17 November, after each page's main image moved to the site's own address: `/work` 97, `/services/ai-websites` 96, `/work/cabot-solutions` 96 (were 95, 90 and 94); desktop 100 on all three. A score moves a point or two between runs. Putting the styles inside each page (`inlineCss`) was tried and undone: it made phones slower.
 - [ ] On Hostinger, check the main images still load fast: they now come through the site's own image service (`/_next/image`), which Vercel caches worldwide and a single server does not.
 
 ## When you connect the real domain
