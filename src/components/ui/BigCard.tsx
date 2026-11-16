@@ -96,7 +96,8 @@ export function BigCard({
             plain && "max-sm:text-[5.8vw]",
           )}
         >
-          {title}
+          {/* Keep hyphenated words whole (no "Developer-" / "ready" split). */}
+          {title.split(/(\S+-\S+)/).map((part, i) => (i % 2 ? <span key={i} className="whitespace-nowrap">{part}</span> : part))}
         </Title>
         {footLeft && (
           <div
