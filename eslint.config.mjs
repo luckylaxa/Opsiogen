@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Helper scripts that make the service-page images; not part of the site.
+    "design/**",
   ]),
 ]);
 
