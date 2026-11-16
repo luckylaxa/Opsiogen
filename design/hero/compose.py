@@ -14,7 +14,7 @@ def cover(im, ratio):
 def flow(name, inset=(0.06, 0.04)):
     im = Image.open(P + name).convert('RGB'); w, h = im.size
     return im.crop((int(w * inset[0]), int(h * inset[1]), int(w * (1 - inset[0])), int(h * (1 - inset[1]))))
-def place(base, art, quad, mode='screen', thr=225, grow=2, ref=None, exclude=()):
+def place(base, art, quad, mode='screen', thr=225, grow=2, ref=None, exclude=(), soft=None):
     """quad: TL, TR, BR, BL. screen = shows where the photo is white; paper = takes the paper's shading."""
     W, H = base.size; ss = 3
     qw = (np.hypot(quad[1][0] - quad[0][0], quad[1][1] - quad[0][1]) + np.hypot(quad[2][0] - quad[3][0], quad[2][1] - quad[3][1])) / 2
@@ -31,6 +31,9 @@ def place(base, art, quad, mode='screen', thr=225, grow=2, ref=None, exclude=())
     if mode == 'screen':
         m = pm & (np.array(ref if ref is not None else base).astype(float).min(axis=2) > thr)  # white in the untouched photo
         al = np.array(Image.fromarray((m * 255).astype('uint8')).filter(ImageFilter.GaussianBlur(0.6))).astype(float)[..., None] / 255
+        if soft:  # glass in front of the screen: the design shows through it, tinted
+            mn = np.array(ref if ref is not None else base).astype(float).min(axis=2)
+            al = (np.clip((mn - soft[0]) / (soft[1] - soft[0]), 0, 1) * pm)[..., None]
         out = b * (1 - al) + np.array(w).astype(float) * 0.96 * al
     else:
         lum = b.mean(axis=2); ref = np.percentile(lum[pm], 85)
@@ -75,3 +78,30 @@ g = Image.open(P + 'work/oh-my-glam/oh-my-glam-flow.jpg').convert('RGB')
 im = place(im, g.crop((0, 0, 1050, 1000)), [(581, 312), (667, 312), (667, 370), (581, 375)])
 im = place(im, g.crop((1110, 70, 1490, 930)), rect(707, 337, 724, 365))
 im.save('work-06-film.jpg', quality=92)
+
+# ---- AI lab rooms (second round) ----
+# 03 build lab: a client website on the wall display (the glass panels in front stay in front)
+im = Image.open('lab-03-build.png').convert('RGB')
+im = place(im, flow('work/bigtapp/bigtapp-flow.jpg'), [(463, 195), (941, 159), (942, 417), (463, 412)], thr=235, soft=(150, 245))
+im.save('labwork-03-build.jpg', quality=92)
+
+# 04 automation lab: a client dashboard where the light lines end
+im = Image.open('lab-04-automation.png').convert('RGB')
+im = place(im, flow('work/care-connect/care-connect-flow.jpg'), [(724, 120), (963, 171), (963, 316), (724, 315)], thr=235)
+im.save('labwork-04-automation.jpg', quality=92)
+
+# 05 brand lab: three client posters (the colour swatches in front of the first stay in front)
+im = Image.open('lab-05-brand.png').convert('RGB')
+swatches = [[(593, 293), (625, 293), (625, 332), (593, 332)], [(631, 287), (662, 287), (662, 332), (631, 332)], [(665, 280), (696, 280), (696, 332), (665, 332)]]
+for a, q, ex in zip([arts[0], arts[1], arts[2]], [rect(617, 162, 709, 300), rect(728, 162, 821, 300), rect(840, 162, 933, 300)], [swatches, (), ()]):
+    im = place(im, a, q, mode='paper', grow=0, exclude=ex)
+im.save('labwork-05-brand.jpg', quality=92)
+
+# 06 AI film lab: our app film on the desk monitor, three client pieces on the upright screens
+im = Image.open('lab-06-film.png').convert('RGB'); src = im.copy()
+im = place(im, g.crop((0, 0, 1050, 1000)), rect(603, 378, 685, 426), thr=200, ref=src)
+ph = [g.crop((1110, 70, 1490, 930)), Image.open(P + 'work/carlton-noble/carlton-noble-flow-phone.jpg').convert('RGB').crop((300, 0, 780, 1080)),
+      Image.open(P + 'work/bigtapp/bigtapp-flow-phone.jpg').convert('RGB').crop((300, 0, 780, 1080))]
+for a, (x, y, w, h) in zip(ph, [(860, 394, 13, 28), (894, 394, 13, 28), (930, 394, 14, 29)]):
+    im = place(im, a, rect(x, y, x + w, y + h), thr=200, ref=src)
+im.save('labwork-06-film.jpg', quality=92)
