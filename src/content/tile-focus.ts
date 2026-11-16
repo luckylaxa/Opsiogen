@@ -38,6 +38,14 @@ export const PHONE_CARDS: Record<string, { url: string; width: number; height: n
 const tilePhones = (slug: string, tiles: Record<string, string>) =>
   Object.fromEntries(Object.entries(tiles).map(([title, file]) => [`${slug}/${title}`, `/services/${slug}/${file}-phone.jpg`]));
 export const TILE_PHONES: Record<string, string> = {
+  ...tilePhones("ai-automation", {
+    "Process audit": "tile-audit",
+    "Lead and enquiry automation": "tile-leads",
+    "Internal dashboards": "tile-dashboards",
+    "Document and data extraction": "tile-documents",
+    "AI chatbots and voice assistants": "tile-assistants",
+    "Reports, proposals and approvals": "tile-approvals",
+  }),
   ...tilePhones("ai-video-production", {
     "Explainer and product videos": "tile-explainer",
     "Social video and reels": "tile-social",

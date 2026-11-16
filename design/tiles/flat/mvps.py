@@ -28,4 +28,5 @@ jobs = [
  ('tile-internal.jpg', *D, '#0f3a25', ipad('o-pick.png', 970, 380, 570, 762, port=True) + chip(600, 860, 330, '5 of 8 picked', 'HARBOUR CAFÉ · VAN 2')),
  ('tile-internal-phone.jpg', *P, '#0f3a25', ipad('o-pick.png', 202, 470, 670, 880, port=True)),
 ]
-render(jobs, '../out/flat-mvps')
+if __name__ == '__main__':
+    render(jobs, '../out/flat-mvps')

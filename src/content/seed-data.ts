@@ -432,12 +432,12 @@ export const SERVICES: Service[] = [
       ["Looked after", "A monthly care plan keeps every automation running and improving."],
     ]),
     offerings: cards("ai-automation", [
-      ["Process audit", "We map how work gets done and find the tasks worth automating first.", "tile-audit.jpg", "A wall covered in sticky notes from a workshop mapping how work gets done"],
-      ["Lead and enquiry automation", "Every enquiry captured, sorted and followed up without manual work.", "tile-leads.jpg", "A hand holding a phone in an office, its lock screen showing a new enquiry sorted as a hot lead, a follow-up sent and a call booked"],
-      ["Internal dashboards", "Dashboards and reports that update themselves from the tools you use.", "tile-dashboards.jpg", "A laptop on a desk showing a sales dashboard: £48,200 last week, sales by week and a report scheduled for Monday at 8:00"],
-      ["Document and data extraction", "Data pulled from forms, invoices and PDFs into your systems.", "tile-documents.jpg", "A hand holding a tablet against blue, showing an invoice being read automatically and the fields found, with Looks right, file it"],
-      ["AI chatbots and voice assistants", "Assistants that answer questions and handle routine requests by chat or voice.", "tile-assistants.jpg", "A phone on a soft mint blanket showing an assistant answering a question about holiday days, with the handbook pages it used"],
-      ["Reports, proposals and approvals", "Documents drafted and approvals routed automatically.", "tile-approvals.jpg", "A hand holding a phone over a dark desk, its lock screen asking to approve £4,800 for four laptops"],
+      ["Process audit", "We map how work gets done and find the tasks worth automating first.", "tile-audit.jpg", "A quote process mapped step by step on deep purple, each step timed, three marked to automate: 27 hours a week the computer could do"],
+      ["Lead and enquiry automation", "Every enquiry captured, sorted and followed up without manual work.", "tile-leads.jpg", "An enquiry flow on navy, from new enquiry to scored, replied and booked, beside a phone showing the same updates as notifications"],
+      ["Internal dashboards", "Dashboards and reports that update themselves from the tools you use.", "tile-dashboards.jpg", "A sales dashboard in a browser window on plum, with a card saying it is sent every Monday at 8:00"],
+      ["Document and data extraction", "Data pulled from forms, invoices and PDFs into your systems.", "tile-documents.jpg", "A supplier invoice on deep teal beside the fields read from it, supplier, number, date and total, each ticked and filed in accounts"],
+      ["AI chatbots and voice assistants", "Assistants that answer questions and handle routine requests by chat or voice.", "tile-assistants.jpg", "A people assistant answering a holiday question on a phone, on slate purple, with the handbook pages it answered from"],
+      ["Reports, proposals and approvals", "Documents drafted and approvals routed automatically.", "tile-approvals.jpg", "A proposal drafted from call notes on aubergine, approved by the manager and with finance, beside a phone asking to approve £4,800"],
     ]),
     faqs: [
       ...aiFaqs([

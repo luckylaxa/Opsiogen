@@ -25,7 +25,7 @@ const focus = (h: { x: number; y: number }, x?: number) => (x === undefined ? h 
 
 /** Services with a hero image use the full page. */
 /** Service pages whose What we do tiles were made in the plain style (see the service-tiles skill). */
-const PLAIN_TILES = new Set(["ai-product-design", "ai-mvps-business-apps", "ai-video-production"]);
+const PLAIN_TILES = new Set(["ai-product-design", "ai-mvps-business-apps", "ai-video-production", "ai-automation"]);
 
 export const hasFullPage = (service: Service) => Boolean(service.hero?.image?.url);
 
