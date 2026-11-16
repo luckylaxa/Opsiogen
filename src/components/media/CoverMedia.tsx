@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Img, Video } from "@/lib/types";
 import { Media } from "@/components/ui/Media";
+import { afterPageLoad } from "@/lib/afterLoad";
 import { prefersReducedMotion } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
@@ -30,24 +31,38 @@ export function CoverMedia({
   const ref = useRef<HTMLVideoElement>(null);
   const [load, setLoad] = useState(false);
   const [playing, setPlaying] = useState(false);
+  const inView = useRef(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!video || !el || prefersReducedMotion()) return;
+    let cancel = () => {};
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setLoad(true);
-          el.play().catch(() => {});
-        } else {
-          el.pause();
+        inView.current = entry.isIntersecting;
+        if (!entry.isIntersecting) el.pause();
+        else if (el.getAttribute("src")) el.play().catch(() => {});
+        else {
+          // The image under the video may be the page's main image: let the page finish loading first.
+          cancel();
+          cancel = afterPageLoad(() => {
+            if (inView.current) setLoad(true);
+          });
         }
       },
       { rootMargin: "200px 0px" },
     );
     io.observe(el);
-    return () => io.disconnect();
+    return () => {
+      cancel();
+      io.disconnect();
+    };
   }, [video]);
+
+  // Start as soon as the file is attached, while the cover is on screen.
+  useEffect(() => {
+    if (load && inView.current) ref.current?.play().catch(() => {});
+  }, [load]);
 
   return (
     <div className={cn("absolute inset-0", className)}>

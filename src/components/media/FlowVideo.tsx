@@ -3,20 +3,39 @@
 import { useEffect, useRef } from "react";
 import type { ProjectFlow } from "@/lib/types";
 import { prefersReducedMotion } from "@/lib/motion";
+import { isSanityImage, sanityLoader } from "@/lib/sanityImage";
+
+/** The poster at the width it is shown, from the image CDN. */
+const sized = (url: string | undefined, width: number) =>
+  url && isSanityImage(url) ? sanityLoader({ src: url, width, quality: 70 }) : url;
 
 /**
  * A case study's screen-flow video: 16:10 from tablets up, square on phones
- * when a phone version exists. Each video loads only when it is near the
- * screen and shown at this width, plays muted on a loop while visible, and
- * pauses off screen. Reduced-motion visitors see the poster.
+ * when a phone version exists. Each video and its poster load only when near
+ * the screen and shown at this width; the video plays muted on a loop while
+ * visible and pauses off screen. Reduced-motion visitors see the poster.
  */
 export function FlowVideo({ flow, label }: { flow: ProjectFlow; label: string }) {
   const box = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const root = box.current;
-    if (!root || prefersReducedMotion()) return;
+    if (!root) return;
     const videos = Array.from(root.querySelectorAll("video"));
+    // Each poster loads as its video nears the screen, and only for the version shown at this width.
+    const posters = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const v = entry.target as HTMLVideoElement;
+          if (!entry.isIntersecting || v.offsetParent === null || !v.dataset.poster) continue;
+          v.poster = v.dataset.poster;
+          posters.unobserve(v);
+        }
+      },
+      { rootMargin: "1200px 0px" },
+    );
+    videos.forEach((v) => posters.observe(v));
+    if (prefersReducedMotion()) return () => posters.disconnect();
     const io = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -37,7 +56,10 @@ export function FlowVideo({ flow, label }: { flow: ProjectFlow; label: string })
       { rootMargin: "300px 0px" },
     );
     videos.forEach((v) => io.observe(v));
-    return () => io.disconnect();
+    return () => {
+      posters.disconnect();
+      io.disconnect();
+    };
   }, []);
 
   const phone = flow.phone?.url;
@@ -46,7 +68,7 @@ export function FlowVideo({ flow, label }: { flow: ProjectFlow; label: string })
       {phone && (
         <video
           className="block aspect-square w-full object-cover sm:hidden"
-          poster={flow.posterPhone?.url ?? flow.poster?.url}
+          data-poster={sized(flow.posterPhone?.url ?? flow.poster?.url, 828)}
           muted
           loop
           playsInline
@@ -59,7 +81,7 @@ export function FlowVideo({ flow, label }: { flow: ProjectFlow; label: string })
       )}
       <video
         className={phone ? "hidden aspect-[16/10] w-full object-cover sm:block" : "block aspect-[16/10] w-full object-cover"}
-        poster={flow.poster?.url}
+        data-poster={sized(flow.poster?.url, 1600)}
         muted
         loop
         playsInline

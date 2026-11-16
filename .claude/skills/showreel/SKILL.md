@@ -12,8 +12,9 @@ rewrite the concept or ask him to approve the script again.
 ## Before building (check these first)
 
 1. **Afthab's work goes in first.** Lucky said: "we have to put afthab work as well before video
-   creation." If it is not in the repo or the Figma files yet, ask where it is (a Figma link or
-   files) and which chapter it belongs in. Do not start the video without it unless he says so.
+   creation." This is most likely the Afthab Tours case study (`/work/afthab-tours`), which
+   still uses sample images (see LAUNCH-CHECKLIST.md). If its real designs are not in the repo
+   or the Figma files yet, ask for its Figma link and which chapter it belongs in. Do not start the video without it unless he says so.
 2. **Credits need approval.** The build below needs no image or video credits. Music and any AI
    motion shot do: quote the cost and wait for a yes. He approves spend per request and wants
    `generations_count` 1.

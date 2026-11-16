@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { ShowreelSection, Video } from "@/lib/types";
 import { Media } from "@/components/ui/Media";
+import { afterPageLoad } from "@/lib/afterLoad";
 import { prefersReducedMotion } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
@@ -34,17 +35,26 @@ export function Showreel({ section, className }: { section: ShowreelSection; cla
     const el = ref.current;
     if (!video || !el) return;
     held.current = prefersReducedMotion();
+    let cancel = () => {};
     const io = new IntersectionObserver(
       ([entry]) => {
         inView.current = entry.isIntersecting;
         if (!entry.isIntersecting) el.pause();
-        else if (!el.getAttribute("src")) setSrc(chooseSrc(el, video, videoWebm));
-        else if (!held.current) el.play().catch(() => {});
+        else if (!el.getAttribute("src")) {
+          // The poster is the page's main image: let it finish before the video starts downloading.
+          cancel();
+          cancel = afterPageLoad(() => {
+            if (inView.current) setSrc(chooseSrc(el, video, videoWebm));
+          });
+        } else if (!held.current) el.play().catch(() => {});
       },
       { rootMargin: "200px 0px" },
     );
     io.observe(el);
-    return () => io.disconnect();
+    return () => {
+      cancel();
+      io.disconnect();
+    };
   }, [video, videoWebm]);
 
   // Start as soon as the file is attached, while the card is on screen.
