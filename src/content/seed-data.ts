@@ -927,12 +927,12 @@ export const SERVICES: Service[] = [
       ["On brand", "Designers check every frame against your brand."],
     ]),
     offerings: cards("ai-video-production", [
-      ["Explainer and product videos", "Short videos that show what you do and why it matters.", "tile-explainer.jpg", "A laptop on a wooden table playing an explainer video: How we make a scoop"],
-      ["Social video and reels", "Vertical, fast-paced video made for social channels.", "tile-social.jpg", "A hand holding a phone over a dark desk, playing a vertical ice cream video: Two scoops. No rules."],
-      ["Video ads", "Ads cut to the length and format of every placement.", "tile-ads.jpg", "A billboard against the sky showing an ice cream advert: Two scoops. No rules."],
-      ["Motion graphics and animation", "Animated stories, titles and data that make ideas easy to follow.", "tile-motion.jpg", "A person in headphones at a monitor in a dark room, animating an ice cream title on a timeline"],
-      ["AI video", "Visuals, voiceovers and scenes made with AI and finished by designers.", "tile-ai.jpg", "A cinema screen above a stage showing an ice cream brand film with floating cones"],
-      ["Concepts and scripts", "Ideas, scripts and storyboards, before a single frame is made.", "tile-concepts.jpg", "A six-frame storyboard and a script for an ice cream ad, lying on a sofa beside a pencil"],
+      ["Explainer and product videos", "Short videos that show what you do and why it matters.", "tile-explainer.jpg", "A video player on deep plum: an explainer for an ice cream shop, How we make a scoop, paused on chapter two"],
+      ["Social video and reels", "Vertical, fast-paced video made for social channels.", "tile-social.jpg", "Three vertical videos for an ice cream shop on near black, with their view counts"],
+      ["Video ads", "Ads cut to the length and format of every placement.", "tile-ads.jpg", "One ice cream ad in three sizes on deep green: 16:9, 1:1 and 9:16"],
+      ["Motion graphics and animation", "Animated stories, titles and data that make ideas easy to follow.", "tile-motion.jpg", "An animation in its edit window on wine red: Two scoops, with a timeline of coloured keyframes"],
+      ["AI video", "Visuals, voiceovers and scenes made with AI and finished by designers.", "tile-ai.jpg", "A wide video frame of floating ice cream cones on charcoal, with the prompt behind it and Take 3 chosen"],
+      ["Concepts and scripts", "Ideas, scripts and storyboards, before a single frame is made.", "tile-concepts.jpg", "A storyboard sheet on magenta: six numbered frames for a 30 second ice cream ad, draft 3"],
     ]),
     faqs: [
       ...aiFaqs([
