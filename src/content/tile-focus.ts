@@ -13,7 +13,6 @@ export const TILE_FOCUS: Record<string, number> = {
   "ai-print-collateral": 0.85,
   "ai-brand-services": 0.7,
   "ai-websites/Website revamps": 1,
-  "ai-social-media-marketing/Content calendar": 1,
   "digital-marketing/Lead generation campaigns": 0.5,
   "digital-marketing/Analytics and reporting": 1,
   "ai-print-collateral/Brochures and catalogues": 1,
@@ -38,6 +37,14 @@ export const PHONE_CARDS: Record<string, { url: string; width: number; height: n
 const tilePhones = (slug: string, tiles: Record<string, string>) =>
   Object.fromEntries(Object.entries(tiles).map(([title, file]) => [`${slug}/${title}`, `/services/${slug}/${file}-phone.jpg`]));
 export const TILE_PHONES: Record<string, string> = {
+  ...tilePhones("ai-social-media-marketing", {
+    "Content calendar": "tile-calendar",
+    "Posts and carousels": "tile-posts",
+    "Reels and short video": "tile-reels",
+    "Paid social creative": "tile-paid",
+    "Campaign concepts": "tile-campaign",
+    "Publishing and reporting": "tile-reporting",
+  }),
   ...tilePhones("ai-automation", {
     "Process audit": "tile-audit",
     "Lead and enquiry automation": "tile-leads",

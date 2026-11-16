@@ -520,12 +520,12 @@ export const SERVICES: Service[] = [
       ["Clear reporting", "A monthly report on what worked and what comes next."],
     ]),
     offerings: cards("ai-social-media-marketing", [
-      ["Content calendar", "A monthly plan built around your goals, launches and events.", "tile-calendar.jpg", "A laptop and a phone seen from above on a sunlit desk: the laptop shows a bakery’s April content plan, the phone its feed"],
-      ["Posts and carousels", "On-brand designs and captions for every channel, made fast with AI.", "tile-posts.jpg", "A white phone lying on a soft mint blanket, showing a bakery’s post: a sourdough loaf and the line Baked at 4 am. Gone by noon."],
-      ["Reels and short video", "Short, vertical video that keeps your brand in the feed.", "tile-reels.jpg", "A phone playing a bakery reel, Fresh out at seven, beside a second reel card, The crumb shot, on dark brown"],
-      ["Paid social creative", "Ad designs and variations, made to test and improve.", "tile-paid.jpg", "Three versions of one bakery ad fanned out with their results, the third, Friday is loaf day, marked as the winner"],
-      ["Campaign concepts", "One big idea for a launch or season, ready for every format.", "tile-campaign.jpg", "A bakery campaign, Friday is loaf day, as a printed poster and on a phone, on a leather sofa"],
-      ["Publishing and reporting", "We publish to your calendar and report on what worked.", "tile-reporting.jpg", "A laptop on a table by a window showing a bakery’s April report: reach, engagement and top posts"],
+      ["Content calendar", "A monthly plan built around your goals, launches and events.", "tile-calendar.jpg", "A bakery's April content plan in a window on dark brown, with Friday's reel, The crumb shot, called out"],
+      ["Posts and carousels", "On-brand designs and captions for every channel, made fast with AI.", "tile-posts.jpg", "A three-slide bakery carousel on mustard: Baked at 4 am, Feed the starter, and Sourdough in four slow steps"],
+      ["Reels and short video", "Short, vertical video that keeps your brand in the feed.", "tile-reels.jpg", "A short bakery video playing on a phone on espresso brown: Fresh out at seven, 24.1k plays"],
+      ["Paid social creative", "Ad designs and variations, made to test and improve.", "tile-paid.jpg", "Three versions of a bakery ad on olive, each with its click rate, version C marked the winner at 3.4%"],
+      ["Campaign concepts", "One big idea for a launch or season, ready for every format.", "tile-campaign.jpg", "A campaign concept board on terracotta: Friday is loaf day, with bread photos, brand colours and the idea"],
+      ["Publishing and reporting", "We publish to your calendar and report on what worked.", "tile-reporting.jpg", "A bakery's April social report in a window on deep teal, with the top post called out at 18.4k reach"],
     ]),
     faqs: [
       ...aiFaqs([
