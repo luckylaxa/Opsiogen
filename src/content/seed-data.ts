@@ -603,12 +603,12 @@ export const SERVICES: Service[] = [
       ["Always improving", "We test, learn and move budget to what works."],
     ]),
     offerings: cards("digital-marketing", [
-      ["Paid social ads", "Campaigns aimed at the people most likely to buy.", "tile-social.jpg", "A close-up of a phone in a green case on a wooden desk, showing a sponsored post for an electric bike: Hills, flattened."],
-      ["Search ads", "Be found at the moment customers search for what you offer.", "tile-search.jpg", "A hand holding a phone showing search results with a sponsored listing for electric bikes: Hills, Flattened"],
-      ["SEO", "Better search visibility through content, structure and technical fixes.", "tile-seo.jpg", "A laptop seen from above on an oak table, showing a search visibility report with 18,420 visits and a page score of 92"],
-      ["Lead generation campaigns", "Campaigns and landing pages built to bring in enquiries.", "tile-leads.jpg", "A laptop on an office desk showing a landing page with a form to book an electric bike test ride"],
-      ["Email and retargeting", "Follow-ups that bring people back when they’re ready to buy.", "tile-email.jpg", "A hand holding a tablet against warm sand, showing a follow-up email: Still thinking it over?"],
-      ["Analytics and reporting", "Clear tracking of leads, sales and return on ad spend.", "tile-analytics.jpg", "A laptop and a phone seen from above on a sunlit desk: the laptop shows a campaign dashboard from visit to sale, with a return on ad spend of 5.2×"],
+      ["Paid social ads", "Campaigns aimed at the people most likely to buy.", "tile-social.jpg", "An e-bike ad in a social feed on a phone, on deep blue, beside its cost per test ride: £6.40, down 38% on last month"],
+      ["Search ads", "Be found at the moment customers search for what you offer.", "tile-search.jpg", "A search for electric bike for commuting on navy, with the e-bike shop's ad on top and its click rate of 7.9%"],
+      ["SEO", "Better search visibility through content, structure and technical fixes.", "tile-seo.jpg", "A search visibility report in a browser window on midnight blue: rankings, a rising traffic chart and a site health score of 92"],
+      ["Lead generation campaigns", "Campaigns and landing pages built to bring in enquiries.", "tile-leads.jpg", "A test ride landing page in a browser window on orange, with a new booking for Saturday just in"],
+      ["Email and retargeting", "Follow-ups that bring people back when they’re ready to buy.", "tile-email.jpg", "A follow-up email, Still thinking it over?, on slate blue, beside the three emails in its sequence"],
+      ["Analytics and reporting", "Clear tracking of leads, sales and return on ad spend.", "tile-analytics.jpg", "A campaign funnel on indigo, from 24,600 visits to 64 bikes sold, with a return on ad spend of 5.2 times"],
     ]),
     faqs: [
       ...aiFaqs([
