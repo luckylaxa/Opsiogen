@@ -25,7 +25,8 @@ const objectPosition = (img: Img) =>
 
 /**
  * next/image wrapper for CMS and placeholder images. CMS images come straight
- * from Sanity's CDN at the size each screen needs; until one arrives, the box
+ * from Sanity's CDN at the size each screen needs, except the page's main
+ * (`priority`) image, which the site serves itself; until one arrives, the box
  * shows one flat colour taken from the image's tiny preview (never a blur).
  */
 export function Media({ image, sizes, className, priority, eager, lowPriority, fill = true, phone, phoneBelow = 640 }: Props) {
@@ -47,7 +48,10 @@ export function Media({ image, sizes, className, priority, eager, lowPriority, f
       src,
       alt,
       sizes,
-      loader: loaderFor(src),
+      // The page's main image comes through the site's own address, on the connection the page
+      // already has open: a first connection to the image CDN costs a slow phone about half a
+      // second. Every other image comes straight from the CDN.
+      loader: priority ? undefined : loaderFor(src),
       ...(fill ? { fill: true } : { width: image.width, height: image.height }),
       ...load,
     }).props;
