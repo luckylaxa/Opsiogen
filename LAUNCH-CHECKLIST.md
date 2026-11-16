@@ -1,12 +1,13 @@
 # Launch checklist: what's still pending
 
-Last updated: 16 November 2026. Ask "what's pending" and Claude reads this file.
+Last updated: 17 November 2026. Ask "what's pending" and Claude reads this file.
 Tick items as they are done.
 
 ## Before moving to Hostinger (the site is a staging site until then)
 
 - [ ] Run the full checks in CLAUDE.md: lint, types, build, `npm run audit`, Lighthouse on mobile and desktop. (Run on the staging site on 16 November 2026, results below. Run them once more on Hostinger after the move.)
-- [ ] Check phone speed on pagespeed.web.dev for one service page, the Work page and one case study. From the test session these scored 84 to 90 on phone, but that session's network slows the first connection to the image CDN, so the real score should be higher. If it is under 97 there, the fix is to serve each page's main image from the site's own address.
+- [ ] Re-check phone speed on pagespeed.web.dev for `/services/ai-websites`, `/work` and `/work/cabot-solutions` (target 97+). On 17 November they scored 90, 95 and 94 on phone and 100 on desktop. Since then each page's main image is served from the site's own address; in the test session that lifted service pages and case studies to 94 to 97, but the Work page still measured 87 to 90 there, although a real browser shows its poster as the main image at about 1.2s. If Work stays under 97, the next step is to give its video the poster directly.
+- [ ] On Hostinger, check the main images still load fast: they now come through the site's own image service (`/_next/image`), which Vercel caches worldwide and a single server does not.
 
 ## When you connect the real domain
 
@@ -50,5 +51,6 @@ Tick items as they are done.
 - Every page in the sitemap, plus /blog/preview and the 404 page, at phone (iPhone 13) and desktop (1440px) widths: no sideways scroll, no broken images, no image without alt text, one H1 each, no script errors.
 - Working parts: phone menu, theme switch, Services menu, search, Work filters and Load more, case-study pop-up, contact form steps and its checks (no enquiry sent), 404 page, keyboard focus, videos.
 - Lighthouse on 12 key pages: accessibility, best practices and SEO 100 on all, phone and desktop. Desktop performance 98 to 100. Phone performance 95 to 99 on Home, Services, About, Contact and Blog; 84 to 90 on service detail pages, Work and case studies (see the unticked item above).
+- 17 November: each page's main image now comes from the site's own address, and the Work poster is requested at the width it is shown on phones.
 - Speed fixes made: videos at the top of a page now wait until the page has loaded, and case-study walkthrough posters load at the right size, only for the version shown, and only when near the screen.
 - Not tested: sending a real enquiry (it would save a test entry in the Studio and Resend is not set up yet).
