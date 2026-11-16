@@ -5,6 +5,31 @@ description: Make the "What we do" tiles and page-top images for an Opsiogen ser
 
 # Service page tiles: the approved way
 
+## 0. Current method (16 Nov, after the owner rejected warped screens)
+
+The owner rejected every tile where a design was warped onto a tilted device in a photo: "the
+screen's totally disordered ... looks like AI ... not acceptable". So:
+
+- **No perspective warping, ever.** Tiles are built flat in HTML (`design/tiles/flat/`:
+  `frames.css` device frames, `render.py`, one script per page) and rendered straight-on, so every
+  screen shows our real design pixel for pixel. Text, fonts and colours are the real ones.
+- **Each page has its own mockup style**, same colour rhythm across the site:
+  MVPs = straight-on devices (`mvps.py`); Product design = design-file artboards with labels,
+  audit notes, cursor (`pd.py`); Video = players, reels, ad sizes, edit window, storyboard
+  (`video.py`); Automation = process map, workflow steps, invoice to data (`automation.py`);
+  Social = feed posts, carousel, ad versions, concept board (`social.py`); Digital marketing =
+  each ad or page with the number it moved (`digital.py`); Creative subscription = delivered
+  requests with complete assets at their own sizes (`creative.py`). Print and Brand keep their
+  real-object photos. Websites keeps its approved tiles.
+- **Every tile has a tall phone version** (1074 x 1380), listed in `TILE_PHONES`
+  (`src/content/tile-focus.ts`), so nothing is cut on phones. Pages remade this way are in
+  `PLAIN_TILES` (no shade).
+- **Spacing:** card text has extra top padding; the device sits just under the text, no empty
+  band between them (desktop device top about 35-37%, phone version about 34-36%).
+- Never crop a design through its text: show complete pieces (draw ads at their own size).
+- No credits are needed for this method.
+
+
 The owner's rules, collected from every round of feedback. Follow all of them. Do not
 experiment on the live site. Mistakes cost the owner money and trust.
 
