@@ -161,7 +161,7 @@ ribbon('StripGlow', 1.003, 0.06, M_glow, fade=True)              # a soft halo f
 # ---- fine panel seams
 eye = Vector((0, -1, 0))
 def above_groove(p): return p.normalized().dot(AX) < math.cos(RHO + 0.03)
-def seam(name, pts): pts = [p * 1.0004 for p in pts]; return tube(name, pts, 0.0024, M_seam) if len(pts) > 3 else None
+def seam(name, pts): pts = [p * 1.0004 for p in pts]; return tube(name, pts, 0.0032, M_seam) if len(pts) > 3 else None
 def circle_pts(axis, cosd, keep):
     axis = Vector(axis).normalized(); u = axis.orthogonal().normalized(); v = axis.cross(u); rad = math.sqrt(1 - cosd * cosd)
     pts = [axis * cosd + rad * (math.cos(a) * u + math.sin(a) * v) for a in [2 * math.pi * i / 360 for i in range(361)]]
@@ -172,7 +172,7 @@ def circle_pts(axis, cosd, keep):
     if run: runs.append(run)
     return max(runs, key=len) if runs else []
 # one seam round the top of the body: it rises over the eye and over the back, and dips at the sides (as on the reference sheet)
-def cap_lat(lon): return math.radians(27 + 12 * math.cos(2 * lon) + 5 * math.cos(lon))
+def cap_lat(lon): return math.radians(25 + 11 * math.cos(2 * lon) + 11.5 * math.cos(lon))   # as on the sheet: over the top of the eye, down to the sides, a gentle arc across the back
 seam('SeamCap', [on_body(l, cap_lat(l)) for l in [2 * math.pi * i / 360 for i in range(361)]])
 # and a short one under the eye, from its rim down to the colour line
 seam('SeamChin', [p for p in [on_body(0.0, math.radians(a)) for a in range(-40, -80, -1)] if above_groove(p)])
