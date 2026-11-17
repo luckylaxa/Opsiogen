@@ -1,0 +1,200 @@
+<title>Opsiogen Orb Run</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap">
+<style>
+  /* Layout: one pinned first screen. The world fills it; the sphere character is drawn live on top,
+     looks ahead while the page moves and turns to the visitor when it stops. One look, sunlit. */
+  :root {
+    --page: #0a090d;
+    --ink: #f8f6f8;
+    --soft: rgb(248 246 248 / 0.82);
+    --shade: rgb(8 16 38 / 0.55);
+    --line: rgb(248 246 248 / 0.4);
+    --display: "Outfit", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+    color-scheme: dark;
+  }
+  body { background: var(--page); color: var(--ink); font-family: var(--display); margin: 0; }
+  .gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+  .stage { height: 420vh; position: relative; }
+  .pin { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: #6fa8dc; }
+
+  .world { position: absolute; inset: -2%; background: url(img/world-1.jpg) 58% 50% / cover no-repeat; transform-origin: 58% 52%; will-change: transform; }
+  .rays { position: absolute; inset: -20%; pointer-events: none; opacity: 0; transform-origin: 58% 52%;
+    background: repeating-conic-gradient(from 0deg at 58% 52%, rgb(255 255 255 / 0) 0deg 5deg, rgb(255 255 255 / 0.5) 5.4deg 5.7deg, rgb(255 255 255 / 0) 6.1deg 11deg);
+    -webkit-mask-image: radial-gradient(circle at 58% 52%, transparent 0 22%, #000 70%); mask-image: radial-gradient(circle at 58% 52%, transparent 0 22%, #000 70%); }
+  .veil { position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(90deg, rgb(8 16 38 / 0) 42%, var(--shade) 84%), linear-gradient(180deg, rgb(8 16 38 / 0.5), rgb(8 16 38 / 0) 20%, rgb(8 16 38 / 0) 74%, rgb(8 16 38 / 0.55)); }
+
+  .bar { position: absolute; inset: 0 0 auto; z-index: 6; display: flex; align-items: center; gap: clamp(16px, 2.4vw, 40px); height: clamp(64px, 6vw, 88px); padding-inline: clamp(16px, 3.4vw, 65px); }
+  .bar img { height: clamp(22px, 2.6vw, 38px); width: auto; }
+  .bar nav { display: flex; gap: clamp(14px, 2vw, 28px); font-size: clamp(14px, 1.2vw, 18px); }
+  .bar .cta { margin-left: auto; background: var(--ink); color: var(--page); border-radius: 8px; padding: 0.7em 1.15em; font-weight: 500; font-size: clamp(14px, 1.2vw, 18px); white-space: nowrap; }
+
+  .words { position: absolute; z-index: 5; right: clamp(16px, 4.4vw, 80px); top: 50%; transform: translateY(-46%); width: min(46vw, 660px); }
+  .pill { display: inline-block; border: 1px solid var(--line); border-radius: 4px; padding: 0.15em 0.6em; font-size: clamp(14px, 1.2vw, 18px); margin: 0 0 clamp(16px, 2.6vh, 30px); }
+  h1 { margin: 0; font-weight: 700; text-transform: uppercase; line-height: 0.95; letter-spacing: -0.02em; font-size: clamp(34px, min(6.4vw, 11.4vh), 104px); text-wrap: balance; text-shadow: 0 2px 30px rgb(8 16 38 / 0.35); }
+  .go { display: inline-block; margin-top: clamp(18px, 3vh, 36px); background: var(--ink); color: var(--page); border-radius: 8px; padding: 0.8em 1.3em; font-weight: 500; font-size: clamp(15px, 1.2vw, 18px); text-decoration: none; }
+  .go:focus-visible { outline: 2px solid #d8ff3e; outline-offset: 3px; }
+
+  /* the character: trail, soft shadow, and the live-drawn sphere */
+  .orb { position: absolute; z-index: 4; left: 27%; top: 56%; width: clamp(150px, 25vw, 400px); aspect-ratio: 1; transform: translate(-50%, -50%); will-change: transform; }
+  .orb canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .ground { position: absolute; left: 16%; right: 16%; bottom: -24%; height: 13%; border-radius: 50%; background: rgb(10 14 30 / 0.5); filter: blur(16px); }
+  .trail { position: absolute; z-index: 3; left: 27%; top: 56%; width: 80vw; height: clamp(120px, 20vw, 330px); transform-origin: 100% 50%; transform: translate(-100%, -50%) rotate(-16deg); opacity: 0; pointer-events: none; filter: blur(14px);
+    background: linear-gradient(180deg, rgb(255 60 60 / 0), #ff5a3c 12%, #ffb400 26%, #d8fa01 40%, #01f14c 54%, #00ecfd 68%, #9b1cf0 84%, rgb(155 28 240 / 0));
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 55%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 55%, #000 92%, transparent); }
+
+  .foot { position: absolute; z-index: 5; inset: auto 0 0; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding: 0 clamp(16px, 3.4vw, 65px) max(22px, env(safe-area-inset-bottom, 0px)); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--soft); }
+  .dots { display: flex; gap: 12px; align-items: center; }
+  .dots span { width: 8px; height: 8px; border-radius: 50%; background: rgb(255 255 255 / 0.45); }
+  .dots span:first-child { background: #fff; box-shadow: 0 0 0 5px rgb(255 255 255 / 0.22); }
+
+  @media (max-width: 760px) {
+    .bar nav { display: none; }
+    .words { right: 0; left: 0; top: clamp(84px, 13vh, 130px); transform: none; width: auto; padding-inline: max(20px, env(safe-area-inset-left, 0px)); }
+    .orb, .trail { left: 42%; top: 70%; }
+    .orb { width: clamp(150px, 48vw, 260px); }
+    .veil { background: linear-gradient(180deg, rgb(8 16 38 / 0.62), rgb(8 16 38 / 0.25) 46%, rgb(8 16 38 / 0) 62%, rgb(8 16 38 / 0.5)); }
+    .foot .tip { display: none; }
+  }
+
+  .after { background: var(--page); padding-block: clamp(56px, 9vw, 120px); }
+  .after p { max-width: 60ch; margin: 0 auto; color: #a2a0a6; font-size: clamp(16px, 1.4vw, 20px); line-height: 1.45; text-align: center; }
+</style>
+
+<section class="stage" id="stage" aria-label="Home hero prototype">
+  <div class="pin">
+    <div class="world" id="world"></div>
+    <div class="rays" id="rays"></div>
+    <div class="veil"></div>
+
+    <div class="bar">
+      <img src="img/logo.png" alt="Opsiogen">
+      <nav aria-label="Main"><span>Work</span><span>Services</span><span>About</span></nav>
+      <span class="cta">Start a project</span>
+    </div>
+
+    <div class="trail" id="trail"></div>
+    <div class="orb" id="orb" aria-hidden="true"><div class="ground"></div><canvas id="ball" width="640" height="640"></canvas></div>
+
+    <div class="words">
+      <p class="pill">AI-first design and digital company</p>
+      <h1>Your digital department, without the hiring.</h1>
+      <a class="go" href="#after">See our work</a>
+    </div>
+
+    <div class="foot">
+      <span>01 · Websites &amp; apps</span>
+      <div class="dots" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+      <span class="tip">Scroll, then stop</span>
+    </div>
+  </div>
+</section>
+
+<section class="after" id="after">
+  <div class="gutter"><p>Prototype of one world. Scroll and the character looks ahead at the place it is flying into; stop and it turns to you. The other four worlds follow the same way.</p></div>
+</section>
+
+<script>
+(function () {
+  var canvas = document.getElementById("ball"), orb = document.getElementById("orb"), trail = document.getElementById("trail"),
+      world = document.getElementById("world"), rays = document.getElementById("rays");
+  var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var gl = canvas.getContext("webgl", { premultipliedAlpha: false, antialias: true });
+
+  var VS = "attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}";
+  var FS = [
+    "precision highp float;",
+    "uniform vec2 uRes; uniform float uYaw, uPitch, uTime, uBlink; uniform vec2 uLook; uniform sampler2D uEnv;",
+    "vec3 hue(float h){ return clamp(abs(mod(h*6.+vec3(0.,4.,2.),6.)-3.)-1.,0.,1.); }",
+    "void main(){",
+    "  vec2 p=(gl_FragCoord.xy-.5*uRes)/(.5*min(uRes.x,uRes.y)); float R=.94; float r=length(p)/R;",
+    "  if(r>1.){ gl_FragColor=vec4(0.); return; }",
+    "  vec3 n=vec3(p/R, sqrt(max(0.,1.-r*r)));",                      // surface normal, z toward the viewer
+    "  vec3 d=vec3(sin(uYaw)*cos(uPitch), sin(uPitch), cos(uYaw)*cos(uPitch));",   // where the eye points
+    "  vec3 rt=normalize(cross(vec3(0.,1.,0.),d)), up=cross(d,rt);",
+    "  float c=dot(n,d), ang=acos(clamp(c,-1.,1.));",
+    "  vec3 refl=reflect(vec3(0.,0.,-1.),n);",
+    "  vec3 env=texture2D(uEnv, vec2(.5+refl.x*.42, .5-refl.y*.42)).rgb;",
+    "  vec3 L=normalize(vec3(.45,.75,.5)); float dif=.62+.38*max(0.,dot(n,L));",
+    "  float fres=pow(1.-n.z,2.4);",
+    "  vec3 shell=vec3(.955,.96,.975)*dif+vec3(.0,.02,.05)*n.y; shell=mix(shell, env*1.1, .05+.4*fres);",
+    "  vec3 H=normalize(L+vec3(0.,0.,1.)); shell+=vec3(1.)*pow(max(0.,dot(n,H)),70.)*.75;",
+    "  shell*=mix(1.,.72,smoothstep(.75,1.,r));",                                   // darker toward the edge
+    "  vec3 m=normalize(vec3(sin(uYaw)*.16+cos(uYaw)*.0, 1., cos(uYaw)*.16)); float s=dot(n,m)+.06;",   // the seam
+    "  shell=mix(shell, vec3(.85,1.,.05)*1.15, smoothstep(.05,.0,abs(s))*.55);",
+    "  shell=mix(shell, vec3(.06,.07,.09), smoothstep(.016,.007,abs(s)));",
+    "  float E=.60;",                                                               // the eye's size on the shell
+    "  vec3 col=shell;",
+    "  col=mix(col, vec3(.05,.055,.07)+env*.12, smoothstep(E+.075,E+.055,ang));",   // dark rim around the eye
+    "  vec3 glass=vec3(.012,.014,.03)+env*(.06+.3*fres);",
+    "  float az=atan(dot(n,up),dot(n,rt));",
+    "  float ring=smoothstep(.265,.305,ang)*smoothstep(.415,.375,ang);",
+    "  glass+=hue(az/6.2832+.08+uTime*.03)*ring*1.35;",
+    "  glass+=hue(az/6.2832+.08)*smoothstep(.6,.34,ang)*smoothstep(.2,.3,ang)*.12;",                      // faint glow inside
+    "  vec2 q=vec2(dot(n,rt),dot(n,up))-uLook; glass+=vec3(1.)*smoothstep(.075,.045,length(q));",   // the pupil
+    "  glass+=vec3(1.)*pow(max(0.,dot(n,H)),160.)*1.2;",
+    "  float lid=smoothstep(0.,.03, abs(dot(n,up))-(1.-uBlink)*sin(E)*1.02);",      // the lids, for a blink
+    "  glass=mix(glass, shell*.93, lid);",
+    "  col=mix(col, glass, smoothstep(E+.012,E-.012,ang));",
+    "  float a=smoothstep(1.,.985,r);",
+    "  gl_FragColor=vec4(col,a);",
+    "}"].join("\n");
+
+  var prog, U = {}, ready = false;
+  if (gl) {
+    var sh = function (t, src) { var s = gl.createShader(t); gl.shaderSource(s, src); gl.compileShader(s); return s; };
+    prog = gl.createProgram(); gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(prog);
+    if (gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+      gl.useProgram(prog);
+      var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+      var loc = gl.getAttribLocation(prog, "a"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+      ["uRes", "uYaw", "uPitch", "uTime", "uBlink", "uLook", "uEnv"].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
+      gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      var tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([150, 190, 235, 255]));
+      var im = new Image(); im.onload = function () {
+        gl.bindTexture(gl.TEXTURE_2D, tex); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, im);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      }; im.src = "img/env.jpg";
+      ready = true;
+    }
+  }
+
+  // state
+  var AHEAD = 1.74;                      // eye turned into the scene: only its edge shows
+  var yaw = still ? 0 : 0, pitch = 0, speed = 0, lastY = window.scrollY, lastMove = -1e9, look = [0, 0], want = [0, 0], blinkAt = 2.5, blink = 0;
+  window.addEventListener("scroll", function () { var y = window.scrollY; speed += Math.min(60, Math.abs(y - lastY)); lastY = y; lastMove = performance.now(); }, { passive: true });
+  window.addEventListener("pointermove", function (e) { var r = orb.getBoundingClientRect(); want = [(e.clientX - (r.left + r.width / 2)) / window.innerWidth, (e.clientY - (r.top + r.height / 2)) / window.innerHeight]; }, { passive: true });
+
+  var prev = performance.now();
+  function frame(now) {
+    var dt = Math.min(0.05, (now - prev) / 1000); prev = now; var t = now / 1000;
+    var moving = !still && now - lastMove < 260;
+    speed *= Math.pow(0.02, dt);                                        // eases off after the last scroll
+    var v = still ? 0 : Math.min(1, speed / 90);
+    var ty = moving ? AHEAD : want[0] * 0.55, tp = moving ? 0.05 : -want[1] * 0.45;
+    yaw += (ty - yaw) * (1 - Math.pow(0.0012, dt)); pitch += (tp - pitch) * (1 - Math.pow(0.002, dt));
+    look[0] += ((moving ? 0 : want[0] * 0.12) - look[0]) * 0.12; look[1] += ((moving ? 0 : -want[1] * 0.12) - look[1]) * 0.12;
+    if (!moving && t > blinkAt) { blink = 1; blinkAt = t + 2.6 + Math.random() * 3; }
+    blink = Math.max(0, blink - dt * 7);
+    var bob = still ? 0 : Math.sin(t * 1.7) * 6, lean = v * 10;
+    orb.style.transform = "translate(-50%,-50%) translate(" + (lean * 0.6).toFixed(1) + "px," + (bob - lean * 0.3).toFixed(1) + "px) rotate(" + (v * -4).toFixed(2) + "deg)";
+    trail.style.opacity = (v * 0.9).toFixed(3);
+    world.style.transform = "scale(" + (1 + v * 0.07).toFixed(4) + ")";
+    rays.style.opacity = (v * 0.4).toFixed(3); rays.style.transform = "scale(" + (1 + ((t * 1.4) % 1) * 0.25).toFixed(3) + ")";
+    if (ready) {
+      var w = canvas.clientWidth * Math.min(2, window.devicePixelRatio || 1) | 0;
+      if (canvas.width !== w && w > 0) { canvas.width = w; canvas.height = w; }
+      gl.viewport(0, 0, canvas.width, canvas.height); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.uniform2f(U.uRes, canvas.width, canvas.height); gl.uniform1f(U.uYaw, yaw); gl.uniform1f(U.uPitch, pitch); gl.uniform1f(U.uTime, t);
+      gl.uniform1f(U.uBlink, Math.sin(Math.min(1, blink) * Math.PI)); gl.uniform2f(U.uLook, look[0], look[1]); gl.uniform1i(U.uEnv, 0);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
