@@ -48,7 +48,7 @@
      so it widens as it comes. It is part of the character, drawn over its back. */
   .trail { position: absolute; z-index: 2; left: 50%; top: 67%; width: 190%; height: 175%; transform: translateX(-50%); transform-origin: 50% 0; opacity: 0; pointer-events: none; filter: blur(clamp(6px, 0.9vw, 14px)); will-change: opacity, transform; }
   .trail i { position: absolute; inset: 0; -webkit-clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%); clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%);
-    background: linear-gradient(90deg, #37d6ff 6%, #5b7bff 22%, #b45cff 38%, #ff4f8b 54%, #ff8a3c 70%, #ffe14a 84%, #5ff08a 96%);
+    background: linear-gradient(90deg, #2fd4ff 16%, #3f7bff 33%, #9b5cff 50%, #ff4f9b 67%, #ff8a3c 84%);   /* our colours only, in the order of the line on its body */
     -webkit-mask-image: linear-gradient(180deg, #000 0, rgb(0 0 0 / 0.85) 14%, rgb(0 0 0 / 0.5) 45%, transparent 92%); mask-image: linear-gradient(180deg, #000 0, rgb(0 0 0 / 0.85) 14%, rgb(0 0 0 / 0.5) 45%, transparent 92%); }
   .trail i + i { mix-blend-mode: screen; opacity: 0.8; }
 
@@ -107,7 +107,7 @@
 <script>
 (function () {
   // The character is a real 3D model (design/hero/character/model), drawn live, so it turns smoothly through every angle.
-  // While the page scrolls it looks ahead, its back to us; when the scrolling stops it turns round to the visitor and its eye follows the pointer.
+  // While the page scrolls it looks ahead, seen from behind and a little to one side; when the scrolling stops it turns round to the visitor and its eye follows the pointer.
   var orb = document.getElementById("orb"), canvas = document.getElementById("gl"), ground = document.getElementById("ground"), trail = document.getElementById("trail"),
       world = document.getElementById("world"), rays = document.getElementById("rays"), fallback = document.getElementById("vFront");
   var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -190,7 +190,7 @@
     speed *= Math.pow(0.02, dt); var v = still ? 0 : Math.min(1, speed / 90);
     lean[0] += ((moving ? 0 : want[0]) - lean[0]) * (1 - Math.pow(0.004, dt)); lean[1] += ((moving ? 0 : want[1]) - lean[1]) * (1 - Math.pow(0.004, dt));
     // the turn is a soft spring: half a turn to look ahead, back round to the visitor, and a little toward the pointer
-    var aimY = moving ? Math.PI : lean[0] * 0.62 + (still ? 0 : Math.sin(t * 0.6) * 0.04), aimX = moving ? 0.05 : lean[1] * 0.42, k = moving ? 30 : 22, c = 2 * Math.sqrt(k) * 0.9;
+    var aimY = moving ? 2.62 : lean[0] * 0.62 + (still ? 0 : Math.sin(t * 0.6) * 0.04), aimX = moving ? 0.05 : lean[1] * 0.42, k = moving ? 30 : 22, c = 2 * Math.sqrt(k) * 0.9;
     yawV += ((aimY - yaw) * k - yawV * c) * dt; yaw += yawV * dt; pitchV += ((aimX - pitch) * k - pitchV * c) * dt; pitch += pitchV * dt;
     var since = t - hello, twirl = since < 0.9 && !still ? ease(since / 0.9) * Math.PI * 2 : 0;     // a tap: it hops, spins once and blinks twice
     if (since > 0.95 && since < 1.0) blink = 1;
@@ -205,8 +205,8 @@
     orb.style.transform = "translate(-50%,-50%) translate(" + (push * 0.6 + lean[0] * 14).toFixed(1) + "px," + (bob - push * 0.3 + hop + lean[1] * 8).toFixed(1) + "px) scale(" + (1 + grow * 0.06).toFixed(3) + ")";
     ground.style.opacity = (0.8 + grow * 0.2 + 0.1 * Math.sin(t * 1.3)).toFixed(3);
     tail += ((moving ? 1 : 0) - tail) * (1 - Math.pow(moving ? 0.01 : 0.05, dt));
-    var back = clamp((-facing - 0.35) / 0.65, 0, 1) * tail;            // the light tail shows once its back is turned to us
-    trail.style.opacity = back.toFixed(3); trail.style.transform = "translateX(-50%) scaleY(" + (0.55 + 0.45 * back + v * 0.08).toFixed(3) + ")";
+    var back = clamp((-facing - 0.2) / 0.6, 0, 1) * tail;              // the light tail shows once its back is turned to us
+    trail.style.opacity = back.toFixed(3); trail.style.transform = "translateX(-50%) rotate(" + (Math.sin(yaw + twirl) * 34).toFixed(1) + "deg) scaleY(" + (0.55 + 0.45 * back + v * 0.08).toFixed(3) + ")";   // it streams from the back, so it swings with the turn
     world.style.transform = "scale(" + (1 + v * 0.06).toFixed(4) + ")";
     rays.style.opacity = (v * 0.2).toFixed(3); rays.style.transform = "scale(" + (1 + ((t * 1.4) % 1) * 0.25).toFixed(3) + ")";
     if (gl && pivot) {
