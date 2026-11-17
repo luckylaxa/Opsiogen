@@ -106,7 +106,7 @@
   var VS = "attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}";
   var FS = [
     "precision highp float;",
-    "uniform vec2 uRes; uniform float uYaw, uPitch, uTime, uBlink; uniform vec2 uLook; uniform sampler2D uEnv, uMark;",
+    "uniform vec2 uRes; uniform float uYaw, uPitch, uTime, uBlink, uOpen; uniform vec2 uLook; uniform sampler2D uEnv, uMark;",
     "void main(){",
     "  vec2 p=(gl_FragCoord.xy-.5*uRes)/(.5*min(uRes.x,uRes.y)); float R=.94; float r=length(p)/R;",
     "  if(r>1.){ gl_FragColor=vec4(0.); return; }",
@@ -122,14 +122,19 @@
     "  vec3 H=normalize(L+vec3(0.,0.,1.)); shell+=vec3(1.)*pow(max(0.,dot(n,H)),70.)*.75;",
     "  shell*=mix(1.,.72,smoothstep(.75,1.,r));",                                   // darker toward the edge
     "  vec3 m=normalize(vec3(sin(uYaw)*.16+cos(uYaw)*.0, 1., cos(uYaw)*.16)); float s=dot(n,m)+.06;",   // the seam
-        "  shell=mix(shell, vec3(.52,.54,.58), smoothstep(.012,.004,abs(s))*.7);",
+    "  shell=mix(shell, vec3(.52,.54,.58), smoothstep(.012,.004,abs(s))*.7);",
     "  vec3 col=shell;",
     "  col=mix(col, vec3(.05,.055,.07)+env*.12, smoothstep(E+.075,E+.055,ang));",   // dark rim around the eye
     "  vec3 glass=vec3(.012,.014,.03)+env*(.06+.3*fres);",
-                    "  vec2 q=(vec2(dot(n,rt),dot(n,up))-uLook*.6)/(sin(E)*.86);",                  // our logo mark fills the eye and looks around
+    "  vec2 e=vec2(dot(n,rt),dot(n,up))/sin(E); float ed=length(e);",               // position inside the eye: 0 centre, 1 edge
+    "  glass+=vec3(.5,.7,1.)*(smoothstep(.03,.0,abs(ed-.86))*.10+smoothstep(.02,.0,abs(ed-.66))*.05);",   // faint lens rings, for depth
+    "  float S=.40*(1.+.035*sin(uTime*1.6))+uOpen*.05;",                            // the pupil: our logo mark, small and centred
+    "  vec2 q=(e-uLook)/S; float qd=length(q);",
+    "  glass+=mix(vec3(.1,.75,1.),vec3(.75,.2,1.),.5+.5*sin(atan(q.y,q.x)*2.+uTime*.7))*exp(-pow(max(0.,qd-.9)/.55,2.))*.34;",   // soft glow around it
     "  vec4 mk=texture2D(uMark, q*.5+.5); mk.a*=step(abs(q.x),1.)*step(abs(q.y),1.);",
-    "  glass=mix(glass, mk.rgb*1.12+env*.08*fres, mk.a);",
-    "  glass+=vec3(1.)*pow(max(0.,dot(n,H)),160.)*1.2;",
+    "  glass=mix(glass, mk.rgb*1.15, mk.a);",
+    "  glass+=vec3(1.)*(smoothstep(.26,.0,length(e-vec2(-.36,.44)))*.42+smoothstep(.07,.0,length(e-vec2(.34,-.4)))*.5);",   // two glints
+    "  glass+=vec3(1.)*pow(max(0.,dot(n,H)),160.)*.9;",
     "  float lid=smoothstep(0.,.03, abs(dot(n,up))-(1.-uBlink)*sin(E)*1.02);",      // the lids, for a blink
     "  glass=mix(glass, shell*.93, lid);",
     "  col=mix(col, glass, smoothstep(E+.012,E-.012,ang));",
@@ -145,7 +150,7 @@
       gl.useProgram(prog);
       var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
       var loc = gl.getAttribLocation(prog, "a"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-      ["uRes", "uYaw", "uPitch", "uTime", "uBlink", "uLook", "uEnv", "uMark"].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
+      ["uRes", "uYaw", "uPitch", "uTime", "uBlink", "uOpen", "uLook", "uEnv", "uMark"].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
       gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
       var tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([150, 190, 235, 255]));
@@ -168,7 +173,7 @@
 
   // state
   var AHEAD = 1.74;                      // eye turned into the scene: only its edge shows
-  var yaw = still ? 0 : 0, pitch = 0, speed = 0, lastY = window.scrollY, lastMove = -1e9, look = [0, 0], want = [0, 0], blinkAt = 2.5, blink = 0;
+  var yaw = still ? 0 : 0, pitch = 0, speed = 0, lastY = window.scrollY, lastMove = -1e9, look = [0, 0], want = [0, 0], open = 0, blinkAt = 2.5, blink = 0;
   window.addEventListener("scroll", function () { var y = window.scrollY; speed += Math.min(60, Math.abs(y - lastY)); lastY = y; lastMove = performance.now(); }, { passive: true });
   window.addEventListener("pointermove", function (e) { var r = orb.getBoundingClientRect(); want = [(e.clientX - (r.left + r.width / 2)) / window.innerWidth, (e.clientY - (r.top + r.height / 2)) / window.innerHeight]; }, { passive: true });
 
@@ -180,7 +185,9 @@
     var v = still ? 0 : Math.min(1, speed / 90);
     var ty = moving ? AHEAD : want[0] * 0.55, tp = moving ? 0.05 : -want[1] * 0.45;
     yaw += (ty - yaw) * (1 - Math.pow(0.0012, dt)); pitch += (tp - pitch) * (1 - Math.pow(0.002, dt));
-    look[0] += ((moving ? 0 : want[0] * 0.12) - look[0]) * 0.12; look[1] += ((moving ? 0 : -want[1] * 0.12) - look[1]) * 0.12;
+    var lx = Math.max(-0.3, Math.min(0.3, want[0] * 0.9)), ly = Math.max(-0.3, Math.min(0.3, -want[1] * 0.9));
+    look[0] += ((moving ? 0 : lx) - look[0]) * 0.12; look[1] += ((moving ? 0 : ly) - look[1]) * 0.12;
+    open += ((moving ? 0 : 1) - open) * 0.06;                            // the pupil opens a little when it turns to you
     if (!moving && t > blinkAt) { blink = 1; blinkAt = t + 2.6 + Math.random() * 3; }
     blink = Math.max(0, blink - dt * 7);
     var bob = still ? 0 : Math.sin(t * 1.7) * 6, lean = v * 10;
@@ -193,7 +200,7 @@
       if (canvas.width !== w && w > 0) { canvas.width = w; canvas.height = w; }
       gl.viewport(0, 0, canvas.width, canvas.height); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
       gl.uniform2f(U.uRes, canvas.width, canvas.height); gl.uniform1f(U.uYaw, yaw); gl.uniform1f(U.uPitch, pitch); gl.uniform1f(U.uTime, t);
-      gl.uniform1f(U.uBlink, Math.sin(Math.min(1, blink) * Math.PI)); gl.uniform2f(U.uLook, look[0], look[1]); gl.uniform1i(U.uEnv, 0); gl.uniform1i(U.uMark, 1);
+      gl.uniform1f(U.uBlink, Math.sin(Math.min(1, blink) * Math.PI)); gl.uniform2f(U.uLook, look[0], look[1]); gl.uniform1f(U.uOpen, open); gl.uniform1i(U.uEnv, 0); gl.uniform1i(U.uMark, 1);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
     requestAnimationFrame(frame);
