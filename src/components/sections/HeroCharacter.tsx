@@ -2,14 +2,17 @@
 
 import { useEffect, useRef } from "react";
 
-/** The light trail: streaks of rainbow light pouring straight out of its back (the side away from its eye) while it flies fast, like speed lines. */
+/**
+ * The light trail: a soft fog of rainbow light pouring straight out of its back (the side away from its eye) while it
+ * flies fast. The scene shows through it. The wedge is cut on the inner layer and blurred on the outer one, so it
+ * has no hard edge anywhere.
+ */
 const TRAIL: React.CSSProperties = {
   background:
-    "repeating-linear-gradient(180deg, rgb(255 255 255 / 0.2) 0 1.2%, transparent 1.2% 5.5%), linear-gradient(180deg, #ff5fb4 0%, #b667ff 15%, #5a7dff 29%, #35d4ff 43%, #4be58a 56%, #ffe14d 69%, #ff9a3c 82%, #ff5fa8 100%)",
-  maskImage: "linear-gradient(270deg, #000 0%, rgb(0 0 0 / 0.8) 40%, rgb(0 0 0 / 0.12) 100%)",
-  WebkitMaskImage: "linear-gradient(270deg, #000 0%, rgb(0 0 0 / 0.8) 40%, rgb(0 0 0 / 0.12) 100%)",
-  clipPath: "polygon(100% 33%, 0 0, 0 100%, 100% 67%)",
-  transformOrigin: "100% 50%",
+    "linear-gradient(180deg, rgb(255 110 190 / 0.9) 0%, rgb(190 120 255 / 0.9) 16%, rgb(105 140 255 / 0.9) 30%, rgb(80 220 255 / 0.9) 44%, rgb(110 235 150 / 0.9) 57%, rgb(255 232 110 / 0.9) 70%, rgb(255 165 90 / 0.9) 83%, rgb(255 110 180 / 0.9) 100%)",
+  maskImage: "linear-gradient(270deg, #000 0%, rgb(0 0 0 / 0.75) 45%, rgb(0 0 0 / 0.3) 100%)",
+  WebkitMaskImage: "linear-gradient(270deg, #000 0%, rgb(0 0 0 / 0.75) 45%, rgb(0 0 0 / 0.3) 100%)",
+  clipPath: "polygon(100% 36%, 0 4%, 0 96%, 100% 64%)",
 };
 
 /** The light it throws on the ground below it: our colours in a soft pool, with a faint shadow under it. */
@@ -206,13 +209,13 @@ export function HeroCharacter() {
         const bob = reduce ? 0 : Math.sin(t * 1.7) * 5, hop = since < 0.45 ? -Math.sin((since / 0.45) * Math.PI) * 18 : 0;
         el.style.transform = `translate(${(fx + lean[0] * 30 * (1 - away)).toFixed(1)}px,${(fy + bob + hop + lean[1] * 18 * (1 - away)).toFixed(1)}px) scale(${((1 + grow * 0.06) * fs).toFixed(3)})`;
         // The trail shows only while it flies fast, longer the faster it goes. It keeps its size as the character shrinks.
-        tr.style.opacity = (clamp((v - 0.08) / 0.4, 0, 1) * clamp(away * 3, 0, 1) * 0.85).toFixed(3);
+        tr.style.opacity = (clamp((v - 0.08) / 0.4, 0, 1) * clamp(away * 3, 0, 1) * 0.72).toFixed(3);
         tr.style.transform = `translateY(-50%) rotate(-17deg) scale(${((0.6 + v * 0.45) / fs).toFixed(3)},${((0.9 + v * 0.15) / fs).toFixed(3)})`;
         // The pool of light on the ground: it stays put while the character bobs and hops above it, and breathes a little.
         const lift = (bob + hop) / Math.max(1, size);
         gw.style.opacity = (0.86 - Math.min(0.3, -hop / 60) + (reduce ? 0 : Math.sin(t * 1.7) * 0.06)).toFixed(3);
         gw.style.transform = `translateY(${(-(bob + hop)).toFixed(1)}px) scale(${(1 + lift * 0.6).toFixed(3)})`;
-        for (const r of rush) r.style.opacity = (clamp((v - 0.05) / 0.5, 0, 1) * 0.4).toFixed(3);
+        for (const r of rush) r.style.opacity = (clamp((v - 0.05) / 0.5, 0, 1) * 0.16).toFixed(3);
         fit();
         pivot.rotation.y = yaw + twirl; pivot.rotation.x = pitch; pivot.rotation.z = -lean[0] * 0.08 * (1 - away) - away * 0.1;
         if (hud && hudMat) {
@@ -252,7 +255,9 @@ export function HeroCharacter() {
       className="absolute top-[calc(60%-var(--w)/2)] left-[calc(50%-var(--w)/2)] block aspect-square w-[var(--w)] cursor-pointer rounded-full outline-offset-4 will-change-transform [--w:clamp(150px,46vw,230px)] [-webkit-tap-highlight-color:transparent] md:top-[calc(42%-var(--w)/2)] md:left-[calc(39%-var(--w)/2)] md:[--w:clamp(200px,min(20vw,34svh),340px)]"
     >
       {/* The trail starts behind its back and streams away to the left and a little down, widening as it goes. */}
-      <span ref={trail} aria-hidden="true" className="pointer-events-none absolute top-1/2 right-1/2 -z-10 h-[150%] w-[min(85vw,1200px)] opacity-0 blur-[clamp(8px,1vw,18px)]" style={TRAIL} />
+      <span ref={trail} aria-hidden="true" className="pointer-events-none absolute top-1/2 right-1/2 -z-10 h-[150%] w-[min(85vw,1200px)] origin-right opacity-0 blur-[clamp(16px,2.2vw,36px)]">
+        <span className="absolute inset-0" style={TRAIL} />
+      </span>
       <span ref={glow} aria-hidden="true" className="pointer-events-none absolute top-[88%] left-[-5%] -z-10 h-[34%] w-[110%] opacity-85 blur-[clamp(6px,0.7vw,12px)]" style={GLOW} />
       {/* Its own little screen: what a press on it shows (and, on phones, what it shows by itself). */}
       <span ref={note} aria-live="polite" className="pointer-events-none absolute top-[108%] left-1/2 block w-[min(76vw,260px)] -translate-x-1/2 overflow-hidden rounded-[10px] border border-white/20 bg-[rgb(10_12_22/0.88)] px-3.5 pt-3 pb-3 text-left opacity-0 shadow-[0_12px_40px_rgb(0_0_0/0.45)] transition-opacity duration-200 md:top-auto md:bottom-[100%]">
