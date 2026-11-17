@@ -137,7 +137,8 @@ export function Hero({
                   key={i}
                   className={cn(
                     "block size-[7px] rounded-full",
-                    i === 0 ? (day ? "bg-ink ring-4 ring-ink/20" : "bg-white ring-4 ring-white/20") : day ? "bg-ink/35" : "bg-white/35",
+                    // White in both themes: by day they lie over the trees.
+                    i === 0 ? "bg-white ring-4 ring-white/25" : day ? "bg-white/60 dark:bg-white/35" : "bg-white/35",
                   )}
                 />
               ))}
