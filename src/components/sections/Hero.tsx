@@ -50,7 +50,8 @@ export function Hero({
     // with the night picture alone they are always white.
     const soft = day ? "text-ink/80" : "text-white/80";
     const wash = day ? "from-page/60" : "from-black/60";
-    const washLow = day ? "from-page/80" : "from-black/75";
+    // Phones: the wash holds further up, behind the note that sits above the buttons.
+    const washLow = day ? "from-page/80 max-md:via-page/55" : "from-black/75";
     return (
       <>
         {/* The picture fills the first screen and runs up under the clear header. */}
