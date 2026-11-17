@@ -106,8 +106,7 @@
   var VS = "attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}";
   var FS = [
     "precision highp float;",
-    "uniform vec2 uRes; uniform float uYaw, uPitch, uTime, uBlink; uniform vec2 uLook; uniform sampler2D uEnv;",
-    "vec3 hue(float h){ return clamp(abs(mod(h*6.+vec3(0.,4.,2.),6.)-3.)-1.,0.,1.); }",
+    "uniform vec2 uRes; uniform float uYaw, uPitch, uTime, uBlink; uniform vec2 uLook; uniform sampler2D uEnv, uMark;",
     "void main(){",
     "  vec2 p=(gl_FragCoord.xy-.5*uRes)/(.5*min(uRes.x,uRes.y)); float R=.94; float r=length(p)/R;",
     "  if(r>1.){ gl_FragColor=vec4(0.); return; }",
@@ -118,22 +117,18 @@
     "  vec3 refl=reflect(vec3(0.,0.,-1.),n);",
     "  vec3 env=texture2D(uEnv, vec2(.5+refl.x*.42, .5-refl.y*.42)).rgb;",
     "  vec3 L=normalize(vec3(.45,.75,.5)); float dif=.62+.38*max(0.,dot(n,L));",
-    "  float fres=pow(1.-n.z,2.4);",
+    "  float fres=pow(1.-n.z,2.4); float E=.62;",                                   // E: the eye's size on the shell
     "  vec3 shell=vec3(.955,.96,.975)*dif+vec3(.0,.02,.05)*n.y; shell=mix(shell, env*1.1, .05+.4*fres);",
     "  vec3 H=normalize(L+vec3(0.,0.,1.)); shell+=vec3(1.)*pow(max(0.,dot(n,H)),70.)*.75;",
     "  shell*=mix(1.,.72,smoothstep(.75,1.,r));",                                   // darker toward the edge
     "  vec3 m=normalize(vec3(sin(uYaw)*.16+cos(uYaw)*.0, 1., cos(uYaw)*.16)); float s=dot(n,m)+.06;",   // the seam
-    "  shell=mix(shell, vec3(.85,1.,.05)*1.15, smoothstep(.05,.0,abs(s))*.55);",
-    "  shell=mix(shell, vec3(.06,.07,.09), smoothstep(.016,.007,abs(s)));",
-    "  float E=.60;",                                                               // the eye's size on the shell
+        "  shell=mix(shell, vec3(.52,.54,.58), smoothstep(.012,.004,abs(s))*.7);",
     "  vec3 col=shell;",
     "  col=mix(col, vec3(.05,.055,.07)+env*.12, smoothstep(E+.075,E+.055,ang));",   // dark rim around the eye
     "  vec3 glass=vec3(.012,.014,.03)+env*(.06+.3*fres);",
-    "  float az=atan(dot(n,up),dot(n,rt));",
-    "  float ring=smoothstep(.265,.305,ang)*smoothstep(.415,.375,ang);",
-    "  glass+=hue(az/6.2832+.08+uTime*.03)*ring*1.35;",
-    "  glass+=hue(az/6.2832+.08)*smoothstep(.6,.34,ang)*smoothstep(.2,.3,ang)*.12;",                      // faint glow inside
-    "  vec2 q=vec2(dot(n,rt),dot(n,up))-uLook; glass+=vec3(1.)*smoothstep(.075,.045,length(q));",   // the pupil
+                    "  vec2 q=(vec2(dot(n,rt),dot(n,up))-uLook*.6)/(sin(E)*.86);",                  // our logo mark fills the eye and looks around
+    "  vec4 mk=texture2D(uMark, q*.5+.5); mk.a*=step(abs(q.x),1.)*step(abs(q.y),1.);",
+    "  glass=mix(glass, mk.rgb*1.12+env*.08*fres, mk.a);",
     "  glass+=vec3(1.)*pow(max(0.,dot(n,H)),160.)*1.2;",
     "  float lid=smoothstep(0.,.03, abs(dot(n,up))-(1.-uBlink)*sin(E)*1.02);",      // the lids, for a blink
     "  glass=mix(glass, shell*.93, lid);",
@@ -150,7 +145,7 @@
       gl.useProgram(prog);
       var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
       var loc = gl.getAttribLocation(prog, "a"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-      ["uRes", "uYaw", "uPitch", "uTime", "uBlink", "uLook", "uEnv"].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
+      ["uRes", "uYaw", "uPitch", "uTime", "uBlink", "uLook", "uEnv", "uMark"].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
       gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
       var tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([150, 190, 235, 255]));
@@ -159,6 +154,14 @@
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
       }; im.src = "img/env.jpg";
+      var mtex = gl.createTexture(); gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, mtex);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 0])); gl.activeTexture(gl.TEXTURE0);
+      var mk = new Image(); mk.onload = function () {
+        gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, mtex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, mk); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR); gl.activeTexture(gl.TEXTURE0);
+      }; mk.src = "img/mark.png";
       ready = true;
     }
   }
@@ -190,7 +193,7 @@
       if (canvas.width !== w && w > 0) { canvas.width = w; canvas.height = w; }
       gl.viewport(0, 0, canvas.width, canvas.height); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
       gl.uniform2f(U.uRes, canvas.width, canvas.height); gl.uniform1f(U.uYaw, yaw); gl.uniform1f(U.uPitch, pitch); gl.uniform1f(U.uTime, t);
-      gl.uniform1f(U.uBlink, Math.sin(Math.min(1, blink) * Math.PI)); gl.uniform2f(U.uLook, look[0], look[1]); gl.uniform1i(U.uEnv, 0);
+      gl.uniform1f(U.uBlink, Math.sin(Math.min(1, blink) * Math.PI)); gl.uniform2f(U.uLook, look[0], look[1]); gl.uniform1i(U.uEnv, 0); gl.uniform1i(U.uMark, 1);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
     requestAnimationFrame(frame);
