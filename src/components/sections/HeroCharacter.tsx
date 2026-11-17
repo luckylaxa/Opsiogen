@@ -111,15 +111,15 @@ export function HeroCharacter({ className }: { className?: string }) {
         const r = el.getBoundingClientRect();
         const dx = Math.sin(pose[0]) * r.width * 0.3, dy = Math.sin(pose[1]) * r.height * 0.3;
         window.dispatchEvent(new CustomEvent("hero:pulse", { detail: { x: r.left + r.width / 2 + dx, y: r.top + r.height / 2 + dy } }));
-        // Thin beams of colour shoot a short way out of the eye, the way it is looking, then fade.
+        // A beam of coloured light shines a short way out of the eye, the way it is looking, then fades.
         const fl = el.querySelector<HTMLElement>("[data-flash]");
         if (fl && !reduce) {
           fl.style.left = `${r.width / 2 + dx}px`; fl.style.top = `${r.height / 2 + dy}px`;
           fl.style.rotate = `${Math.atan2(Math.sin(pose[1]), Math.sin(pose[0]))}rad`;
           Array.from(fl.children).forEach((beam, n) => {
             (beam as HTMLElement).animate(
-              [{ scale: "0 1", opacity: 1 }, { scale: "1 1", opacity: 1, offset: 0.35 }, { scale: "1.08 1", opacity: 0 }],
-              { duration: 620, delay: n * 45, easing: "cubic-bezier(0.2,0.8,0.2,1)" },
+              [{ scale: "0 0.6", opacity: 0.95 }, { scale: "1 1", opacity: 0.9, offset: 0.3 }, { scale: "1 1", opacity: 0.8, offset: 0.6 }, { scale: "1.06 1.1", opacity: 0 }],
+              { duration: 1100, delay: n * 60, easing: "cubic-bezier(0.2,0.8,0.2,1)" },
             );
           });
         }
@@ -291,15 +291,27 @@ export function HeroCharacter({ className }: { className?: string }) {
         <span className="block text-[11px] font-semibold tracking-[0.16em] text-white/70 uppercase" />
         <span className="mt-1 block text-[15px] leading-snug font-medium text-white" />
       </span>
-      {/* The beams of colour that shoot from its eye on a press: in front of it, a short way out. */}
+      {/* The beam of light that shines from its eye on a press: in front of it, a short way out. */}
       <span data-flash aria-hidden="true" className="pointer-events-none absolute z-10 block size-0">
-        {[["#35d4ff", -16], ["#5a7dff", -8], ["#b667ff", 0], ["#ff5fb4", 8], ["#ff9a3c", 16]].map(([c, a]) => (
-          <span
-            key={c}
-            className="absolute top-0 left-0 block h-[3px] w-[calc(var(--w)*1.5)] origin-left rounded-full opacity-0"
-            style={{ rotate: `${a}deg`, translate: "0 -50%", background: `linear-gradient(90deg, #fff 0%, ${c} 18%, ${c} 70%, transparent 100%)`, boxShadow: `0 0 10px 1px ${c}` }}
-          />
-        ))}
+        {/* A soft cone of light, narrow at the eye and wider as it goes, in our colours; then a bright core down its middle. */}
+        <span
+          className="absolute top-0 left-0 block h-[calc(var(--w)*0.95)] w-[calc(var(--w)*1.9)] origin-left opacity-0 blur-[6px]"
+          style={{
+            translate: "0 -50%",
+            background: "linear-gradient(180deg, #35d4ff 8%, #5a7dff 28%, #b667ff 50%, #ff5fb4 72%, #ff9a3c 92%)",
+            clipPath: "polygon(0 44%, 100% 0, 100% 100%, 0 56%)",
+            maskImage: "linear-gradient(90deg, #000 0%, rgb(0 0 0 / 0.75) 45%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(90deg, #000 0%, rgb(0 0 0 / 0.75) 45%, transparent 100%)",
+          }}
+        />
+        <span
+          className="absolute top-0 left-0 block h-[calc(var(--w)*0.22)] w-[calc(var(--w)*1.3)] origin-left opacity-0 blur-[5px]"
+          style={{
+            translate: "0 -50%",
+            background: "linear-gradient(90deg, rgb(255 255 255 / 0.85) 0%, rgb(255 255 255 / 0.28) 45%, transparent 100%)",
+            clipPath: "polygon(0 38%, 100% 0, 100% 100%, 0 62%)",
+          }}
+        />
       </span>
       {/* eslint-disable-next-line @next/next/no-img-element -- a small still that only shows until the 3D model is drawn */}
       <img ref={still} src="/home/character-front.webp" alt="" width={420} height={420} className="absolute inset-0 size-full object-contain transition-opacity duration-300" />
