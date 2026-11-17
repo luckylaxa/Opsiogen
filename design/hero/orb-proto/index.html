@@ -106,7 +106,8 @@
   var VS = "attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}";
   var FS = [
     "precision highp float;",
-    "uniform vec2 uRes; uniform float uYaw, uPitch, uTime, uBlink, uOpen; uniform vec2 uLook; uniform sampler2D uEnv, uMark;",
+    "uniform vec2 uRes; uniform float uYaw, uPitch, uTime, uBlink, uOpen; uniform vec2 uLook; uniform sampler2D uEnv;",
+    "vec3 hue(float h){ return clamp(abs(mod(h*6.+vec3(0.,4.,2.),6.)-3.)-1.,0.,1.); }",
     "void main(){",
     "  vec2 p=(gl_FragCoord.xy-.5*uRes)/(.5*min(uRes.x,uRes.y)); float R=.94; float r=length(p)/R;",
     "  if(r>1.){ gl_FragColor=vec4(0.); return; }",
@@ -121,19 +122,27 @@
     "  vec3 shell=vec3(.955,.96,.975)*dif+vec3(.0,.02,.05)*n.y; shell=mix(shell, env*1.1, .05+.4*fres);",
     "  vec3 H=normalize(L+vec3(0.,0.,1.)); shell+=vec3(1.)*pow(max(0.,dot(n,H)),70.)*.75;",
     "  shell*=mix(1.,.72,smoothstep(.75,1.,r));",                                   // darker toward the edge
-    "  vec3 m=normalize(vec3(sin(uYaw)*.16+cos(uYaw)*.0, 1., cos(uYaw)*.16)); float s=dot(n,m)+.06;",   // the seam
-    "  shell=mix(shell, vec3(.52,.54,.58), smoothstep(.012,.004,abs(s))*.7);",
+    "  vec3 m=normalize(up+d*.10); float s=dot(n,m)+.05;",                            // the seam around the body
+    "  float lon=atan(dot(n,rt),dot(n,d));",
+    "  vec3 band=hue(lon/6.2832+.62);",                                             // our logo's colours run along it
+    "  shell+=band*smoothstep(.07,.0,abs(s))*.16;",                                 // a soft glow beside the strip
+    "  shell=mix(shell, vec3(.07,.08,.1), smoothstep(.017,.011,abs(s)));",           // the groove
+    "  shell=mix(shell, band*1.25, smoothstep(.009,.004,abs(s)));",                  // the thin lit strip inside it
+    "  vec3 ax=normalize(rt*-.72+up*-.58+d*.38); float pl=abs(acos(clamp(dot(n,ax),-1.,1.))-.60);",
+    "  shell=mix(shell, vec3(.07,.08,.1), smoothstep(.011,.005,pl)*.9);",            // one curved panel line, lower left
     "  vec3 col=shell;",
     "  col=mix(col, vec3(.05,.055,.07)+env*.12, smoothstep(E+.075,E+.055,ang));",   // dark rim around the eye
-    "  vec3 glass=vec3(.012,.014,.03)+env*(.06+.3*fres);",
-    "  vec2 e=vec2(dot(n,rt),dot(n,up))/sin(E); float ed=length(e);",               // position inside the eye: 0 centre, 1 edge
-    "  glass+=vec3(.5,.7,1.)*(smoothstep(.03,.0,abs(ed-.86))*.10+smoothstep(.02,.0,abs(ed-.66))*.05);",   // faint lens rings, for depth
-    "  float S=.40*(1.+.035*sin(uTime*1.6))+uOpen*.05;",                            // the pupil: our logo mark, small and centred
-    "  vec2 q=(e-uLook)/S; float qd=length(q);",
-    "  glass+=mix(vec3(.1,.75,1.),vec3(.75,.2,1.),.5+.5*sin(atan(q.y,q.x)*2.+uTime*.7))*exp(-pow(max(0.,qd-.9)/.55,2.))*.34;",   // soft glow around it
-    "  vec4 mk=texture2D(uMark, q*.5+.5); mk.a*=step(abs(q.x),1.)*step(abs(q.y),1.);",
-    "  glass=mix(glass, mk.rgb*1.15, mk.a);",
-    "  glass+=vec3(1.)*(smoothstep(.26,.0,length(e-vec2(-.36,.44)))*.42+smoothstep(.07,.0,length(e-vec2(.34,-.4)))*.5);",   // two glints
+    "  vec3 glass=vec3(.012,.016,.03)+env*(.07+.32*fres);",
+    "  vec2 e=vec2(dot(n,rt),dot(n,up))/sin(E); float ed=length(e), az=atan(e.y,e.x);",   // inside the eye: 0 centre, 1 edge
+    "  vec3 tint=mix(vec3(.25,.95,1.), hue(az/6.2832+.55+uTime*.02), .45);",        // lens light: cyan, shading through the logo's colours
+    "  glass+=tint*smoothstep(.018,.0,abs(ed-.84))*.22;",                            // outer ring
+    "  glass+=tint*smoothstep(.014,.0,abs(ed-.60))*step(.35,fract(az*3.82+uTime*.05))*.38;",   // dashed ring
+    "  glass+=tint*smoothstep(.03,.0,abs(ed-.60))*smoothstep(.72,1.,cos(az-uTime*.5))*1.1;",   // a bright arc that travels round
+    "  glass+=tint*smoothstep(.012,.0,abs(ed-.36))*.3;",                             // inner ring
+    "  glass+=tint*smoothstep(.02,.0,abs(fract(az*1.91)-.5)*ed)*step(.66,ed)*step(ed,.80)*.25;",   // tick marks
+    "  vec2 q=e-uLook; float qd=length(q); float S=.105+uOpen*.02+.008*sin(uTime*1.6);",   // the pupil follows the pointer
+    "  glass+=vec3(.3,.95,1.)*exp(-pow(qd/(S*2.6),2.))*.55+vec3(1.)*smoothstep(S,S*.55,qd);",
+    "  glass+=vec3(1.)*(smoothstep(.26,.0,length(e-vec2(-.36,.44)))*.38+smoothstep(.06,.0,length(e-vec2(.34,-.4)))*.45);",   // two glints
     "  glass+=vec3(1.)*pow(max(0.,dot(n,H)),160.)*.9;",
     "  float lid=smoothstep(0.,.03, abs(dot(n,up))-(1.-uBlink)*sin(E)*1.02);",      // the lids, for a blink
     "  glass=mix(glass, shell*.93, lid);",
@@ -150,7 +159,7 @@
       gl.useProgram(prog);
       var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
       var loc = gl.getAttribLocation(prog, "a"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-      ["uRes", "uYaw", "uPitch", "uTime", "uBlink", "uOpen", "uLook", "uEnv", "uMark"].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
+      ["uRes", "uYaw", "uPitch", "uTime", "uBlink", "uOpen", "uLook", "uEnv"].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
       gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
       var tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([150, 190, 235, 255]));
@@ -159,14 +168,6 @@
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
       }; im.src = "img/env.jpg";
-      var mtex = gl.createTexture(); gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, mtex);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 0])); gl.activeTexture(gl.TEXTURE0);
-      var mk = new Image(); mk.onload = function () {
-        gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, mtex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, mk); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR); gl.activeTexture(gl.TEXTURE0);
-      }; mk.src = "img/mark.png";
       ready = true;
     }
   }
@@ -200,7 +201,7 @@
       if (canvas.width !== w && w > 0) { canvas.width = w; canvas.height = w; }
       gl.viewport(0, 0, canvas.width, canvas.height); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
       gl.uniform2f(U.uRes, canvas.width, canvas.height); gl.uniform1f(U.uYaw, yaw); gl.uniform1f(U.uPitch, pitch); gl.uniform1f(U.uTime, t);
-      gl.uniform1f(U.uBlink, Math.sin(Math.min(1, blink) * Math.PI)); gl.uniform2f(U.uLook, look[0], look[1]); gl.uniform1f(U.uOpen, open); gl.uniform1i(U.uEnv, 0); gl.uniform1i(U.uMark, 1);
+      gl.uniform1f(U.uBlink, Math.sin(Math.min(1, blink) * Math.PI)); gl.uniform2f(U.uLook, look[0], look[1]); gl.uniform1f(U.uOpen, open); gl.uniform1i(U.uEnv, 0);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
     requestAnimationFrame(frame);
