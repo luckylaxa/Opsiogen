@@ -294,7 +294,7 @@ export function Hero({
         accent={section.accent}
         text={section.text}
         // Full screen: the heading fills the first screen, centred above the floating bar.
-        className={full ? "min-h-[calc(100svh-var(--header-h)-clamp(64px,calc(3.14vw+52px),112px))] justify-center pb-[clamp(96px,12vh,160px)]" : undefined}
+        className={full ? "min-h-[calc(100svh-var(--header-h)-clamp(64px,calc(3.14vw+52px),112px))] justify-center pb-[clamp(96px,12vh,160px)]" + (glow ? " -translate-y-[clamp(12px,3.5svh,44px)]" : "") : undefined}
       >
         {section.button?.href && section.button.label && (
           <ButtonLink href={section.button.href} className="mt-[clamp(28px,calc(1.7vw+21.6px),54px)]">
