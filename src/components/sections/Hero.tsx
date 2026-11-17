@@ -8,36 +8,60 @@ import { HeroCharacter } from "./HeroCharacter";
 const fadeOut = { opacity: "clamp(0, calc(1 - var(--hero-p, 0) * 3.2), 1)", transform: "translateY(calc(var(--hero-p, 0) * -60px))" } as React.CSSProperties;
 const fadeIn = { opacity: "clamp(0, calc((var(--hero-p, 0) - 0.42) * 3.4), 1)", transform: "translateY(calc((1 - clamp(0, calc((var(--hero-p, 0) - 0.42) * 3.4), 1)) * 40px))" } as React.CSSProperties;
 
+/** The scene grows toward its far end as the visitor scrolls, as if we follow the character into it. */
+const dolly = (extra: number) => ({ transform: `scale(calc((1 + var(--hero-p, 0) * 0.6) * ${extra}))`, transformOrigin: "56% 57%" }) as React.CSSProperties;
+const rushMask = "radial-gradient(ellipse 46% 44% at 56% 57%, transparent 30%, #000 100%)";
+
 /**
- * Home: the scene holds still for a short scroll. The big heading sits in the middle with our character below it;
- * as the visitor scrolls, the heading fades, the character flies off down the road toward the sun with its light
- * trail, and one line about what we do fades in. Then the page carries on.
+ * Home: the first stop of the journey holds still for a short scroll. Our character floats in the middle, large,
+ * with the heading small beside it (above it on phones). As the visitor scrolls, the character turns its back and
+ * flies into the scene: the picture moves toward us and streaks at the edges while it is fast, the heading fades
+ * and one line about what we do takes its place. Then the page carries on.
  */
 function HeroJourney({ section, image, children }: { section: HeroSection; image: HeroImage; children?: React.ReactNode }) {
+  const words = "absolute inset-x-0 top-[calc(var(--header-h)+5svh)] px-gutter md:top-0 md:right-auto md:flex md:h-full md:w-[46vw] md:items-center";
   return (
     <>
-      <div data-hero-stage className="hero-picture hero-picture-dark on-dark relative -mt-[var(--header-h)] h-[190svh] bg-night text-white">
+      <div data-hero-stage className="hero-picture hero-picture-dark on-dark relative -mt-[var(--header-h)] h-[220svh] bg-night text-white">
         <div className="sticky top-0 h-[100svh] min-h-[560px] overflow-hidden">
-          <Media image={image.image} phone={image.phone} sizes="100vw" priority />
-          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[55%] bg-gradient-to-b from-black/55 via-black/25 to-transparent" />
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_62%_38%_at_50%_30%,rgb(0_0_0/0.34),transparent_75%)]" />
-          <div style={fadeOut} className="absolute inset-x-0 top-[calc(var(--header-h)+6svh)] flex flex-col items-center px-gutter text-center md:top-[calc(var(--header-h)+5svh)]">
-            {section.label && (
-              <p className="mb-[clamp(14px,1.6vw,24px)] rounded-[4px] border border-white/40 px-[0.6em] py-[0.15em] text-[clamp(13px,1.1vw,17px)]">{section.label}</p>
-            )}
-            <h1 className="max-w-[24ch] text-[length:clamp(32px,min(5.9vw,10svh),100px)] leading-[0.95] font-bold tracking-[-0.02em] text-balance uppercase [text-shadow:0_2px_30px_rgb(0_0_0/0.25)]">
-              {section.heading}
-            </h1>
-            {section.button?.href && section.button.label && (
-              <ButtonLink href={section.button.href} variant="light" className="mt-[clamp(18px,2.6svh,32px)]">
-                {section.button.label}
-              </ButtonLink>
-            )}
+          <div className="absolute inset-0 will-change-transform" style={dolly(1)}>
+            <Media image={image.image} phone={image.phone} sizes="100vw" priority />
+          </div>
+          {/* Speed streaks: the same picture again, a little larger, at the edges only. The character code fills and shows them while it flies fast. */}
+          {[1.05, 1.11].map((k) => (
+            <div
+              key={k}
+              data-hero-rush
+              data-wide={image.image.url}
+              data-narrow={image.phone?.url}
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-0 will-change-[transform,opacity]"
+              style={{ ...dolly(k), maskImage: rushMask, WebkitMaskImage: rushMask }}
+            />
+          ))}
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[55%] bg-gradient-to-b from-black/60 via-black/25 to-transparent md:h-40 md:from-black/45 md:via-transparent" />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-0 hidden w-[62%] bg-gradient-to-r from-black/65 via-black/30 to-transparent md:block" />
+          <div className={words}>
+            <div style={fadeOut} className="flex flex-col items-center text-center md:items-start md:text-left">
+              {section.label && (
+                <p className="mb-[clamp(14px,1.4vw,22px)] rounded-[4px] border border-white/40 px-[0.6em] py-[0.15em] text-[clamp(13px,1vw,16px)]">{section.label}</p>
+              )}
+              <h1 className="max-w-[19ch] text-[length:clamp(30px,8.4vw,44px)] leading-[0.98] font-bold tracking-[-0.02em] uppercase [text-shadow:0_2px_30px_rgb(0_0_0/0.3)] md:text-[length:clamp(36px,min(3.5vw,6.6svh),64px)]">
+                {section.heading}
+              </h1>
+              {section.button?.href && section.button.label && (
+                <ButtonLink href={section.button.href} variant="light" className="mt-[clamp(18px,2.6svh,32px)]">
+                  {section.button.label}
+                </ButtonLink>
+              )}
+            </div>
           </div>
           {image.after && (
-            <p style={fadeIn} className="pointer-events-none absolute inset-x-0 top-[calc(var(--header-h)+6svh)] mx-auto max-w-[24ch] px-gutter text-center text-[length:clamp(30px,min(4.6vw,8svh),76px)] leading-[1.02] font-bold tracking-[-0.02em] text-balance [text-shadow:0_2px_30px_rgb(0_0_0/0.3)]">
-              {image.after}
-            </p>
+            <div className={`pointer-events-none ${words}`}>
+              <p style={fadeIn} className="mx-auto max-w-[19ch] text-center text-[length:clamp(28px,7.6vw,40px)] leading-[1.04] font-bold tracking-[-0.02em] text-balance [text-shadow:0_2px_30px_rgb(0_0_0/0.3)] md:mx-0 md:text-left md:text-[length:clamp(34px,min(3.3vw,6.2svh),60px)]">
+                {image.after}
+              </p>
+            </div>
           )}
           <HeroCharacter />
         </div>

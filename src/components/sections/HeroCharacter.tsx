@@ -52,6 +52,12 @@ export function HeroCharacter() {
     };
     const onScroll = () => { const y = window.scrollY; speed += Math.abs(y - lastY); lastY = y; measure(); };
     measure();
+    // The speed streaks at the edges of the picture: filled in only once the page has loaded.
+    const rush = stage ? Array.from(stage.querySelectorAll<HTMLElement>("[data-hero-rush]")) : [];
+    const fillRush = () => {
+      const narrow = window.matchMedia("(max-width: 639px)").matches;
+      for (const r of rush) { const u = (narrow && r.dataset.narrow) || r.dataset.wide; if (u) r.style.backgroundImage = `url("${u}")`; }
+    };
 
     // The pointer
     let want = [0, 0], hello = -10, blink = 0, blinkAt = 2, over = 0;
@@ -72,6 +78,7 @@ export function HeroCharacter() {
 
     async function start() {
       if (stop) return;
+      if (!reduce) fillRush();
       const THREE = await import("three");
       const { GLTFLoader } = await import("three/examples/jsm/loaders/GLTFLoader.js");
       if (stop) return;
@@ -142,7 +149,7 @@ export function HeroCharacter() {
       cleanup = () => { window.removeEventListener("resize", fit); gl.dispose(); };
 
       // A quick, springy turn: it follows the pointer at once and settles without wobbling.
-      const AWAY = 1.3;                                                      // turned to fly off into the scene, its back to the visitor
+      const AWAY = 2.25;                                                     // turned to fly off into the scene, its back to the visitor
       let yaw = 0, yawV = 0, pitch = 0, pitchV = 0, lean = [0, 0], grow = 0, flyX = 0, prev = performance.now();
       const frame = (now: number) => {
         if (stop) return;
@@ -162,18 +169,19 @@ export function HeroCharacter() {
         const ph = 1 - blink, dim = blink <= 0 ? 0 : ph < 0.3 ? ph / 0.3 : ph < 0.5 ? 1 : Math.max(0, 1 - (ph - 0.5) / 0.12);
         const fl = blink > 0 && ph > 0.55 ? Math.sin(((ph - 0.55) / 0.45) * Math.PI) : 0;
         grow += ((over && away < 0.1 ? 1 : 0) - grow) * (1 - Math.pow(0.0001, dt));
-        // It flies off into the scene: up toward the far end of the promenade, smaller as it goes.
+        // It flies into the scene and we follow close behind: it draws a little ahead while the picture moves toward us.
         flyX += (progress - flyX) * (1 - Math.pow(0.0005, dt));
-        const fx = flyX * window.innerWidth * 0.06, fy = -flyX * window.innerHeight * 0.12, fs = 1 - flyX * 0.45;
+        const fx = 0, fy = -flyX * window.innerHeight * 0.04, fs = 1 - flyX * 0.3;
         const bob = reduce ? 0 : Math.sin(t * 1.7) * 5, hop = since < 0.45 ? -Math.sin((since / 0.45) * Math.PI) * 18 : 0;
         el.style.transform = `translate(${(fx + lean[0] * 10 * (1 - away)).toFixed(1)}px,${(fy + bob + hop + lean[1] * 6 * (1 - away)).toFixed(1)}px) scale(${((1 + grow * 0.06) * fs).toFixed(3)})`;
         // The trail shows only while it flies fast, longer the faster it goes. It keeps its size as the character shrinks.
         tr.style.opacity = (clamp((v - 0.08) / 0.4, 0, 1) * clamp(away * 3, 0, 1) * 0.92).toFixed(3);
-        tr.style.transform = `translateY(-50%) rotate(-24deg) scale(${((0.55 + v * 0.5) / fs).toFixed(3)},${((0.85 + v * 0.2) / fs).toFixed(3)})`;
+        tr.style.transform = `translateY(-50%) rotate(-56deg) scale(${((0.55 + v * 0.5) / fs).toFixed(3)},${((0.85 + v * 0.2) / fs).toFixed(3)})`;
         // The pool of light on the ground: it stays put while the character bobs and hops above it, and breathes a little.
         const lift = (bob + hop) / Math.max(1, el.offsetWidth);
         gw.style.opacity = (0.86 - Math.min(0.3, -hop / 60) + (reduce ? 0 : Math.sin(t * 1.7) * 0.06)).toFixed(3);
         gw.style.transform = `translateY(${(-(bob + hop)).toFixed(1)}px) scale(${(1 + lift * 0.6).toFixed(3)})`;
+        for (const r of rush) r.style.opacity = (clamp((v - 0.05) / 0.5, 0, 1) * 0.55).toFixed(3);
         fit();
         pivot.rotation.y = yaw + twirl; pivot.rotation.x = pitch; pivot.rotation.z = -lean[0] * 0.08 * (1 - away) - away * 0.1;
         if (hud && hudMat) {
@@ -209,7 +217,7 @@ export function HeroCharacter() {
       ref={box}
       type="button"
       aria-label="Our character. Press to say hello."
-      className="absolute top-[56%] left-[calc(50%-var(--w)/2)] block aspect-square w-[var(--w)] cursor-pointer rounded-full outline-offset-4 will-change-transform [--w:clamp(130px,38vw,190px)] [-webkit-tap-highlight-color:transparent] md:top-[56%] md:[--w:clamp(170px,min(16vw,28svh),280px)]"
+      className="absolute top-[calc(64%-var(--w)/2)] left-[calc(50%-var(--w)/2)] block aspect-square w-[var(--w)] cursor-pointer rounded-full outline-offset-4 will-change-transform [--w:clamp(150px,46vw,230px)] [-webkit-tap-highlight-color:transparent] md:top-[calc(53%-var(--w)/2)] md:left-[calc(62%-var(--w)/2)] md:[--w:clamp(240px,min(27vw,44svh),460px)]"
     >
       {/* The trail starts at its back and fans out down and to the left, toward the visitor. */}
       <span ref={trail} aria-hidden="true" className="pointer-events-none absolute top-1/2 right-1/2 -z-10 h-[210%] w-[min(95vw,1300px)] opacity-0 blur-[clamp(6px,0.8vw,14px)]" style={TRAIL} />
