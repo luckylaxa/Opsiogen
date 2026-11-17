@@ -7,18 +7,19 @@ export function generateMetadata() {
 }
 
 /**
- * The home hero: our character flies along a coast road at sunrise beside a car from our concept
- * launch (made with AI), and turns to look at the visitor when the pointer moves.
+ * The home hero: an empty coast road at sunrise (made with AI). Our character flies off down the road
+ * as the visitor scrolls, and turns to look at the visitor when the pointer moves.
  */
 const HERO_IMAGE = {
   image: {
-    url: "/home/hero-coast.jpg",
+    url: "/home/hero-road.jpg",
     width: 2560,
-    height: 1432,
-    alt: "A dark green electric coupe on a coast road at sunrise, with our round white character flying beside it",
+    height: 1440,
+    alt: "An empty coast road winding along sea cliffs toward the rising sun",
   },
-  phone: { url: "/home/hero-coast-phone.jpg", width: 1000, height: 1440 },
+  phone: { url: "/home/hero-road-phone.jpg", width: 1000, height: 1440 },
   character: true,
+  after: "Brand, websites and apps, print, automation, social and video. All in one place.",
 };
 
 export default function HomePage() {

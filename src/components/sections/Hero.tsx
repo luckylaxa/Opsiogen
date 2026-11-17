@@ -5,6 +5,48 @@ import { Media } from "@/components/ui/Media";
 import { cn } from "@/lib/utils";
 import { HeroCharacter } from "./HeroCharacter";
 
+const fadeOut = { opacity: "clamp(0, calc(1 - var(--hero-p, 0) * 3.2), 1)", transform: "translateY(calc(var(--hero-p, 0) * -60px))" } as React.CSSProperties;
+const fadeIn = { opacity: "clamp(0, calc((var(--hero-p, 0) - 0.42) * 3.4), 1)", transform: "translateY(calc((1 - clamp(0, calc((var(--hero-p, 0) - 0.42) * 3.4), 1)) * 40px))" } as React.CSSProperties;
+
+/**
+ * Home: the scene holds still for a short scroll. The big heading sits in the middle with our character below it;
+ * as the visitor scrolls, the heading fades, the character flies off down the road toward the sun with its light
+ * trail, and one line about what we do fades in. Then the page carries on.
+ */
+function HeroJourney({ section, image, children }: { section: HeroSection; image: HeroImage; children?: React.ReactNode }) {
+  return (
+    <>
+      <div data-hero-stage className="hero-picture hero-picture-dark on-dark relative -mt-[var(--header-h)] h-[190svh] bg-night text-white">
+        <div className="sticky top-0 h-[100svh] min-h-[560px] overflow-hidden">
+          <Media image={image.image} phone={image.phone} sizes="100vw" priority />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-black/50 to-transparent" />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_45%_at_50%_42%,rgb(0_0_0/0.38),transparent_75%)]" />
+          <div style={fadeOut} className="absolute inset-x-0 top-[calc(var(--header-h)+6svh)] flex flex-col items-center px-gutter text-center md:top-[calc(var(--header-h)+9svh)]">
+            {section.label && (
+              <p className="mb-[clamp(16px,2.2vw,32px)] rounded-[4px] border border-white/40 px-[0.6em] py-[0.15em] text-[clamp(13px,1.1vw,17px)]">{section.label}</p>
+            )}
+            <h1 className="max-w-[14ch] text-[length:clamp(38px,min(7.4vw,12svh),124px)] leading-[0.95] font-bold tracking-[-0.02em] text-balance uppercase [text-shadow:0_2px_30px_rgb(0_0_0/0.25)]">
+              {section.heading}
+            </h1>
+            {section.button?.href && section.button.label && (
+              <ButtonLink href={section.button.href} variant="light" className="mt-[clamp(22px,3svh,40px)]">
+                {section.button.label}
+              </ButtonLink>
+            )}
+          </div>
+          {image.after && (
+            <p style={fadeIn} className="pointer-events-none absolute inset-x-0 top-[calc(var(--header-h)+10svh)] mx-auto max-w-[22ch] px-gutter text-center text-[length:clamp(30px,min(4.6vw,8svh),76px)] leading-[1.02] font-bold tracking-[-0.02em] text-balance [text-shadow:0_2px_30px_rgb(0_0_0/0.3)]">
+              {image.after}
+            </p>
+          )}
+          <HeroCharacter />
+        </div>
+      </div>
+      {children && <div className="bg-band pt-[clamp(48px,calc(2.88vw+37.2px),92px)] pb-[clamp(40px,calc(2.3vw+31.4px),76px)]">{children}</div>}
+    </>
+  );
+}
+
 /**
  * A picture for the first hero: the wide image and a tall crop for phones, plus the
  * words that belong to the picture (small label, faint wordmark, scroll hint, note, second button).
@@ -26,6 +68,8 @@ export type HeroImage = {
   stops?: number;
   /** Our character flies in the picture and turns to look at the visitor. */
   character?: boolean;
+  /** With the character: the line that fades in once the heading has gone. */
+  after?: string;
 };
 
 /**
@@ -46,6 +90,7 @@ export function Hero({
   image?: HeroImage;
   children?: React.ReactNode;
 }) {
+  if (image?.character) return <HeroJourney section={section} image={image}>{children}</HeroJourney>;
   if (image) {
     const label = image.eyebrow ?? section.label;
     const day = image.day;
@@ -90,11 +135,6 @@ export function Hero({
               {image.wordmark}
             </p>
           )}
-          {image.character && (
-            // With the character, the sky at the top left darkens a little behind the words.
-            <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_0%_0%,rgb(0_0_0/0.55),transparent_70%)]" />
-          )}
-          {image.character && <HeroCharacter />}
           {/* Phones: the words sit in the sky. Larger screens: bottom left, over the water; with the character, top left over the sky. */}
           <div
             className={cn(
