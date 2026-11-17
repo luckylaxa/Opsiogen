@@ -25,7 +25,7 @@ const GLOW: React.CSSProperties = {
 
 /**
  * Our character, drawn live as a real 3D model, in the Home picture. It faces the visitor and its eye
- * follows the pointer straight away; a click makes it hop and spin. A pool of coloured light sits on the
+ * follows the pointer straight away; a click makes its eye blink. A pool of coloured light sits on the
  * ground below it. As the visitor scrolls through the hero it turns and flies off into the scene, and only
  * while it moves fast does a fan of rainbow light pour from its back. The 3D code and the model load after the page has loaded, so the first screen never
  * waits for them; until then, and where 3D cannot be drawn, a still picture shows instead.
@@ -63,7 +63,7 @@ export function HeroCharacter({ className }: { className?: string }) {
       for (const r of rush) { const u = (narrow && r.dataset.narrow) || r.dataset.wide; if (u) r.style.backgroundImage = `url("${u}")`; }
     };
 
-    let want = [0, 0], hello = -10, blink = 0, blinkAt = 2, over = 0;
+    let want = [0, 0], blink = 0, blinkAt = 2, over = 0;
     // The points in the picture: when the pointer goes to one, the character looks at it and its little screen opens.
     // Left alone for a while it shows them one by one itself; a press on the character shows the next one beside it.
     const spots = stage ? Array.from(stage.querySelectorAll<HTMLElement>("[data-hero-spot]")) : [];
@@ -99,7 +99,8 @@ export function HeroCharacter({ className }: { className?: string }) {
     };
     const onLeave = () => { want = [0, 0]; over = 0; };
     const greet = () => {
-      hello = performance.now() / 1000; lastMove = performance.now(); show(true);
+      // A press is a blink of its eye light, nothing more: no hop and no spin.
+      blink = 1; lastMove = performance.now(); show(true);
       // Tell the background light where the press came from (Home's glow listens for this).
       const r = el.getBoundingClientRect();
       window.dispatchEvent(new CustomEvent("hero:pulse", { detail: { x: r.left + r.width / 2, y: r.top + r.height / 2 } }));
@@ -201,9 +202,7 @@ export function HeroCharacter({ className }: { className?: string }) {
         const aimY = (1 - away) * lean[0] * 0.95 + away * AWAY, aimX = (1 - away) * lean[1] * 0.55 + away * 0.05;
         const k = 420, c = 2 * Math.sqrt(k) * 0.95;
         yawV += ((aimY - yaw) * k - yawV * c) * dt; yaw += yawV * dt; pitchV += ((aimX - pitch) * k - pitchV * c) * dt; pitch += pitchV * dt;
-        const since = t - hello, s = clamp(since / 0.55, 0, 1), twirl = since < 0.55 && !reduce ? s * s * (3 - 2 * s) * Math.PI * 2 : 0;
-        if (since > 0.6 && since < 0.65) blink = 1;
-        if (Math.cos(yaw + twirl) > 0.9 && t > blinkAt && away < 0.1) { blink = 1; blinkAt = t + 3 + Math.random() * 3.5; }
+        if (Math.cos(yaw) > 0.9 && t > blinkAt && away < 0.1) { blink = 1; blinkAt = t + 3 + Math.random() * 3.5; }
         blink = Math.max(0, blink - dt / 0.3);                                  // a blink of light, not lids
         const ph = 1 - blink, dim = blink <= 0 ? 0 : ph < 0.3 ? ph / 0.3 : ph < 0.5 ? 1 : Math.max(0, 1 - (ph - 0.5) / 0.12);
         const fl = blink > 0 && ph > 0.55 ? Math.sin(((ph - 0.55) / 0.45) * Math.PI) : 0;
@@ -211,19 +210,19 @@ export function HeroCharacter({ className }: { className?: string }) {
         // It flies off to the right across the scene, eye first, while the picture moves toward us a little.
         flyX += (progress - flyX) * (1 - Math.pow(0.0005, dt));
         const fx = flyX * window.innerWidth * 0.3, fy = -flyX * window.innerHeight * 0.05, fs = 1 - flyX * 0.25;
-        const bob = reduce ? 0 : Math.sin(t * 1.7) * 5, hop = since < 0.45 ? -Math.sin((since / 0.45) * Math.PI) * 18 : 0;
-        el.style.transform = `translate(${(fx + lean[0] * 30 * (1 - away)).toFixed(1)}px,${(fy + bob + hop + lean[1] * 18 * (1 - away)).toFixed(1)}px) scale(${((1 + grow * 0.06) * fs).toFixed(3)})`;
+        const bob = reduce ? 0 : Math.sin(t * 1.7) * 5;
+        el.style.transform = `translate(${(fx + lean[0] * 30 * (1 - away)).toFixed(1)}px,${(fy + bob + lean[1] * 18 * (1 - away)).toFixed(1)}px) scale(${((1 + grow * 0.06) * fs).toFixed(3)})`;
         // The trail shows only while it flies fast, longer the faster it goes. It keeps its size as the character shrinks.
         tr.style.opacity = (clamp((v - 0.08) / 0.4, 0, 1) * clamp(away * 3, 0, 1) * 0.72).toFixed(3);
         tr.style.transform = `translateY(-50%) rotate(-17deg) scale(${((0.6 + v * 0.45) / fs).toFixed(3)},${((0.9 + v * 0.15) / fs).toFixed(3)})`;
-        // The pool of light on the ground: it stays put while the character bobs and hops above it, and breathes a little.
+        // The pool of light on the ground: it stays put while the character bobs above it, and breathes a little.
         // It belongs to standing still, so it goes as soon as the character flies fast and comes back when it stops.
-        const lift = (bob + hop) / Math.max(1, size);
-        gw.style.opacity = ((0.86 - Math.min(0.3, -hop / 60) + (reduce ? 0 : Math.sin(t * 1.7) * 0.06)) * (1 - clamp(v * 4, 0, 1))).toFixed(3);
-        gw.style.transform = `translateY(${(-(bob + hop)).toFixed(1)}px) scale(${(1 + lift * 0.6).toFixed(3)})`;
+        const lift = bob / Math.max(1, size);
+        gw.style.opacity = ((0.86 + (reduce ? 0 : Math.sin(t * 1.7) * 0.06)) * (1 - clamp(v * 4, 0, 1))).toFixed(3);
+        gw.style.transform = `translateY(${(-bob).toFixed(1)}px) scale(${(1 + lift * 0.6).toFixed(3)})`;
         for (const r of rush) r.style.opacity = (clamp((v - 0.05) / 0.5, 0, 1) * 0.16).toFixed(3);
         fit();
-        pivot.rotation.y = yaw + twirl; pivot.rotation.x = pitch; pivot.rotation.z = -lean[0] * 0.08 * (1 - away) - away * 0.1;
+        pivot.rotation.y = yaw; pivot.rotation.x = pitch; pivot.rotation.z = -lean[0] * 0.08 * (1 - away) - away * 0.1;
         if (hud && hudMat) {
           (hud as Mesh).position.x = lean[0] * 0.06 * (1 - away); (hud as Mesh).position.y = -lean[1] * 0.05 * (1 - away);
           (hudMat as InstanceType<typeof THREE.MeshBasicMaterial>).color.setScalar(1.5 * (1 - dim * 0.94) + fl * 1.2);
