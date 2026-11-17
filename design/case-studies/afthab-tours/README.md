@@ -30,7 +30,7 @@ To check with Afthab before publishing: the Meta ads show real package prices an
 ## On the site (17 Nov)
 
 Approved by the owner and live. Each frame has a square phone version (`square.html`, built from cut-out parts
-of the wide frames by `parts.cjs`, rendered by `square.cjs`), shown on phones instead of the wide one.
+of the wide frames by `parts.cjs`, rendered by `square.cjs`), shown on phones instead of the wide one. The phone frames are also in the Figma file, to the right of the desktop frames; `parts/` holds the cut-out pieces they use.
 Files: `public/work/afthab-tours/afthab-0.jpg` (2400 x 1529) and `afthab-0-phone.jpg` (2400 square) for the cover
 frame, then `afthab-N-wide.jpg` (2400 x 1529) and `afthab-N.jpg` (1600 square) for frames 2 to 12. The work card
 is `card.html` (`card.cjs`), saved as `public/cards/afthab-tours.jpg` and `afthab-tours-phone.jpg`.
