@@ -1,0 +1,187 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:Inter;font-weight:400;src:url(fonts/node_modules/@fontsource/inter/files/inter-latin-400-normal.woff2)}
+@font-face{font-family:Inter;font-weight:500;src:url(fonts/node_modules/@fontsource/inter/files/inter-latin-500-normal.woff2)}
+@font-face{font-family:Inter;font-weight:600;src:url(fonts/node_modules/@fontsource/inter/files/inter-latin-600-normal.woff2)}
+@font-face{font-family:'Playfair Display';font-style:italic;font-weight:400;src:url(fonts/node_modules/@fontsource/playfair-display/files/playfair-display-latin-400-italic.woff2)}
+:root{--ink:#111418;--graphite:#6E737A;--mist:#F4F5F7;--blue:#4284C3;--green:#51B848;--lime:#DDF36A;--ivory:#FBF5E6}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#888;font-family:Inter,sans-serif;color:var(--ink)}
+.m{position:relative;width:1440px;height:917px;overflow:hidden;margin:0 0 40px}
+.eyebrow{font-size:13px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
+.dark .eyebrow{color:var(--green)}
+.h{font-size:54px;line-height:1.04;letter-spacing:-.03em;font-weight:400;margin-top:14px}
+.h i,.sub i{font-family:'Playfair Display',serif;font-style:italic;font-size:1.1em;letter-spacing:-.01em}
+.dark{color:#fff}.dark .h i{color:var(--lime)}
+.light .h i{color:var(--blue)}
+.sub{font-size:19px;line-height:1.45;color:var(--graphite);margin-top:16px;max-width:30ch}
+.dark .sub{color:#b9bec6}
+.tl{position:absolute;left:72px;top:68px}
+.bl{position:absolute;left:72px;bottom:64px}
+.card{position:absolute;border-radius:18px;overflow:hidden;box-shadow:0 18px 50px rgb(17 20 24/.22),0 2px 6px rgb(17 20 24/.12);background:#ddd}
+.card img,.screen img{display:block;width:100%;height:100%;object-fit:cover}
+.phone{position:absolute;border-radius:54px;background:#0b0d10;padding:11px;box-shadow:0 30px 70px rgb(17 20 24/.35),0 0 0 1.5px #2a2e35 inset}
+.screen{position:relative;width:100%;height:100%;border-radius:44px;overflow:hidden;background:#000}
+.island{position:absolute;top:13px;left:50%;width:27%;height:22px;margin-left:-13.5%;border-radius:12px;background:#000;z-index:3}
+.logo{position:absolute;height:38px}
+.foot{position:absolute;right:72px;bottom:64px;font-size:15px;color:var(--graphite)}
+.dark .foot{color:#9aa0a8}
+</style></head><body>
+
+<!-- 01 Cover -->
+<section class="m dark" id="m01" style="background:var(--ink)">
+  <div class="tl"><p class="eyebrow">Afthab Tours · Social media</p><h2 class="h" style="font-size:66px">Travel that reads<br>like a <i>magazine</i>.</h2><p class="sub">Instagram, stories, Meta ads and LinkedIn, all in one look.</p></div>
+  <div class="card" style="left:560px;top:250px;width:250px;height:312px;transform:rotate(-7deg)"><img src="cut/968_39.jpg"></div>
+  <div class="card" style="left:735px;top:170px;width:290px;height:362px;transform:rotate(-3deg)"><img src="cut/ad-ge.jpg"></div>
+  <div class="card" style="left:930px;top:120px;width:340px;height:425px;z-index:2"><img src="cut/az1.jpg"></div>
+  <div class="card" style="left:1175px;top:215px;width:280px;height:350px;transform:rotate(5deg)"><img src="cut/plan.jpg"></div>
+  <div class="card" style="left:640px;top:560px;width:230px;height:409px;transform:rotate(4deg)"><img src="cut/s1.jpg"></div>
+  <div class="card" style="left:900px;top:585px;width:300px;height:375px;transform:rotate(-2deg)"><img src="cut/li-a1.jpg"></div>
+  <div class="card" style="left:1215px;top:600px;width:270px;height:338px;transform:rotate(3deg)"><img src="cut/ad-th.jpg"></div>
+  <img class="logo" src="src/logo.png" style="left:72px;bottom:64px;height:40px">
+</section>
+
+<!-- 02 Carousel -->
+<section class="m light" id="m02" style="background:var(--mist)">
+  <div class="tl"><p class="eyebrow">Instagram carousel</p><h2 class="h">A carousel that reads<br>like a <i>story</i>.</h2></div>
+  <div style="position:absolute;left:72px;top:330px;display:flex;gap:22px">
+    <div class="card" style="position:relative;width:330px;height:413px;flex:none"><img src="cut/az1.jpg"></div>
+    <div class="card" style="position:relative;width:330px;height:413px;flex:none"><img src="cut/az2.jpg"></div>
+    <div class="card" style="position:relative;width:330px;height:413px;flex:none"><img src="cut/az3.jpg"></div>
+    <div class="card" style="position:relative;width:330px;height:413px;flex:none"><img src="cut/az4.jpg"></div>
+    <div class="card" style="position:relative;width:330px;height:413px;flex:none"><img src="cut/az5.jpg"></div>
+  </div>
+  <p class="bl" style="font-size:17px;color:var(--graphite);max-width:60ch">One strong photo, a clean headline with one accent word, and one line of copy on every slide.</p>
+</section>
+
+<!-- 03 Instagram on phones -->
+<section class="m light" id="m03" style="background:#E9EEF4">
+  <div class="tl" style="top:300px"><p class="eyebrow">Instagram</p><h2 class="h">A feed that feels<br>like one <i>brand</i>.</h2><p class="sub">Every post is built from the same templates, so the grid stays calm.</p></div>
+  <div class="phone" style="left:650px;top:70px;width:340px;height:736px"><div class="screen" style="background:#fff"><div class="island"></div>
+    <div style="padding:52px 14px 0;font-size:15px;font-weight:600">afthabtours</div>
+    <div style="display:flex;align-items:center;gap:18px;padding:12px 14px"><div style="width:66px;height:66px;border-radius:50%;background:var(--mist);display:grid;place-items:center;border:2px solid var(--blue)"><img src="src/mark.png" style="width:44px;height:auto;object-fit:contain"></div>
+      <div style="font-size:12px;line-height:1.35"><b style="font-size:13px">Afthab Tours</b><br><span style="color:var(--graphite)">Travel agency</span><br>Personalized journeys. Dubai, UAE</div></div>
+    <div style="display:flex;gap:6px;padding:2px 14px 12px"><span style="flex:1;background:var(--blue);color:#fff;border-radius:8px;text-align:center;font-size:12px;font-weight:600;padding:7px">Follow</span><span style="flex:1;background:var(--mist);border-radius:8px;text-align:center;font-size:12px;font-weight:600;padding:7px">Message</span></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px">
+      <img src="cut/az1.jpg" style="aspect-ratio:3/4"><img src="cut/968_35.jpg" style="aspect-ratio:3/4"><img src="cut/plan.jpg" style="aspect-ratio:3/4">
+      <img src="cut/963_43.jpg" style="aspect-ratio:3/4"><img src="cut/az5.jpg" style="aspect-ratio:3/4"><img src="cut/968_37.jpg" style="aspect-ratio:3/4">
+      <img src="cut/az4.jpg" style="aspect-ratio:3/4"><img src="cut/escape.jpg" style="aspect-ratio:3/4"><img src="cut/az3.jpg" style="aspect-ratio:3/4">
+      <img src="cut/963_40.jpg" style="aspect-ratio:3/4"><img src="cut/az6.jpg" style="aspect-ratio:3/4"><img src="cut/963_35.jpg" style="aspect-ratio:3/4">
+    </div></div></div>
+  <div class="phone" style="left:1030px;top:130px;width:340px;height:736px"><div class="screen" style="background:#fff"><div class="island"></div>
+    <div style="display:flex;align-items:center;gap:10px;padding:52px 14px 10px"><div style="width:32px;height:32px;border-radius:50%;background:var(--blue)"></div><div style="font-size:13px;font-weight:600">afthabtours<br><span style="font-weight:400;color:var(--graphite);font-size:11px">Azerbaijan</span></div></div>
+    <img src="cut/az1.jpg" style="height:398px">
+    <div style="display:flex;justify-content:center;gap:5px;padding:12px"><i style="width:6px;height:6px;border-radius:50%;background:var(--blue)"></i><i style="width:6px;height:6px;border-radius:50%;background:#cfd3d9"></i><i style="width:6px;height:6px;border-radius:50%;background:#cfd3d9"></i><i style="width:6px;height:6px;border-radius:50%;background:#cfd3d9"></i><i style="width:6px;height:6px;border-radius:50%;background:#cfd3d9"></i></div>
+    <p style="font-size:12.5px;line-height:1.45;padding:0 14px"><b>afthabtours</b> 5 things not to miss in Azerbaijan. From Baku's old city to the mountains of Gabala.</p></div></div>
+</section>
+
+<!-- 04 Stories -->
+<section class="m dark" id="m04" style="background:var(--blue)">
+  <div class="tl"><p class="eyebrow" style="color:#fff;opacity:.8">Instagram stories</p><h2 class="h">A week of <i style="color:var(--ink)">stories</i>.</h2></div>
+  <div class="foot" style="top:84px;bottom:auto;color:#fff;opacity:.85;max-width:34ch;text-align:right;font-size:17px;line-height:1.45">Polls, quizzes and travel tips that ask followers to tap, guess and reply.</div>
+  <div style="position:absolute;left:72px;right:72px;top:250px;display:flex;justify-content:space-between">
+    <div class="card" style="position:relative;width:200px;height:356px;border-radius:22px;margin-top:40px"><img src="cut/s1.jpg"></div>
+    <div class="card" style="position:relative;width:200px;height:356px;border-radius:22px"><img src="cut/s2.jpg"></div>
+    <div class="card" style="position:relative;width:200px;height:356px;border-radius:22px;margin-top:40px"><img src="cut/s3.jpg"></div>
+    <div class="card" style="position:relative;width:200px;height:356px;border-radius:22px"><img src="cut/s4.jpg"></div>
+    <div class="card" style="position:relative;width:200px;height:356px;border-radius:22px;margin-top:40px"><img src="cut/s5.jpg"></div>
+    <div class="card" style="position:relative;width:200px;height:356px;border-radius:22px"><img src="cut/s6.jpg"></div>
+  </div>
+  <p class="bl" style="font-size:16px;color:#fff;opacity:.85">Monday to Saturday: poll, quiz, reveal, this or that, travel tip, enquiry.</p>
+</section>
+
+<!-- 05 Meta ads -->
+<section class="m dark" id="m05" style="background:var(--ink)">
+  <div class="tl"><p class="eyebrow">Meta ads</p><h2 class="h">Holiday packages,<br>ready to <i>book</i>.</h2><p class="sub">The destination, the price and one button on every ad.</p></div>
+  <div class="card" style="left:560px;top:96px;width:268px;height:335px"><img src="cut/ad-az.jpg"></div>
+  <div class="card" style="left:850px;top:96px;width:268px;height:335px"><img src="cut/ad-th.jpg"></div>
+  <div class="card" style="left:1140px;top:96px;width:268px;height:335px"><img src="cut/ad-al.jpg"></div>
+  <div class="card" style="left:560px;top:486px;width:268px;height:335px"><img src="cut/ad-ge.jpg"></div>
+  <div class="card" style="left:850px;top:486px;width:268px;height:335px"><img src="cut/ad-all.jpg"></div>
+  <div class="card" style="left:1140px;top:486px;width:268px;height:335px"><img src="cut/ad-mv.jpg"></div>
+</section>
+
+<!-- 06 One campaign, every placement -->
+<section class="m light" id="m06" style="background:var(--mist)">
+  <div class="tl"><p class="eyebrow">Meta ads · placements</p><h2 class="h">One campaign,<br>every <i>placement</i>.</h2><p class="sub">Feed, square, story and landscape, each laid out for its own space.</p></div>
+  <div class="phone" style="left:580px;top:100px;width:330px;height:714px"><div class="screen"><div class="island"></div><img src="cut/st-ge.jpg"></div></div>
+  <div class="card" style="left:960px;top:100px;width:230px;height:288px"><img src="cut/ad-ge.jpg"></div>
+  <div class="card" style="left:1212px;top:100px;width:156px;height:156px"><img src="cut/sq-ge.jpg"></div>
+  <div class="card" style="left:960px;top:414px;width:408px;height:214px"><img src="cut/ls-ge.jpg"></div>
+  <p style="position:absolute;left:960px;top:660px;font-size:15px;line-height:1.6;color:var(--graphite)">Story 9:16 · Feed 4:5<br>Square 1:1 · Landscape 1.91:1</p>
+</section>
+
+<!-- 07 Flag Day -->
+<section class="m light" id="m07" style="background:#DCEBF7">
+  <div class="tl"><p class="eyebrow">Seasonal campaign · UAE Flag Day</p><h2 class="h">One flag. Every <i>journey</i>.</h2></div>
+  <div class="card" style="left:72px;top:270px;width:300px;height:375px"><img src="cut/968_35.jpg"></div>
+  <div class="card" style="left:396px;top:270px;width:300px;height:375px"><img src="cut/968_37.jpg"></div>
+  <div class="card" style="left:720px;top:270px;width:300px;height:375px"><img src="cut/968_39.jpg"></div>
+  <div class="phone" style="left:1070px;top:150px;width:300px;height:650px"><div class="screen"><div class="island"></div><img src="cut/fdA.jpg"></div></div>
+  <div class="card" style="left:72px;top:672px;width:300px;height:157px"><img src="cut/977_34.jpg"></div>
+  <p style="position:absolute;left:396px;top:690px;font-size:17px;line-height:1.5;color:#3d4753;max-width:44ch">One idea carried across the feed, stories and LinkedIn, so the greeting looks the same wherever people see it.</p>
+</section>
+
+<!-- 08 LinkedIn carousel -->
+<section class="m light" id="m08" style="background:#fff">
+  <div class="tl"><p class="eyebrow">LinkedIn · Business beyond borders</p><h2 class="h">Useful first, <i>never</i> an ad.</h2></div>
+  <div class="foot" style="top:88px;bottom:auto;max-width:36ch;text-align:right;font-size:17px;line-height:1.45">A weekly carousel for companies that plan team travel, one question per page.</div>
+  <div style="position:absolute;left:72px;top:290px;display:flex;gap:20px">
+    <div class="card" style="position:relative;width:304px;height:380px;flex:none;box-shadow:0 14px 40px rgb(17 20 24/.14),0 0 0 1px #ece6d4"><img src="cut/li-a1.jpg"></div>
+    <div class="card" style="position:relative;width:304px;height:380px;flex:none;box-shadow:0 14px 40px rgb(17 20 24/.14),0 0 0 1px #ece6d4"><img src="cut/li-a2.jpg"></div>
+    <div class="card" style="position:relative;width:304px;height:380px;flex:none;box-shadow:0 14px 40px rgb(17 20 24/.14),0 0 0 1px #ece6d4"><img src="cut/li-a4.jpg"></div>
+    <div class="card" style="position:relative;width:304px;height:380px;flex:none;box-shadow:0 14px 40px rgb(17 20 24/.14),0 0 0 1px #ece6d4"><img src="cut/li-a6.jpg"></div>
+    <div class="card" style="position:relative;width:304px;height:380px;flex:none;box-shadow:0 14px 40px rgb(17 20 24/.14)"><img src="cut/li-a7.jpg"></div>
+  </div>
+  <p class="bl" style="font-size:16px;color:var(--graphite)">The offsite checklist: a cover, five questions and a closing page.</p>
+</section>
+
+<!-- 09 LinkedIn posts -->
+<section class="m dark" id="m09" style="background:var(--ink)">
+  <div class="tl"><p class="eyebrow">LinkedIn · single posts</p><h2 class="h">One idea,<br>one <i>concept</i>.</h2><p class="sub">Each post tells one business point on one flat brand colour.</p></div>
+  <div class="card" style="left:560px;top:120px;width:270px;height:338px;transform:rotate(-3deg)"><img src="cut/li-brief.jpg"></div>
+  <div class="card" style="left:850px;top:80px;width:290px;height:363px"><img src="cut/li-fd2.jpg" style="outline:1px solid #2a2e35"></div>
+  <div class="card" style="left:1160px;top:120px;width:270px;height:338px;transform:rotate(3deg)"><img src="cut/li-b7.jpg"></div>
+  <div class="card" style="left:600px;top:490px;width:270px;height:338px;transform:rotate(2deg)"><img src="cut/li-b1.jpg"></div>
+  <div class="card" style="left:890px;top:470px;width:290px;height:363px"><img src="cut/li-desk.jpg"></div>
+  <div class="card" style="left:1200px;top:490px;width:270px;height:338px;transform:rotate(-2deg)"><img src="cut/li-fd1.jpg"></div>
+</section>
+
+<!-- 10 Brand system -->
+<section class="m light" id="m10" style="background:var(--mist)">
+  <div class="tl"><p class="eyebrow">Brand system for social</p><h2 class="h">Simple, premium, <i>personal</i>.</h2></div>
+  <div style="position:absolute;left:72px;top:250px;width:420px;height:250px;background:#fff;border-radius:22px;display:grid;place-items:center"><img src="src/logo.png" style="width:280px"></div>
+  <div style="position:absolute;left:72px;top:524px;width:420px;height:250px;background:var(--ink);border-radius:22px;display:grid;place-items:center"><img src="src/logo.png" style="width:280px"></div>
+  <div style="position:absolute;left:516px;top:250px;width:852px;height:250px;background:var(--ink);border-radius:22px;color:#fff;padding:34px 40px">
+    <p style="font-size:12px;letter-spacing:.14em;color:var(--green)">HEADLINES · INTER &nbsp;·&nbsp; ACCENT · PLAYFAIR DISPLAY ITALIC</p>
+    <p style="font-size:84px;letter-spacing:-.03em;line-height:1.1;margin-top:22px;white-space:nowrap">Georgia, <i style="font-family:'Playfair Display';font-style:italic;font-size:92px;color:var(--lime)">your way</i></p></div>
+  <div style="position:absolute;left:516px;top:524px;width:852px;height:250px;display:flex;gap:14px">
+    <div style="flex:1;border-radius:22px;background:var(--ink);color:#fff;padding:18px;font-size:14px;display:flex;align-items:end">Ink</div>
+    <div style="flex:1;border-radius:22px;background:var(--graphite);color:#fff;padding:18px;font-size:14px;display:flex;align-items:end">Graphite</div>
+    <div style="flex:1;border-radius:22px;background:#fff;padding:18px;font-size:14px;display:flex;align-items:end">White</div>
+    <div style="flex:1;border-radius:22px;background:var(--blue);color:#fff;padding:18px;font-size:14px;display:flex;align-items:end">Afthab Blue</div>
+    <div style="flex:1;border-radius:22px;background:var(--green);color:#fff;padding:18px;font-size:14px;display:flex;align-items:end">Afthab Green</div>
+    <div style="flex:1;border-radius:22px;background:var(--lime);padding:18px;font-size:14px;display:flex;align-items:end">Lime</div>
+  </div>
+  <p class="bl" style="font-size:16px;color:var(--graphite)">One accent word per headline. Flat colour only. Real photography, full bleed.</p>
+</section>
+
+<!-- 11 Story ads on phones -->
+<section class="m dark" id="m11" style="background:#0D2A44">
+  <div class="tl" style="top:320px"><p class="eyebrow" style="color:var(--lime)">Story and reel ads</p><h2 class="h">Full screen,<br>one <i>tap</i> to book.</h2></div>
+  <div class="phone" style="left:560px;top:150px;width:270px;height:585px;transform:rotate(-4deg)"><div class="screen"><div class="island"></div><img src="cut/st-az.jpg"></div></div>
+  <div class="phone" style="left:850px;top:90px;width:300px;height:650px;z-index:2"><div class="screen"><div class="island"></div><img src="cut/st-th.jpg"></div></div>
+  <div class="phone" style="left:1170px;top:150px;width:270px;height:585px;transform:rotate(4deg)"><div class="screen"><div class="island"></div><img src="cut/st-al.jpg"></div></div>
+</section>
+
+<!-- 12 Wall -->
+<section class="m light" id="m12" style="background:var(--ink)">
+  <div style="position:absolute;left:-120px;top:-170px;width:1900px;display:grid;grid-template-columns:repeat(8,1fr);gap:18px;transform:rotate(-8deg)">
+    <img src="cut/az1.jpg" style="border-radius:14px;width:100%"><img src="cut/ad-ge.jpg" style="border-radius:14px;width:100%"><img src="cut/li-a1.jpg" style="border-radius:14px;width:100%"><img src="cut/968_35.jpg" style="border-radius:14px;width:100%"><img src="cut/az3.jpg" style="border-radius:14px;width:100%"><img src="cut/ad-th.jpg" style="border-radius:14px;width:100%"><img src="cut/li-brief.jpg" style="border-radius:14px;width:100%"><img src="cut/az5.jpg" style="border-radius:14px;width:100%">
+    <img src="cut/plan.jpg" style="border-radius:14px;width:100%"><img src="cut/li-a7.jpg" style="border-radius:14px;width:100%"><img src="cut/az4.jpg" style="border-radius:14px;width:100%"><img src="cut/ad-al.jpg" style="border-radius:14px;width:100%"><img src="cut/968_39.jpg" style="border-radius:14px;width:100%"><img src="cut/li-a4.jpg" style="border-radius:14px;width:100%"><img src="cut/az2.jpg" style="border-radius:14px;width:100%"><img src="cut/ad-mv.jpg" style="border-radius:14px;width:100%">
+    <img src="cut/ad-az.jpg" style="border-radius:14px;width:100%"><img src="cut/az7.jpg" style="border-radius:14px;width:100%"><img src="cut/968_37.jpg" style="border-radius:14px;width:100%"><img src="cut/li-desk.jpg" style="border-radius:14px;width:100%"><img src="cut/escape.jpg" style="border-radius:14px;width:100%"><img src="cut/az6.jpg" style="border-radius:14px;width:100%"><img src="cut/ad-all.jpg" style="border-radius:14px;width:100%"><img src="cut/li-fd2.jpg" style="border-radius:14px;width:100%">
+    <img src="cut/li-b1.jpg" style="border-radius:14px;width:100%"><img src="cut/963_43.jpg" style="border-radius:14px;width:100%"><img src="cut/ad-ge.jpg" style="border-radius:14px;width:100%"><img src="cut/az1.jpg" style="border-radius:14px;width:100%"><img src="cut/li-a2.jpg" style="border-radius:14px;width:100%"><img src="cut/plan.jpg" style="border-radius:14px;width:100%"><img src="cut/az4.jpg" style="border-radius:14px;width:100%"><img src="cut/li-fd1.jpg" style="border-radius:14px;width:100%">
+  </div>
+</section>
+</body></html>
