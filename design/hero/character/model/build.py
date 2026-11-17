@@ -81,11 +81,13 @@ arc(d, 0.50, 0.016, (44, 190, 212)); arc(d, 0.50, 0.03, (150, 245, 255), 100, 17
 arc(d, 0.34, 0.075, C)                                                                          # the bright ring round the lens
 d.ellipse((c + 0.13 * c, c + 0.50 * c, c + 0.21 * c, c + 0.58 * c), fill=(200, 250, 255)); d.ellipse((c - 0.66 * c, c - 0.03 * c, c - 0.61 * c, c + 0.02 * c), fill=C)
 glowl = lines.filter(ImageFilter.GaussianBlur(22)).point(lambda v: min(255, int(v * 2.4)))
-pool, g = layer(); g.ellipse((c - 0.62 * c, c - 0.62 * c, c + 0.62 * c, c + 0.62 * c), fill=(8, 74, 90)); pool = pool.filter(ImageFilter.GaussianBlur(70))   # teal depth
+pool, g = layer(); g.ellipse((c - 0.5 * c, c - 0.5 * c, c + 0.5 * c, c + 0.5 * c), fill=(5, 46, 58)); pool = pool.filter(ImageFilter.GaussianBlur(70))   # teal depth
 lens, g = layer(); g.ellipse((c - 0.26 * c, c - 0.26 * c, c + 0.26 * c, c + 0.26 * c), fill=(255, 255, 255)); lens = lens.filter(ImageFilter.GaussianBlur(6)).convert('L')
 core, g = layer(); g.ellipse((c - 0.30 * c, c - 0.34 * c, c + 0.10 * c, c + 0.06 * c), fill=(20, 110, 130)); core = core.filter(ImageFilter.GaussianBlur(40))        # a soft glint in the lens
 from PIL import ImageChops
 hud = ImageChops.add(ImageChops.add(pool, glowl), lines); hud = Image.composite(ImageChops.add(Image.new('RGB', (S, S), (2, 10, 14)), core), hud, lens)
+K = 0.74; small = hud.resize((round(S * K), round(S * K)), Image.LANCZOS); hud = Image.new('RGB', (S, S), (1, 4, 6)); hud.paste(small, (round(S * (1 - K) / 2),) * 2)   # the instrument is small in a dark eye, as on the artwork
+edge = Image.new('L', (S, S), 0); ImageDraw.Draw(edge).ellipse((S * 0.16, S * 0.16, S * 0.84, S * 0.84), fill=255); hud = Image.composite(hud, Image.new('RGB', (S, S), (1, 4, 6)), edge.filter(ImageFilter.GaussianBlur(30)))
 hud.save(os.path.join(HERE, 'hud.png'))
 img = bpy.data.images.load(os.path.join(HERE, 'hud.png')); nt = M_hud.node_tree; tex = nt.nodes.new('ShaderNodeTexImage'); tex.image = img
 nt.links.new(tex.outputs['Color'], nt.nodes['Principled BSDF'].inputs['Emission Color'])
@@ -147,6 +149,7 @@ def ribbon(name, r, grow, mat, fade=False):
         if not on: mid = RHO
         hot = tuple(v + (1 - v) * 0.22 for v in cl) if on and not fade else cl          # a brighter, whiter centre
         if fade: hot = tuple(v * on for v in cl); cl = (0.0, 0.0, 0.0)             # the halo is brightest on the line and fades to nothing at its edges
+        cl, hot = (tuple(v ** 2.2 for v in q) for q in (cl, hot))                 # the colours are picked as seen on screen; the file stores them as light
         verts += [tuple(groove_pt(mid - hw, phi, r)), tuple(groove_pt(mid, phi, r + (0.004 if not fade else 0))), tuple(groove_pt(mid + hw, phi, r))]; cols += [cl, hot, cl]
     for i in range(N):
         if not (lit(((i / N) + 0.04) % 1.0) and lit((((i + 1) / N) + 0.04) % 1.0)): continue          # no line across the back: the groove is left open and dark

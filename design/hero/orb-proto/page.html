@@ -1,0 +1,224 @@
+<title>Opsiogen Orb Run</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap">
+<style>
+  /* Layout: one pinned screen for testing the character on a plain dusk stage. No scenery and no work shown here:
+     the places and the work come with the approved script. One look, dark. */
+  :root {
+    --page: #0a090d;
+    --ink: #f8f6f8;
+    --soft: rgb(248 246 248 / 0.78);
+    --line: rgb(248 246 248 / 0.4);
+    --sky-top: #141736;
+    --sky-mid: #4a3f7a;
+    --sky-low: #e48f7c;
+    --ground: #15141c;
+    --display: "Outfit", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+    color-scheme: dark;
+  }
+  body { background: var(--page); color: var(--ink); font-family: var(--display); margin: 0; }
+  .gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+  .stage { height: 420vh; position: relative; }
+  .pin { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: var(--ground); }
+  .world { position: absolute; inset: -2%; transform-origin: 58% 60%; will-change: transform;
+    background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 38%, var(--sky-low) 59.6%, #2a2532 60%, var(--ground) 100%); }
+  .rays { position: absolute; inset: -20%; pointer-events: none; opacity: 0; transform-origin: 58% 60%;
+    background: repeating-conic-gradient(from 0deg at 58% 60%, rgb(255 255 255 / 0) 0deg 5deg, rgb(255 255 255 / 0.5) 5.4deg 5.7deg, rgb(255 255 255 / 0) 6.1deg 11deg);
+    -webkit-mask-image: radial-gradient(circle at 58% 60%, transparent 0 20%, #000 70%); mask-image: radial-gradient(circle at 58% 60%, transparent 0 20%, #000 70%); }
+
+  .bar { position: absolute; inset: 0 0 auto; z-index: 6; display: flex; align-items: center; gap: clamp(16px, 2.4vw, 40px); height: clamp(64px, 6vw, 88px); padding-inline: clamp(16px, 3.4vw, 65px); }
+  .bar img { height: clamp(22px, 2.6vw, 38px); width: auto; }
+  .bar nav { display: flex; gap: clamp(14px, 2vw, 28px); font-size: clamp(14px, 1.2vw, 18px); }
+  .bar .cta { margin-left: auto; background: var(--ink); color: var(--page); border-radius: 8px; padding: 0.7em 1.15em; font-weight: 500; font-size: clamp(14px, 1.2vw, 18px); white-space: nowrap; }
+
+  .words { position: absolute; z-index: 5; right: clamp(16px, 4.4vw, 80px); top: 50%; transform: translateY(-46%); width: min(46vw, 660px); pointer-events: none; }
+  .pill { display: inline-block; border: 1px solid var(--line); border-radius: 4px; padding: 0.15em 0.6em; font-size: clamp(14px, 1.2vw, 18px); margin: 0 0 clamp(16px, 2.6vh, 30px); }
+  h1 { margin: 0; font-weight: 700; text-transform: uppercase; line-height: 0.95; letter-spacing: -0.02em; font-size: clamp(34px, min(6.4vw, 11.4vh), 104px); text-wrap: balance; }
+  .go { pointer-events: auto; display: inline-block; margin-top: clamp(18px, 3vh, 36px); background: var(--ink); color: var(--page); border-radius: 8px; padding: 0.8em 1.3em; font-weight: 500; font-size: clamp(15px, 1.2vw, 18px); text-decoration: none; }
+  .go:focus-visible, .orb:focus-visible { outline: 2px solid #d8ff3e; outline-offset: 3px; }
+
+  /* the character: the 3D model on its canvas, the glow underneath and the light tail */
+  .orb { position: absolute; z-index: 4; left: 27%; top: 52%; width: clamp(170px, 27vw, 430px); aspect-ratio: 1; transform: translate(-50%, -50%); will-change: transform; cursor: pointer; border-radius: 50%; touch-action: manipulation; }
+  .orb img, .orb canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: contain; transition: opacity 0.3s; }
+  .orb canvas { opacity: 0; }   /* the picture shows until the model is drawn, and stays if it cannot be */
+  .ground { position: absolute; left: 6%; right: 6%; bottom: -10%; height: 16%; border-radius: 50%; filter: blur(22px); mix-blend-mode: screen;
+    background: radial-gradient(ellipse at 42% 50%, rgb(40 110 255 / 0.7), rgb(150 70 255 / 0.55) 45%, rgb(255 80 170 / 0.3) 62%, rgb(255 80 170 / 0) 76%); will-change: opacity, transform; }
+  /* the light tail: it pours out of the vent low on the character's back and runs toward us along the path it is flying,
+     so it widens as it comes. It is part of the character, drawn over its back. */
+  .trail { position: absolute; z-index: 2; left: 50%; top: 67%; width: 190%; height: 175%; transform: translateX(-50%); transform-origin: 50% 0; opacity: 0; pointer-events: none; filter: blur(clamp(6px, 0.9vw, 14px)); will-change: opacity, transform; }
+  .trail i { position: absolute; inset: 0; -webkit-clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%); clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%);
+    background: linear-gradient(90deg, #37d6ff 6%, #5b7bff 22%, #b45cff 38%, #ff4f8b 54%, #ff8a3c 70%, #ffe14a 84%, #5ff08a 96%);
+    -webkit-mask-image: linear-gradient(180deg, #000 0, rgb(0 0 0 / 0.85) 14%, rgb(0 0 0 / 0.5) 45%, transparent 92%); mask-image: linear-gradient(180deg, #000 0, rgb(0 0 0 / 0.85) 14%, rgb(0 0 0 / 0.5) 45%, transparent 92%); }
+  .trail i + i { mix-blend-mode: screen; opacity: 0.8; }
+
+  .foot { position: absolute; z-index: 5; inset: auto 0 0; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding: 0 clamp(16px, 3.4vw, 65px) max(22px, env(safe-area-inset-bottom, 0px)); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--soft); }
+
+  @media (max-width: 760px) {
+    .bar nav { display: none; }
+    .words { right: 0; left: 0; top: clamp(84px, 13vh, 130px); transform: none; width: auto; padding-inline: max(20px, env(safe-area-inset-left, 0px)); }
+    .orb { left: 46%; top: 66%; }
+    .orb { width: clamp(170px, 54vw, 280px); }
+    .foot span:last-child { display: none; }
+  }
+
+  .after { background: var(--page); padding-block: clamp(56px, 9vw, 120px); }
+  .after p { max-width: 60ch; margin: 0 auto; color: #a2a0a6; font-size: clamp(16px, 1.4vw, 20px); line-height: 1.45; text-align: center; }
+</style>
+
+<section class="stage" id="stage" aria-label="Character test">
+  <div class="pin">
+    <div class="world" id="world"></div>
+    <div class="rays" id="rays"></div>
+
+    <div class="bar">
+      <img src="{{LOGO}}" alt="Opsiogen">
+      <nav aria-label="Main"><span>Work</span><span>Services</span><span>About</span></nav>
+      <span class="cta">Start a project</span>
+    </div>
+
+    <div class="orb" id="orb" role="button" tabindex="0" aria-label="The Opsiogen character. Press to say hello.">
+      <div class="ground" id="ground"></div>
+      <img id="vFront" src="{{FRONT}}" alt="">
+      <canvas id="gl" aria-hidden="true"></canvas>
+      <div class="trail" id="trail"><i></i><i></i></div>
+    </div>
+
+    <div class="words">
+      <p class="pill">AI-first design and digital company</p>
+      <h1>Your digital department, without the hiring.</h1>
+      <a class="go" href="#after">See our work</a>
+    </div>
+
+    <div class="foot">
+      <span>Character test</span>
+      <span>Scroll, stop, move the pointer, tap it</span>
+    </div>
+  </div>
+</section>
+
+<section class="after" id="after">
+  <div class="gutter"><p>A test of the character only, on a plain stage. The character is now a real 3D model, drawn live, so it turns smoothly through every angle. Scroll and it turns to look ahead; stop and it turns back to you. Move the pointer and it looks toward it. Tap it and it says hello. The places and our work are added once the script is approved.</p></div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script>var GLB = "{{GLB}}";</script>
+<script>
+(function () {
+  // The character is a real 3D model (design/hero/character/model), drawn live, so it turns smoothly through every angle.
+  // While the page scrolls it looks ahead, its back to us; when the scrolling stops it turns round to the visitor and its eye follows the pointer.
+  var orb = document.getElementById("orb"), canvas = document.getElementById("gl"), ground = document.getElementById("ground"), trail = document.getElementById("trail"),
+      world = document.getElementById("world"), rays = document.getElementById("rays"), fallback = document.getElementById("vFront");
+  var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var yaw = 0, yawV = 0, pitch = 0, pitchV = 0, speed = 0, lastY = window.scrollY, lastMove = -1e9, want = [0, 0], lean = [0, 0],
+      blink = 0, blinkAt = 2.2, hello = -10, over = 0, wasMoving = false, grow = 0, tail = 0;
+  window.addEventListener("scroll", function () { var y = window.scrollY; speed += Math.min(60, Math.abs(y - lastY)); lastY = y; lastMove = performance.now(); }, { passive: true });
+  window.addEventListener("pointermove", function (e) {
+    var r = orb.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+    want = [clamp(dx / (window.innerWidth * 0.5), -1, 1), clamp(dy / (window.innerHeight * 0.5), -1, 1)]; over = Math.hypot(dx, dy) < r.width * 0.42 ? 1 : 0;
+  }, { passive: true });
+  function rest(e) { if (!e.pointerType || e.pointerType !== "mouse" || e.type === "pointerleave") { want = [0, 0]; over = 0; } }   // when the finger lifts or the pointer leaves, it looks straight at the visitor again
+  window.addEventListener("pointerup", rest, { passive: true }); window.addEventListener("pointercancel", rest, { passive: true }); document.documentElement.addEventListener("pointerleave", rest, { passive: true });
+  function greet() { hello = performance.now() / 1000; blink = 1; }
+  orb.addEventListener("pointerdown", function (e) { e.preventDefault(); });   // a click does not leave a focus ring; the keyboard still can
+  orb.addEventListener("click", greet);
+  orb.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); greet(); } });
+  function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+  function ease(v) { v = clamp(v, 0, 1); return v * v * (3 - 2 * v); }
+
+  // ---- the model ----
+  var T = window.THREE, gl = null, scene, cam, pivot, hud = null, hudMat, stripMat, glowMat, line, size = 0;
+  function studio() {                                                   // what the glossy body reflects: a soft studio with two bright windows, and colour coming up from below
+    var W = 512, H = 256, d = new Uint8Array(W * H * 4), wins = [[0.835, 0.885, 0.6, 0.8], [0.895, 0.93, 0.6, 0.8], [0.595, 0.64, 0.6, 0.77], [0.652, 0.682, 0.6, 0.77]];
+    function blob(u, v, cu, cv, r) { var a = (u - cu) * 2, b = v - cv, q = 1 - Math.sqrt(a * a + b * b) / r; return q > 0 ? q * q : 0; }
+    for (var y = 0; y < H; y++) for (var x = 0; x < W; x++) {
+      var u = x / W, v = y / H, l = v > 0.5 ? 0.27 + (v - 0.5) * 0.4 : 0.07 + v * 0.4, r = l * 0.96, g = l * 0.97, b = l * 1.04;      // v runs from the floor (0) to the ceiling (1)
+      var bl = blob(u, v, 0.9, 0.1, 0.34), pk = blob(u, v, 0.62, 0.1, 0.34), vi = blob(u, v, 0.76, 0.02, 0.3);
+      r += pk * 1.3 + vi * 0.5 + bl * 0.1; g += bl * 0.35 + pk * 0.15 + vi * 0.18; b += bl * 1.5 + vi * 0.9 + pk * 0.6;
+      for (var k = 0; k < 4; k++) if (u > wins[k][0] && u < wins[k][1] && v > wins[k][2] && v < wins[k][3]) { r += 7; g += 7; b += 7.3; }
+      var m = Math.max(r, g, b), e = Math.ceil(Math.log(m) / Math.LN2), f = 255.999 / Math.pow(2, e), o = (y * W + x) * 4;                // stored with an exponent, so the windows can be far brighter than white
+      d[o] = r * f; d[o + 1] = g * f; d[o + 2] = b * f; d[o + 3] = e + 128;
+    }
+    var tex = new T.DataTexture(d, W, H, T.RGBAFormat, T.UnsignedByteType); tex.encoding = T.RGBEEncoding; tex.mapping = T.EquirectangularReflectionMapping;
+    tex.minFilter = tex.magFilter = T.NearestFilter; tex.generateMipmaps = false; tex.needsUpdate = true; return tex;
+  }
+  function begin() {
+    if (!T || !T.GLTFLoader) return;
+    try { gl = new T.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true }); } catch (e) { gl = null; return; }
+    gl.outputEncoding = T.sRGBEncoding; gl.setClearColor(0x000000, 0);
+    scene = new T.Scene(); cam = new T.PerspectiveCamera(20, 1, 1, 20); cam.position.set(0, 0, 6.75);   // the body fills 84% of its box
+    var pm = new T.PMREMGenerator(gl), tex = studio();
+    scene.environment = pm.fromEquirectangular(tex).texture; tex.dispose(); pm.dispose();
+    var key = new T.DirectionalLight(0xffffff, 0.22); key.position.set(-3, 4, 4); scene.add(key);
+    var blue = new T.PointLight(0x3f7bff, 0.35, 6); blue.position.set(-1.3, -2.3, 1.7); scene.add(blue);
+    var pink = new T.PointLight(0xff4fa0, 0.32, 6); pink.position.set(1.4, -2.3, 1.7); scene.add(pink);
+    var looks = {
+      body: new T.MeshPhysicalMaterial({ color: 0xeef0f6, roughness: 0.13, metalness: 0, reflectivity: 0.9, clearcoat: 1, clearcoatRoughness: 0.04, envMapIntensity: 1.0 }),
+      base: new T.MeshPhysicalMaterial({ color: 0xdfe2ec, roughness: 0.16, metalness: 0, reflectivity: 0.9, clearcoat: 1, clearcoatRoughness: 0.06, envMapIntensity: 1.0 }),
+      socket: new T.MeshStandardMaterial({ color: 0x05080c, roughness: 0.6 }),
+      gasket: new T.MeshPhysicalMaterial({ color: 0x07090d, roughness: 0.25, clearcoat: 1, clearcoatRoughness: 0.1, envMapIntensity: 0.7 }),
+      glass: new T.MeshPhysicalMaterial({ color: 0x020406, roughness: 0.02, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.02, transparent: true, opacity: 1, transmission: 0.62, depthWrite: false, envMapIntensity: 1.3 }),
+      seam: new T.MeshStandardMaterial({ color: 0xb9bcc8, roughness: 0.5 }),
+      strip: (stripMat = new T.MeshBasicMaterial({ vertexColors: true, toneMapped: false })),
+      stripGlow: (glowMat = new T.ShaderMaterial({ vertexColors: true, transparent: true, depthWrite: false, side: T.DoubleSide, uniforms: { o: { value: 0.5 } },       // a soft halo of the line's own colour, fading out at its edges
+        vertexShader: "varying vec3 c; void main() { c = color.rgb; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
+        fragmentShader: "varying vec3 c; uniform float o; void main() { float m = max(c.r, max(c.g, c.b)); gl_FragColor = vec4(pow(c / max(m, 0.001), vec3(0.4545)), sqrt(m) * o); }" }))
+    };
+    var bytes = Uint8Array.from(atob(GLB), function (ch) { return ch.charCodeAt(0); });
+    new T.GLTFLoader().parse(bytes.buffer, "", function (file) {
+      file.scene.traverse(function (o) {
+        if (!o.isMesh) return; var n = o.material.name;
+        if (n === "hud") { var map = o.material.emissiveMap || o.material.map; hudMat = new T.MeshBasicMaterial({ map: map, toneMapped: false }); o.material = hudMat; hud = o; }
+        else if (looks[n]) { o.material = looks[n]; if (n === "glass" || n === "stripGlow") o.renderOrder = 2; }
+      });
+      pivot = new T.Group(); pivot.rotation.order = "YXZ"; pivot.add(file.scene); scene.add(pivot);
+      // the blink: one cyan line across the dark eye
+      line = new T.Mesh(new T.PlaneGeometry(0.62, 0.014), new T.MeshBasicMaterial({ color: 0x4de9ff, transparent: true, opacity: 0, toneMapped: false, depthWrite: false }));
+      var box = new T.Box3().setFromObject(hud); line.position.set(0, (box.min.y + box.max.y) / 2, box.max.z + 0.02); line.renderOrder = 1; pivot.add(line);
+      fit(); gl.render(scene, cam); fallback.style.opacity = "0"; canvas.style.opacity = "1";
+    }, function () { gl = null; });
+  }
+  function fit() { if (!gl) return; var w = Math.round(orb.clientWidth); if (!w || w === size) return; size = w; gl.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2)); gl.setSize(w, w, false); }
+  window.addEventListener("resize", fit);
+  begin();
+
+  var prev = performance.now();
+  function frame(now) {
+    var dt = Math.min(0.05, (now - prev) / 1000); prev = now; var t = now / 1000;
+    var moving = !still && now - lastMove < 1100;                     // short gaps between scroll steps do not count as stopping
+    speed *= Math.pow(0.02, dt); var v = still ? 0 : Math.min(1, speed / 90);
+    lean[0] += ((moving ? 0 : want[0]) - lean[0]) * (1 - Math.pow(0.004, dt)); lean[1] += ((moving ? 0 : want[1]) - lean[1]) * (1 - Math.pow(0.004, dt));
+    // the turn is a soft spring: half a turn to look ahead, back round to the visitor, and a little toward the pointer
+    var aimY = moving ? Math.PI : lean[0] * 0.62 + (still ? 0 : Math.sin(t * 0.6) * 0.04), aimX = moving ? 0.05 : lean[1] * 0.42, k = moving ? 30 : 22, c = 2 * Math.sqrt(k) * 0.9;
+    yawV += ((aimY - yaw) * k - yawV * c) * dt; yaw += yawV * dt; pitchV += ((aimX - pitch) * k - pitchV * c) * dt; pitch += pitchV * dt;
+    var since = t - hello, twirl = since < 0.9 && !still ? ease(since / 0.9) * Math.PI * 2 : 0;     // a tap: it hops, spins once and blinks twice
+    if (since > 0.95 && since < 1.0) blink = 1;
+    if (wasMoving && !moving) blinkAt = t + 1.4;
+    wasMoving = moving;
+    var facing = Math.cos(yaw + twirl);                               // 1 faces the visitor, -1 looks ahead
+    if (!moving && facing > 0.9 && t > blinkAt) { blink = 1; blinkAt = t + 3 + Math.random() * 3.5; }
+    blink = Math.max(0, blink - dt / 0.34);                            // the blink is light, not lids: the eye goes dark to one line, then flashes back
+    var ph = 1 - blink, dim = blink <= 0 ? 0 : ph < 0.3 ? ph / 0.3 : ph < 0.5 ? 1 : Math.max(0, 1 - (ph - 0.5) / 0.12), fl = blink > 0 && ph > 0.55 ? Math.sin((ph - 0.55) / 0.45 * Math.PI) : 0;
+    grow += ((over && !moving ? 1 : 0) - grow) * 0.12;
+    var bob = still ? 0 : Math.sin(t * 1.7) * 6, push = v * 10, hop = since < 0.6 ? -Math.sin(since / 0.6 * Math.PI) * 16 : 0;
+    orb.style.transform = "translate(-50%,-50%) translate(" + (push * 0.6 + lean[0] * 14).toFixed(1) + "px," + (bob - push * 0.3 + hop + lean[1] * 8).toFixed(1) + "px) scale(" + (1 + grow * 0.06).toFixed(3) + ")";
+    ground.style.opacity = (0.8 + grow * 0.2 + 0.1 * Math.sin(t * 1.3)).toFixed(3);
+    tail += ((moving ? 1 : 0) - tail) * (1 - Math.pow(moving ? 0.01 : 0.05, dt));
+    var back = clamp((-facing - 0.35) / 0.65, 0, 1) * tail;            // the light tail shows once its back is turned to us
+    trail.style.opacity = back.toFixed(3); trail.style.transform = "translateX(-50%) scaleY(" + (0.55 + 0.45 * back + v * 0.08).toFixed(3) + ")";
+    world.style.transform = "scale(" + (1 + v * 0.06).toFixed(4) + ")";
+    rays.style.opacity = (v * 0.2).toFixed(3); rays.style.transform = "scale(" + (1 + ((t * 1.4) % 1) * 0.25).toFixed(3) + ")";
+    if (gl && pivot) {
+      fit();
+      pivot.rotation.y = yaw + twirl; pivot.rotation.x = pitch; pivot.rotation.z = -lean[0] * 0.07;
+      hud.position.x = lean[0] * 0.05; hud.position.y = -lean[1] * 0.04;                             // the eye itself also looks toward the pointer, inside its glass
+      hudMat.color.setScalar(1.5 * (1 - dim * 0.94) + fl * 1.2); line.material.opacity = dim;
+      stripMat.color.setScalar(1 + v * 0.25); glowMat.uniforms.o.value = 0.42 + v * 0.3 + 0.06 * Math.sin(t * 2.1);
+      gl.render(scene, cam);
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
