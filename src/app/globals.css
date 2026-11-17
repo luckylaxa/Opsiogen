@@ -96,6 +96,7 @@
     }
   }
   [data-theme="dark"],
+  body:has(.hero-picture) .site-header,
   .on-dark {
     --gradient-hover: linear-gradient(#45e0a8, #45e0a8);
     --icon-hover: #45e0a8;
@@ -111,7 +112,8 @@
    * keeps an element light in both themes, e.g. light buttons and fields on
    * dark cards and the menu.
    */
-  [data-theme="dark"] {
+  [data-theme="dark"],
+  body:has(.hero-picture) .site-header {
     --color-page: #0a090d;
     --color-band: #121115;
     --color-field: #1b1a1e;
@@ -480,6 +482,21 @@ html.project-open {
   .site-menu[data-open] [data-menu-item] {
     transition: none;
   }
+}
+
+/*
+ * Home: the header lies over the hero picture (Hero.tsx), so there it is clear and
+ * takes the dark theme's colours in both themes: light logo and text, see-through search.
+ */
+body:has(.hero-picture) .site-header {
+  --color-search: rgb(10 9 13 / 0.45);
+  color: var(--color-ink);
+}
+body:has(.hero-picture) .site-header .logo-on-light {
+  display: none;
+}
+body:has(.hero-picture) .site-header .logo-on-dark {
+  display: block;
 }
 
 /* The header stays above the Services mega menu while it is open (NavMenu.tsx). */

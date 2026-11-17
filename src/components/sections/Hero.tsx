@@ -43,7 +43,7 @@ export function Hero({
     return (
       <>
         {/* The picture fills the first screen and runs up under the clear header. */}
-        <div className="on-dark relative -mt-[var(--header-h)] h-[100svh] min-h-[560px] overflow-hidden bg-night text-white">
+        <div className="hero-picture on-dark relative -mt-[var(--header-h)] h-[100svh] min-h-[560px] overflow-hidden bg-night text-white">
           <Media image={image.image} phone={image.phone} sizes="100vw" priority />
           <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-black/60 to-transparent" />
           <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/75 to-transparent" />

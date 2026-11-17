@@ -50,7 +50,7 @@ export function Logo({
   return (
     <span className={cn("flex", className)}>
       {tone === "auto" && (
-        <Image src={onLight} alt="" aria-hidden="true" sizes={sizes} className={cn(large ? SIZE_LG : SIZE, "dark:hidden")} />
+        <Image src={onLight} alt="" aria-hidden="true" sizes={sizes} className={cn(large ? SIZE_LG : SIZE, "logo-on-light dark:hidden")} />
       )}
       <Image
         src={onDark}
@@ -58,7 +58,7 @@ export function Logo({
         aria-hidden="true"
         sizes={sizes}
         loading={priority ? "eager" : undefined}
-        className={cn(large ? SIZE_LG : SIZE, tone === "auto" && "hidden dark:block")}
+        className={cn(large ? SIZE_LG : SIZE, tone === "auto" && "logo-on-dark hidden dark:block")}
       />
       <span className="sr-only">{name}</span>
     </span>
