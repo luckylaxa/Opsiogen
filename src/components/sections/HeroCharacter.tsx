@@ -63,9 +63,9 @@ export function HeroCharacter({ className }: { className?: string }) {
       for (const r of rush) { const u = (narrow && r.dataset.narrow) || r.dataset.wide; if (u) r.style.backgroundImage = `url("${u}")`; }
     };
 
-    let want = [0, 0], blink = 0, blinkAt = 2, over = 0, turnTo = -1, poseUntil = 0;
+    let want = [0, 0], blink = 0, blinkAt = 2, over = 0, turnTo = -1, poseUntil = 0, fire = 0;
     // Where it looks after each press (turn, tilt), in order.
-    const POSES = [[0.95, -0.12], [-0.95, 0.1], [0.55, -0.42], [-0.6, 0.34], [1.25, 0.05], [-1.2, -0.08]];
+    const POSES = [[1.05, -0.1], [-1.05, -0.1], [0.75, -0.4], [-0.75, 0.3]];
     // The points in the picture: when the pointer goes to one, the character looks at it and its little screen opens.
     // Left alone for a while it shows them one by one itself; a press on the character shows the next one beside it.
     const spots = stage ? Array.from(stage.querySelectorAll<HTMLElement>("[data-hero-spot]")) : [];
@@ -103,10 +103,20 @@ export function HeroCharacter({ className }: { className?: string }) {
     const greet = () => {
       // A press: its eye blinks and it turns to look a new way for a moment, a different way each time. One calm turn, never a spin.
       blink = 1; lastMove = performance.now(); show(true);
-      turnTo = (turnTo + 1) % POSES.length; poseUntil = performance.now() + 1500;
-      // Tell the background light where the press came from (Home's glow listens for this).
-      const r = el.getBoundingClientRect();
-      window.dispatchEvent(new CustomEvent("hero:pulse", { detail: { x: r.left + r.width / 2, y: r.top + r.height / 2 } }));
+      turnTo = (turnTo + 1) % POSES.length; poseUntil = performance.now() + 1900;
+      // It turns first; then the colour leaves from its eye, wherever the eye now points.
+      const pose = POSES[turnTo];
+      window.clearTimeout(fire);
+      fire = window.setTimeout(() => {
+        const r = el.getBoundingClientRect();
+        const dx = Math.sin(pose[0]) * r.width * 0.3, dy = Math.sin(pose[1]) * r.height * 0.3;
+        window.dispatchEvent(new CustomEvent("hero:pulse", { detail: { x: r.left + r.width / 2 + dx, y: r.top + r.height / 2 + dy } }));
+        const fl = el.querySelector<HTMLElement>("[data-flash]");
+        if (fl && !reduce) {
+          fl.style.left = `${r.width / 2 + dx}px`; fl.style.top = `${r.height / 2 + dy}px`;
+          fl.animate([{ transform: "translate(-50%,-50%) scale(0.15)", opacity: 1 }, { transform: "translate(-50%,-50%) scale(1.8)", opacity: 0.85, offset: 0.4 }, { transform: "translate(-50%,-50%) scale(5)", opacity: 0 }], { duration: 1200, easing: "ease-out" });
+        }
+      }, 380);
     };
     const noFocusRing = (e: PointerEvent) => e.preventDefault();
     window.addEventListener("pointermove", onMove, { passive: true });
@@ -252,7 +262,7 @@ export function HeroCharacter({ className }: { className?: string }) {
       window.removeEventListener("pointermove", onMove); document.documentElement.removeEventListener("pointerleave", onLeave);
       window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", measure);
       el.removeEventListener("pointerdown", noFocusRing); el.removeEventListener("click", greet);
-      stage?.removeEventListener("pointerover", onOver); stage?.removeEventListener("pointerout", onOut); window.clearTimeout(hide);
+      stage?.removeEventListener("pointerover", onOver); stage?.removeEventListener("pointerout", onOut); window.clearTimeout(hide); window.clearTimeout(fire);
     };
   }, []);
 
@@ -274,6 +284,8 @@ export function HeroCharacter({ className }: { className?: string }) {
         <span className="block text-[11px] font-semibold tracking-[0.16em] text-white/70 uppercase" />
         <span className="mt-1 block text-[15px] leading-snug font-medium text-white" />
       </span>
+      {/* The burst of colour that leaves its eye on a press: in front of it, so it reads as coming from the eye. */}
+      <span data-flash aria-hidden="true" className="pointer-events-none absolute z-10 aspect-square w-[70%] rounded-full opacity-0" style={{ background: "radial-gradient(closest-side, rgb(255 255 255 / 0.9) 0%, #5cf2e6 20%, #a98bff 46%, rgb(255 122 200 / 0.7) 68%, transparent 100%)", transform: "translate(-50%,-50%) scale(0.15)" }} />
       {/* eslint-disable-next-line @next/next/no-img-element -- a small still that only shows until the 3D model is drawn */}
       <img ref={still} src="/home/character-front.webp" alt="" width={420} height={420} className="absolute inset-0 size-full object-contain transition-opacity duration-300" />
       <canvas ref={canvas} aria-hidden="true" className="absolute inset-0 size-full opacity-0 transition-opacity duration-300" />
