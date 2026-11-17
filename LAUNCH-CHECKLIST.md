@@ -40,6 +40,7 @@ Tick items as they are done.
 
 - [ ] First plan: the studio tour on scroll. Six rooms are drawn in one style with our designs on the screens (`design/hero/rooms-all.jpg`, made by `design/hero/rooms.py`). Waiting for the owner's yes on the direction, then the video.
 - [ ] Backup plan, only after the owner confirms: keep the earlier big heading that fills the first screen and put moving work behind it. Two rows of our work tiles (images and short silent loops, mixed widths, one height) drift slowly sideways on the dark band, as on the reference the owner shared (Envato's AI video page). Use our own work and our own layout, not theirs. No image or video credits needed.
+- [ ] Also tried, waiting for the owner's pick: a ribbon of our work cards that lands on a tilted board on scroll (working prototype in `design/hero/cards-proto`, no credits needed), and our own character running through the studio rooms, each room one service (`design/hero/character-lineup.png`, `character-hero-mock.jpg`; needs video credits).
 - Home today shows the trial picture of the glass studio (day in the light theme, night in the dark theme).
 
 ## Already done (4 November 2026)
