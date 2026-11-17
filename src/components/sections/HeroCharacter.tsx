@@ -30,7 +30,7 @@ const GLOW: React.CSSProperties = {
  * while it moves fast does a fan of rainbow light pour from its back. The 3D code and the model load after the page has loaded, so the first screen never
  * waits for them; until then, and where 3D cannot be drawn, a still picture shows instead.
  */
-export function HeroCharacter() {
+export function HeroCharacter({ className }: { className?: string }) {
   const box = useRef<HTMLButtonElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const still = useRef<HTMLImageElement>(null);
@@ -98,7 +98,12 @@ export function HeroCharacter() {
       over = Math.hypot(dx, dy) < r.width * 0.5 ? 1 : 0;
     };
     const onLeave = () => { want = [0, 0]; over = 0; };
-    const greet = () => { hello = performance.now() / 1000; lastMove = performance.now(); show(true); };
+    const greet = () => {
+      hello = performance.now() / 1000; lastMove = performance.now(); show(true);
+      // Tell the background light where the press came from (Home's glow listens for this).
+      const r = el.getBoundingClientRect();
+      window.dispatchEvent(new CustomEvent("hero:pulse", { detail: { x: r.left + r.width / 2, y: r.top + r.height / 2 } }));
+    };
     const noFocusRing = (e: PointerEvent) => e.preventDefault();
     window.addEventListener("pointermove", onMove, { passive: true });
     document.documentElement.addEventListener("pointerleave", onLeave);
@@ -253,7 +258,7 @@ export function HeroCharacter() {
       ref={box}
       type="button"
       aria-label="Our character. Press to hear what we do here."
-      className="absolute top-[calc(60%-var(--w)/2)] left-[calc(50%-var(--w)/2)] block aspect-square w-[var(--w)] cursor-pointer rounded-full outline-offset-4 will-change-transform [--w:clamp(150px,46vw,230px)] [-webkit-tap-highlight-color:transparent] md:top-[calc(42%-var(--w)/2)] md:left-[calc(39%-var(--w)/2)] md:[--w:clamp(200px,min(20vw,34svh),340px)]"
+      className={`absolute block aspect-square w-[var(--w)] cursor-pointer rounded-full outline-offset-4 will-change-transform [-webkit-tap-highlight-color:transparent] ${className ?? "top-[calc(60%-var(--w)/2)] left-[calc(50%-var(--w)/2)] [--w:clamp(150px,46vw,230px)] md:top-[calc(42%-var(--w)/2)] md:left-[calc(39%-var(--w)/2)] md:[--w:clamp(200px,min(20vw,34svh),340px)]"}`}
     >
       {/* The trail starts behind its back and streams away to the left and a little down, widening as it goes. */}
       <span ref={trail} aria-hidden="true" className="pointer-events-none absolute top-1/2 right-1/2 -z-10 h-[150%] w-[min(85vw,1200px)] origin-right opacity-0 blur-[clamp(16px,2.2vw,36px)]">

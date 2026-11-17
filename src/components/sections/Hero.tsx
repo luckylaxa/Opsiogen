@@ -4,6 +4,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Media } from "@/components/ui/Media";
 import { cn } from "@/lib/utils";
 import { HeroCharacter } from "./HeroCharacter";
+import { HeroGlow } from "./HeroGlow";
 
 const fadeOut = { opacity: "clamp(0, calc(1 - var(--hero-p, 0) * 3.2), 1)", transform: "translateY(calc(var(--hero-p, 0) * -60px))" } as React.CSSProperties;
 const fadeIn = { opacity: "clamp(0, calc((var(--hero-p, 0) - 0.42) * 3.4), 1)", transform: "translateY(calc((1 - clamp(0, calc((var(--hero-p, 0) - 0.42) * 3.4), 1)) * 40px))" } as React.CSSProperties;
@@ -144,11 +145,14 @@ export type HeroImage = {
 export function Hero({
   section,
   full,
+  glow,
   image,
   children,
 }: {
   section: HeroSection;
   full?: boolean;
+  /** Soft pools of colour behind the heading, on the page's own white or black, with our character (Home). */
+  glow?: boolean;
   /** Shows the hero as one picture card filling the first screen, with the text on it. */
   image?: HeroImage;
   children?: React.ReactNode;
@@ -276,10 +280,12 @@ export function Hero({
   return (
     <div
       className={cn(
-        "-mt-[var(--header-h)] bg-band pt-[calc(var(--header-h)+clamp(64px,calc(3.14vw+52px),112px))]",
+        "-mt-[var(--header-h)] pt-[calc(var(--header-h)+clamp(64px,calc(3.14vw+52px),112px))]",
+        glow ? "relative isolate bg-page" : "bg-band",
         children ? "pb-[clamp(40px,calc(2.3vw+31.4px),76px)]" : "pb-[clamp(104px,calc(7.07vw+77.6px),196px)]",
       )}
     >
+      {glow && <HeroGlow />}
       <GiantHeading
         as="h1"
         label={section.label}
@@ -296,6 +302,11 @@ export function Hero({
           </ButtonLink>
         )}
       </GiantHeading>
+      {glow && (
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-[100svh] min-h-[560px]">
+          <HeroCharacter className="pointer-events-auto right-[clamp(14px,8vw,130px)] bottom-[clamp(100px,8svh,120px)] [--w:clamp(92px,min(10.5vw,18svh),160px)]" />
+        </div>
+      )}
       {children && <div className="mt-[clamp(48px,calc(2.88vw+37.2px),92px)]">{children}</div>}
     </div>
   );
