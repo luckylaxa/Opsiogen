@@ -96,7 +96,7 @@
     }
   }
   [data-theme="dark"],
-  body:has(.hero-picture) .site-header,
+  body:has(.hero-picture-dark) .site-header,
   .on-dark {
     --gradient-hover: linear-gradient(#45e0a8, #45e0a8);
     --icon-hover: #45e0a8;
@@ -113,7 +113,7 @@
    * dark cards and the menu.
    */
   [data-theme="dark"],
-  body:has(.hero-picture) .site-header {
+  body:has(.hero-picture-dark) .site-header {
     --color-page: #0a090d;
     --color-band: #121115;
     --color-field: #1b1a1e;
@@ -485,17 +485,21 @@ html.project-open {
 }
 
 /*
- * Home: the header lies over the hero picture (Hero.tsx), so there it is clear and
- * takes the dark theme's colours in both themes: light logo and text, see-through search.
+ * Home: the header lies over the hero picture (Hero.tsx), so there it is clear with a
+ * see-through search field. Over a picture with a day and a night version it follows the
+ * theme; over a night picture alone (.hero-picture-dark) it takes the dark theme's colours
+ * in both themes: light logo and text.
  */
 body:has(.hero-picture) .site-header {
-  --color-search: rgb(10 9 13 / 0.45);
+  --color-search: color-mix(in srgb, var(--color-page) 45%, transparent);
+}
+body:has(.hero-picture-dark) .site-header {
   color: var(--color-ink);
 }
-body:has(.hero-picture) .site-header .logo-on-light {
+body:has(.hero-picture-dark) .site-header .logo-on-light {
   display: none;
 }
-body:has(.hero-picture) .site-header .logo-on-dark {
+body:has(.hero-picture-dark) .site-header .logo-on-dark {
   display: block;
 }
 

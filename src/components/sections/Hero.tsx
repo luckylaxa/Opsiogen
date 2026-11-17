@@ -11,6 +11,11 @@ import { cn } from "@/lib/utils";
 export type HeroImage = {
   image: Img;
   phone?: Omit<Img, "alt" | "hotspot">;
+  /**
+   * A daytime version for the light theme; `image` is then the dark theme's night version,
+   * and the words and the header over the picture follow the theme.
+   */
+  day?: { image: Img; phone?: Omit<Img, "alt" | "hotspot"> };
   eyebrow?: string;
   wordmark?: string;
   scrollHint?: string;
@@ -40,17 +45,43 @@ export function Hero({
 }) {
   if (image) {
     const label = image.eyebrow ?? section.label;
+    const day = image.day;
+    // With a day version the words take the theme's ink (dark by day, light by night);
+    // with the night picture alone they are always white.
+    const soft = day ? "text-ink/80" : "text-white/80";
+    const wash = day ? "from-page/60" : "from-black/60";
+    const washLow = day ? "from-page/80" : "from-black/75";
     return (
       <>
         {/* The picture fills the first screen and runs up under the clear header. */}
-        <div className="hero-picture on-dark relative -mt-[var(--header-h)] h-[100svh] min-h-[560px] overflow-hidden bg-night text-white">
-          <Media image={image.image} phone={image.phone} sizes="100vw" priority />
-          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-black/60 to-transparent" />
-          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/75 to-transparent" />
+        <div
+          className={cn(
+            "hero-picture relative -mt-[var(--header-h)] h-[100svh] min-h-[560px] overflow-hidden",
+            day ? "bg-band text-ink" : "hero-picture-dark on-dark bg-night text-white",
+          )}
+        >
+          {day ? (
+            <>
+              {/* Night is the main image (dark is the default theme); day loads only when the light theme shows it. */}
+              <div className="absolute inset-0 hidden dark:block">
+                <Media image={image.image} phone={image.phone} sizes="100vw" priority />
+              </div>
+              <div className="absolute inset-0 dark:hidden">
+                <Media image={day.image} phone={day.phone} sizes="100vw" />
+              </div>
+            </>
+          ) : (
+            <Media image={image.image} phone={image.phone} sizes="100vw" priority />
+          )}
+          <div aria-hidden="true" className={cn("pointer-events-none absolute inset-x-0 top-0 h-48 bg-gradient-to-b to-transparent", wash)} />
+          <div aria-hidden="true" className={cn("pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t to-transparent", washLow)} />
           {image.wordmark && (
             <p
               aria-hidden="true"
-              className="pointer-events-none absolute inset-x-0 top-[calc(var(--header-h)+2vh)] hidden text-center text-[length:15vw] leading-none font-bold tracking-[-0.02em] text-white/[0.13] uppercase select-none md:block"
+              className={cn(
+                "pointer-events-none absolute inset-x-0 top-[calc(var(--header-h)+2vh)] hidden text-center text-[length:15vw] leading-none font-bold tracking-[-0.02em] uppercase select-none md:block",
+                day ? "text-white/40 dark:text-white/[0.13]" : "text-white/[0.13]",
+              )}
             >
               {image.wordmark}
             </p>
@@ -59,34 +90,41 @@ export function Hero({
           <div
             className="absolute inset-x-0 top-[calc(var(--header-h)+12px)] p-[clamp(20px,calc(2.6vw+10px),48px)] md:top-auto md:right-auto md:bottom-0 md:max-w-[min(38vw,560px)]"
           >
-            {label && <p className="mb-[clamp(12px,1.2vw,20px)] text-[13px] tracking-[0.2em] text-white/80 uppercase">{label}</p>}
+            {label && <p className={cn("mb-[clamp(12px,1.2vw,20px)] text-[13px] tracking-[0.2em] uppercase", soft)}>{label}</p>}
             <h1 className="max-w-[13ch] text-[length:clamp(31px,calc(2.2vw+13px),52px)] leading-[1] font-bold tracking-[-0.02em] uppercase">
               {section.heading}
             </h1>
-            {section.text && <p className="mt-4 max-w-[38ch] text-lead text-white/85">{section.text}</p>}
+            {section.text && <p className={cn("mt-4 max-w-[38ch] text-lead", day ? "text-ink/85" : "text-white/85")}>{section.text}</p>}
           </div>
           {image.scrollHint && (
             <p
               aria-hidden="true"
-              className="absolute bottom-[112px] left-1/2 hidden -translate-x-1/2 text-center text-[11px] tracking-[0.24em] text-white/80 uppercase md:block"
+              className={cn("absolute bottom-[112px] left-1/2 hidden -translate-x-1/2 text-center text-[11px] tracking-[0.24em] uppercase md:block", soft)}
             >
               {image.scrollHint}
-              <span className="relative mx-auto mt-2.5 block h-[34px] w-[22px] rounded-[12px] border-[1.5px] border-white after:absolute after:top-[7px] after:left-1/2 after:h-[7px] after:w-[3px] after:-translate-x-1/2 after:rounded-[2px] after:bg-white" />
+              <span
+                className={cn(
+                  "relative mx-auto mt-2.5 block h-[34px] w-[22px] rounded-[12px] border-[1.5px] after:absolute after:top-[7px] after:left-1/2 after:h-[7px] after:w-[3px] after:-translate-x-1/2 after:rounded-[2px]",
+                  day ? "border-ink after:bg-ink" : "border-white after:bg-white",
+                )}
+              />
             </p>
           )}
           {/* Note and buttons: above the floating bar on phones, bottom right on larger screens. */}
           <div
             className="absolute inset-x-0 bottom-[92px] flex flex-col items-start gap-3 p-[clamp(20px,calc(2.6vw+10px),48px)] md:right-0 md:bottom-0 md:left-auto md:items-end"
           >
-            {image.note && <p className="max-w-[30ch] text-[13px] leading-[1.35] text-white/75 md:text-right">{image.note}</p>}
+            {image.note && (
+              <p className={cn("max-w-[30ch] text-[13px] leading-[1.35] md:text-right", day ? "text-ink/75" : "text-white/75")}>{image.note}</p>
+            )}
             <div className="flex flex-wrap gap-3">
               {section.button?.href && section.button.label && (
-                <ButtonLink href={section.button.href} variant="light">
+                <ButtonLink href={section.button.href} variant={day ? "dark" : "light"}>
                   {section.button.label}
                 </ButtonLink>
               )}
               {image.secondButton && (
-                <ButtonLink href={image.secondButton.href} variant="outline-light">
+                <ButtonLink href={image.secondButton.href} variant={day ? "outline" : "outline-light"}>
                   {image.secondButton.label}
                 </ButtonLink>
               )}
@@ -95,7 +133,13 @@ export function Hero({
           {image.stops && (
             <div aria-hidden="true" className="absolute top-1/2 right-[clamp(14px,1.6vw,30px)] hidden -translate-y-1/2 gap-3.5 md:grid">
               {Array.from({ length: image.stops }, (_, i) => (
-                <span key={i} className={cn("block size-[7px] rounded-full", i === 0 ? "bg-white ring-4 ring-white/20" : "bg-white/35")} />
+                <span
+                  key={i}
+                  className={cn(
+                    "block size-[7px] rounded-full",
+                    i === 0 ? (day ? "bg-ink ring-4 ring-ink/20" : "bg-white ring-4 ring-white/20") : day ? "bg-ink/35" : "bg-white/35",
+                  )}
+                />
               ))}
             </div>
           )}

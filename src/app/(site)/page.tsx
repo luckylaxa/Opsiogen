@@ -15,6 +15,11 @@ const HERO_IMAGE = {
     alt: "An imagined glass studio on a still lake at dusk, with a glowing rainbow ribbon ring inside",
   },
   phone: { url: "/home/hero-phone.jpg", width: 1000, height: 1440 },
+  // Light theme: the same studio by day.
+  day: {
+    image: { url: "/home/hero-day.jpg", width: 2560, height: 1440, alt: "An imagined glass studio on a misty lake in morning light, with a rainbow ribbon ring inside" },
+    phone: { url: "/home/hero-day-phone.jpg", width: 1000, height: 1440 },
+  },
   eyebrow: "Our AI studio",
   wordmark: "Opsiogen",
   scrollHint: "Scroll to explore",
