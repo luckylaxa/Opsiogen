@@ -22,7 +22,7 @@ const vars = (p: string[]) => Object.fromEntries(p.map((c, i) => [`--c${i + 1}`,
 
 /**
  * The Home hero's background light: soft pools of colour rising from the bottom of the first screen, on the
- * page's own white or black. They lean a little toward the pointer, and each press on the character
+ * page's own white or black, and thinning out behind the section that follows. They lean a little toward the pointer, and each press on the character
  * (a `hero:pulse` event) sends a ring of new colour out from it and turns the pools to the next colour set.
  * Only transforms and opacity move, so nothing is repainted while it plays.
  */
@@ -74,9 +74,15 @@ export function HeroGlow() {
   }, []);
 
   return (
-    <div ref={root} aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[100svh] min-h-[560px] overflow-hidden">
+    <div
+      ref={root}
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[150svh] min-h-[840px] overflow-hidden"
+      // The light runs on behind the next section and thins out slowly, so there is no edge where it stops.
+      style={{ maskImage: "linear-gradient(to bottom, #000 0%, #000 46%, rgb(0 0 0 / 0.55) 66%, rgb(0 0 0 / 0.18) 84%, transparent 100%)", WebkitMaskImage: "linear-gradient(to bottom, #000 0%, #000 46%, rgb(0 0 0 / 0.55) 66%, rgb(0 0 0 / 0.18) 84%, transparent 100%)" }}
+    >
       {[0, 1].map((k) => (
-        <div key={k} data-layer style={{ ...vars(PALETTES[0]), opacity: k === 0 ? 1 : 0 }} className="absolute inset-0 transition-opacity duration-[1200ms] ease-out">
+        <div key={k} data-layer style={{ ...vars(PALETTES[0]), opacity: k === 0 ? 1 : 0 }} className="absolute inset-x-0 top-0 h-[100svh] min-h-[560px] transition-opacity duration-[1200ms] ease-out">
           {BLOBS.map((b) => (
             <span
               key={b.n}
@@ -92,8 +98,6 @@ export function HeroGlow() {
         </div>
       ))}
       <span data-burst className="absolute aspect-square w-[150vmax] rounded-full opacity-0 will-change-transform dark:mix-blend-screen" style={{ transform: "translate(-50%,-50%) scale(0.08)" }} />
-      {/* The pools fade into the page at the very bottom, so the next section starts clean. */}
-      <div className="absolute inset-x-0 bottom-0 h-[14%] bg-gradient-to-t from-page to-transparent" />
     </div>
   );
 }
