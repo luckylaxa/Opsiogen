@@ -2,7 +2,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap">
 <style>
-  /* Layout: one pinned first screen. The world fills it; the sphere character is drawn live on top,
+  /* Layout: one pinned first screen. The world fills it; the character (the owner's artwork) sits on top,
      looks ahead while the page moves and turns to the visitor when it stops. One look, sunlit. */
   :root {
     --page: #0a090d;
@@ -37,14 +37,13 @@
   .go { display: inline-block; margin-top: clamp(18px, 3vh, 36px); background: var(--ink); color: var(--page); border-radius: 8px; padding: 0.8em 1.3em; font-weight: 500; font-size: clamp(15px, 1.2vw, 18px); text-decoration: none; }
   .go:focus-visible { outline: 2px solid #d8ff3e; outline-offset: 3px; }
 
-  /* the character: trail, soft shadow, and the live-drawn sphere */
+  /* the character: trail, soft shadow, and the owner's artwork */
   .orb { position: absolute; z-index: 4; left: 27%; top: 56%; width: clamp(150px, 25vw, 400px); aspect-ratio: 1; transform: translate(-50%, -50%); will-change: transform; }
-  .orb canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-  .ground { position: absolute; left: 16%; right: 16%; bottom: -24%; height: 13%; border-radius: 50%; background: rgb(10 14 30 / 0.5); filter: blur(16px); }
-  .aura { position: absolute; inset: -22%; border-radius: 50%; background: radial-gradient(circle, rgb(70 225 255 / 0.34) 30%, rgb(70 225 255 / 0.12) 52%, rgb(70 225 255 / 0) 70%); will-change: opacity, transform; }
-  .ground { background: rgb(0 110 140 / 0.42); left: 10%; right: 10%; height: 15%; filter: blur(20px); }
+  .orb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block; will-change: opacity, transform; }
+  .ground { position: absolute; left: 8%; right: 8%; bottom: -17%; height: 17%; border-radius: 50%; filter: blur(18px);
+    background: radial-gradient(ellipse at 42% 50%, rgb(40 110 255 / 0.62), rgb(150 70 255 / 0.5) 45%, rgb(255 80 170 / 0.28) 62%, rgb(255 80 170 / 0) 76%); }
   .trail { position: absolute; z-index: 3; left: 27%; top: 56%; width: 80vw; height: clamp(120px, 20vw, 330px); transform-origin: 100% 50%; transform: translate(-100%, -50%) rotate(-16deg); opacity: 0; pointer-events: none; filter: blur(14px);
-    background: linear-gradient(180deg, rgb(255 60 60 / 0), #ff5a3c 12%, #ffb400 26%, #d8fa01 40%, #01f14c 54%, #00ecfd 68%, #9b1cf0 84%, rgb(155 28 240 / 0));
+    background: linear-gradient(180deg, rgb(0 230 255 / 0), #19d8ff 14%, #2f7bff 34%, #8a3cff 54%, #ff3ea5 74%, #ff8a1e 90%, rgb(255 138 30 / 0));
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 55%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 55%, #000 92%, transparent); }
 
   .foot { position: absolute; z-index: 5; inset: auto 0 0; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding: 0 clamp(16px, 3.4vw, 65px) max(22px, env(safe-area-inset-bottom, 0px)); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--soft); }
@@ -78,7 +77,12 @@
     </div>
 
     <div class="trail" id="trail"></div>
-    <div class="orb" id="orb" aria-hidden="true"><div class="ground"></div><div class="aura" id="aura"></div><canvas id="ball" width="640" height="640"></canvas></div>
+    <div class="orb" id="orb" aria-hidden="true">
+      <div class="ground"></div>
+      <img id="vBack" src="img/back.webp" alt="">
+      <img id="vTurn" src="img/three-quarter.webp" alt="">
+      <img id="vFront" src="img/front.webp" alt="">
+    </div>
 
     <div class="words">
       <p class="pill">AI-first design and digital company</p>
@@ -100,88 +104,15 @@
 
 <script>
 (function () {
-  var canvas = document.getElementById("ball"), orb = document.getElementById("orb"), aura = document.getElementById("aura"), trail = document.getElementById("trail"),
-      world = document.getElementById("world"), rays = document.getElementById("rays");
+  // The character is the owner's artwork, unchanged: the front view faces the visitor, the back view looks at the road,
+  // and the three-quarter view is shown for a moment in between.
+  var orb = document.getElementById("orb"), trail = document.getElementById("trail"), world = document.getElementById("world"), rays = document.getElementById("rays"),
+      vFront = document.getElementById("vFront"), vTurn = document.getElementById("vTurn"), vBack = document.getElementById("vBack");
   var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var gl = canvas.getContext("webgl", { premultipliedAlpha: false, antialias: true });
-
-  var VS = "attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}";
-  var FS = [
-    "precision highp float;",
-    "uniform vec2 uRes; uniform float uYaw, uPitch, uTime, uBlink, uOpen; uniform vec2 uLook; uniform sampler2D uEnv;",
-    "vec3 hue(float h){ return clamp(abs(mod(h*6.+vec3(0.,4.,2.),6.)-3.)-1.,0.,1.); }",
-    "void main(){",
-    "  vec2 p=(gl_FragCoord.xy-.5*uRes)/(.5*min(uRes.x,uRes.y)); float R=.94; float r=length(p)/R;",
-    "  if(r>1.){ gl_FragColor=vec4(0.); return; }",
-    "  vec3 n=vec3(p/R, sqrt(max(0.,1.-r*r)));",                      // surface normal, z toward the viewer
-    "  vec3 d=vec3(sin(uYaw)*cos(uPitch), sin(uPitch), cos(uYaw)*cos(uPitch));",   // where the eye points
-    "  vec3 rt=normalize(cross(vec3(0.,1.,0.),d)), up=cross(d,rt);",
-    "  float c=dot(n,d), ang=acos(clamp(c,-1.,1.));",
-    "  vec3 refl=reflect(vec3(0.,0.,-1.),n);",
-    "  vec3 env=texture2D(uEnv, vec2(.5+refl.x*.42, .5-refl.y*.42)).rgb;",
-    "  vec3 L=normalize(vec3(-.42,.72,.55)); float lam=dot(n,L);",
-    "  float fres=pow(1.-n.z,2.4); float E=.64;",                                   // E: the eye's size on the shell
-    "  vec3 GL=vec3(.25,.9,1.);",                                                   // the glow: a clear cyan
-    // a smooth, unmarked body: bright where the light falls, a soft cool grey-blue where it turns away
-    "  vec3 shell=mix(vec3(.60,.70,.80), vec3(.985,.99,1.), smoothstep(-.35,.95,lam));",
-    "  shell=mix(shell, vec3(.58,.72,.84), smoothstep(.15,-1.,n.y)*.42);",
-    "  shell=mix(shell, env*1.05, .03+.22*fres);",                                   // a faint reflection of the place it is in
-    "  vec3 H=normalize(L+vec3(0.,0.,1.)); float sp=max(0.,dot(n,H));",
-    "  shell+=vec3(1.)*(smoothstep(.34,.0,length(n.xy-vec2(-.34,.46)))*.13+pow(sp,90.)*.5);",   // a wide soft sheen and one small glint
-    "  shell=mix(shell, vec3(.90,.96,1.), smoothstep(.78,1.,r)*.28);",              // the glossy edge, with no line in it
-    "  shell+=GL*smoothstep(.5,1.,r)*smoothstep(.35,-.75,n.x*.8+n.y*.6)*.20;",       // cyan light wrapping the lower left edge
-    "  shell+=GL*exp(-pow((ang-E-.10)/.13,2.))*.13;",                                // and a breath of it on the body beside the eye
-    "  vec3 col=shell;",
-    "  col=mix(col, vec3(.035,.05,.065)+env*.10, smoothstep(E+.11,E+.085,ang));",    // a thick dark rim round the eye
-    // the eye: a dark glass dome with instrument light deep inside
-    "  vec3 glass=vec3(.008,.035,.05)+env*(.05+.30*fres);",
-    "  vec2 e=vec2(dot(n,rt),dot(n,up))/sin(E); float ed=length(e);",               // inside the eye: 0 centre, 1 edge
-    "  vec2 c2=e-uLook*.9; float cd=length(c2), ca=atan(c2.y,c2.x);",               // the instrument turns toward what it looks at
-    "  glass+=GL*exp(-pow(cd/.62,2.))*.20;",                                         // a soft pool of light
-    "  glass+=GL*smoothstep(.014,.0,abs(cd-.78))*.30;",
-    "  glass+=GL*smoothstep(.010,.0,abs(cd-.52))*step(.3,fract(ca*3.5+uTime*.06))*.45;",
-    "  glass+=GL*smoothstep(.008,.0,abs(cd-.30))*.4;",
-    "  glass+=GL*smoothstep(.016,.0,abs(fract(ca*2.86)-.5)*cd)*step(.60,cd)*step(cd,.72)*.35;",   // ticks
-    "  float arc=smoothstep(.055,.02,abs(cd-.40))*smoothstep(.45,.95,cos(ca+.25-sin(uTime*.5)*.5));",
-    "  glass+=mix(GL,vec3(1.),.55)*arc*1.25;",                                       // the bright crescent
-    "  glass+=GL*(smoothstep(.05,.0,length(c2-vec2(-.34,-.26)))+smoothstep(.035,.0,length(c2-vec2(.12,.5)))+smoothstep(.03,.0,length(c2-vec2(-.5,.22))))*.9;",   // small lights
-    "  float S=.07+uOpen*.02+.006*sin(uTime*1.6);",
-    "  glass+=GL*exp(-pow(cd/(S*2.4),2.))*.7+vec3(1.)*smoothstep(S,S*.5,cd);",       // the pupil
-    "  glass+=vec3(1.)*(smoothstep(.30,.0,length(e-vec2(-.34,.46)))*.34+smoothstep(.06,.0,length(e-vec2(.36,-.4)))*.4);",   // reflections on the dome
-    "  glass+=vec3(1.)*pow(sp,160.)*.9;",
-    "  float lid=smoothstep(0.,.03, abs(dot(n,up))-(1.-uBlink)*sin(E)*1.02);",      // the lids, for a blink
-    "  glass=mix(glass, shell*.93, lid);",
-    "  col=mix(col, glass, smoothstep(E+.012,E-.012,ang));",
-    "  float a=smoothstep(1.,.985,r);",
-    "  gl_FragColor=vec4(col,a);",
-    "}"].join("\n");
-
-  var prog, U = {}, ready = false;
-  if (gl) {
-    var sh = function (t, src) { var s = gl.createShader(t); gl.shaderSource(s, src); gl.compileShader(s); return s; };
-    prog = gl.createProgram(); gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(prog);
-    if (gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-      gl.useProgram(prog);
-      var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-      var loc = gl.getAttribLocation(prog, "a"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-      ["uRes", "uYaw", "uPitch", "uTime", "uBlink", "uOpen", "uLook", "uEnv"].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
-      gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-      var tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([150, 190, 235, 255]));
-      var im = new Image(); im.onload = function () {
-        gl.bindTexture(gl.TEXTURE_2D, tex); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, im);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-      }; im.src = "img/env.jpg";
-      ready = true;
-    }
-  }
-
-  // state
-  var AHEAD = 1.74;                      // eye turned into the scene: only its edge shows
-  var yaw = still ? 0 : 0, pitch = 0, speed = 0, lastY = window.scrollY, lastMove = -1e9, look = [0, 0], want = [0, 0], open = 0, blinkAt = 2.5, blink = 0;
+  var turn = 0, speed = 0, lastY = window.scrollY, lastMove = -1e9, want = [0, 0], lean = [0, 0];
   window.addEventListener("scroll", function () { var y = window.scrollY; speed += Math.min(60, Math.abs(y - lastY)); lastY = y; lastMove = performance.now(); }, { passive: true });
   window.addEventListener("pointermove", function (e) { var r = orb.getBoundingClientRect(); want = [(e.clientX - (r.left + r.width / 2)) / window.innerWidth, (e.clientY - (r.top + r.height / 2)) / window.innerHeight]; }, { passive: true });
+  function clamp(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
 
   var prev = performance.now();
   function frame(now) {
@@ -189,27 +120,16 @@
     var moving = !still && now - lastMove < 260;
     speed *= Math.pow(0.02, dt);                                        // eases off after the last scroll
     var v = still ? 0 : Math.min(1, speed / 90);
-    var ty = moving ? AHEAD : want[0] * 0.55, tp = moving ? 0.05 : -want[1] * 0.45;
-    yaw += (ty - yaw) * (1 - Math.pow(0.0012, dt)); pitch += (tp - pitch) * (1 - Math.pow(0.002, dt));
-    var lx = Math.max(-0.3, Math.min(0.3, want[0] * 0.9)), ly = Math.max(-0.3, Math.min(0.3, -want[1] * 0.9));
-    look[0] += ((moving ? 0 : lx) - look[0]) * 0.12; look[1] += ((moving ? 0 : ly) - look[1]) * 0.12;
-    open += ((moving ? 0 : 1) - open) * 0.06;                            // the pupil opens a little when it turns to you
-    if (!moving && t > blinkAt) { blink = 1; blinkAt = t + 2.6 + Math.random() * 3; }
-    blink = Math.max(0, blink - dt * 7);
-    var bob = still ? 0 : Math.sin(t * 1.7) * 6, lean = v * 10;
-    orb.style.transform = "translate(-50%,-50%) translate(" + (lean * 0.6).toFixed(1) + "px," + (bob - lean * 0.3).toFixed(1) + "px) rotate(" + (v * -4).toFixed(2) + "deg)";
+    turn += ((moving ? 1 : 0) - turn) * (1 - Math.pow(0.0006, dt));     // 0 faces the visitor, 1 looks ahead
+    vFront.style.opacity = (1 - clamp(turn / 0.5)).toFixed(3);
+    vTurn.style.opacity = (turn < 0.5 ? 1 : 1 - clamp((turn - 0.5) / 0.5)).toFixed(3);
+    vBack.style.opacity = turn >= 0.5 ? "1" : "0";
+    lean[0] += ((moving ? 0 : want[0]) - lean[0]) * 0.08; lean[1] += ((moving ? 0 : want[1]) - lean[1]) * 0.08;   // it leans a little toward the pointer
+    var bob = still ? 0 : Math.sin(t * 1.7) * 6, push = v * 10, squash = 1 - 0.08 * Math.sin(Math.PI * turn);
+    orb.style.transform = "translate(-50%,-50%) translate(" + (push * 0.6 + lean[0] * 22).toFixed(1) + "px," + (bob - push * 0.3 + lean[1] * 14).toFixed(1) + "px) rotate(" + (v * -4 + lean[0] * 7).toFixed(2) + "deg) scaleX(" + squash.toFixed(3) + ")";
     trail.style.opacity = (v * 0.9).toFixed(3);
-    aura.style.opacity = (0.75 + 0.25 * Math.sin(t * 1.3) + v * 0.4).toFixed(3); aura.style.transform = "scale(" + (1 + v * 0.12).toFixed(3) + ")";
     world.style.transform = "scale(" + (1 + v * 0.07).toFixed(4) + ")";
     rays.style.opacity = (v * 0.4).toFixed(3); rays.style.transform = "scale(" + (1 + ((t * 1.4) % 1) * 0.25).toFixed(3) + ")";
-    if (ready) {
-      var w = canvas.clientWidth * Math.min(2, window.devicePixelRatio || 1) | 0;
-      if (canvas.width !== w && w > 0) { canvas.width = w; canvas.height = w; }
-      gl.viewport(0, 0, canvas.width, canvas.height); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
-      gl.uniform2f(U.uRes, canvas.width, canvas.height); gl.uniform1f(U.uYaw, yaw); gl.uniform1f(U.uPitch, pitch); gl.uniform1f(U.uTime, t);
-      gl.uniform1f(U.uBlink, Math.sin(Math.min(1, blink) * Math.PI)); gl.uniform2f(U.uLook, look[0], look[1]); gl.uniform1f(U.uOpen, open); gl.uniform1i(U.uEnv, 0);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    }
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
