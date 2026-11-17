@@ -2,13 +2,13 @@
 
 import { useEffect, useRef } from "react";
 
-/** The light trail: a fan of rainbow light pouring from its back while it flies fast, widening toward the visitor. */
+/** The light trail: streaks of rainbow light pouring straight out of its back (the side away from its eye) while it flies fast, like speed lines. */
 const TRAIL: React.CSSProperties = {
   background:
-    "linear-gradient(180deg, #ff5fb4 0%, #b667ff 15%, #5a7dff 29%, #35d4ff 43%, #4be58a 56%, #ffe14d 69%, #ff9a3c 82%, #ff5fa8 100%)",
-  maskImage: "linear-gradient(270deg, #000 0%, #000 55%, rgb(0 0 0 / 0.55) 100%)",
-  WebkitMaskImage: "linear-gradient(270deg, #000 0%, #000 55%, rgb(0 0 0 / 0.55) 100%)",
-  clipPath: "polygon(100% 41%, 0 0, 0 100%, 100% 59%)",
+    "repeating-linear-gradient(180deg, rgb(255 255 255 / 0.2) 0 1.2%, transparent 1.2% 5.5%), linear-gradient(180deg, #ff5fb4 0%, #b667ff 15%, #5a7dff 29%, #35d4ff 43%, #4be58a 56%, #ffe14d 69%, #ff9a3c 82%, #ff5fa8 100%)",
+  maskImage: "linear-gradient(270deg, #000 0%, rgb(0 0 0 / 0.8) 40%, rgb(0 0 0 / 0.12) 100%)",
+  WebkitMaskImage: "linear-gradient(270deg, #000 0%, rgb(0 0 0 / 0.8) 40%, rgb(0 0 0 / 0.12) 100%)",
+  clipPath: "polygon(100% 33%, 0 0, 0 100%, 100% 67%)",
   transformOrigin: "100% 50%",
 };
 
@@ -177,7 +177,7 @@ export function HeroCharacter() {
       cleanup = () => { window.removeEventListener("resize", fit); gl.dispose(); };
 
       // A quick, springy turn: it follows the pointer at once and settles without wobbling.
-      const AWAY = 2.25;                                                     // turned to fly off into the scene, its back to the visitor
+      const AWAY = 1.2;                                                      // turned side-on to fly off to the right, so its back (where the trail comes from) is on the left
       let yaw = 0, yawV = 0, pitch = 0, pitchV = 0, lean = [0, 0], grow = 0, flyX = 0, prev = performance.now();
       const frame = (now: number) => {
         if (stop) return;
@@ -190,8 +190,8 @@ export function HeroCharacter() {
         if (hover) lookAt(hover); else if (shown) lookAt(shown); else if (now - lastMove > 6000) want = [0, 0];
         const follow = 1 - Math.pow(1e-7, dt);
         lean = [lean[0] + (want[0] - lean[0]) * follow, lean[1] + (want[1] - lean[1]) * follow];
-        const aimY = (1 - away) * lean[0] * 0.8 + away * AWAY, aimX = (1 - away) * lean[1] * 0.5 + away * 0.05;
-        const k = 140, c = 2 * Math.sqrt(k) * 0.95;
+        const aimY = (1 - away) * lean[0] * 0.95 + away * AWAY, aimX = (1 - away) * lean[1] * 0.55 + away * 0.05;
+        const k = 420, c = 2 * Math.sqrt(k) * 0.95;
         yawV += ((aimY - yaw) * k - yawV * c) * dt; yaw += yawV * dt; pitchV += ((aimX - pitch) * k - pitchV * c) * dt; pitch += pitchV * dt;
         const since = t - hello, s = clamp(since / 0.55, 0, 1), twirl = since < 0.55 && !reduce ? s * s * (3 - 2 * s) * Math.PI * 2 : 0;
         if (since > 0.6 && since < 0.65) blink = 1;
@@ -200,19 +200,19 @@ export function HeroCharacter() {
         const ph = 1 - blink, dim = blink <= 0 ? 0 : ph < 0.3 ? ph / 0.3 : ph < 0.5 ? 1 : Math.max(0, 1 - (ph - 0.5) / 0.12);
         const fl = blink > 0 && ph > 0.55 ? Math.sin(((ph - 0.55) / 0.45) * Math.PI) : 0;
         grow += ((over && away < 0.1 ? 1 : 0) - grow) * (1 - Math.pow(0.0001, dt));
-        // It flies into the scene and we follow close behind: it draws a little ahead while the picture moves toward us.
+        // It flies off to the right across the scene, eye first, while the picture moves toward us a little.
         flyX += (progress - flyX) * (1 - Math.pow(0.0005, dt));
-        const fx = 0, fy = -flyX * window.innerHeight * 0.04, fs = 1 - flyX * 0.3;
+        const fx = flyX * window.innerWidth * 0.3, fy = -flyX * window.innerHeight * 0.05, fs = 1 - flyX * 0.25;
         const bob = reduce ? 0 : Math.sin(t * 1.7) * 5, hop = since < 0.45 ? -Math.sin((since / 0.45) * Math.PI) * 18 : 0;
-        el.style.transform = `translate(${(fx + lean[0] * 10 * (1 - away)).toFixed(1)}px,${(fy + bob + hop + lean[1] * 6 * (1 - away)).toFixed(1)}px) scale(${((1 + grow * 0.06) * fs).toFixed(3)})`;
+        el.style.transform = `translate(${(fx + lean[0] * 30 * (1 - away)).toFixed(1)}px,${(fy + bob + hop + lean[1] * 18 * (1 - away)).toFixed(1)}px) scale(${((1 + grow * 0.06) * fs).toFixed(3)})`;
         // The trail shows only while it flies fast, longer the faster it goes. It keeps its size as the character shrinks.
-        tr.style.opacity = (clamp((v - 0.08) / 0.4, 0, 1) * clamp(away * 3, 0, 1) * 0.92).toFixed(3);
-        tr.style.transform = `translateY(-50%) rotate(-56deg) scale(${((0.55 + v * 0.5) / fs).toFixed(3)},${((0.85 + v * 0.2) / fs).toFixed(3)})`;
+        tr.style.opacity = (clamp((v - 0.08) / 0.4, 0, 1) * clamp(away * 3, 0, 1) * 0.85).toFixed(3);
+        tr.style.transform = `translateY(-50%) rotate(-17deg) scale(${((0.6 + v * 0.45) / fs).toFixed(3)},${((0.9 + v * 0.15) / fs).toFixed(3)})`;
         // The pool of light on the ground: it stays put while the character bobs and hops above it, and breathes a little.
-        const lift = (bob + hop) / Math.max(1, el.offsetWidth);
+        const lift = (bob + hop) / Math.max(1, size);
         gw.style.opacity = (0.86 - Math.min(0.3, -hop / 60) + (reduce ? 0 : Math.sin(t * 1.7) * 0.06)).toFixed(3);
         gw.style.transform = `translateY(${(-(bob + hop)).toFixed(1)}px) scale(${(1 + lift * 0.6).toFixed(3)})`;
-        for (const r of rush) r.style.opacity = (clamp((v - 0.05) / 0.5, 0, 1) * 0.55).toFixed(3);
+        for (const r of rush) r.style.opacity = (clamp((v - 0.05) / 0.5, 0, 1) * 0.4).toFixed(3);
         fit();
         pivot.rotation.y = yaw + twirl; pivot.rotation.x = pitch; pivot.rotation.z = -lean[0] * 0.08 * (1 - away) - away * 0.1;
         if (hud && hudMat) {
@@ -249,10 +249,10 @@ export function HeroCharacter() {
       ref={box}
       type="button"
       aria-label="Our character. Press to hear what we do here."
-      className="absolute top-[calc(59%-var(--w)/2)] left-[calc(50%-var(--w)/2)] block aspect-square w-[var(--w)] cursor-pointer rounded-full outline-offset-4 will-change-transform [--w:clamp(150px,46vw,230px)] [-webkit-tap-highlight-color:transparent] md:top-[calc(53%-var(--w)/2)] md:left-[calc(40%-var(--w)/2)] md:[--w:clamp(240px,min(27vw,44svh),460px)]"
+      className="absolute top-[calc(60%-var(--w)/2)] left-[calc(50%-var(--w)/2)] block aspect-square w-[var(--w)] cursor-pointer rounded-full outline-offset-4 will-change-transform [--w:clamp(150px,46vw,230px)] [-webkit-tap-highlight-color:transparent] md:top-[calc(37%-var(--w)/2)] md:left-[calc(45%-var(--w)/2)] md:[--w:clamp(200px,min(20vw,34svh),340px)]"
     >
-      {/* The trail starts at its back and fans out down and to the left, toward the visitor. */}
-      <span ref={trail} aria-hidden="true" className="pointer-events-none absolute top-1/2 right-1/2 -z-10 h-[210%] w-[min(95vw,1300px)] opacity-0 blur-[clamp(6px,0.8vw,14px)]" style={TRAIL} />
+      {/* The trail starts behind its back and streams away to the left and a little down, widening as it goes. */}
+      <span ref={trail} aria-hidden="true" className="pointer-events-none absolute top-1/2 right-1/2 -z-10 h-[150%] w-[min(85vw,1200px)] opacity-0 blur-[clamp(8px,1vw,18px)]" style={TRAIL} />
       <span ref={glow} aria-hidden="true" className="pointer-events-none absolute top-[88%] left-[-5%] -z-10 h-[34%] w-[110%] opacity-85 blur-[clamp(6px,0.7vw,12px)]" style={GLOW} />
       {/* Its own little screen: what a press on it shows (and, on phones, what it shows by itself). */}
       <span ref={note} aria-live="polite" className="pointer-events-none absolute top-[108%] left-1/2 block w-[min(76vw,260px)] -translate-x-1/2 overflow-hidden rounded-[10px] border border-white/20 bg-[rgb(10_12_22/0.88)] px-3.5 pt-3 pb-3 text-left opacity-0 shadow-[0_12px_40px_rgb(0_0_0/0.45)] transition-opacity duration-200 md:top-auto md:bottom-[100%]">

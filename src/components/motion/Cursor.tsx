@@ -56,8 +56,8 @@ export function Cursor() {
     let shown = false;
 
     const loop = () => {
-      x += (tx - x) * 0.2;
-      y += (ty - y) * 0.2;
+      x += (tx - x) * 0.5;
+      y += (ty - y) * 0.5;
       node.style.transform = `translate3d(${x}px, ${y}px, 0)`;
       raf = Math.abs(tx - x) + Math.abs(ty - y) > 0.1 ? requestAnimationFrame(loop) : 0;
     };

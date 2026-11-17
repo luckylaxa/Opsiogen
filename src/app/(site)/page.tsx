@@ -12,20 +12,22 @@ export function generateMetadata() {
  */
 const HERO_IMAGE = {
   image: {
-    url: "/home/hero-brand.jpg",
+    url: "/home/hero-launch.jpg",
     width: 2560,
-    height: 1440,
-    alt: "A newly branded café terrace on a sunny seaside promenade",
+    height: 1432,
+    alt: "A green electric coupe on a show stand by the marina at night, under the brand's wall, banner and counter",
   },
-  phone: { url: "/home/hero-brand-phone.jpg", width: 1000, height: 1440 },
+  phone: { url: "/home/hero-launch-phone.jpg", width: 1000, height: 1440 },
+  // The launch of a car brand we made up to show our work: it is ours, not a client.
+  caption: "Vaelo is a concept brand we designed to show our work.",
   character: true,
   // Points on the brand items in the picture (left and top as a share of the wide picture).
   spots: [
-    { x: 16.4, y: 18, title: "Logo", text: "A mark made to work on a sign, a cup and a screen." },
-    { x: 24.5, y: 15.5, title: "Shopfront", text: "One colour and one look across the whole place." },
-    { x: 27.3, y: 35, title: "Outdoor", text: "Parasols, awnings and signs that carry the brand outside." },
-    { x: 12, y: 64.6, title: "Print", text: "Menus, brochures and cards, designed and ready to print.", side: "up" as const },
-    { x: 8.6, y: 68.4, title: "Packaging", text: "The same brand on every cup and bag.", side: "down" as const },
+    { x: 64.7, y: 15.7, title: "Logo", text: "A name and a mark people know at a glance." },
+    { x: 80, y: 27, title: "Event stand", text: "The wall, the lights and the counter, all in one look.", side: "left" as const },
+    { x: 92.8, y: 33, title: "Print", text: "Banners, brochures and posters, designed and ready to print.", side: "left" as const },
+    { x: 32.4, y: 54.7, title: "Badge", text: "The mark made into a badge for the car itself." },
+    { x: 13, y: 58, title: "Launch day", text: "Invitations, the welcome desk and every detail in the brand." },
   ],
   after: "Brand, websites and apps, print, automation, social and video. All in one place.",
 };

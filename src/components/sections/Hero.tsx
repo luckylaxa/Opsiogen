@@ -9,9 +9,9 @@ const fadeOut = { opacity: "clamp(0, calc(1 - var(--hero-p, 0) * 3.2), 1)", tran
 const fadeIn = { opacity: "clamp(0, calc((var(--hero-p, 0) - 0.42) * 3.4), 1)", transform: "translateY(calc((1 - clamp(0, calc((var(--hero-p, 0) - 0.42) * 3.4), 1)) * 40px))" } as React.CSSProperties;
 
 /** The scene grows toward its far end as the visitor scrolls, as if we follow the character into it. */
-const dolly = (extra: number) => ({ transform: `scale(calc((1 + var(--hero-p, 0) * 0.6) * ${extra}))`, transformOrigin: "56% 57%" }) as React.CSSProperties;
+const dolly = (extra: number) => ({ transform: `scale(calc((1 + var(--hero-p, 0) * 0.22) * ${extra}))`, transformOrigin: "50% 55%" }) as React.CSSProperties;
 const spotsFade = { opacity: "clamp(0, calc(1 - var(--hero-p, 0) * 6), 1)" } as React.CSSProperties;
-const rushMask = "radial-gradient(ellipse 46% 44% at 56% 57%, transparent 30%, #000 100%)";
+const rushMask = "radial-gradient(ellipse 46% 44% at 50% 55%, transparent 62%, #000 100%)";
 
 /**
  * Home: the first stop of the journey holds still for a short scroll. Our character floats in the middle, large,
@@ -21,7 +21,7 @@ const rushMask = "radial-gradient(ellipse 46% 44% at 56% 57%, transparent 30%, #
  * and one line about what we do takes its place. Then the page carries on.
  */
 function HeroJourney({ section, image, children }: { section: HeroSection; image: HeroImage; children?: React.ReactNode }) {
-  const words = "absolute inset-x-0 top-[calc(var(--header-h)+5svh)] px-gutter md:top-0 md:left-auto md:flex md:h-full md:w-[47vw] md:items-center";
+  const words = "absolute inset-x-0 top-[calc(var(--header-h)+5svh)] px-gutter md:top-0 md:top-[calc(var(--header-h)+4svh)] md:right-auto md:w-[40vw]";
   return (
     <>
       <div data-hero-stage className="hero-picture hero-picture-dark on-dark relative -mt-[var(--header-h)] h-[220svh] bg-night text-white">
@@ -45,7 +45,8 @@ function HeroJourney({ section, image, children }: { section: HeroSection; image
                     <span aria-hidden="true" className="absolute inset-[14px] rounded-full bg-white shadow-[0_0_0_3px_rgb(0_0_0/0.25),0_2px_10px_rgb(0_0_0/0.4)] transition-transform duration-200 group-hover:scale-125" />
                     <span
                       className={cn(
-                        "pointer-events-none absolute left-[calc(100%+2px)] block w-[clamp(200px,17vw,260px)] origin-left scale-90 overflow-hidden rounded-[10px] border border-white/20 bg-[rgb(10_12_22/0.88)] px-3.5 pt-3 pb-3 text-left opacity-0 shadow-[0_12px_40px_rgb(0_0_0/0.45)] transition duration-200 group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100 group-data-[on]:scale-100 group-data-[on]:opacity-100",
+                        "pointer-events-none absolute block w-[clamp(200px,17vw,260px)] scale-90 overflow-hidden rounded-[10px] border border-white/20 bg-[rgb(10_12_22/0.88)] px-3.5 pt-3 pb-3 text-left opacity-0 shadow-[0_12px_40px_rgb(0_0_0/0.45)] transition duration-200 group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100 group-data-[on]:scale-100 group-data-[on]:opacity-100",
+                        spot.side === "left" ? "right-[calc(100%+2px)] origin-right" : "left-[calc(100%+2px)] origin-left",
                         spot.side === "up" ? "bottom-1/2" : spot.side === "down" ? "top-1/2" : "top-1/2 -translate-y-1/2",
                       )}
                     >
@@ -70,14 +71,14 @@ function HeroJourney({ section, image, children }: { section: HeroSection; image
               style={{ ...dolly(k), maskImage: rushMask, WebkitMaskImage: rushMask }}
             />
           ))}
-          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[55%] bg-gradient-to-b from-black/60 via-black/25 to-transparent md:h-40 md:from-black/45 md:via-transparent" />
-          <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 hidden w-[60%] bg-gradient-to-l from-black/65 via-black/30 to-transparent md:block" />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[60%] bg-gradient-to-b from-black/80 via-black/50 to-transparent md:h-40 md:from-black/45 md:via-transparent" />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-0 hidden w-[48%] bg-gradient-to-r from-black/60 via-black/25 to-transparent md:block" />
           <div className={words}>
             <div style={fadeOut} className="flex flex-col items-center text-center md:items-start md:text-left">
               {section.label && (
                 <p className="mb-[clamp(14px,1.4vw,22px)] rounded-[4px] border border-white/40 px-[0.6em] py-[0.15em] text-[clamp(13px,1vw,16px)]">{section.label}</p>
               )}
-              <h1 className="max-w-[19ch] text-[length:clamp(30px,8.4vw,44px)] leading-[0.98] font-bold tracking-[-0.02em] uppercase [text-shadow:0_2px_30px_rgb(0_0_0/0.3)] md:text-[length:clamp(34px,min(3.2vw,6.2svh),60px)]">
+              <h1 className="max-w-[19ch] text-[length:clamp(30px,8.4vw,44px)] leading-[0.98] font-bold tracking-[-0.02em] uppercase [text-shadow:0_2px_30px_rgb(0_0_0/0.3)] md:text-[length:clamp(30px,min(2.7vw,5.4svh),52px)]">
                 {section.heading}
               </h1>
               {section.button?.href && section.button.label && (
@@ -89,10 +90,13 @@ function HeroJourney({ section, image, children }: { section: HeroSection; image
           </div>
           {image.after && (
             <div className={`pointer-events-none ${words}`}>
-              <p style={fadeIn} className="mx-auto max-w-[19ch] text-center text-[length:clamp(28px,7.6vw,40px)] leading-[1.04] font-bold tracking-[-0.02em] text-balance [text-shadow:0_2px_30px_rgb(0_0_0/0.3)] md:mx-0 md:text-left md:text-[length:clamp(34px,min(3.3vw,6.2svh),60px)]">
+              <p style={fadeIn} className="mx-auto max-w-[19ch] text-center text-[length:clamp(28px,7.6vw,40px)] leading-[1.04] font-bold tracking-[-0.02em] text-balance [text-shadow:0_2px_30px_rgb(0_0_0/0.3)] md:mx-0 md:text-left md:text-[length:clamp(30px,min(2.7vw,5.4svh),52px)]">
                 {image.after}
               </p>
             </div>
+          )}
+          {image.caption && (
+            <p style={spotsFade} className="pointer-events-none absolute right-gutter bottom-[96px] max-w-[60vw] text-right text-[12px] text-white/75 md:bottom-6 md:text-[13px]">{image.caption}</p>
           )}
           <HeroCharacter />
         </div>
@@ -124,7 +128,9 @@ export type HeroImage = {
   /** Our character flies in the picture and turns to look at the visitor. */
   character?: boolean;
   /** With the character: points in the picture it looks at and explains in a few words, when the pointer goes to them. */
-  spots?: { x: number; y: number; title: string; text: string; side?: "up" | "down" }[];
+  spots?: { x: number; y: number; title: string; text: string; side?: "up" | "down" | "left" }[];
+  /** With the character: one small line that says whose brand the picture shows. */
+  caption?: string;
   /** With the character: the line that fades in once the heading has gone. */
   after?: string;
 };
