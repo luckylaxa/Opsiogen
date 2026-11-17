@@ -12,12 +12,12 @@ export function generateMetadata() {
  */
 const HERO_IMAGE = {
   image: {
-    url: "/home/hero-road.jpg",
+    url: "/home/hero-brand.jpg",
     width: 2560,
     height: 1440,
-    alt: "An empty coast road winding along sea cliffs toward the rising sun",
+    alt: "A newly branded café terrace on a sunny seaside promenade",
   },
-  phone: { url: "/home/hero-road-phone.jpg", width: 1000, height: 1440 },
+  phone: { url: "/home/hero-brand-phone.jpg", width: 1000, height: 1440 },
   character: true,
   after: "Brand, websites and apps, print, automation, social and video. All in one place.",
 };

@@ -1,0 +1,21 @@
+▲ Next.js 16.4.3 (Turbopack)
+- Local:         http://localhost:3311
+- Network:       http://192.0.2.2:3311
+✓ Ready in 352ms
+✓ Running next.config.ts took 36ms
+⨯ The following page files do not match any complete route:
+- src/app/(studio)/studio/[[...tool]]/page.tsx
+
+Every page must be part of at least one complete route. Add matching pages or default files for the sibling parallel route slots, or remove the unreachable pages.
+⚠ Strict route matching is enabled by default. This validation indicates a bug in your app's route structure, but you can temporarily restore loose route matching by setting `deprecated.looseRouteMatching` to `true` in your Next.js config.
+- Experiments (use with caution):
+  · serverActions
+
+⚠ Your version of Next.js is affected by a known security vulnerability. This command is continuing after the upgrade reminder.
+Reference: https://registry.npmjs.org/-/npm/v1/security/advisories/bulk
+○ Compiling / ...
+ GET / 200 in 734ms (next.js: 304ms, application-code: 430ms)
+ GET / 200 in 210ms (next.js: 2ms, application-code: 207ms)
+ GET / 200 in 174ms (next.js: 1.7ms, application-code: 172ms)
+ GET / 200 in 156ms (next.js: 1.7ms, application-code: 154ms)
+ GET / 200 in 156ms (next.js: 3ms, application-code: 153ms)

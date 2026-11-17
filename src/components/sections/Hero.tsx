@@ -19,23 +19,23 @@ function HeroJourney({ section, image, children }: { section: HeroSection; image
       <div data-hero-stage className="hero-picture hero-picture-dark on-dark relative -mt-[var(--header-h)] h-[190svh] bg-night text-white">
         <div className="sticky top-0 h-[100svh] min-h-[560px] overflow-hidden">
           <Media image={image.image} phone={image.phone} sizes="100vw" priority />
-          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-black/50 to-transparent" />
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_45%_at_50%_42%,rgb(0_0_0/0.38),transparent_75%)]" />
-          <div style={fadeOut} className="absolute inset-x-0 top-[calc(var(--header-h)+6svh)] flex flex-col items-center px-gutter text-center md:top-[calc(var(--header-h)+9svh)]">
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[55%] bg-gradient-to-b from-black/55 via-black/25 to-transparent" />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_62%_38%_at_50%_30%,rgb(0_0_0/0.34),transparent_75%)]" />
+          <div style={fadeOut} className="absolute inset-x-0 top-[calc(var(--header-h)+6svh)] flex flex-col items-center px-gutter text-center md:top-[calc(var(--header-h)+5svh)]">
             {section.label && (
-              <p className="mb-[clamp(16px,2.2vw,32px)] rounded-[4px] border border-white/40 px-[0.6em] py-[0.15em] text-[clamp(13px,1.1vw,17px)]">{section.label}</p>
+              <p className="mb-[clamp(14px,1.6vw,24px)] rounded-[4px] border border-white/40 px-[0.6em] py-[0.15em] text-[clamp(13px,1.1vw,17px)]">{section.label}</p>
             )}
-            <h1 className="max-w-[14ch] text-[length:clamp(38px,min(7.4vw,12svh),124px)] leading-[0.95] font-bold tracking-[-0.02em] text-balance uppercase [text-shadow:0_2px_30px_rgb(0_0_0/0.25)]">
+            <h1 className="max-w-[24ch] text-[length:clamp(32px,min(5.9vw,10svh),100px)] leading-[0.95] font-bold tracking-[-0.02em] text-balance uppercase [text-shadow:0_2px_30px_rgb(0_0_0/0.25)]">
               {section.heading}
             </h1>
             {section.button?.href && section.button.label && (
-              <ButtonLink href={section.button.href} variant="light" className="mt-[clamp(22px,3svh,40px)]">
+              <ButtonLink href={section.button.href} variant="light" className="mt-[clamp(18px,2.6svh,32px)]">
                 {section.button.label}
               </ButtonLink>
             )}
           </div>
           {image.after && (
-            <p style={fadeIn} className="pointer-events-none absolute inset-x-0 top-[calc(var(--header-h)+10svh)] mx-auto max-w-[22ch] px-gutter text-center text-[length:clamp(30px,min(4.6vw,8svh),76px)] leading-[1.02] font-bold tracking-[-0.02em] text-balance [text-shadow:0_2px_30px_rgb(0_0_0/0.3)]">
+            <p style={fadeIn} className="pointer-events-none absolute inset-x-0 top-[calc(var(--header-h)+6svh)] mx-auto max-w-[24ch] px-gutter text-center text-[length:clamp(30px,min(4.6vw,8svh),76px)] leading-[1.02] font-bold tracking-[-0.02em] text-balance [text-shadow:0_2px_30px_rgb(0_0_0/0.3)]">
               {image.after}
             </p>
           )}
