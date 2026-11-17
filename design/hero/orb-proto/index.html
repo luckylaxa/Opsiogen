@@ -42,7 +42,7 @@
   .orb canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
   .ground { position: absolute; left: 16%; right: 16%; bottom: -24%; height: 13%; border-radius: 50%; background: rgb(10 14 30 / 0.5); filter: blur(16px); }
   .aura { position: absolute; inset: -22%; border-radius: 50%; background: radial-gradient(circle, rgb(70 225 255 / 0.34) 30%, rgb(70 225 255 / 0.12) 52%, rgb(70 225 255 / 0) 70%); will-change: opacity, transform; }
-  .ground { background: rgb(6 40 58 / 0.5); }
+  .ground { background: rgb(0 110 140 / 0.42); left: 10%; right: 10%; height: 15%; filter: blur(20px); }
   .trail { position: absolute; z-index: 3; left: 27%; top: 56%; width: 80vw; height: clamp(120px, 20vw, 330px); transform-origin: 100% 50%; transform: translate(-100%, -50%) rotate(-16deg); opacity: 0; pointer-events: none; filter: blur(14px);
     background: linear-gradient(180deg, rgb(255 60 60 / 0), #ff5a3c 12%, #ffb400 26%, #d8fa01 40%, #01f14c 54%, #00ecfd 68%, #9b1cf0 84%, rgb(155 28 240 / 0));
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 55%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 55%, #000 92%, transparent); }
@@ -119,34 +119,20 @@
     "  float c=dot(n,d), ang=acos(clamp(c,-1.,1.));",
     "  vec3 refl=reflect(vec3(0.,0.,-1.),n);",
     "  vec3 env=texture2D(uEnv, vec2(.5+refl.x*.42, .5-refl.y*.42)).rgb;",
-    "  vec3 L=normalize(vec3(-.42,.72,.55)); float lam=max(0.,dot(n,L));",
+    "  vec3 L=normalize(vec3(-.42,.72,.55)); float lam=dot(n,L);",
     "  float fres=pow(1.-n.z,2.4); float E=.64;",                                   // E: the eye's size on the shell
     "  vec3 GL=vec3(.25,.9,1.);",                                                   // the glow: a clear cyan
-    // a bright ceramic body: soft light, cool shade underneath, a faint reflection of the place it is in
-    "  vec3 shell=mix(vec3(.70,.80,.90), vec3(.985,.99,1.), .42+.58*lam);",
-    "  shell=mix(shell, vec3(.62,.76,.88), smoothstep(.1,-.9,n.y)*.45);",
-    "  shell=mix(shell, env*1.05, .03+.26*fres);",
+    // a smooth, unmarked body: bright where the light falls, a soft cool grey-blue where it turns away
+    "  vec3 shell=mix(vec3(.60,.70,.80), vec3(.985,.99,1.), smoothstep(-.35,.95,lam));",
+    "  shell=mix(shell, vec3(.58,.72,.84), smoothstep(.15,-1.,n.y)*.42);",
+    "  shell=mix(shell, env*1.05, .03+.22*fres);",                                   // a faint reflection of the place it is in
     "  vec3 H=normalize(L+vec3(0.,0.,1.)); float sp=max(0.,dot(n,H));",
-    "  shell+=vec3(1.)*(pow(sp,10.)*.16+pow(sp,90.)*.7);",                           // a wide soft sheen and a sharp glint
-    // a clear outer coat: a bright rim with a thin inner edge, as if the body sits inside glass
-    "  shell=mix(shell, vec3(.80,.90,.97), smoothstep(.90,.93,r)*smoothstep(.975,.95,r)*.55);",
-    "  shell=mix(shell, vec3(1.), smoothstep(.955,.985,r)*.5);",
-    "  shell+=GL*smoothstep(.72,1.,r)*smoothstep(.25,-.6,n.x+n.y*.2)*.16;",          // cyan light catching the left edge
-    // the seam round the middle: a dark gap with light inside it
-    "  vec3 m=normalize(up+d*.08); float s=dot(n,m)+.03; float lon=atan(dot(n,rt),dot(n,d));",
-    "  vec3 lit=mix(GL, hue(lon/6.2832+.62), .28);",                                 // mostly cyan, shading gently through our logo's colours
-    "  float dash=smoothstep(.30,.36,fract(lon*2.2+uTime*.04))*smoothstep(.95,.89,fract(lon*2.2+uTime*.04));",
-    "  shell+=lit*smoothstep(.085,.0,abs(s))*.20*(.4+.6*dash);",                     // the glow that spills out of the gap
-    "  shell=mix(shell, vec3(.05,.07,.09), smoothstep(.021,.014,abs(s)));",          // the gap
-    "  shell=mix(shell, lit*1.5+.15, smoothstep(.010,.004,abs(s))*dash);",            // the lit segments inside
-    // one sweeping panel line low on the body, and a faint glowing meridian on the far side
-    "  vec3 ax=normalize(rt*-.70+up*-.62+d*.36); float pl=abs(acos(clamp(dot(n,ax),-1.,1.))-.62);",
-    "  shell=mix(shell, vec3(.05,.07,.09), smoothstep(.017,.008,pl)*.92);",
-    "  float mer=abs(dot(n,normalize(rt*.86+d*.5)));",
-    "  shell+=GL*(smoothstep(.05,.0,mer)*.12+smoothstep(.008,.0,mer)*.5)*smoothstep(-.1,.3,-dot(n,d));",
+    "  shell+=vec3(1.)*(smoothstep(.34,.0,length(n.xy-vec2(-.34,.46)))*.13+pow(sp,90.)*.5);",   // a wide soft sheen and one small glint
+    "  shell=mix(shell, vec3(.90,.96,1.), smoothstep(.78,1.,r)*.28);",              // the glossy edge, with no line in it
+    "  shell+=GL*smoothstep(.5,1.,r)*smoothstep(.35,-.75,n.x*.8+n.y*.6)*.20;",       // cyan light wrapping the lower left edge
+    "  shell+=GL*exp(-pow((ang-E-.10)/.13,2.))*.13;",                                // and a breath of it on the body beside the eye
     "  vec3 col=shell;",
     "  col=mix(col, vec3(.035,.05,.065)+env*.10, smoothstep(E+.11,E+.085,ang));",    // a thick dark rim round the eye
-    "  col+=GL*smoothstep(E+.16,E+.10,ang)*smoothstep(E+.085,E+.11,ang)*.10;",       // a breath of cyan on the body beside it
     // the eye: a dark glass dome with instrument light deep inside
     "  vec3 glass=vec3(.008,.035,.05)+env*(.05+.30*fres);",
     "  vec2 e=vec2(dot(n,rt),dot(n,up))/sin(E); float ed=length(e);",               // inside the eye: 0 centre, 1 edge
