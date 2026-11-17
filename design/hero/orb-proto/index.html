@@ -41,11 +41,11 @@
   /* the character: its ribbon, the glow underneath, and the owner's artwork turned smoothly */
   .orb { position: absolute; z-index: 4; left: 27%; top: 56%; width: clamp(170px, 27vw, 430px); aspect-ratio: 1; transform: translate(-50%, -50%); will-change: transform; cursor: pointer; border-radius: 50%; touch-action: manipulation; }
   .orb canvas, .orb img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-  .ground { position: absolute; left: 12%; right: 12%; bottom: -9%; height: 15%; border-radius: 50%; filter: blur(18px);
+  .ground { position: absolute; left: 6%; right: 6%; bottom: -10%; height: 16%; border-radius: 50%; filter: blur(22px); mix-blend-mode: screen;
     background: radial-gradient(ellipse at 42% 50%, rgb(40 110 255 / 0.7), rgb(150 70 255 / 0.55) 45%, rgb(255 80 170 / 0.3) 62%, rgb(255 80 170 / 0) 76%); will-change: opacity, transform; }
-  .trail { position: absolute; z-index: 3; left: 27%; top: 56%; width: 80vw; height: clamp(110px, 18vw, 300px); transform-origin: 100% 50%; transform: translate(-100%, -50%) rotate(-14deg); opacity: 0; pointer-events: none; filter: blur(14px);
+  .trail { position: absolute; z-index: 3; left: 27%; top: 56%; width: 62vw; height: clamp(110px, 18vw, 300px); transform-origin: 100% 50%; transform: translate(-100%, -50%) rotate(-14deg); opacity: 0; pointer-events: none; filter: blur(26px); mix-blend-mode: screen;
     background: linear-gradient(180deg, rgb(0 230 255 / 0), #19d8ff 14%, #2f7bff 34%, #8a3cff 54%, #ff3ea5 74%, #ff8a1e 90%, rgb(255 138 30 / 0));
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 55%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 55%, #000 92%, transparent); }
+    -webkit-mask-image: radial-gradient(ellipse 100% 62% at 100% 50%, #000 0%, rgb(0 0 0 / 0.55) 34%, transparent 74%); mask-image: radial-gradient(ellipse 100% 62% at 100% 50%, #000 0%, rgb(0 0 0 / 0.55) 34%, transparent 74%); }
 
   .foot { position: absolute; z-index: 5; inset: auto 0 0; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding: 0 clamp(16px, 3.4vw, 65px) max(22px, env(safe-area-inset-bottom, 0px)); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--soft); }
 
@@ -116,14 +116,16 @@
     "  float c=cos(uYaw), s=sin(uYaw);",
     "  vec3 o=vec3(dot(n,vec3(c,0.,s)), n.y, dot(n,vec3(-s,0.,c)));",               // the same point on the character itself
     "  float q=uYaw/1.5708;",                                                       // 0 front, 1 side, 2 back
-    "  float wF=clamp(1.-abs(q),0.,1.)*smoothstep(0.,.3,o.z);",
-    "  float wS=clamp(1.-abs(q-1.),0.,1.)*smoothstep(0.,.3,o.x);",
-    "  float wB=clamp(q-1.,0.,1.)*smoothstep(0.,.3,-o.z);",
+    "  float gF=clamp(1.-abs(q),0.,1.), gS=clamp(1.-abs(q-1.),0.,1.), gB=clamp(q-1.,0.,1.);",   // how close the pose is to each of the three views
+    "  float tF=.5*(1.-gF), tS=.5*(1.-gS), tB=.5*(1.-gB);",                         // away from its own pose a view gives only its middle, never its rim
+    "  float wF=gF*smoothstep(tF,tF+mix(.34,.1,gF),o.z), wS=gS*smoothstep(tS,tS+mix(.34,.1,gS),o.x), wB=gB*smoothstep(tB,tB+mix(.34,.1,gB),-o.z);",   // joined softly, so no line shows where two views meet
     "  float rho=length(o.xy);",
     "  vec2 fo=o.xy-uLook*(1.-smoothstep(.24,.50,rho))*step(0.,o.z);",              // the light inside the eye slides toward what it looks at
     "  vec3 cF=texture2D(uF,.5+.42*fo).rgb, cS=texture2D(uS,.5+.42*vec2(-o.z,o.y)).rgb, cB=texture2D(uB,.5+.42*vec2(-o.x,o.y)).rgb;",
+    "  float fF=pow(max(o.z,0.),3.)+.0005, fS=pow(abs(o.x),3.)+.0005, fB=pow(max(-o.z,0.),3.)+.0005;",
+    "  vec3 fill=(cF*fF+cS*fS+cB*fB)/(fF+fS+fB);",                                  // every part of the body has something to show, so no patches
     "  float w=wF+wS+wB;",
-    "  vec3 col=mix(vec3(.93,.945,.965), (cF*wF+cS*wS+cB*wB)/max(w,.0001), smoothstep(0.,.12,w));",
+    "  vec3 col=mix(fill, (cF*wF+cS*wS+cB*wB)/max(w,.0001), smoothstep(0.,.5,w));",
     "  float edge=(1.-uBlink)*.56;",                                                // the lids, closing over the eye
     "  float span=sqrt(max(0.,1.-o.x*o.x/.3136));",                                 // the lids follow the round of the eye
     "  float lid=step(0.,o.z)*smoothstep(.565,.545,rho)*smoothstep(0.,.03,abs(o.y)-edge*span);",
@@ -174,7 +176,7 @@
     speed *= Math.pow(0.02, dt); var v = still ? 0 : Math.min(1, speed / 90);
     var since = t - hello, wiggle = since < 1.1 ? Math.sin(since * 13) * 0.5 * (1 - since / 1.1) : 0;       // a tap: it shakes its head and blinks twice
     if (since > 0.28 && since < 0.32) blink = 1;
-    var target = moving ? Math.PI : clamp(-want[0] * 0.9, -0.42, 0.42) + wiggle;                              // looks ahead while moving, else toward the pointer
+    var target = moving ? Math.PI : clamp(-want[0] * 0.7, -0.3, 0.3) + wiggle;                              // looks ahead while moving, else toward the pointer
     yaw += (target - yaw) * (1 - Math.pow(0.004, dt));
     if (typeof window.__testYaw === "number") yaw = window.__testYaw;                                          // for checking a pose
     var lx = moving ? 0 : clamp(want[0] * 0.5, -0.1, 0.1), ly = moving ? 0 : clamp(-want[1] * 0.5, -0.1, 0.1);
@@ -187,9 +189,9 @@
     var bob = still ? 0 : Math.sin(t * 1.7) * 6, push = v * 10, hop = since < 0.5 ? -Math.sin(since / 0.5 * Math.PI) * 14 : 0;
     orb.style.transform = "translate(-50%,-50%) translate(" + (push * 0.6).toFixed(1) + "px," + (bob - push * 0.3 + hop).toFixed(1) + "px) rotate(" + (v * -4 + (moving ? 0 : want[1] * -6)).toFixed(2) + "deg) scale(" + (1 + grow * 0.06).toFixed(3) + ")";
     ground.style.opacity = (0.8 + grow * 0.2 + 0.1 * Math.sin(t * 1.3)).toFixed(3); ground.style.transform = "scale(" + (1 + grow * 0.18 - hop * 0.004).toFixed(3) + ")";
-    trail.style.opacity = (v * 0.9).toFixed(3);
+    trail.style.opacity = (v * 0.7).toFixed(3);
     world.style.transform = "scale(" + (1 + v * 0.06).toFixed(4) + ")";
-    rays.style.opacity = (v * 0.38).toFixed(3); rays.style.transform = "scale(" + (1 + ((t * 1.4) % 1) * 0.25).toFixed(3) + ")";
+    rays.style.opacity = (v * 0.2).toFixed(3); rays.style.transform = "scale(" + (1 + ((t * 1.4) % 1) * 0.25).toFixed(3) + ")";
     if (ready) {
       var w = canvas.clientWidth * Math.min(2, window.devicePixelRatio || 1) | 0;
       if (canvas.width !== w && w > 0) { canvas.width = w; canvas.height = w; }
