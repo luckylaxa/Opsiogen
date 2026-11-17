@@ -4,53 +4,53 @@ E = html.escape
 OPEN, LEG, STOP, END = 0.6, 0.6, 0.8, 0.6            # length of each part, in screens of scroll (desktop)
 stops = [
  dict(n=1, name="Brand", place="Coast road, early morning", sky="#ffd9a8,#9fd0f5",
-  see="We catch up with a rider on a Torvi road bike, in Torvi kit. The camera rides along behind her and to one side.",
-  char="Flies beside the rider with its eye on her. When the visitor stops scrolling it turns to face them.",
+  see="An electric supercar comes up the coast road, low and wide. The camera runs beside it. As the character's light passes over the car, the badge, the name across the tail and the light blade come alive.",
+  char="Flies beside the car with its eye on it. When the visitor stops scrolling it turns to face them.",
   head="A brand people know at a glance.", line="Name, logo, colours and voice, made to work everywhere your customers meet you.",
   btn=[("Brand services", "/services/ai-brand-services")],
-  marks="The bike frame, the jersey and the bottle. Each lights up with a short label: Logo, Colours, Kit design.",
-  swing="A few degrees only. A person on a bike cannot be turned freely, so the view shifts gently with the pointer.",
-  make="One picture of the rider from behind. Brand marks come from the Torvi designs we already have."),
+  marks="The badge on the nose, the name across the tail and the light blade. Each lights up with a short label: Logo, Name, Light signature.",
+  swing="About a third of a circle round the car, from the nose to the tail.",
+  make="One picture of the empty road. The car is our own 3D model, placed on it."),
  dict(n=2, name="Websites and apps", place="Café terrace, mid-morning", sky="#9fd0f5,#cfe8fb",
-  see="A customer at a terrace table orders from the Torvi shop on a laptop. A phone beside the cup shows the Torvi app.",
+  see="A customer at a terrace table builds their car on a laptop. A phone beside the cup shows the owner's app: charge, range and unlock. The car itself is parked across the street.",
   char="Hovers over the table and looks at the laptop screen, then at the phone.",
   head="Websites and apps that take the order.", line="Designed and built to be easy on every screen, from the first tap to the thank-you page.",
   btn=[("Websites", "/services/ai-websites"), ("Product and apps", "/services/ai-mvps-business-apps")],
-  marks="The laptop screen and the phone. On hover the screen brightens and the page scrolls slowly through our real design.",
+  marks="The laptop screen and the phone. On the laptop the visitor can change the car's colour and wheels themselves, and the parked car changes with it.",
   swing="About a third of a circle. The laptop and phone are real 3D objects, so the visitor can look round them.",
-  make="One picture of the terrace with the table clear. Laptop and phone built in 3D, with our website and app designs on their screens."),
+  make="One picture of the terrace with the table clear. Laptop and phone built in 3D, with our build-your-car page and app designs on their screens."),
  dict(n=3, name="Print", place="Waterfront, midday", sky="#cfe8fb,#eaf5ff",
-  see="An outdoor cycling show on the quay. The Torvi exhibition booth stands in the middle: back wall, counter, banner stands, brochures on the counter.",
-  char="Circles slowly in front of the booth and looks up at the back wall.",
-  head="Print that stops people walking past.", line="Booths, brochures and packaging, designed and made ready for the printer.",
+  see="An open-air motor show on the quay. The car stands on a low platform in front of the brand's back wall, with a counter, banner stands and brochures.",
+  char="Circles slowly in front of the stand and looks up at the back wall.",
+  head="Print that stops people walking past.", line="Stands, brochures and packaging, designed and made ready for the printer.",
   btn=[("Print and collateral", "/services/ai-print-collateral")],
-  marks="The booth and the brochure stack. This is the showpiece of the journey.",
-  swing="The widest of all: about two thirds of a circle round the booth, from the left banner to the right side of the counter.",
-  make="One picture of the quay with an empty pitch. The booth built in 3D from flat panels carrying our Torvi artwork."),
- dict(n=4, name="Automation", place="Workshop yard, afternoon", sky="#ffe2ae,#f7b98a",
-  see="A Torvi dispatch table in an open yard. An order arrives on a tablet, the label prints, the parcel's status changes, and nobody touches any of it. Behind, a mechanic works on a bike.",
-  char="Watches the order move from tablet to label to parcel, following it with its eye.",
-  head="The routine work runs by itself.", line="Orders, replies and reports handled automatically, so people do the work that needs people.",
+  marks="The stand and the brochure stack. This is the showpiece of the journey.",
+  swing="The widest of all: about two thirds of a circle round the stand and the car on it.",
+  make="One picture of the quay with an empty pitch. The stand built in 3D from flat panels carrying our artwork, with the 3D car on its platform."),
+ dict(n=4, name="Automation", place="Charging yard, afternoon", sky="#ffe2ae,#f7b98a",
+  see="An open charging yard with the car plugged in. On a screen beside the charger, test drives confirm themselves, a message reads Your car is ready, and the day's list fills in. Nobody touches any of it. Behind, a technician polishes a wheel.",
+  char="Watches each message go out, following it with its eye.",
+  head="The routine work runs by itself.", line="Bookings, replies and reports handled automatically, so people do the work that needs people.",
   btn=[("AI automation", "/services/ai-automation")],
-  marks="The tablet and the parcels. On hover the order plays through its three steps: Order received, Label printed, Customer told.",
-  swing="About a third of a circle round the table.",
-  make="One picture of the yard. Tablet, printer and parcels built in 3D; the order flow is a short screen animation we draw ourselves."),
+  marks="The charger screen and a phone on the bench. On hover the booking plays through its three steps: Test drive booked, Car prepared, Customer told.",
+  swing="About a third of a circle round the charger and the car.",
+  make="One picture of the yard. Charger and screen built in 3D; the booking flow is a short screen animation we draw ourselves."),
  dict(n=5, name="Social and marketing", place="City street, dusk", sky="#f08a6a,#5b4a9a",
-  see="A Torvi campaign on a lit bus shelter. Two people waiting see the same campaign on their phones.",
-  char="Looks at the poster, then glances at the nearest phone.",
+  see="The launch campaign on a lit billboard and a bus shelter. Two people waiting see the same campaign on their phones.",
+  char="Looks at the billboard, then glances at the nearest phone.",
   head="Seen on the street and in the feed.", line="Campaigns, posts and ads that bring the right people to you.",
   btn=[("Social media", "/services/ai-social-media-marketing"), ("Digital marketing", "/services/digital-marketing")],
   marks="The shelter poster and one phone. On hover the phone shows the post, then the ad, then the search result.",
   swing="About a third of a circle round the shelter.",
-  make="One picture of the street with a blank shelter. Poster panel and phone built in 3D with our campaign artwork."),
+  make="One picture of the street with a blank billboard and shelter. Poster panels and phone built in 3D with our campaign artwork, made from pictures of the 3D car."),
  dict(n=6, name="Video", place="City square, night", sky="#3a2f78,#12122e",
-  see="The Torvi launch film plays on a large public screen. A few people have stopped to watch.",
+  see="The unveiling. The launch film plays on a large public screen while the car sits under lights in the square, its light blade glowing. A crowd has gathered.",
   char="Faces the big screen; its glass eye picks up the film's light.",
   head="A film worth stopping for.", line="Scripts, shoots and edits for launches, ads and social.",
   btn=[("Video production", "/services/ai-video-production")],
-  marks="The screen. On hover the film plays, silent. A tap plays it larger.",
-  swing="About a third of a circle, so the screen is seen from the side as well.",
-  make="One picture of the square with a dark screen. A silent Torvi film of about ten seconds: free if cut from the other scenes' pictures, video credits if shot new."),
+  marks="The screen and the car. On hover the film plays, silent. A tap plays it larger.",
+  swing="About a third of a circle, so the screen and the car are seen from the side as well.",
+  make="One picture of the square with a dark screen. A silent launch film of about ten seconds, made by filming our own 3D car, so it needs no video credits."),
 ]
 legs = ["Along the coast", "Into town", "Down to the waterfront", "Along the quay", "Into the city as the light drops", "Through lit streets"]
 total = OPEN + 6 * (LEG + STOP) + END
@@ -89,9 +89,9 @@ for p in parts:
 {row("To make", E(s["make"]))}</dl></article>''')
     else:
         scenes.append(f'''<article class="scene"><header><span class="sky" style="background:linear-gradient(90deg,{p["sky"]})"></span><h3>End</h3><p class="where">Back on the coast road, night turning to dawn · scroll {rng(p)}</p></header><dl>
-{row("We see", "The road from the start, a day later. The sky warms as the last of the scroll runs out.")}
+{row("We see", "The road from the start, a day later. The car pulls away along the coast and its light blade fades into the dawn.")}
 {row("Character", "Turns to face the visitor and gives one slow blink.")}
-{row("Words", "<q class='big'>That was one brand. Yours next.</q> · button <q>Start a project</q> opens <code>/contact</code> · button <q>See our work</q> opens <code>/work</code> · small line <q>Need all of this every month? See the creative subscription.</q> opens <code>/services/ai-creative-subscription</code>")}
+{row("Words", "<q class='big'>That was one launch. Yours next.</q> · button <q>Start a project</q> opens <code>/contact</code> · button <q>See our work</q> opens <code>/work</code> · small line <q>Need all of this every month? See the creative subscription.</q> opens <code>/services/ai-creative-subscription</code>")}
 {row("Then", "The journey lets go and the rest of Home scrolls up as normal.")}</dl></article>''')
 
 page = f'''<title>Hero Journey Script</title>
@@ -161,14 +161,27 @@ page = f'''<title>Hero Journey Script</title>
 <div class="wrap">
   <section>
     <p class="eyebrow">Opsiogen Home hero · script and scene plan · 17 November 2026</p>
-    <h1>One brand, one day, six stops.</h1>
-    <p class="lead">The visitor scrolls and our character flies through one day in the life of a single brand, from sunrise on a coast road to a city square at night. At each stop it finds one kind of our work, out in the real world. Nothing of ours appears on the way between stops.</p>
+    <h1>One launch day, six stops.</h1>
+    <p class="lead">The visitor scrolls and our character flies through the launch day of a new electric supercar, from an empty coast road at sunrise to the unveiling in a city square at night. At each stop its light sweeps over something plain and one kind of our work appears. Nothing of ours shows on the way between stops.</p>
     <div class="facts">
-      <div><b>The brand</b>Torvi, our own cycle brand, at every stop. No client names needed.</div>
+      <div><b>The brand</b>Our own electric supercar, with a name we invent. No real car maker and no client is named.</div>
       <div><b>Length</b>About {total:.1f} screens of scroll on a desktop, about 8 on a phone.</div>
       <div><b>The character</b>The 3D model you approved, drawn live over every scene.</div>
       <div><b>Setting</b>Outdoors only. People in the pictures are AI-made.</div>
     </div>
+  </section>
+
+  <section>
+    <h2>The car</h2>
+    <p>An electric supercar of our own design: low, wide and sharp-edged, in the spirit of the great Italian wedge supercars without copying any of them.</p>
+    <ul class="plain">
+      <li><b>Shape.</b> A low wedge with a short nose, a long sloping glass canopy and wide rear shoulders. Hard creases and flat, faceted surfaces. Doors that open upward.</li>
+      <li><b>Body.</b> Pearl white gloss, like our character, over black lower parts.</li>
+      <li><b>Glass.</b> One dark canopy from the windscreen to the tail, echoing the character's eye.</li>
+      <li><b>Light.</b> A thin light blade across the nose and one across the full width of the tail. At speed the tail blade leaves a streak of light.</li>
+      <li><b>Wheels.</b> Large, closed, turbine-style, with a thin ring of light.</li>
+      <li><b>Name and badge.</b> Invented by us and checked against real car makers before use. No other maker's badge or signature details.</li>
+    </ul>
   </section>
 
   <section>
@@ -254,32 +267,35 @@ page = f'''<title>Hero Journey Script</title>
     <h2>What we have to make</h2>
     <div class="tbl"><table>
       <tr><th>Item</th><th>How many</th><th>How</th><th>Cost</th></tr>
-      <tr><td>Scene pictures</td><td class="num">7</td><td>Generated: the road, plus one per stop. Travel legs reuse them, so no extra pictures.</td><td class="num">About 1,330 to 1,575 image credits of about 2,010 left</td></tr>
-      <tr><td>3D objects</td><td class="num">5 sets</td><td>Built the same free way as the character: laptop and phone, booth, dispatch table, shelter and phone, big screen.</td><td>None</td></tr>
-      <tr><td>Artwork on the objects</td><td class="num">about 10</td><td>Torvi website, app, booth panels, brochure, poster, posts and ad, from designs we already have or draw ourselves.</td><td>None</td></tr>
-      <tr><td>Order flow animation</td><td class="num">1</td><td>Drawn by us for the tablet at stop 4.</td><td>None</td></tr>
-      <tr><td>Launch film</td><td class="num">1</td><td>Cut from the scene pictures, or shot new.</td><td>None, or video credits after a top-up</td></tr>
+      <tr><td>Car design sheet</td><td class="num">1</td><td>Generated: front, side, rear and three-quarter views of the car, for you to approve before anything is built.</td><td class="num">About 190 image credits</td></tr>
+      <tr><td>The car in 3D</td><td class="num">1</td><td>Built from the approved sheet the same free way as the character. Because it is one real model, the car is identical at every stop and can be turned and recoloured.</td><td>None if we build it; a paid image-to-3D tool is the fallback</td></tr>
+      <tr><td>Scene pictures</td><td class="num">7</td><td>Generated: the road, plus one per stop, all without the car. Travel legs reuse them, so no extra pictures.</td><td class="num">About 1,330 image credits</td></tr>
+      <tr><td>Other 3D objects</td><td class="num">5 sets</td><td>Built the same free way: laptop and phone, show stand, charger and screen, billboard, shelter and phone, big screen.</td><td>None</td></tr>
+      <tr><td>Artwork on the objects</td><td class="num">about 10</td><td>Logo, build-your-car page, app, stand panels, brochure, posters, posts and ad, drawn by us.</td><td>None</td></tr>
+      <tr><td>Booking flow animation</td><td class="num">1</td><td>Drawn by us for the charger screen at stop 4.</td><td>None</td></tr>
+      <tr><td>Launch film</td><td class="num">1</td><td>Filmed with our own 3D car.</td><td>None</td></tr>
       <tr><td>Travel clips</td><td class="num">6, optional</td><td>Real moving footage between stops instead of a push into the picture.</td><td>Video credits after a top-up</td></tr>
     </table></div>
-    <p class="mute">Credit figures are estimates from the prices quoted earlier: 190 a picture, or 433 where a picture must match the Torvi logo exactly. That leaves room for two or three retries.</p>
+    <p class="mute">Credit figures are estimates from the price quoted earlier, 190 a picture. About 1,520 in all of about 2,010 left, which leaves room for two retries.</p>
   </section>
 
   <section>
     <h2>Order of work</h2>
     <ol class="plain">
       <li><b>The journey in plain colours.</b> The full scroll with the real character, words, timings and buttons, on flat sky-coloured scenes. Free. You feel the pacing before anything is spent.</li>
-      <li><b>One stop for real: the booth.</b> One generated picture and the 3D booth. This proves that a 3D object sits believably in a photographed place.</li>
-      <li><b>The other five stops and the road.</b> Six more pictures and four sets of objects.</li>
+      <li><b>The car.</b> The design sheet for your approval, then the 3D model built from it and shown turning on a plain stage, as the character was.</li>
+      <li><b>One stop for real: the show stand.</b> One generated picture, the 3D stand and the car on it. This proves that 3D objects sit believably in a photographed place.</li>
+      <li><b>The other five stops and the road.</b> Six more pictures and the remaining objects.</li>
       <li><b>Phone pass.</b> Crops, sizes and touch at 390px.</li>
       <li><b>Into the site.</b> Slim the files, check PageSpeed on phone and desktop, then replace the glass-studio hero.</li>
     </ol>
-    <div class="note"><p><b>The one real risk.</b> A 3D object placed in a generated photo can look pasted on. Step 2 tests exactly that with the booth before more credits go out. If it does not hold up, the fallback is a generated picture of each object with a gentle shift of a few degrees instead of a full look-round.</p></div>
+    <div class="note"><p><b>Two real risks.</b> First, a car is far harder to model than our round character. Its sharp, flat surfaces help, but it is tested on a plain stage before any scene is made, and a paid image-to-3D tool is the fallback. Second, a 3D object placed in a generated photo can look pasted on. The show stand tests exactly that before more credits go out. If it does not hold up, the fallback is generated pictures with a gentle shift of a few degrees instead of a full look-round.</p></div>
   </section>
 
   <section>
     <h2>Choices made here, yours to change</h2>
     <ul class="plain">
-      <li><b>One brand all the way.</b> Torvi at every stop, so the journey reads as one story and no client is named on Home.</li>
+      <li><b>One brand all the way.</b> The same car at every stop, so the journey reads as one launch and no client is named on Home.</li>
       <li><b>Six stops.</b> Brand, Websites and apps, Print, Automation, Social and marketing, Video. The creative subscription is the closing line, not a stop.</li>
       <li><b>All the words are drafts.</b> Headings, lines and button labels are first proposals for you to edit.</li>
       <li><b>Length.</b> About {total:.1f} screens. Shorter legs would bring it down to about 8 without losing a stop.</li>
