@@ -11,7 +11,7 @@ body{background:#888;font-family:Inter,sans-serif;color:var(--ink)}
 .m{position:relative;width:1440px;height:917px;overflow:hidden;margin:0 0 40px}
 .eyebrow{font-size:13px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
 .dark .eyebrow{color:var(--green)}
-.h{font-size:54px;line-height:1.04;letter-spacing:-.03em;font-weight:400;margin-top:14px}
+.h{color:var(--ink);font-size:54px;line-height:1.04;letter-spacing:-.03em;font-weight:400;margin-top:14px}
 .h i,.sub i{font-family:'Playfair Display',serif;font-style:italic;font-size:1.1em;letter-spacing:-.01em}
 .dark{color:#fff}.dark .h i{color:var(--lime)}
 .light .h i{color:var(--blue)}
@@ -19,9 +19,9 @@ body{background:#888;font-family:Inter,sans-serif;color:var(--ink)}
 .dark .sub{color:#b9bec6}
 .tl{position:absolute;left:72px;top:68px}
 .bl{position:absolute;left:72px;bottom:64px}
-.card{position:absolute;border-radius:18px;overflow:hidden;box-shadow:0 18px 50px rgb(17 20 24/.22),0 2px 6px rgb(17 20 24/.12);background:#ddd}
+.card{position:absolute;border-radius:18px;overflow:hidden;background:#ddd}
 .card img,.screen img{display:block;width:100%;height:100%;object-fit:cover}
-.phone{position:absolute;border-radius:54px;background:#0b0d10;padding:11px;box-shadow:0 30px 70px rgb(17 20 24/.35),0 0 0 1.5px #2a2e35 inset}
+.phone{position:absolute;border-radius:54px;background:#0b0d10;padding:11px}
 .screen{position:relative;width:100%;height:100%;border-radius:44px;overflow:hidden;background:#000}
 .island{position:absolute;top:13px;left:50%;width:27%;height:22px;margin-left:-13.5%;border-radius:12px;background:#000;z-index:3}
 .logo{position:absolute;height:38px}
@@ -30,7 +30,7 @@ body{background:#888;font-family:Inter,sans-serif;color:var(--ink)}
 @font-face{font-family:'IBM Plex Mono';font-weight:400;src:url(fonts/node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2)}
 @font-face{font-family:'IBM Plex Mono';font-weight:500;src:url(fonts/node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff2)}
 /* LinkedIn post card and the redesigned pages (all sizes in em, so one page scales with its width) */
-.post{position:absolute;background:#fff;border-radius:14px;box-shadow:0 22px 60px rgb(17 20 24/.28),0 2px 6px rgb(17 20 24/.1);color:var(--ink);overflow:hidden}
+.post{position:absolute;background:#fff;border-radius:14px;color:var(--ink);overflow:hidden}
 .post .hd{display:flex;align-items:center;gap:10px;padding:14px 16px 10px}
 .post .av{width:40px;height:40px;border-radius:8px;background:var(--mist);display:grid;place-items:center;flex:none}
 .post .av img{width:28px;height:auto}
@@ -55,8 +55,8 @@ body{background:#888;font-family:Inter,sans-serif;color:var(--ink)}
 </style></head><body>
 
 <!-- 01 Cover -->
-<section class="m dark" id="m01" style="background:var(--ink)">
-  <div class="tl"><p class="eyebrow">Afthab Tours · Social media</p><h2 class="h" style="font-size:66px">Travel that reads<br>like a <i>magazine</i>.</h2><p class="sub">Instagram, stories, Meta ads and LinkedIn, all in one look.</p></div>
+<section class="m light" id="m01" style="background:var(--mist)">
+  <div class="tl"><h2 class="h" style="font-size:66px">Travel that reads<br>like a magazine.</h2></div>
   <div class="card" style="left:560px;top:250px;width:250px;height:312px;transform:rotate(-7deg)"><img src="cut/968_39.jpg"></div>
   <div class="card" style="left:735px;top:170px;width:290px;height:362px;transform:rotate(-3deg)"><img src="cut/ad-ge.jpg"></div>
   <div class="card" style="left:930px;top:120px;width:340px;height:425px;z-index:2"><img src="cut/az1.jpg"></div>
@@ -69,7 +69,7 @@ body{background:#888;font-family:Inter,sans-serif;color:var(--ink)}
 
 <!-- 02 Carousel -->
 <section class="m light" id="m02" style="background:var(--mist)">
-  <div class="tl"><p class="eyebrow">Instagram carousel</p><h2 class="h">A carousel that reads<br>like a <i>story</i>.</h2></div>
+  <div class="tl"><h2 class="h">A carousel that reads<br>like a story.</h2></div>
   <div style="position:absolute;left:72px;top:330px;display:flex;gap:22px">
     <div class="card" style="position:relative;width:330px;height:413px;flex:none"><img src="cut/az1.jpg"></div>
     <div class="card" style="position:relative;width:330px;height:413px;flex:none"><img src="cut/az2.jpg"></div>
@@ -77,12 +77,11 @@ body{background:#888;font-family:Inter,sans-serif;color:var(--ink)}
     <div class="card" style="position:relative;width:330px;height:413px;flex:none"><img src="cut/az4.jpg"></div>
     <div class="card" style="position:relative;width:330px;height:413px;flex:none"><img src="cut/az5.jpg"></div>
   </div>
-  <p class="bl" style="font-size:17px;color:var(--graphite);max-width:60ch">One strong photo, a clean headline with one accent word, and one line of copy on every slide.</p>
 </section>
 
 <!-- 03 Instagram on phones -->
-<section class="m light" id="m03" style="background:#E9EEF4">
-  <div class="tl" style="top:300px"><p class="eyebrow">Instagram</p><h2 class="h">A feed that feels<br>like one <i>brand</i>.</h2><p class="sub">Every post is built from the same templates, so the grid stays calm.</p></div>
+<section class="m light" id="m03" style="background:var(--mist)">
+  <div class="tl" style="top:300px"><h2 class="h">A feed that feels<br>like one brand.</h2></div>
   <div class="phone" style="left:650px;top:70px;width:340px;height:736px"><div class="screen" style="background:#fff"><div class="island"></div>
     <div style="padding:52px 14px 0;font-size:15px;font-weight:600">afthabtours</div>
     <div style="display:flex;align-items:center;gap:18px;padding:12px 14px"><div style="width:66px;height:66px;border-radius:50%;background:var(--mist);display:grid;place-items:center;border:2px solid var(--blue)"><img src="src/mark.png" style="width:44px;height:auto;object-fit:contain"></div>
@@ -102,9 +101,8 @@ body{background:#888;font-family:Inter,sans-serif;color:var(--ink)}
 </section>
 
 <!-- 04 Stories -->
-<section class="m dark" id="m04" style="background:var(--blue)">
-  <div class="tl"><p class="eyebrow" style="color:#fff;opacity:.8">Instagram stories</p><h2 class="h">A week of <i style="color:var(--ink)">stories</i>.</h2></div>
-  <div class="foot" style="top:84px;bottom:auto;color:#fff;opacity:.85;max-width:34ch;text-align:right;font-size:17px;line-height:1.45">Polls, quizzes and travel tips that ask followers to tap, guess and reply.</div>
+<section class="m light" id="m04" style="background:var(--mist)">
+  <div class="tl"><h2 class="h">A week of stories.</h2></div>
   <div style="position:absolute;left:72px;right:72px;top:250px;display:flex;justify-content:space-between">
     <div class="card" style="position:relative;width:200px;height:356px;border-radius:22px;margin-top:40px"><img src="cut/s1.jpg"></div>
     <div class="card" style="position:relative;width:200px;height:356px;border-radius:22px"><img src="cut/s2.jpg"></div>
@@ -113,12 +111,11 @@ body{background:#888;font-family:Inter,sans-serif;color:var(--ink)}
     <div class="card" style="position:relative;width:200px;height:356px;border-radius:22px;margin-top:40px"><img src="cut/s5.jpg"></div>
     <div class="card" style="position:relative;width:200px;height:356px;border-radius:22px"><img src="cut/s6.jpg"></div>
   </div>
-  <p class="bl" style="font-size:16px;color:#fff;opacity:.85">Monday to Saturday: poll, quiz, reveal, this or that, travel tip, enquiry.</p>
 </section>
 
 <!-- 05 Meta ads -->
-<section class="m dark" id="m05" style="background:var(--ink)">
-  <div class="tl"><p class="eyebrow">Seasonal campaign · UAE National Day</p><h2 class="h">Your National Day<br><i>escape</i>.</h2><p class="sub">Four holiday packages from Dubai as Meta ads, each with its price and one button to book.</p></div>
+<section class="m light" id="m05" style="background:var(--mist)">
+  <div class="tl"><h2 class="h">Your National Day<br>escape.</h2></div>
   <div class="card" style="left:560px;top:96px;width:268px;height:335px"><img src="cut/ad-az.jpg"></div>
   <div class="card" style="left:850px;top:96px;width:268px;height:335px"><img src="cut/ad-th.jpg"></div>
   <div class="card" style="left:1140px;top:96px;width:268px;height:335px"><img src="cut/ad-al.jpg"></div>
@@ -129,28 +126,26 @@ body{background:#888;font-family:Inter,sans-serif;color:var(--ink)}
 
 <!-- 06 One campaign, every placement -->
 <section class="m light" id="m06" style="background:var(--mist)">
-  <div class="tl"><p class="eyebrow">Meta ads · placements</p><h2 class="h">One campaign,<br>every <i>placement</i>.</h2><p class="sub">Feed, square, story and landscape, each laid out for its own space.</p></div>
+  <div class="tl"><h2 class="h">One campaign,<br>every placement.</h2></div>
   <div class="phone" style="left:580px;top:100px;width:330px;height:714px"><div class="screen"><div class="island"></div><img src="cut/st-ge.jpg"></div></div>
   <div class="card" style="left:960px;top:100px;width:230px;height:288px"><img src="cut/ad-ge.jpg"></div>
   <div class="card" style="left:1212px;top:100px;width:156px;height:156px"><img src="cut/sq-ge.jpg"></div>
   <div class="card" style="left:960px;top:414px;width:408px;height:214px"><img src="cut/ls-ge.jpg"></div>
-  <p style="position:absolute;left:960px;top:660px;font-size:15px;line-height:1.6;color:var(--graphite)">Story 9:16 · Feed 4:5<br>Square 1:1 · Landscape 1.91:1</p>
 </section>
 
 <!-- 07 Flag Day -->
-<section class="m light" id="m07" style="background:#DCEBF7">
-  <div class="tl"><p class="eyebrow">Occasion greeting · UAE Flag Day</p><h2 class="h">One flag. Every <i>journey</i>.</h2></div>
+<section class="m light" id="m07" style="background:var(--mist)">
+  <div class="tl"><h2 class="h">One flag. Every journey.</h2></div>
   <div class="card" style="left:72px;top:270px;width:300px;height:375px"><img src="cut/968_35.jpg"></div>
   <div class="card" style="left:396px;top:270px;width:300px;height:375px"><img src="cut/968_37.jpg"></div>
   <div class="card" style="left:720px;top:270px;width:300px;height:375px"><img src="cut/968_39.jpg"></div>
   <div class="phone" style="left:1070px;top:150px;width:300px;height:650px"><div class="screen"><div class="island"></div><img src="cut/fdA.jpg"></div></div>
   <div class="card" style="left:72px;top:672px;width:300px;height:157px"><img src="cut/977_34.jpg"></div>
-  <p style="position:absolute;left:396px;top:690px;font-size:17px;line-height:1.5;color:#3d4753;max-width:44ch">One greeting made for the feed, stories and LinkedIn, so it looks the same wherever people see it.</p>
 </section>
 
 <!-- 08 LinkedIn carousel -->
-<section class="m light" id="m08" style="background:#E9EEF4">
-  <div class="tl" style="top:250px"><p class="eyebrow">LinkedIn · Business beyond borders</p><h2 class="h">Useful first,<br><i>never</i> an ad.</h2><p class="sub">A weekly document carousel for companies that plan team travel, one question per page.</p></div>
+<section class="m light" id="m08" style="background:var(--mist)">
+  <div class="tl" style="top:250px"><h2 class="h">Useful first,<br>never an ad.</h2></div>
   <div class="post" style="left:520px;top:76px;width:400px">
     <div class="hd"><div class="av"><img src="src/mark.png"></div><p class="nm">Afthab Tours<span>Travel agency · Dubai</span></p></div>
     <p class="tx">A good offsite is decided long before anyone books a venue. Five questions we settle with every client first.</p>
@@ -171,8 +166,8 @@ body{background:#888;font-family:Inter,sans-serif;color:var(--ink)}
 </section>
 
 <!-- 09 LinkedIn posts -->
-<section class="m dark" id="m09" style="background:var(--ink)">
-  <div class="tl"><p class="eyebrow">LinkedIn · single posts</p><h2 class="h">One idea,<br>one <i>concept</i>.</h2><p class="sub">An itinerary, a boarding pass, a route: each post tells one business point through one picture.</p></div>
+<section class="m light" id="m09" style="background:var(--mist)">
+  <div class="tl"><h2 class="h">One idea,<br>one concept.</h2></div>
   <div class="post" style="left:470px;top:150px;width:300px">
     <div class="hd"><div class="av"><img src="src/mark.png"></div><p class="nm">Afthab Tours<span>Travel agency · Dubai</span></p></div>
     <div class="pg ink" style="--u:2.78px"><div class="in"><p class="hl">Cancelled at <i>2 am</i>.</p><p class="sl" style="margin-top:.7em">What our desk does next.</p>
@@ -201,35 +196,58 @@ body{background:#888;font-family:Inter,sans-serif;color:var(--ink)}
   </div>
 </section>
 
-<!-- 10 Brand system -->
+<!-- 10 Brand film and reels -->
 <section class="m light" id="m10" style="background:var(--mist)">
-  <div class="tl"><p class="eyebrow">Brand system for social</p><h2 class="h">Simple, premium, <i>personal</i>.</h2></div>
-  <div style="position:absolute;left:72px;top:250px;width:420px;height:250px;background:#fff;border-radius:22px;display:grid;place-items:center"><img src="src/logo.png" style="width:280px"></div>
-  <div style="position:absolute;left:72px;top:524px;width:420px;height:250px;background:var(--ink);border-radius:22px;display:grid;place-items:center"><img src="src/logo.png" style="width:280px"></div>
-  <div style="position:absolute;left:516px;top:250px;width:852px;height:250px;background:var(--ink);border-radius:22px;color:#fff;padding:34px 40px">
-    <p style="font-size:12px;letter-spacing:.14em;color:var(--green)">HEADLINES · INTER &nbsp;·&nbsp; ACCENT · PLAYFAIR DISPLAY ITALIC</p>
-    <p style="font-size:84px;letter-spacing:-.03em;line-height:1.1;margin-top:22px;white-space:nowrap">Georgia, <i style="font-family:'Playfair Display';font-style:italic;font-size:92px;color:var(--lime)">your way</i></p></div>
-  <div style="position:absolute;left:516px;top:524px;width:852px;height:250px;display:flex;gap:14px">
-    <div style="flex:1;border-radius:22px;background:var(--ink);color:#fff;padding:18px;font-size:14px;display:flex;align-items:end">Ink</div>
-    <div style="flex:1;border-radius:22px;background:var(--graphite);color:#fff;padding:18px;font-size:14px;display:flex;align-items:end">Graphite</div>
-    <div style="flex:1;border-radius:22px;background:#fff;padding:18px;font-size:14px;display:flex;align-items:end">White</div>
-    <div style="flex:1;border-radius:22px;background:var(--blue);color:#fff;padding:18px;font-size:14px;display:flex;align-items:end">Afthab Blue</div>
-    <div style="flex:1;border-radius:22px;background:var(--green);color:#fff;padding:18px;font-size:14px;display:flex;align-items:end">Afthab Green</div>
-    <div style="flex:1;border-radius:22px;background:var(--lime);padding:18px;font-size:14px;display:flex;align-items:end">Lime</div>
+  <div class="tl"><h2 class="h">Travel beyond boundaries.</h2></div>
+  <!-- 16:9 player -->
+  <div style="position:absolute;left:72px;top:250px;width:880px;height:495px;border-radius:16px;overflow:hidden;">
+    <img src="photo/p2.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 52%">
+    <div style="position:absolute;inset:0;background:rgb(10 12 16/.28)"></div>
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#F6F1E4;text-align:center">
+      <p style="font-size:14px;font-weight:500;letter-spacing:.42em;text-transform:uppercase;opacity:.92">Afthab Tours</p>
+      <p style="font-size:58px;font-weight:600;letter-spacing:-.02em;line-height:1.05;margin-top:14px">Travel beyond boundaries</p></div>
+    <div style="position:absolute;left:0;right:0;bottom:0;height:86px;background:linear-gradient(transparent,rgb(0 0 0/.62))"></div>
+    <div style="position:absolute;left:24px;right:24px;bottom:22px;display:flex;align-items:center;gap:16px;color:#fff;font-size:14px">
+      <svg width="16" height="18" viewBox="0 0 16 18"><path d="M1 1l14 8-14 8z" fill="#fff"/></svg>
+      <span style="font-variant-numeric:tabular-nums">0:12 / 1:23</span>
+      <div style="flex:1;height:4px;border-radius:2px;background:rgb(255 255 255/.3);position:relative"><div style="position:absolute;left:0;top:0;bottom:0;width:15%;border-radius:2px;background:var(--lime)"></div><div style="position:absolute;left:15%;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#fff"></div></div>
+      <span>1080p</span><span>4K</span></div>
   </div>
-  <p class="bl" style="font-size:16px;color:var(--graphite)">One accent word per headline. Flat colour only. Real photography, full bleed.</p>
+  <!-- film strip -->
+  <div style="position:absolute;left:72px;top:769px;width:880px;display:flex;gap:10px">
+    <img src="photo/p1.jpg" style="flex:1;height:96px;object-fit:cover;object-position:50% 80%;border-radius:8px">
+    <img src="photo/p5.jpg" style="flex:1;height:96px;object-fit:cover;border-radius:8px">
+    <img src="photo/p6.jpg" style="flex:1;height:96px;object-fit:cover;object-position:50% 45%;border-radius:8px">
+    <img src="photo/p4.jpg" style="flex:1;height:96px;object-fit:cover;object-position:50% 60%;border-radius:8px">
+    <img src="photo/p2.jpg" style="flex:1;height:96px;object-fit:cover;object-position:50% 40%;border-radius:8px">
+  </div>
+  <!-- reels -->
+  <div class="phone" style="left:1000px;top:230px;width:200px;height:433px;padding:8px;border-radius:38px"><div class="screen" style="border-radius:31px"><div class="island" style="top:9px;height:15px"></div>
+    <img src="photo/p5.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+    <div style="position:absolute;inset:auto 0 0 0;height:55%;background:linear-gradient(transparent,rgb(0 0 0/.6))"></div>
+    <div style="position:absolute;left:10px;right:10px;top:32px;height:2px;background:rgb(255 255 255/.35)"><div style="width:40%;height:100%;background:#fff"></div></div>
+    <p style="position:absolute;left:14px;right:40px;top:58px;color:#fff;font-size:19px;line-height:1.1;letter-spacing:-.02em">Your dream destination, with Afthab</p>
+    <div style="position:absolute;right:10px;bottom:70px;display:flex;flex-direction:column;gap:14px"><i style="width:18px;height:18px;border-radius:50%;border:2px solid #fff"></i><i style="width:18px;height:18px;border-radius:50%;border:2px solid #fff"></i><i style="width:18px;height:18px;border-radius:50%;border:2px solid #fff"></i></div>
+    <p style="position:absolute;left:14px;bottom:22px;color:#fff;font-size:11px;font-weight:600">afthabtours <span style="font-weight:400;opacity:.8">· Switzerland</span></p></div></div>
+  <div class="phone" style="left:1218px;top:290px;width:200px;height:433px;padding:8px;border-radius:38px"><div class="screen" style="border-radius:31px"><div class="island" style="top:9px;height:15px"></div>
+    <img src="photo/p1.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+    <div style="position:absolute;inset:auto 0 0 0;height:55%;background:linear-gradient(transparent,rgb(0 0 0/.55))"></div>
+    <div style="position:absolute;left:10px;right:10px;top:32px;height:2px;background:rgb(255 255 255/.35)"><div style="width:65%;height:100%;background:#fff"></div></div>
+    <p style="position:absolute;left:14px;right:40px;top:58px;color:var(--ink);font-size:21px;line-height:1.1;letter-spacing:-.02em">Where to next?</p>
+    <div style="position:absolute;right:10px;bottom:70px;display:flex;flex-direction:column;gap:14px"><i style="width:18px;height:18px;border-radius:50%;border:2px solid #fff"></i><i style="width:18px;height:18px;border-radius:50%;border:2px solid #fff"></i><i style="width:18px;height:18px;border-radius:50%;border:2px solid #fff"></i></div>
+    <p style="position:absolute;left:14px;bottom:22px;color:#fff;font-size:11px;font-weight:600">afthabtours <span style="font-weight:400;opacity:.8">· Plan it, Afthab way</span></p></div></div>
 </section>
 
 <!-- 11 Story ads on phones -->
-<section class="m dark" id="m11" style="background:#0D2A44">
-  <div class="tl" style="top:320px"><p class="eyebrow" style="color:var(--lime)">Story and reel ads</p><h2 class="h">Full screen,<br>one <i>tap</i> to book.</h2></div>
+<section class="m light" id="m11" style="background:var(--mist)">
+  <div class="tl" style="top:320px"><h2 class="h">Full screen,<br>one tap to book.</h2></div>
   <div class="phone" style="left:560px;top:150px;width:270px;height:585px;transform:rotate(-4deg)"><div class="screen"><div class="island"></div><img src="cut/st-az.jpg"></div></div>
   <div class="phone" style="left:850px;top:90px;width:300px;height:650px;z-index:2"><div class="screen"><div class="island"></div><img src="cut/st-th.jpg"></div></div>
   <div class="phone" style="left:1170px;top:150px;width:270px;height:585px;transform:rotate(4deg)"><div class="screen"><div class="island"></div><img src="cut/st-al.jpg"></div></div>
 </section>
 
 <!-- 12 Wall -->
-<section class="m light" id="m12" style="background:var(--ink)">
+<section class="m light" id="m12" style="background:var(--mist)">
   <div style="position:absolute;left:-120px;top:-170px;width:1900px;display:grid;grid-template-columns:repeat(8,1fr);gap:18px;transform:rotate(-8deg)">
     <img src="cut/az1.jpg" style="border-radius:14px;width:100%"><img src="cut/ad-ge.jpg" style="border-radius:14px;width:100%"><img src="cut/li-a1.jpg" style="border-radius:14px;width:100%"><img src="cut/968_35.jpg" style="border-radius:14px;width:100%"><img src="cut/az3.jpg" style="border-radius:14px;width:100%"><img src="cut/ad-th.jpg" style="border-radius:14px;width:100%"><img src="cut/li-brief.jpg" style="border-radius:14px;width:100%"><img src="cut/az5.jpg" style="border-radius:14px;width:100%">
     <img src="cut/plan.jpg" style="border-radius:14px;width:100%"><img src="cut/963_35.jpg" style="border-radius:14px;width:100%"><img src="cut/az4.jpg" style="border-radius:14px;width:100%"><img src="cut/ad-al.jpg" style="border-radius:14px;width:100%"><img src="cut/968_39.jpg" style="border-radius:14px;width:100%"><img src="cut/li-a4.jpg" style="border-radius:14px;width:100%"><img src="cut/az2.jpg" style="border-radius:14px;width:100%"><img src="cut/ad-mv.jpg" style="border-radius:14px;width:100%">
