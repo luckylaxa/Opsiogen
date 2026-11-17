@@ -43,11 +43,13 @@
   .orb canvas, .orb img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
   .ground { position: absolute; left: 6%; right: 6%; bottom: -10%; height: 16%; border-radius: 50%; filter: blur(22px); mix-blend-mode: screen;
     background: radial-gradient(ellipse at 42% 50%, rgb(40 110 255 / 0.7), rgb(150 70 255 / 0.55) 45%, rgb(255 80 170 / 0.3) 62%, rgb(255 80 170 / 0) 76%); will-change: opacity, transform; }
-  /* the light tail: a rainbow beam that streams out behind it while it travels, mixed into the scene as light */
-  .trail { position: absolute; z-index: 3; left: 27%; top: 56%; width: 70vw; height: 70vw; transform-origin: 100% 50%; transform: translate(-100%, -50%) rotate(-13deg); opacity: 0; pointer-events: none; mix-blend-mode: screen; will-change: opacity, transform; }
-  .trail i { position: absolute; inset: 0; filter: blur(clamp(6px, 0.9vw, 14px));
-    background: conic-gradient(from 252deg at 100% 50%, rgb(180 92 255 / 0) 0deg, #b45cff 4deg, #5b7bff 9deg, #37d6ff 14deg, #5ff08a 19deg, #ffe14a 24deg, #ff8a3c 29deg, #ff4f8b 33deg, rgb(255 79 139 / 0) 37deg, transparent 37deg);
-    -webkit-mask-image: linear-gradient(90deg, transparent 4%, rgb(0 0 0 / 0.6) 45%, #000 82%, rgb(0 0 0 / 0.9) 100%); mask-image: linear-gradient(90deg, transparent 4%, rgb(0 0 0 / 0.6) 45%, #000 82%, rgb(0 0 0 / 0.9) 100%); }
+  /* the light tail: it streams from the character's back toward us, low and to the left, widening as it comes.
+     It sits under the character, so it appears from behind its edge. */
+  .trail { position: absolute; z-index: 3; left: 27%; top: 56%; width: 150vmax; height: 150vmax; transform: translate(-50%, -50%); opacity: 0; pointer-events: none; will-change: opacity, transform; }
+  .trail i { position: absolute; inset: 0; filter: blur(clamp(8px, 1.1vw, 18px));
+    background: conic-gradient(from 214deg at 50% 50%, rgb(180 92 255 / 0) 0deg, #b45cff 5deg, #5b7bff 10deg, #37d6ff 15deg, #5ff08a 20deg, #ffe14a 25deg, #ff8a3c 30deg, #ff4f8b 35deg, rgb(255 79 139 / 0) 40deg, transparent 40deg);
+    -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 0, rgb(0 0 0 / 0.95) 9%, rgb(0 0 0 / 0.75) 22%, rgb(0 0 0 / 0.35) 38%, transparent 52%); mask-image: radial-gradient(circle at 50% 50%, #000 0, rgb(0 0 0 / 0.95) 9%, rgb(0 0 0 / 0.75) 22%, rgb(0 0 0 / 0.35) 38%, transparent 52%); }
+  .trail i + i { mix-blend-mode: screen; opacity: 0.7; }
 
   .foot { position: absolute; z-index: 5; inset: auto 0 0; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding: 0 clamp(16px, 3.4vw, 65px) max(22px, env(safe-area-inset-bottom, 0px)); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--soft); }
 
@@ -55,7 +57,6 @@
     .bar nav { display: none; }
     .words { right: 0; left: 0; top: clamp(84px, 13vh, 130px); transform: none; width: auto; padding-inline: max(20px, env(safe-area-inset-left, 0px)); }
     .orb, .trail { left: 46%; top: 70%; }
-    .trail { width: 90vw; }
     .orb { width: clamp(170px, 54vw, 280px); }
     .foot span:last-child { display: none; }
   }
@@ -75,7 +76,7 @@
       <span class="cta">Start a project</span>
     </div>
 
-    <div class="trail" id="trail"><i></i></div>
+    <div class="trail" id="trail"><i></i><i></i></div>
     <div class="orb" id="orb" role="button" tabindex="0" aria-label="The Opsiogen character. Press to say hello.">
       <div class="ground" id="ground"></div>
       <img id="fallback" src="img/front.webp" alt="">
@@ -96,13 +97,14 @@
 </section>
 
 <section class="after" id="after">
-  <div class="gutter"><p>A test of the character only, on a plain stage. Scroll and it turns to look ahead; stop and it turns back to you. Move the pointer and its eye follows. Tap it and it says hello. The places and our work are added once the script is approved.</p></div>
+  <div class="gutter"><p>A test of the character only, on a plain stage. It is a live 3D model built to the supplied design. Scroll and it turns to look ahead; stop and it turns back to you. Move the pointer and its eye follows. Tap it and it says hello. The places and our work are added once the script is approved.</p></div>
 </section>
 
 <script>
 (function () {
-  // The character is the owner's artwork. Their front, side and back views are wrapped into one map of the whole sphere
-  // (design/hero/character/wrap.py), so it turns as one solid body, lit by the artwork's own soft light.
+  // The character is a real model, built to the owner's design and drawn live: a glossy white sphere, a dark glass eye in a
+  // bevelled ring with cyan instrument light inside, a lit colour strip round the lower body that goes dark across the back,
+  // and fine panel seams. Being a model, it is exact and sharp from every angle; nothing is stitched from pictures.
   var canvas = document.getElementById("ball"), fallback = document.getElementById("fallback"), orb = document.getElementById("orb"), ground = document.getElementById("ground"),
       trail = document.getElementById("trail"), world = document.getElementById("world"), rays = document.getElementById("rays");
   var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -111,56 +113,118 @@
   var VS = "attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}";
   var FS = [
     "precision highp float;",
-    "uniform vec2 uRes; uniform float uYaw, uBlink, uFlash; uniform vec2 uLook; uniform sampler2D uF, uW, uLF, uLB;",
+    "uniform vec2 uRes; uniform float uYaw, uPitch, uBlink, uFlash, uTime; uniform vec2 uLook;",
+    "const float E=.56, B=.10;",                                                    // the eye's size, and its ring's width (as angles)
+    "const vec3 GL=vec3(.25,.92,1.);",
+    "vec3 glowCol(float x){ return mix(mix(vec3(.22,.5,1.),vec3(.6,.35,1.),smoothstep(-.7,0.,x)), vec3(1.,.32,.72), smoothstep(0.,.7,x)); }",
+    // the room it is lit by: bright above, cool at the sides, one large soft light up and to the left, coloured light from below
+    "vec3 room(vec3 d){",
+    "  vec3 e=mix(vec3(.60,.64,.74), vec3(.985,.99,1.), smoothstep(-.55,.65,d.y));",
+    "  e+=vec3(1.)*smoothstep(.42,.05,length(d.xy-vec2(-.42,.52)))*step(0.,d.z)*.55;",
+    "  e+=vec3(.9,.95,1.)*smoothstep(.16,.02,abs(d.x-.62))*smoothstep(.55,.1,abs(d.y-.1))*step(0.,d.z)*.22;",
+    "  return mix(e, glowCol(d.x)*1.05, smoothstep(-.3,-.95,d.y)*.8);",
+    "}",
+    "vec3 lit(vec3 n, vec3 alb, float gloss){",                                    // a glossy painted surface in that room
+    "  float k=dot(n,normalize(vec3(-.5,.64,.58)))*.72+n.y*.28;",
+    "  vec3 c=alb*mix(vec3(.78,.81,.89), vec3(1.), smoothstep(-.45,.8,k));",
+    "  c=mix(c, c*.55+glowCol(n.x)*.5, smoothstep(-.42,-1.,n.y)*.62);",              // the coloured light catching the underside
+    "  float f=.04+.55*pow(1.-max(n.z,0.),3.);",
+    "  c=mix(c, room(reflect(vec3(0.,0.,-1.),n)), f*gloss);",
+    "  c+=gloss*(.10*smoothstep(.6,0.,length(n.xy-vec2(-.36,.5)))+.05*smoothstep(.2,0.,abs(n.x-.6))*smoothstep(.5,0.,abs(n.y-.15))+.5*pow(max(dot(n,normalize(vec3(-.36,.5,.79))),0.),260.));",
+    "  return c;",
+    "}",
+    "float ctl(float i){ i=mod(i,6.); if(i<.5) return -.47; if(i<1.5) return -.86; if(i<2.5) return -1.06; if(i<3.5) return -.70; if(i<4.5) return -.42; return -.44; }",
+    "float stripLat(float lon){",                                                   // where the strip runs: a smooth wave round the body
+    "  float x=(lon+1.5708)/1.0472, i=floor(x), t=x-i;",
+    "  float p0=ctl(i-1.), p1=ctl(i), p2=ctl(i+1.), p3=ctl(i+2.);",
+    "  return .5*(2.*p1+(p2-p0)*t+(2.*p0-5.*p1+4.*p2-p3)*t*t+(3.*p1-p0-3.*p2+p3)*t*t*t);",
+    "}",
+    "vec3 stripCol(float t){",                                                      // its colours, round the body from the left of the eye
+    "  vec3 c=vec3(.1,.85,1.);",
+    "  c=mix(c,vec3(.2,.45,1.),smoothstep(.0,.12,t)); c=mix(c,vec3(.62,.3,1.),smoothstep(.12,.24,t)); c=mix(c,vec3(1.,.25,.72),smoothstep(.24,.33,t));",
+    "  c=mix(c,vec3(1.,.55,.14),smoothstep(.33,.42,t)); c=mix(c,vec3(1.,.3,.6),smoothstep(.42,.5,t)); c=mix(c,vec3(.6,.32,1.),smoothstep(.5,.58,t));",
+    "  c=mix(c,vec3(.2,.6,1.),smoothstep(.58,.66,t)); c=mix(c,vec3(1.,.3,.7),smoothstep(.8,.9,t)); c=mix(c,vec3(.1,.85,1.),smoothstep(.93,1.,t));",
+    "  return c;",
+    "}",
     "void main(){",
-    "  vec2 p=(gl_FragCoord.xy-.5*uRes)/(.5*uRes.x); float R=.84; float r=length(p)/R;",   // the sphere fills the same part of the box as in the artwork
+    "  vec2 p=(gl_FragCoord.xy-.5*uRes)/(.5*uRes.x); float R=.84, r=length(p)/R, aa=2.4/(R*uRes.x);",
     "  if(r>1.){ gl_FragColor=vec4(0.); return; }",
     "  vec3 n=vec3(p/R, sqrt(max(0.,1.-r*r)));",
-    "  float c=cos(uYaw), s=sin(uYaw);",
-    "  vec3 o=vec3(dot(n,vec3(c,0.,s)), n.y, dot(n,vec3(-s,0.,c)));",               // the same point on the character itself
-    "  float q=uYaw/1.5708, rho=length(o.xy);",                                     // q: 0 front, 1 side, 2 back
-    // what is drawn on the body turns with it; the artwork's own soft light stays where it is on screen
-    "  float lon=atan(o.x,o.z); if(lon<-1.5708) lon+=6.2832;",
-    "  vec4 wr=texture2D(uW, vec2((lon+1.5708)/6.2832, asin(clamp(o.y,-1.,1.))/3.1416+.5));",
-    "  vec2 lu=.5+.42*n.xy*.97;",
-    "  vec3 light=mix(texture2D(uLF,lu).rgb, texture2D(uLB,lu).rgb, smoothstep(.4,1.6,q));",   // the front view's light, easing to the back view's
-    "  vec3 col=wr.rgb*mix(light,vec3(1.),wr.a);",
-    // the eye is the front view itself; the light inside it slides toward what it looks at
-    "  vec2 fo=o.xy-uLook*(1.-smoothstep(.24,.50,rho))*step(0.,o.z);",
-    "  col=mix(col, texture2D(uF,.5+.42*fo).rgb, step(0.,o.z)*smoothstep(.80,.72,rho));",
-    // a digital blink: the eye's light drops to one thin line, then comes back with a flash
-    "  vec3 GL=vec3(.3,.92,1.); float eye=step(0.,o.z)*smoothstep(.55,.51,rho);",
-    "  vec3 off=col*.10+GL*smoothstep(.022,.0,abs(o.y))*smoothstep(.47,.15,abs(o.x))*1.3;",
-    "  col=mix(col, off, uBlink*eye);",
-    "  col+=GL*uFlash*(eye*exp(-pow(rho/.30,2.))*.9+step(0.,o.z)*smoothstep(.80,.55,rho)*.10);",
-    "  gl_FragColor=vec4(col, smoothstep(1.,.985,r));",
+    "  float cy=cos(uYaw), sy=sin(uYaw), cp=cos(uPitch), sp=sin(uPitch);",
+    "  vec3 q=vec3(n.x, n.y*cp-n.z*sp, n.y*sp+n.z*cp);",
+    "  vec3 o=vec3(q.x*cy+q.z*sy, q.y, -q.x*sy+q.z*cy);",                           // the same point on the character itself
+    "  vec3 axis=vec3(-sy, cy*sp, cy*cp);",                                         // where the eye points, as seen
+    "  vec3 rd=vec3(-cp*sy, sp, -cp*cy);",                                          // the line of sight, in the character's own terms
+    "  float ang=acos(clamp(o.z,-1.,1.)), lat=asin(clamp(o.y,-1.,1.)), lon=atan(o.x,o.z); if(lon<-1.5708) lon+=6.2832;",
+
+    // ---- body
+    "  vec3 col=lit(n, vec3(.975,.98,.99), 1.);",
+    "  float f0=stripLat(lon), f1=stripLat(lon+.02);",
+    "  float d=(lat-f0)/sqrt(1.+pow((f1-f0)/.02/max(cos(lat),.25),2.));",           // how far this point is from the strip
+    "  float t=(lon+1.5708)/6.2832, on=1.-smoothstep(.655,.70,t)*(1.-smoothstep(.80,.845,t));",   // lit, except across the back
+    "  vec3 sc=stripCol(t); float hw=.032;",
+    "  col+=sc*on*exp(-pow(d/.10,2.))*.20;",                                        // its light on the body beside it
+    "  col*=1.-.30*smoothstep(hw+.022,hw,abs(d))*step(0.,d)*(1.-on*.5);",            // a soft shadow along its upper lip
+    "  vec3 led=mix(sc*1.05, vec3(1.), .55*exp(-pow(d/(hw*.34),2.)));",
+    "  vec3 dark=vec3(.035,.045,.06)+room(reflect(vec3(0.,0.,-1.),n))*.10;",          // the same channel, unlit: dark and glossy
+    "  col=mix(col, mix(dark, led, on), smoothstep(hw+aa,hw-aa,abs(d)));",
+    "  col=mix(col, vec3(.05,.06,.08), smoothstep(aa*1.4,0.,abs(d-hw-.006))*.8*(1.-on));",   // a crisp edge where it is dark
+    // fine panel seams
+    "  float s1=abs(dot(o,normalize(vec3(.12,.9,.42)))-.63), s2=abs(dot(o,normalize(vec3(-.1,.93,-.35)))-.56);",
+    "  col*=1.-.26*smoothstep(aa*1.6,0.,s1)*smoothstep(E+B+.05,E+B+.12,ang);",
+    "  col*=1.-.20*smoothstep(aa*1.6,0.,s2)*smoothstep(.1,-.2,o.z);",
+    "  col*=1.-.20*smoothstep(aa*1.6,0.,abs(o.x))*step(0.,o.z)*smoothstep(-.80,-.86,o.y)*smoothstep(f0+.02,f0-.04,lat);",
+    "  col*=1.-.07*smoothstep(.80,.97,r); col+=.10*smoothstep(.962,1.,r);",          // the glossy edge
+
+    // ---- the ring round the eye: a bevel that turns in toward the glass
+    "  float rt=(ang-E)/B;",
+    "  vec3 nr=normalize(n+axis*(.5*(1.-rt)));",
+    "  vec3 ring=lit(nr, vec3(.985,.99,1.), 1.2)*(1.02-.10*rt);",
+    "  ring*=1.-.7*smoothstep(.16,.0,rt); ring*=1.-.25*smoothstep(aa*2.,0.,abs(ang-E-B));",
+    "  col=mix(col, ring, smoothstep(E+B+aa,E+B-aa,ang));",
+
+    // ---- the eye: dark glass, with instrument light set a little way inside it
+    "  float zp=cos(E)-.11, tt=(o.z-zp)/max(-rd.z,.22);",
+    "  vec2 h=((o.xy+rd.xy*tt)/sin(E)-uLook)*.56; float hr=length(h), ha=atan(h.y,h.x);",
+    "  float lum=exp(-pow(hr/.20,2.))*.55+smoothstep(.05,.025,hr)*1.2;",             // the glow and the bright centre
+    "  lum+=smoothstep(.016,0.,abs(hr-.135))*1.0+smoothstep(.011,0.,abs(hr-.235))*.7;",   // two rings
+    "  lum+=smoothstep(.007,0.,abs(hr-.36))*.4*step(.32,fract(ha*3.82+uTime*.05));",       // an outer dashed ring, turning slowly
+    "  lum+=smoothstep(.03,0.,abs(hr-.235))*smoothstep(.55,.98,cos(ha+2.4-sin(uTime*.5)*.5))*1.1;",   // a bright arc
+    "  lum+=smoothstep(.006,0.,min(abs(h.x),abs(h.y)))*step(.28,hr)*step(hr,.46)*.5;",      // cross ticks
+    "  lum+=smoothstep(.028,.012,length(h-vec2(0.,-.30)))*1.1+smoothstep(.016,.006,length(h-vec2(-.27,.12)))*.8;",   // small lights
+    "  lum*=smoothstep(.52,.46,hr);",
+    "  vec3 inner=vec3(.006,.022,.032)+vec3(.0,.05,.07)*smoothstep(.55,.15,hr);",
+    "  inner+=GL*lum*(1.-uBlink)+vec3(1.)*smoothstep(.05,.02,hr)*.5*(1.-uBlink);",
+    "  inner+=GL*uBlink*smoothstep(.012,0.,abs(h.y))*smoothstep(.42,.12,abs(h.x))*1.4;",      // the blink: the light drops to one line
+    "  inner+=GL*uFlash*exp(-pow(hr/.28,2.))*.9;",                                           // and comes back with a flash
+    "  vec3 ng=normalize(mix(n, axis, .30));",                                      // the glass is a flatter dome than the body
+    "  float fg=.05+.85*pow(1.-max(ng.z,0.),4.);",
+    "  vec3 glass=inner+room(reflect(vec3(0.,0.,-1.),ng))*fg;",
+    "  vec2 e2=(n.xy-axis.xy)/sin(E);",                                            // across the glass as we see it
+    "  glass+=vec3(.78,.85,.93)*smoothstep(.95,.1,length(e2-vec2(-.42,.62)))*smoothstep(1.02,.8,length(e2))*.52;",   // the soft light reflected in it
+    "  glass+=vec3(.6,.7,.8)*smoothstep(.5,.0,length(e2-vec2(.55,-.5)))*.10;",     // the soft light reflected in it
+    "  glass+=vec3(1.)*pow(max(dot(ng,normalize(vec3(-.36,.5,.79))),0.),420.)*.9;",
+    "  glass*=1.-.5*smoothstep(E*.80,E,ang);",                                      // darker where the glass meets the ring
+    "  col=mix(col, glass, smoothstep(E+aa,E-aa,ang));",
+    "  col+=GL*uFlash*.08*smoothstep(E+B+.25,E,ang);",
+    "  gl_FragColor=vec4(col, smoothstep(1.,1.-aa*1.2,r));",
     "}"].join("\n");
 
-  var U = {}, ready = false, loaded = 0;
+  var U = {}, ready = false;
   if (gl) {
-    var sh = function (t, src) { var x = gl.createShader(t); gl.shaderSource(x, src); gl.compileShader(x); return x; };
+    var sh = function (t, src) { var x = gl.createShader(t); gl.shaderSource(x, src); gl.compileShader(x); if (!gl.getShaderParameter(x, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(x)); return x; };
     var prog = gl.createProgram(); gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(prog);
     if (gl.getProgramParameter(prog, gl.LINK_STATUS)) {
       gl.useProgram(prog);
       var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
       var loc = gl.getAttribLocation(prog, "a"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-      ["uRes", "uYaw", "uBlink", "uFlash", "uLook", "uF", "uW", "uLF", "uLB"].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
+      ["uRes", "uYaw", "uPitch", "uBlink", "uFlash", "uTime", "uLook"].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
       gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-      ["front.webp", "wrap.png", "light-front.png", "light-back.png"].forEach(function (name, i) {
-        var tex = gl.createTexture(), im = new Image();
-        im.onload = function () {
-          gl.activeTexture(gl.TEXTURE0 + i); gl.bindTexture(gl.TEXTURE_2D, tex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, im);
-          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-          if (++loaded === 4) { ready = true; canvas.hidden = false; fallback.hidden = true; }
-        };
-        im.src = "img/" + name;
-      });
+      ready = true; canvas.hidden = false; fallback.hidden = true;
     }
   }
 
-  var yaw = 0, speed = 0, lastY = window.scrollY, lastMove = -1e9, want = [0, 0], look = [0, 0], blink = 0, blinkAt = 2.2, hello = -10, over = 0, wasMoving = false;
+  var yaw = 0, pitch = 0, speed = 0, lastY = window.scrollY, lastMove = -1e9, want = [0, 0], look = [0, 0], blink = 0, blinkAt = 2.2, hello = -10, over = 0, wasMoving = false;
   window.addEventListener("scroll", function () { var y = window.scrollY; speed += Math.min(60, Math.abs(y - lastY)); lastY = y; lastMove = performance.now(); }, { passive: true });
   window.addEventListener("pointermove", function (e) {
     var r = orb.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
@@ -175,34 +239,36 @@
   var prev = performance.now(), grow = 0, tail = 0;
   function frame(now) {
     var dt = Math.min(0.05, (now - prev) / 1000); prev = now; var t = now / 1000;
-    var moving = !still && now - lastMove < 1100;                      // short gaps between scroll steps do not count as stopping
+    var moving = !still && now - lastMove < 1100;                     // short gaps between scroll steps do not count as stopping
     speed *= Math.pow(0.02, dt); var v = still ? 0 : Math.min(1, speed / 90);
-    var since = t - hello, wiggle = since < 1.1 ? Math.sin(since * 13) * 0.5 * (1 - since / 1.1) : 0;       // a tap: it shakes its head and blinks twice
+    var since = t - hello, wiggle = since < 1.1 ? Math.sin(since * 13) * 0.45 * (1 - since / 1.1) : 0;      // a tap: it shakes its head and blinks twice
     if (since > 0.44 && since < 0.48) blink = 1;
-    var target = moving ? Math.PI : clamp(-want[0] * 0.6, -0.22, 0.22) + wiggle;                              // looks ahead while moving, else toward the pointer
+    var target = moving ? Math.PI : clamp(-want[0] * 1.1, -0.5, 0.5) + wiggle;                                // looks ahead while moving, else toward the pointer
     yaw += (target - yaw) * (1 - Math.pow(moving ? 0.003 : 0.03, dt));                                         // quick to look ahead, gentler coming back
-    if (typeof window.__testYaw === "number") yaw = window.__testYaw;                                          // for checking a pose
-    var lx = moving ? 0 : clamp(want[0] * 0.5, -0.1, 0.1), ly = moving ? 0 : clamp(-want[1] * 0.5, -0.1, 0.1);
+    pitch += ((moving ? -0.06 : clamp(-want[1] * 0.8, -0.3, 0.3)) - pitch) * (1 - Math.pow(0.02, dt));
+    if (typeof window.__testYaw === "number") { yaw = window.__testYaw; pitch = window.__testPitch || 0; }     // for checking a pose
+    var lx = moving ? 0 : clamp(want[0] * 0.9, -0.16, 0.16), ly = moving ? 0 : clamp(-want[1] * 0.9, -0.16, 0.16);
     look[0] += (lx - look[0]) * 0.14; look[1] += (ly - look[1]) * 0.14;
     if (wasMoving && !moving) blinkAt = t + 1.6;                                                              // no blink while it is still coming round
     wasMoving = moving;
-    if (!moving && Math.abs(yaw) < 0.4 && t > blinkAt) { blink = 1; blinkAt = t + 3 + Math.random() * 3.5; }
+    if (!moving && Math.abs(yaw) < 0.6 && t > blinkAt) { blink = 1; blinkAt = t + 3 + Math.random() * 3.5; }
     blink = Math.max(0, blink - dt / 0.34);                              // one blink lasts about a third of a second
     var ph = 1 - blink, dim = blink <= 0 ? 0 : ph < 0.3 ? ph / 0.3 : ph < 0.5 ? 1 : Math.max(0, 1 - (ph - 0.5) / 0.12), flash = blink > 0 && ph > 0.55 ? Math.sin((ph - 0.55) / 0.45 * Math.PI) : 0;
     grow += ((over && !moving ? 1 : 0) - grow) * 0.12;
     var bob = still ? 0 : Math.sin(t * 1.7) * 6, push = v * 10, hop = since < 0.5 ? -Math.sin(since / 0.5 * Math.PI) * 14 : 0;
-    orb.style.transform = "translate(-50%,-50%) translate(" + (push * 0.6).toFixed(1) + "px," + (bob - push * 0.3 + hop).toFixed(1) + "px) rotate(" + (v * -4 + (moving ? 0 : want[1] * -6)).toFixed(2) + "deg) scale(" + (1 + grow * 0.06).toFixed(3) + ")";
+    orb.style.transform = "translate(-50%,-50%) translate(" + (push * 0.6).toFixed(1) + "px," + (bob - push * 0.3 + hop).toFixed(1) + "px) scale(" + (1 + grow * 0.06).toFixed(3) + ")";
     ground.style.opacity = (0.8 + grow * 0.2 + 0.1 * Math.sin(t * 1.3)).toFixed(3); ground.style.transform = "scale(" + (1 + grow * 0.18 - hop * 0.004).toFixed(3) + ")";
-    tail += ((moving ? 1 : 0) - tail) * (1 - Math.pow(moving ? 0.002 : 0.05, dt));                           // it comes on as the character sets off and fades when it stops
-    trail.style.opacity = (tail * (0.8 + 0.2 * v)).toFixed(3); trail.style.transform = "translate(-100%,-50%) rotate(-13deg) scaleX(" + (0.55 + 0.45 * tail).toFixed(3) + ")";
+    tail += ((moving ? 1 : 0) - tail) * (1 - Math.pow(moving ? 0.01 : 0.05, dt));                             // the light tail comes on as it sets off and fades when it stops
+    var back = clamp((yaw - 1.9) / 1.0, 0, 1) * tail;                                                         // and only once its back is turned to us
+    trail.style.opacity = back.toFixed(3); trail.style.transform = "translate(-50%,-50%) rotate(" + (Math.sin(t * 1.1) * 1.2).toFixed(2) + "deg) scale(" + (0.6 + 0.4 * back + v * 0.05).toFixed(3) + ")";
     world.style.transform = "scale(" + (1 + v * 0.06).toFixed(4) + ")";
     rays.style.opacity = (v * 0.2).toFixed(3); rays.style.transform = "scale(" + (1 + ((t * 1.4) % 1) * 0.25).toFixed(3) + ")";
     if (ready) {
       var w = canvas.clientWidth * Math.min(2, window.devicePixelRatio || 1) | 0;
       if (canvas.width !== w && w > 0) { canvas.width = w; canvas.height = w; }
       gl.viewport(0, 0, canvas.width, canvas.height); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
-      gl.uniform2f(U.uRes, canvas.width, canvas.height); gl.uniform1f(U.uYaw, yaw); gl.uniform1f(U.uBlink, dim); gl.uniform1f(U.uFlash, flash);
-      gl.uniform2f(U.uLook, look[0], look[1]); gl.uniform1i(U.uF, 0); gl.uniform1i(U.uW, 1); gl.uniform1i(U.uLF, 2); gl.uniform1i(U.uLB, 3);
+      gl.uniform2f(U.uRes, canvas.width, canvas.height); gl.uniform1f(U.uYaw, yaw); gl.uniform1f(U.uPitch, pitch); gl.uniform1f(U.uTime, still ? 0 : t);
+      gl.uniform1f(U.uBlink, dim); gl.uniform1f(U.uFlash, flash); gl.uniform2f(U.uLook, look[0], look[1]);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
     requestAnimationFrame(frame);
