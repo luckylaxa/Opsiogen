@@ -36,6 +36,12 @@ Tick items as they are done.
 - [ ] Case-study mockups for BigTapp and Cabot show a "Webflow" tag (a tool name) inside the images; edit the Figma frames if it should go.
 - [ ] Blog: the four demo posts show only on /blog/preview. Delete them in Studio (Blog) when they're no longer needed, or untick Demo on one to publish it after rewriting it.
 
+## Home hero (decision pending, 17 November 2026)
+
+- [ ] First plan: the studio tour on scroll. Six rooms are drawn in one style with our designs on the screens (`design/hero/rooms-all.jpg`, made by `design/hero/rooms.py`). Waiting for the owner's yes on the direction, then the video.
+- [ ] Backup plan, only after the owner confirms: keep the earlier big heading that fills the first screen and put moving work behind it. Two rows of our work tiles (images and short silent loops, mixed widths, one height) drift slowly sideways on the dark band, as on the reference the owner shared (Envato's AI video page). Use our own work and our own layout, not theirs. No image or video credits needed.
+- Home today shows the trial picture of the glass studio (day in the light theme, night in the dark theme).
+
 ## Already done (4 November 2026)
 
 - Server rendering, sitemap, robots.txt (only /studio blocked), canonicals, meta descriptions, one H1 per page.
