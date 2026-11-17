@@ -3,6 +3,7 @@ import { GiantHeading } from "@/components/ui/Headings";
 import { ButtonLink } from "@/components/ui/Button";
 import { Media } from "@/components/ui/Media";
 import { cn } from "@/lib/utils";
+import { HeroCharacter } from "./HeroCharacter";
 
 /**
  * A picture for the first hero: the wide image and a tall crop for phones, plus the
@@ -23,6 +24,8 @@ export type HeroImage = {
   secondButton?: { label: string; href: string };
   /** Dots down the right edge, one per stop of the tour. */
   stops?: number;
+  /** Our character flies in the picture and turns to look at the visitor. */
+  character?: boolean;
 };
 
 /**
@@ -87,15 +90,28 @@ export function Hero({
               {image.wordmark}
             </p>
           )}
-          {/* Phones: the words sit in the sky. Larger screens: bottom left, over the water. */}
+          {image.character && (
+            // With the character, the sky at the top left darkens a little behind the words.
+            <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_0%_0%,rgb(0_0_0/0.55),transparent_70%)]" />
+          )}
+          {image.character && <HeroCharacter />}
+          {/* Phones: the words sit in the sky. Larger screens: bottom left, over the water; with the character, top left over the sky. */}
           <div
-            className="absolute inset-x-0 top-[calc(var(--header-h)+12px)] p-[clamp(20px,calc(2.6vw+10px),48px)] md:top-auto md:right-auto md:bottom-0 md:max-w-[min(38vw,560px)]"
+            className={cn(
+              "absolute inset-x-0 top-[calc(var(--header-h)+12px)] p-[clamp(20px,calc(2.6vw+10px),48px)] md:right-auto md:max-w-[min(48vw,780px)]",
+              image.character ? "md:top-[calc(var(--header-h)+3vh)]" : "md:top-auto md:bottom-0",
+            )}
           >
             {label && <p className={cn("mb-[clamp(12px,1.2vw,20px)] text-[13px] tracking-[0.2em] uppercase", soft)}>{label}</p>}
-            <h1 className="max-w-[13ch] text-[length:clamp(31px,calc(2.2vw+13px),52px)] leading-[1] font-bold tracking-[-0.02em] uppercase">
+            <h1 className="max-w-[13ch] text-[length:clamp(34px,calc(3.6vw+10px),80px)] leading-[0.98] font-bold tracking-[-0.02em] uppercase">
               {section.heading}
             </h1>
             {section.text && <p className={cn("mt-4 max-w-[38ch] text-lead", day ? "text-ink/85" : "text-white/85")}>{section.text}</p>}
+            {image.character && section.button?.href && section.button.label && (
+              <ButtonLink href={section.button.href} variant="light" className="mt-[clamp(20px,2.4vw,40px)]">
+                {section.button.label}
+              </ButtonLink>
+            )}
           </div>
           {image.scrollHint && (
             <p
@@ -112,6 +128,7 @@ export function Hero({
             </p>
           )}
           {/* Note and buttons: above the floating bar on phones, bottom right on larger screens. */}
+          {!image.character && (
           <div
             className="absolute inset-x-0 bottom-[92px] flex flex-col items-start gap-3 p-[clamp(20px,calc(2.6vw+10px),48px)] md:right-0 md:bottom-0 md:left-auto md:items-end"
           >
@@ -131,6 +148,7 @@ export function Hero({
               )}
             </div>
           </div>
+          )}
           {image.stops && (
             <div aria-hidden="true" className="absolute top-1/2 right-[clamp(14px,1.6vw,30px)] hidden -translate-y-1/2 gap-3.5 md:grid">
               {Array.from({ length: image.stops }, (_, i) => (

@@ -31,9 +31,11 @@
     "server-only": "^0.0.1",
     "styled-components": "^6.5.3",
     "tailwindcss": "^4",
+    "three": "^0.178.0",
     "typescript": "^5"
   },
   "devDependencies": {
+    "@types/three": "^0.178.0",
     "eslint": "^9",
     "eslint-config-next": "16.4.3"
   },

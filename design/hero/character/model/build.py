@@ -32,7 +32,8 @@ def mesh_object(name, verts, faces, mat, colors=None, uvs=None):
     bm = bmesh.new(); bm.from_mesh(me); bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-6); bmesh.ops.recalc_face_normals(bm, faces=bm.faces); bm.to_mesh(me); bm.free()
     return ob
 
-def lathe(name, profile, mat, n=192, uv_radius=None):
+WEB = os.environ.get('WEB') == '1'          # a lighter file for the website: fewer segments, a smaller eye texture
+def lathe(name, profile, mat, n=96 if os.environ.get('WEB') == '1' else 192, uv_radius=None):
     """Turn a profile of (distance from the eye's axis, height along it) round that axis."""
     verts, faces, uvs = [], [], []
     for r, h in profile:
@@ -88,12 +89,13 @@ from PIL import ImageChops
 hud = ImageChops.add(ImageChops.add(pool, glowl), lines); hud = Image.composite(ImageChops.add(Image.new('RGB', (S, S), (2, 10, 14)), core), hud, lens)
 K = 0.74; small = hud.resize((round(S * K), round(S * K)), Image.LANCZOS); hud = Image.new('RGB', (S, S), (1, 4, 6)); hud.paste(small, (round(S * (1 - K) / 2),) * 2)   # the instrument is small in a dark eye, as on the artwork
 edge = Image.new('L', (S, S), 0); ImageDraw.Draw(edge).ellipse((S * 0.16, S * 0.16, S * 0.84, S * 0.84), fill=255); hud = Image.composite(hud, Image.new('RGB', (S, S), (1, 4, 6)), edge.filter(ImageFilter.GaussianBlur(30)))
+hud = hud.resize((512, 512), Image.LANCZOS) if WEB else hud
 hud.save(os.path.join(HERE, 'hud.png'))
 img = bpy.data.images.load(os.path.join(HERE, 'hud.png')); nt = M_hud.node_tree; tex = nt.nodes.new('ShaderNodeTexImage'); tex.image = img
 nt.links.new(tex.outputs['Color'], nt.nodes['Principled BSDF'].inputs['Emission Color'])
 
 # ---- the body: a sphere, with a hole for the eye and a groove that parts the base panel from it
-bpy.ops.mesh.primitive_uv_sphere_add(segments=256, ring_count=128, radius=1.0); body = bpy.context.object; body.name = 'Body'; body.data.materials.append(M_body)
+bpy.ops.mesh.primitive_uv_sphere_add(segments=128 if WEB else 256, ring_count=64 if WEB else 128, radius=1.0); body = bpy.context.object; body.name = 'Body'; body.data.materials.append(M_body)
 EYE_R = 0.612                                                    # the eye's hole
 bpy.ops.mesh.primitive_cylinder_add(vertices=192, radius=EYE_R, depth=1.0, location=(0, -1.1, 0), rotation=(math.pi / 2, 0, 0)); cut_eye = bpy.context.object; cut_eye.data.materials.append(M_dark)
 
@@ -103,7 +105,7 @@ AX = (math.cos(math.radians(21)) * Vector((0, 0, -1)) + math.sin(math.radians(21
 U = (-h0 - AX * (-h0).dot(AX)).normalized(); V = AX.cross(U)     # U points to where the groove is lowest, under the eye
 def groove_pt(theta, phi, r): return r * (math.cos(theta) * AX + math.sin(theta) * (math.cos(phi) * U + math.sin(phi) * V))
 def half_width(phi): return 0.015 + 0.035 * (0.5 - 0.5 * math.cos(phi)) ** 1.3                  # a thin line at the front, opening into a dark recess toward the back
-N = 360; verts, faces = [], []
+N = 180 if WEB else 360; verts, faces = [], []
 for i in range(N):
     phi = 2 * math.pi * i / N; hw = half_width(phi)
     for th, r in ((RHO - hw, 0.90), (RHO + hw, 0.90), (RHO + hw, 1.08), (RHO - hw, 1.08)): verts.append(tuple(groove_pt(th, phi, r)))
@@ -181,7 +183,7 @@ seam('SeamChin', [p for p in [on_body(0.0, math.radians(a)) for a in range(-40, 
 root = bpy.data.objects.new('Character', None); col.objects.link(root)
 for ob in list(col.objects):
     if ob is not root: ob.parent = root
-bpy.ops.export_scene.gltf(filepath=os.path.join(HERE, 'character.glb'), export_format='GLB', export_apply=True, export_vertex_color='ACTIVE', export_all_vertex_colors=True, export_yup=True)
+bpy.ops.export_scene.gltf(filepath=os.path.join(HERE, 'character-web.glb' if WEB else 'character.glb'), export_format='GLB', export_apply=True, export_image_format='JPEG' if WEB else 'AUTO', export_vertex_color='ACTIVE', export_all_vertex_colors=True, export_yup=True)
 bpy.ops.wm.save_as_mainfile(filepath=os.path.join(HERE, 'character.blend'))
 print('exported', os.path.getsize(os.path.join(HERE, 'character.glb')) // 1024, 'KB')
 
