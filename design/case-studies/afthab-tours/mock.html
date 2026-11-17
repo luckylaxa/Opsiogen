@@ -27,6 +27,31 @@ body{background:#888;font-family:Inter,sans-serif;color:var(--ink)}
 .logo{position:absolute;height:38px}
 .foot{position:absolute;right:72px;bottom:64px;font-size:15px;color:var(--graphite)}
 .dark .foot{color:#9aa0a8}
+@font-face{font-family:'IBM Plex Mono';font-weight:400;src:url(fonts/node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2)}
+@font-face{font-family:'IBM Plex Mono';font-weight:500;src:url(fonts/node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff2)}
+/* LinkedIn post card and the redesigned pages (all sizes in em, so one page scales with its width) */
+.post{position:absolute;background:#fff;border-radius:14px;box-shadow:0 22px 60px rgb(17 20 24/.28),0 2px 6px rgb(17 20 24/.1);color:var(--ink);overflow:hidden}
+.post .hd{display:flex;align-items:center;gap:10px;padding:14px 16px 10px}
+.post .av{width:40px;height:40px;border-radius:8px;background:var(--mist);display:grid;place-items:center;flex:none}
+.post .av img{width:28px;height:auto}
+.post .nm{font-size:13.5px;font-weight:600;line-height:1.3}.post .nm span{display:block;font-weight:400;color:var(--graphite);font-size:11.5px}
+.post .tx{font-size:13px;line-height:1.45;padding:0 16px 12px;color:#2a2f36}
+.post .bar{display:flex;justify-content:space-between;padding:9px 16px;font-size:11.5px;color:var(--graphite);border-top:1px solid #eceef1}
+.post .act{display:flex;justify-content:space-around;padding:11px 8px;font-size:12.5px;font-weight:500;color:#59606a;border-top:1px solid #eceef1}
+.pg{position:relative;width:100%;aspect-ratio:4/5;overflow:hidden;font-size:var(--u,3.2px)}
+.pg .mono{font-family:'IBM Plex Mono',monospace;font-size:2.5em;letter-spacing:.08em;text-transform:uppercase}
+.pg .hl{font-size:10.4em;line-height:1.03;letter-spacing:-.03em}
+.pg .hl i{font-family:'Playfair Display',serif;font-style:italic;font-size:1.12em;letter-spacing:-.01em}
+.pg .sl{font-size:3.6em;line-height:1.4;font-weight:500}
+.pg .ft{position:absolute;left:7em;right:7em;bottom:6em;display:flex;justify-content:space-between;align-items:center;font-size:1em}
+.pg .ft img{height:6.4em;width:auto}.pg .ft span{font-size:2.6em}
+.pg .in{position:absolute;inset:8em 7em auto 7em}
+.ink{background:var(--ink);color:#fff}.ink .hl i,.ink .mono{color:var(--lime)}.ink .sl{color:#c9ced6}.ink .ft span{color:#9aa0a8}
+.mst{background:var(--mist)}.mst .hl i,.mst .mono{color:var(--blue)}.mst .sl,.mst .ft span{color:var(--graphite)}
+.ivy{background:var(--ivory)}.ivy .hl i,.ivy .mono{color:var(--blue)}.ivy .sl,.ivy .ft span{color:var(--graphite)}
+.blu{background:var(--blue);color:#fff}.blu .hl i{color:var(--ink)}.blu .sl{color:#e6effa}.blu .ft span{color:#e6effa}
+.row{display:flex;gap:3em;align-items:baseline;font-family:'IBM Plex Mono',monospace;font-size:3.1em;padding:2.1em 0;border-top:1px solid rgb(255 255 255/.14)}
+.row b{font-weight:400;color:#8d949d;width:5.2em;flex:none}
 </style></head><body>
 
 <!-- 01 Cover -->
@@ -93,7 +118,7 @@ body{background:#888;font-family:Inter,sans-serif;color:var(--ink)}
 
 <!-- 05 Meta ads -->
 <section class="m dark" id="m05" style="background:var(--ink)">
-  <div class="tl"><p class="eyebrow">Meta ads</p><h2 class="h">Holiday packages,<br>ready to <i>book</i>.</h2><p class="sub">The destination, the price and one button on every ad.</p></div>
+  <div class="tl"><p class="eyebrow">Seasonal campaign · UAE National Day</p><h2 class="h">Your National Day<br><i>escape</i>.</h2><p class="sub">Four holiday packages from Dubai as Meta ads, each with its price and one button to book.</p></div>
   <div class="card" style="left:560px;top:96px;width:268px;height:335px"><img src="cut/ad-az.jpg"></div>
   <div class="card" style="left:850px;top:96px;width:268px;height:335px"><img src="cut/ad-th.jpg"></div>
   <div class="card" style="left:1140px;top:96px;width:268px;height:335px"><img src="cut/ad-al.jpg"></div>
@@ -114,38 +139,66 @@ body{background:#888;font-family:Inter,sans-serif;color:var(--ink)}
 
 <!-- 07 Flag Day -->
 <section class="m light" id="m07" style="background:#DCEBF7">
-  <div class="tl"><p class="eyebrow">Seasonal campaign · UAE Flag Day</p><h2 class="h">One flag. Every <i>journey</i>.</h2></div>
+  <div class="tl"><p class="eyebrow">Occasion greeting · UAE Flag Day</p><h2 class="h">One flag. Every <i>journey</i>.</h2></div>
   <div class="card" style="left:72px;top:270px;width:300px;height:375px"><img src="cut/968_35.jpg"></div>
   <div class="card" style="left:396px;top:270px;width:300px;height:375px"><img src="cut/968_37.jpg"></div>
   <div class="card" style="left:720px;top:270px;width:300px;height:375px"><img src="cut/968_39.jpg"></div>
   <div class="phone" style="left:1070px;top:150px;width:300px;height:650px"><div class="screen"><div class="island"></div><img src="cut/fdA.jpg"></div></div>
   <div class="card" style="left:72px;top:672px;width:300px;height:157px"><img src="cut/977_34.jpg"></div>
-  <p style="position:absolute;left:396px;top:690px;font-size:17px;line-height:1.5;color:#3d4753;max-width:44ch">One idea carried across the feed, stories and LinkedIn, so the greeting looks the same wherever people see it.</p>
+  <p style="position:absolute;left:396px;top:690px;font-size:17px;line-height:1.5;color:#3d4753;max-width:44ch">One greeting made for the feed, stories and LinkedIn, so it looks the same wherever people see it.</p>
 </section>
 
 <!-- 08 LinkedIn carousel -->
-<section class="m light" id="m08" style="background:#fff">
-  <div class="tl"><p class="eyebrow">LinkedIn · Business beyond borders</p><h2 class="h">Useful first, <i>never</i> an ad.</h2></div>
-  <div class="foot" style="top:88px;bottom:auto;max-width:36ch;text-align:right;font-size:17px;line-height:1.45">A weekly carousel for companies that plan team travel, one question per page.</div>
-  <div style="position:absolute;left:72px;top:290px;display:flex;gap:20px">
-    <div class="card" style="position:relative;width:304px;height:380px;flex:none;box-shadow:0 14px 40px rgb(17 20 24/.14),0 0 0 1px #ece6d4"><img src="cut/li-a1.jpg"></div>
-    <div class="card" style="position:relative;width:304px;height:380px;flex:none;box-shadow:0 14px 40px rgb(17 20 24/.14),0 0 0 1px #ece6d4"><img src="cut/li-a2.jpg"></div>
-    <div class="card" style="position:relative;width:304px;height:380px;flex:none;box-shadow:0 14px 40px rgb(17 20 24/.14),0 0 0 1px #ece6d4"><img src="cut/li-a4.jpg"></div>
-    <div class="card" style="position:relative;width:304px;height:380px;flex:none;box-shadow:0 14px 40px rgb(17 20 24/.14),0 0 0 1px #ece6d4"><img src="cut/li-a6.jpg"></div>
-    <div class="card" style="position:relative;width:304px;height:380px;flex:none;box-shadow:0 14px 40px rgb(17 20 24/.14)"><img src="cut/li-a7.jpg"></div>
+<section class="m light" id="m08" style="background:#E9EEF4">
+  <div class="tl" style="top:250px"><p class="eyebrow">LinkedIn · Business beyond borders</p><h2 class="h">Useful first,<br><i>never</i> an ad.</h2><p class="sub">A weekly document carousel for companies that plan team travel, one question per page.</p></div>
+  <div class="post" style="left:520px;top:76px;width:400px">
+    <div class="hd"><div class="av"><img src="src/mark.png"></div><p class="nm">Afthab Tours<span>Travel agency · Dubai</span></p></div>
+    <p class="tx">A good offsite is decided long before anyone books a venue. Five questions we settle with every client first.</p>
+    <div class="pg ink" style="--u:3.7px"><img src="cut/ph-meet.jpg" style="position:absolute;inset:0 0 auto 0;width:100%;height:50%;object-fit:cover">
+      <div class="in" style="top:57%"><p class="mono">Business beyond borders</p><p class="hl" style="margin-top:.25em">The offsite <i>checklist</i>.</p></div>
+      <div class="ft"><img src="src/logo.png"><span>Swipe →</span></div></div>
+    <div class="bar"><span>The offsite checklist · 7 pages</span><span>1 / 7</span></div>
+    <div class="act"><span>Like</span><span>Comment</span><span>Repost</span><span>Send</span></div>
   </div>
-  <p class="bl" style="font-size:16px;color:var(--graphite)">The offsite checklist: a cover, five questions and a closing page.</p>
+  <div class="card" style="left:968px;top:96px;width:250px;transform:rotate(-3deg)"><div class="pg mst" style="--u:2.31px"><div class="in"><p class="hl" style="font-size:15em"><i>01</i></p><p class="hl" style="font-size:8.2em;margin-top:.1em">What is the offsite for?</p><p class="sl" style="margin-top:.7em">Strategy, reward or team building. The answer shapes everything else.</p></div>
+    <img src="cut/ph-office.jpg" style="position:absolute;left:7em;right:7em;bottom:17em;width:auto;height:38%;border-radius:2.4em;object-fit:cover;width:calc(100% - 14em)"><div class="ft"><img src="src/logo.png"><span>Swipe →</span></div></div></div>
+  <div class="card" style="left:1196px;top:150px;width:250px;transform:rotate(3deg)"><div class="pg mst" style="--u:2.31px"><div class="in"><p class="hl" style="font-size:15em"><i>03</i></p><p class="hl" style="font-size:8.2em;margin-top:.1em">Which dates work?</p><p class="sl" style="margin-top:.7em">Avoid peak fares, public holidays and quarter-end.</p></div>
+    <img src="cut/ph-cal.jpg" style="position:absolute;left:7em;bottom:17em;height:38%;border-radius:2.4em;object-fit:cover;width:calc(100% - 14em)"><div class="ft"><img src="src/logo.png"><span>Swipe →</span></div></div></div>
+  <div class="card" style="left:968px;top:474px;width:250px;transform:rotate(2deg)"><div class="pg mst" style="--u:2.31px"><div class="in"><p class="hl" style="font-size:15em"><i>05</i></p><p class="hl" style="font-size:8.2em;margin-top:.1em">Who signs off, and by when?</p><p class="sl" style="margin-top:.7em">One decision maker keeps the plan moving.</p></div>
+    <img src="cut/ph-sign.jpg" style="position:absolute;left:7em;bottom:17em;height:32%;border-radius:2.4em;object-fit:cover;width:calc(100% - 14em)"><div class="ft"><img src="src/logo.png"><span>Swipe →</span></div></div></div>
+  <div class="card" style="left:1196px;top:528px;width:250px;transform:rotate(-2deg)"><div class="pg blu" style="--u:2.31px"><div class="in" style="top:auto;bottom:22em"><p class="hl">Plan your next <i>offsite</i> with us.</p><p class="sl" style="margin-top:.8em">Send us your five answers. We reply with options.</p></div>
+    <div class="ft"><img src="src/logo.png" style="filter:brightness(0) invert(1)"><span>afthabtours.com</span></div></div></div>
 </section>
 
 <!-- 09 LinkedIn posts -->
 <section class="m dark" id="m09" style="background:var(--ink)">
-  <div class="tl"><p class="eyebrow">LinkedIn · single posts</p><h2 class="h">One idea,<br>one <i>concept</i>.</h2><p class="sub">Each post tells one business point on one flat brand colour.</p></div>
-  <div class="card" style="left:560px;top:120px;width:270px;height:338px;transform:rotate(-3deg)"><img src="cut/li-brief.jpg"></div>
-  <div class="card" style="left:850px;top:80px;width:290px;height:363px"><img src="cut/li-fd2.jpg" style="outline:1px solid #2a2e35"></div>
-  <div class="card" style="left:1160px;top:120px;width:270px;height:338px;transform:rotate(3deg)"><img src="cut/li-b7.jpg"></div>
-  <div class="card" style="left:600px;top:490px;width:270px;height:338px;transform:rotate(2deg)"><img src="cut/li-b1.jpg"></div>
-  <div class="card" style="left:890px;top:470px;width:290px;height:363px"><img src="cut/li-desk.jpg"></div>
-  <div class="card" style="left:1200px;top:490px;width:270px;height:338px;transform:rotate(-2deg)"><img src="cut/li-fd1.jpg"></div>
+  <div class="tl"><p class="eyebrow">LinkedIn · single posts</p><h2 class="h">One idea,<br>one <i>concept</i>.</h2><p class="sub">An itinerary, a boarding pass, a route: each post tells one business point through one picture.</p></div>
+  <div class="post" style="left:470px;top:150px;width:300px">
+    <div class="hd"><div class="av"><img src="src/mark.png"></div><p class="nm">Afthab Tours<span>Travel agency · Dubai</span></p></div>
+    <div class="pg ink" style="--u:2.78px"><div class="in"><p class="hl">Cancelled at <i>2 am</i>.</p><p class="sl" style="margin-top:.7em">What our desk does next.</p>
+      <div style="margin-top:7em"><p class="row"><b>02:00</b><span style="text-decoration:line-through;color:#8d949d">Flight cancelled</span></p><p class="row"><b>02:10</b><span>Desk rebooks</span></p><p class="row"><b>02:40</b><span>New seat confirmed</span></p><p class="row" style="align-items:center"><b style="color:var(--lime)">07:15</b><span style="font-family:'Playfair Display',serif;font-style:italic;font-size:1.9em;color:var(--lime)">On the way.</span></p></div></div>
+      <div class="ft"><img src="src/logo.png"><span>afthabtours.com</span></div></div>
+    <div class="act"><span>Like</span><span>Comment</span><span>Repost</span><span>Send</span></div>
+  </div>
+  <div class="post" style="left:800px;top:80px;width:300px">
+    <div class="hd"><div class="av"><img src="src/mark.png"></div><p class="nm">Afthab Tours<span>Travel agency · Dubai</span></p></div>
+    <div class="pg ivy" style="--u:2.78px"><div class="in"><p class="hl">Visas, done <i>early</i>.</p><p class="sl" style="margin-top:.7em">What to prepare three weeks out.</p>
+      <div style="margin-top:8em;border:1.5px solid var(--ink);display:flex;font-family:'IBM Plex Mono',monospace">
+        <div style="flex:1;padding:4em 4.5em"><p style="font-size:2.2em;color:var(--graphite)">FROM</p><p style="font-family:Inter;font-size:6.6em;letter-spacing:-.02em;margin-top:.1em">Dubai, DXB</p><p style="font-size:2.2em;color:var(--graphite);margin-top:1.6em">TO</p><p style="font-family:'Playfair Display',serif;font-style:italic;font-size:8em;color:var(--blue);line-height:1.1">Your next trip</p>
+          <div style="display:flex;gap:4em;margin-top:3em;font-size:2.2em"><p><span style="color:var(--graphite)">PASSPORT</span><br>Checked</p><p><span style="color:var(--graphite)">DOCUMENTS</span><br>Ready</p><p><span style="color:var(--graphite)">APPLY</span><br>3 weeks out</p></div></div>
+        <div style="width:19em;border-left:1.5px dashed var(--ink);padding:4em 2.6em;font-size:1em"><p style="font-size:2.2em;color:var(--graphite)">VISA</p><p style="font-size:2.6em">Early</p><p style="font-size:2.2em;color:var(--graphite);margin-top:1.4em">SOURCE</p><p style="font-size:2.6em">Official</p>
+          <div style="margin-top:3em;height:9em;background:repeating-linear-gradient(90deg,#111418 0 .5em,transparent .5em 1.1em,#111418 1.1em 1.4em,transparent 1.4em 2.3em)"></div></div></div></div>
+      <div class="ft"><img src="src/logo.png"><span>afthabtours.com</span></div></div>
+    <div class="act"><span>Like</span><span>Comment</span><span>Repost</span><span>Send</span></div>
+  </div>
+  <div class="post" style="left:1130px;top:150px;width:300px">
+    <div class="hd"><div class="av"><img src="src/mark.png"></div><p class="nm">Afthab Tours<span>Travel agency · Dubai</span></p></div>
+    <div class="pg blu" style="--u:2.78px"><div class="in"><p class="hl">Business travel, from <i>Dubai</i>.</p><p class="sl" style="margin-top:.7em">Corporate travel, MICE and visas, one team.</p></div>
+      <svg viewBox="0 0 300 150" style="position:absolute;left:7em;right:7em;bottom:20em;width:calc(100% - 14em)"><path d="M12 138 C 60 20, 220 10, 286 62" fill="none" stroke="#fff" stroke-width="1.4" stroke-dasharray="2 5" stroke-linecap="round"/><rect x="8" y="134" width="8" height="8" fill="#fff"/><rect x="282" y="58" width="8" height="8" fill="#111418"/></svg>
+      <p class="mono" style="position:absolute;left:2.8em;bottom:6.9em;color:#fff;font-size:2.3em">DXB</p><p class="mono" style="position:absolute;right:2.8em;bottom:12.4em;color:#fff;font-size:2.3em;text-transform:none;letter-spacing:.02em">Your next meeting</p>
+      <div class="ft" style="bottom:5.4em"><img src="src/logo.png" style="filter:brightness(0) invert(1);margin-left:14em"><span>afthabtours.com</span></div></div>
+    <div class="act"><span>Like</span><span>Comment</span><span>Repost</span><span>Send</span></div>
+  </div>
 </section>
 
 <!-- 10 Brand system -->
@@ -179,7 +232,7 @@ body{background:#888;font-family:Inter,sans-serif;color:var(--ink)}
 <section class="m light" id="m12" style="background:var(--ink)">
   <div style="position:absolute;left:-120px;top:-170px;width:1900px;display:grid;grid-template-columns:repeat(8,1fr);gap:18px;transform:rotate(-8deg)">
     <img src="cut/az1.jpg" style="border-radius:14px;width:100%"><img src="cut/ad-ge.jpg" style="border-radius:14px;width:100%"><img src="cut/li-a1.jpg" style="border-radius:14px;width:100%"><img src="cut/968_35.jpg" style="border-radius:14px;width:100%"><img src="cut/az3.jpg" style="border-radius:14px;width:100%"><img src="cut/ad-th.jpg" style="border-radius:14px;width:100%"><img src="cut/li-brief.jpg" style="border-radius:14px;width:100%"><img src="cut/az5.jpg" style="border-radius:14px;width:100%">
-    <img src="cut/plan.jpg" style="border-radius:14px;width:100%"><img src="cut/li-a7.jpg" style="border-radius:14px;width:100%"><img src="cut/az4.jpg" style="border-radius:14px;width:100%"><img src="cut/ad-al.jpg" style="border-radius:14px;width:100%"><img src="cut/968_39.jpg" style="border-radius:14px;width:100%"><img src="cut/li-a4.jpg" style="border-radius:14px;width:100%"><img src="cut/az2.jpg" style="border-radius:14px;width:100%"><img src="cut/ad-mv.jpg" style="border-radius:14px;width:100%">
+    <img src="cut/plan.jpg" style="border-radius:14px;width:100%"><img src="cut/963_35.jpg" style="border-radius:14px;width:100%"><img src="cut/az4.jpg" style="border-radius:14px;width:100%"><img src="cut/ad-al.jpg" style="border-radius:14px;width:100%"><img src="cut/968_39.jpg" style="border-radius:14px;width:100%"><img src="cut/li-a4.jpg" style="border-radius:14px;width:100%"><img src="cut/az2.jpg" style="border-radius:14px;width:100%"><img src="cut/ad-mv.jpg" style="border-radius:14px;width:100%">
     <img src="cut/ad-az.jpg" style="border-radius:14px;width:100%"><img src="cut/az7.jpg" style="border-radius:14px;width:100%"><img src="cut/968_37.jpg" style="border-radius:14px;width:100%"><img src="cut/li-desk.jpg" style="border-radius:14px;width:100%"><img src="cut/escape.jpg" style="border-radius:14px;width:100%"><img src="cut/az6.jpg" style="border-radius:14px;width:100%"><img src="cut/ad-all.jpg" style="border-radius:14px;width:100%"><img src="cut/li-fd2.jpg" style="border-radius:14px;width:100%">
     <img src="cut/li-b1.jpg" style="border-radius:14px;width:100%"><img src="cut/963_43.jpg" style="border-radius:14px;width:100%"><img src="cut/ad-ge.jpg" style="border-radius:14px;width:100%"><img src="cut/az1.jpg" style="border-radius:14px;width:100%"><img src="cut/li-a2.jpg" style="border-radius:14px;width:100%"><img src="cut/plan.jpg" style="border-radius:14px;width:100%"><img src="cut/az4.jpg" style="border-radius:14px;width:100%"><img src="cut/li-fd1.jpg" style="border-radius:14px;width:100%">
   </div>

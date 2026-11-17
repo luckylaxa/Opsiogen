@@ -14,4 +14,12 @@ one Playfair Display Italic accent word; flat colour, real photography) and use 
 The website is not changed yet. After approval: export at 2x, add the gallery to the Afthab Tours
 case study and replace its placeholder sample images, cover and summary.
 
+Owner's notes so far (17 Nov): UAE Flag Day is an occasion greeting, not a seasonal campaign; the seasonal
+campaign is the UAE National Day holiday packages (frame 05). The LinkedIn frames (08, 09) were redesigned
+with a LinkedIn post layout and richer pages (itinerary, boarding pass, route) from Afthab's concept library.
+Frame 10 (brand system) is to be replaced by video mockups of the corporate brand film, "Travel beyond
+boundaries" (83 s, 16:9). The film sits in Afthab's video library, which this account cannot open, so that
+frame waits for the video file or a few stills from the owner. `render.cjs` also needs
+`@fontsource/ibm-plex-mono` for the mono labels.
+
 To check with Afthab before publishing: the Meta ads show real package prices and a phone number.
