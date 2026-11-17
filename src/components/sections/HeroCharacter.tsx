@@ -33,6 +33,7 @@ export function HeroCharacter() {
   const still = useRef<HTMLImageElement>(null);
   const trail = useRef<HTMLSpanElement>(null);
   const glow = useRef<HTMLSpanElement>(null);
+  const note = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     if (!box.current || !canvas.current || !still.current || !trail.current || !glow.current) return;
@@ -59,15 +60,42 @@ export function HeroCharacter() {
       for (const r of rush) { const u = (narrow && r.dataset.narrow) || r.dataset.wide; if (u) r.style.backgroundImage = `url("${u}")`; }
     };
 
-    // The pointer
     let want = [0, 0], hello = -10, blink = 0, blinkAt = 2, over = 0;
+    // The points in the picture: when the pointer goes to one, the character looks at it and its little screen opens.
+    // Left alone for a while it shows them one by one itself; a press on the character shows the next one beside it.
+    const spots = stage ? Array.from(stage.querySelectorAll<HTMLElement>("[data-hero-spot]")) : [];
+    let hover: HTMLElement | null = null, shown: HTMLElement | null = null, turn = -1, lastMove = performance.now(), nextAuto = lastMove + 5000, hide = 0;
+    const nt = note.current;
+    const close = () => { if (shown) delete shown.dataset.on; shown = null; if (nt) nt.style.opacity = "0"; };
+    const show = (beside: boolean) => {
+      if (!spots.length) return;
+      close(); turn = (turn + 1) % spots.length; const sp = spots[turn];
+      if (!beside && sp.offsetParent) { shown = sp; sp.dataset.on = ""; }
+      else if (nt) { nt.children[1].textContent = sp.dataset.title ?? ""; nt.children[2].textContent = sp.dataset.text ?? ""; nt.style.opacity = "1"; }
+      blink = 1; window.clearTimeout(hide); hide = window.setTimeout(close, 3800);
+    };
+    const onOver = (e: PointerEvent) => {
+      const sp = (e.target as Element).closest<HTMLElement>("[data-hero-spot]");
+      if (sp && sp !== hover) { close(); hover = sp; blink = 1; }
+    };
+    const onOut = (e: PointerEvent) => { if ((e.target as Element).closest("[data-hero-spot]") === hover) hover = null; };
+    stage?.addEventListener("pointerover", onOver);
+    stage?.addEventListener("pointerout", onOut);
+    const lookAt = (sp: HTMLElement) => {
+      const a = sp.getBoundingClientRect(), b = el.getBoundingClientRect();
+      want = [clamp((a.left + a.width / 2 - b.left - b.width / 2) / (window.innerWidth * 0.3), -1.25, 1.25), clamp((a.top + a.height / 2 - b.top - b.height / 2) / (window.innerHeight * 0.34), -1, 1)];
+    };
+
+    // The pointer
     const onMove = (e: PointerEvent) => {
+      lastMove = performance.now();
+      if (hover) return;
       const r = el.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
       want = [clamp(dx / (window.innerWidth * 0.4), -1, 1), clamp(dy / (window.innerHeight * 0.4), -1, 1)];
       over = Math.hypot(dx, dy) < r.width * 0.5 ? 1 : 0;
     };
     const onLeave = () => { want = [0, 0]; over = 0; };
-    const greet = () => { hello = performance.now() / 1000; blink = 1; };
+    const greet = () => { hello = performance.now() / 1000; lastMove = performance.now(); show(true); };
     const noFocusRing = (e: PointerEvent) => e.preventDefault();
     window.addEventListener("pointermove", onMove, { passive: true });
     document.documentElement.addEventListener("pointerleave", onLeave);
@@ -157,6 +185,9 @@ export function HeroCharacter() {
         speed *= Math.pow(0.02, dt);
         const v = reduce ? 0 : clamp(speed / 90, 0, 1);                     // how fast it is flying, from the scroll
         const away = reduce ? 0 : clamp(progress * 1.6, 0, 1);               // how far it has turned to fly off
+        if (progress > 0.04) { if (shown || (nt && nt.style.opacity === "1")) close(); }
+        else if (!reduce && !hover && now - lastMove > 6000 && now > nextAuto && !document.hidden) { show(false); nextAuto = now + 6500; }
+        if (hover) lookAt(hover); else if (shown) lookAt(shown); else if (now - lastMove > 6000) want = [0, 0];
         const follow = 1 - Math.pow(1e-7, dt);
         lean = [lean[0] + (want[0] - lean[0]) * follow, lean[1] + (want[1] - lean[1]) * follow];
         const aimY = (1 - away) * lean[0] * 0.8 + away * AWAY, aimX = (1 - away) * lean[1] * 0.5 + away * 0.05;
@@ -209,6 +240,7 @@ export function HeroCharacter() {
       window.removeEventListener("pointermove", onMove); document.documentElement.removeEventListener("pointerleave", onLeave);
       window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", measure);
       el.removeEventListener("pointerdown", noFocusRing); el.removeEventListener("click", greet);
+      stage?.removeEventListener("pointerover", onOver); stage?.removeEventListener("pointerout", onOut); window.clearTimeout(hide);
     };
   }, []);
 
@@ -216,12 +248,18 @@ export function HeroCharacter() {
     <button
       ref={box}
       type="button"
-      aria-label="Our character. Press to say hello."
-      className="absolute top-[calc(64%-var(--w)/2)] left-[calc(50%-var(--w)/2)] block aspect-square w-[var(--w)] cursor-pointer rounded-full outline-offset-4 will-change-transform [--w:clamp(150px,46vw,230px)] [-webkit-tap-highlight-color:transparent] md:top-[calc(53%-var(--w)/2)] md:left-[calc(62%-var(--w)/2)] md:[--w:clamp(240px,min(27vw,44svh),460px)]"
+      aria-label="Our character. Press to hear what we do here."
+      className="absolute top-[calc(59%-var(--w)/2)] left-[calc(50%-var(--w)/2)] block aspect-square w-[var(--w)] cursor-pointer rounded-full outline-offset-4 will-change-transform [--w:clamp(150px,46vw,230px)] [-webkit-tap-highlight-color:transparent] md:top-[calc(53%-var(--w)/2)] md:left-[calc(40%-var(--w)/2)] md:[--w:clamp(240px,min(27vw,44svh),460px)]"
     >
       {/* The trail starts at its back and fans out down and to the left, toward the visitor. */}
       <span ref={trail} aria-hidden="true" className="pointer-events-none absolute top-1/2 right-1/2 -z-10 h-[210%] w-[min(95vw,1300px)] opacity-0 blur-[clamp(6px,0.8vw,14px)]" style={TRAIL} />
       <span ref={glow} aria-hidden="true" className="pointer-events-none absolute top-[88%] left-[-5%] -z-10 h-[34%] w-[110%] opacity-85 blur-[clamp(6px,0.7vw,12px)]" style={GLOW} />
+      {/* Its own little screen: what a press on it shows (and, on phones, what it shows by itself). */}
+      <span ref={note} aria-live="polite" className="pointer-events-none absolute top-[108%] left-1/2 block w-[min(76vw,260px)] -translate-x-1/2 overflow-hidden rounded-[10px] border border-white/20 bg-[rgb(10_12_22/0.88)] px-3.5 pt-3 pb-3 text-left opacity-0 shadow-[0_12px_40px_rgb(0_0_0/0.45)] transition-opacity duration-200 md:top-auto md:bottom-[100%]">
+        <span aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,#35d4ff,#5a7dff,#b667ff,#ff5fb4,#ff9a3c)]" />
+        <span className="block text-[11px] font-semibold tracking-[0.16em] text-white/70 uppercase" />
+        <span className="mt-1 block text-[15px] leading-snug font-medium text-white" />
+      </span>
       {/* eslint-disable-next-line @next/next/no-img-element -- a small still that only shows until the 3D model is drawn */}
       <img ref={still} src="/home/character-front.webp" alt="" width={420} height={420} className="absolute inset-0 size-full object-contain transition-opacity duration-300" />
       <canvas ref={canvas} aria-hidden="true" className="absolute inset-0 size-full opacity-0 transition-opacity duration-300" />
