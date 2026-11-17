@@ -57,14 +57,14 @@ def tube(name, points, radius, mat, n=6):
 
 # ---- materials (named so the web page can find them)
 M_body = material('body', (0.95, 0.955, 0.97), rough=0.15, coat=1.0)
-M_base = material('base', (0.9, 0.91, 0.94), rough=0.16, coat=1.0)
+M_base = material('base', (0.84, 0.86, 0.91), rough=0.18, coat=1.0)
 M_dark = material('socket', (0.012, 0.015, 0.02), rough=0.3)
 M_gasket = material('gasket', (0.02, 0.022, 0.028), rough=0.12, coat=1.0)
 M_glass = material('glass', (0.5, 0.72, 0.78), rough=0.0, coat=1.0)                # smoked glass: you see the light inside through it
 M_glass.node_tree.nodes['Principled BSDF'].inputs['Transmission Weight'].default_value = 1.0; M_glass.node_tree.nodes['Principled BSDF'].inputs['IOR'].default_value = 1.45
 M_hud = material('hud', (0, 0, 0), rough=1.0, emit=(0.25, 0.92, 1.0), strength=2.2)
-M_strip = material('strip', rough=0.3, vcol=True, strength=2.4)
-M_glow = material('stripGlow', rough=1.0, vcol=True, strength=0.3, alpha=0.05)
+M_strip = material('strip', rough=0.5, vcol=True, strength=1.0)
+M_glow = material('stripGlow', rough=1.0, vcol=True, strength=1.6, alpha=0.2)
 M_seam = material('seam', (0.7, 0.72, 0.77), rough=0.5)
 
 # ---- the eye's light, drawn once as a picture and carried inside the model file: a lens with rings, ticks and small lights
@@ -100,11 +100,11 @@ RHO = math.radians(53); h0 = Vector((math.sin(math.radians(212)), -math.cos(math
 AX = (math.cos(math.radians(21)) * Vector((0, 0, -1)) + math.sin(math.radians(21)) * h0).normalized()
 U = (-h0 - AX * (-h0).dot(AX)).normalized(); V = AX.cross(U)     # U points to where the groove is lowest, under the eye
 def groove_pt(theta, phi, r): return r * (math.cos(theta) * AX + math.sin(theta) * (math.cos(phi) * U + math.sin(phi) * V))
-def half_width(phi): return 0.02 + 0.02 * (0.5 - 0.5 * math.cos(phi)) ** 1.6                    # a thin line at the front, a broad band across the back
+def half_width(phi): return 0.015 + 0.035 * (0.5 - 0.5 * math.cos(phi)) ** 1.3                  # a thin line at the front, opening into a dark recess toward the back
 N = 360; verts, faces = [], []
 for i in range(N):
     phi = 2 * math.pi * i / N; hw = half_width(phi)
-    for th, r in ((RHO - hw, 0.955), (RHO + hw, 0.955), (RHO + hw, 1.08), (RHO - hw, 1.08)): verts.append(tuple(groove_pt(th, phi, r)))
+    for th, r in ((RHO - hw, 0.90), (RHO + hw, 0.90), (RHO + hw, 1.08), (RHO - hw, 1.08)): verts.append(tuple(groove_pt(th, phi, r)))
 for i in range(N):
     for k in range(4): a, b = i * 4 + k, i * 4 + (k + 1) % 4; cc, dd = ((i + 1) % N) * 4 + (k + 1) % 4, ((i + 1) % N) * 4 + k; faces.append((a, b, cc, dd))
 cut_groove = mesh_object('GrooveCut', verts, faces, M_dark)
@@ -136,20 +136,28 @@ def line_col(t):
     for (t0, c0), (t1, c1) in zip(stops, stops[1:]):
         if t <= t1: k = (t - t0) / (t1 - t0); k = k * k * (3 - 2 * k); return tuple(c0[j] + (c1[j] - c0[j]) * k for j in range(3))
     return stops[-1][1]
+LINE = 0.027                                                     # half the lit line's width: it stays thin all the way
+def lit(t): return 1.0 if max(line_col(t)) > 0.1 else 0.0
 def ribbon(name, r, grow, mat, fade=False):
     verts, faces, cols = [], [], []
     for i in range(N):
-        phi = 2 * math.pi * i / N; hw = half_width(phi) * 0.72 + grow; t = ((i / N) + 0.04) % 1.0; cl = line_col(t)
-        if fade: cl = tuple(v * (0.0 if max(cl) < 0.1 else 1.0) for v in cl)
-        verts += [tuple(groove_pt(RHO - hw, phi, r)), tuple(groove_pt(RHO + hw, phi, r))]; cols += [cl, cl]
-    for i in range(N): a, b = i * 2, i * 2 + 1; cc, dd = ((i + 1) % N) * 2 + 1, ((i + 1) % N) * 2; faces.append((a, b, cc, dd))
+        phi = 2 * math.pi * i / N; t = ((i / N) + 0.04) % 1.0; cl = line_col(t); on = lit(t)
+        mid = RHO - half_width(phi) + LINE + 0.002               # it lies along the base panel's edge of the groove
+        hw = LINE + grow if on else half_width(phi) * 0.7        # where it is not lit, the dark band fills the groove
+        if not on: mid = RHO
+        hot = tuple(v + (1 - v) * 0.22 for v in cl) if on and not fade else cl          # a brighter, whiter centre
+        if fade: hot = tuple(v * on for v in cl); cl = (0.0, 0.0, 0.0)             # the halo is brightest on the line and fades to nothing at its edges
+        verts += [tuple(groove_pt(mid - hw, phi, r)), tuple(groove_pt(mid, phi, r + (0.004 if not fade else 0))), tuple(groove_pt(mid + hw, phi, r))]; cols += [cl, hot, cl]
+    for i in range(N):
+        if not (lit(((i / N) + 0.04) % 1.0) and lit((((i + 1) / N) + 0.04) % 1.0)): continue          # no line across the back: the groove is left open and dark
+        for k in range(2): a, b = i * 3 + k, i * 3 + k + 1; cc, dd = ((i + 1) % N) * 3 + k + 1, ((i + 1) % N) * 3 + k; faces.append((a, b, cc, dd))
     return mesh_object(name, verts, faces, mat, colors=cols)
-ribbon('Strip', 0.996, 0.0, M_strip)
-ribbon('StripGlow', 1.004, 0.045, M_glow, fade=True)             # a soft halo for the web page, which has no light bounce of its own
+ribbon('Strip', 0.990, 0.0, M_strip)
+ribbon('StripGlow', 1.003, 0.06, M_glow, fade=True)              # a soft halo for the web page, which has no light bounce of its own
 
 # ---- fine panel seams
 eye = Vector((0, -1, 0))
-def above_groove(p): return p.normalized().dot(AX) < math.cos(RHO + 0.05)
+def above_groove(p): return p.normalized().dot(AX) < math.cos(RHO + 0.03)
 def seam(name, pts): pts = [p * 1.0004 for p in pts]; return tube(name, pts, 0.0024, M_seam) if len(pts) > 3 else None
 def circle_pts(axis, cosd, keep):
     axis = Vector(axis).normalized(); u = axis.orthogonal().normalized(); v = axis.cross(u); rad = math.sqrt(1 - cosd * cosd)
@@ -160,9 +168,11 @@ def circle_pts(axis, cosd, keep):
         elif run: runs.append(run); run = []
     if run: runs.append(run)
     return max(runs, key=len) if runs else []
-seam('SeamTop', circle_pts((0.16, -0.30, 0.94), 0.60, lambda p: p.angle(eye) > math.asin(EYE_R) + 0.07))
-seam('SeamSide', [on_body(math.radians(-42), math.radians(a)) for a in range(52, -60, -2) if above_groove(on_body(math.radians(-42), math.radians(a)))])
-seam('SeamBack', circle_pts((-0.08, 0.30, 0.95), 0.52, lambda p: p.y > 0.12))
+# one seam round the top of the body: it rises over the eye and over the back, and dips at the sides (as on the reference sheet)
+def cap_lat(lon): return math.radians(27 + 12 * math.cos(2 * lon) + 5 * math.cos(lon))
+seam('SeamCap', [on_body(l, cap_lat(l)) for l in [2 * math.pi * i / 360 for i in range(361)]])
+# and a short one under the eye, from its rim down to the colour line
+seam('SeamChin', [p for p in [on_body(0.0, math.radians(a)) for a in range(-40, -80, -1)] if above_groove(p)])
 
 # one parent, so the whole character turns together
 root = bpy.data.objects.new('Character', None); col.objects.link(root)
@@ -182,5 +192,5 @@ if '--render' in sys.argv:                                     # stills from Ble
         l = bpy.data.lights.new(name, 'AREA'); l.size = size; l.energy = energy; l.color = color; o = bpy.data.objects.new(name, l); col.objects.link(o)
         o.location = loc; o.rotation_euler = Vector(loc).to_track_quat('Z', 'Y').to_euler()
     light('Key', (-3, -4, 4), 5, 190); light('Fill', (4, -3, 1), 4, 50); light('Blue', (-1.5, -1, -3), 2, 60, (0.3, 0.5, 1)); light('Pink', (1.5, -1, -3), 2, 60, (1, 0.35, 0.75))
-    for name, deg in [('front', 0), ('threequarter', 42), ('side', -90), ('back', 180)][:3]:
+    for name, deg in [('front', 0), ('threequarter', 42), ('back', 180)]:
         root.rotation_euler = (0, 0, math.radians(deg)); sc.render.filepath = os.path.join(HERE, 'check-' + name + '.png'); bpy.ops.render.render(write_still=True)
