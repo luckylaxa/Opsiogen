@@ -297,10 +297,12 @@ const OLD_SUMMARY: Record<string, string> = {
   "project-carlton-noble": "666aad01ca2c3bdc",
   "project-engel-volkers": "624cd6050552087f",
   "project-sifio-health": "d5f64fcb3f05515d",
+  "project-afthab-tours": "bdb9adb0bde0bd13",
 };
 /** Project services changed since, with the list the earlier seed wrote; add mode replaces it only while Studio still holds that list. */
 const OLD_SERVICES: Record<string, string[]> = {
   "project-sifio-health": ["ai-websites"],
+  "project-afthab-tours": ["ai-social-media-marketing"],
 };
 /** Project taglines rewritten since, with a fingerprint of the earlier one; same rule as summaries. */
 const OLD_TAGLINE: Record<string, string> = {
@@ -312,7 +314,7 @@ const OLD_TAGLINE: Record<string, string> = {
  * meetingful-0.jpg, omg-0.jpg …), replaced by a project's current gallery
  * while Studio still holds them.
  */
-const OLD_GALLERY_FILE = /^(m?\d+|sample-(hero|\d+)|(surgo|meetingful|omg|care|rx|rs|sifio|sifioweb|bigtapp|cabot|cabotbrand|carlton|ev|norsecom|sandlogic)-(hero|\d+)(-wide)?)\.jpg$/;
+const OLD_GALLERY_FILE = /^(m?\d+|sample-(hero|\d+)|(surgo|meetingful|omg|care|rx|rs|sifio|sifioweb|bigtapp|cabot|cabotbrand|carlton|ev|norsecom|sandlogic|afthab)-(hero|\d+)(-wide)?)\.jpg$/;
 const hash = (value: unknown) => createHash("sha1").update(JSON.stringify(value ?? null)).digest("hex").slice(0, 16);
 
 /** Card images rendered for an earlier version of the page; add mode swaps them for the current ones. */

@@ -1075,6 +1075,20 @@ const STORIES: Record<string, Pair[]> = {
       "Creator looks, AI shade matching and a simple bag and checkout make buying easy, and Glam AI can book a glam artist.",
     ],
   ],
+  "afthab-tours": [
+    [
+      "One look on every channel",
+      "Instagram posts, stories, Meta ads and LinkedIn follow one set of templates, so every post reads like Afthab.",
+    ],
+    [
+      "Packages people can book",
+      "Seasonal campaigns put each destination, its price and a WhatsApp button in every ad size.",
+    ],
+    [
+      "Business travel on LinkedIn",
+      "A weekly post for companies that plan team travel: useful first, never an ad.",
+    ],
+  ],
   "rohde-schwarz": [
     [
       "Print and digital, one look",
@@ -1172,6 +1186,7 @@ const STORIES: Record<string, Pair[]> = {
 /** Generated 1600 × 1200 card images that show the real work, by what they show. */
 const CARD_ALTS: Record<string, string> = {
   "sifio-health": "The Sifio Health web app's home screen",
+  "afthab-tours": "Afthab Tours Instagram posts and a Meta ad for Georgia, on an Afthab blue backdrop",
 };
 
 function makeProject(order: number, p: ProjectInput): Project {
@@ -1420,6 +1435,34 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
       "Finding a patient's outside records across health information exchanges",
       "Labs and vitals over time, with what changed since the last review",
       "Outcomes: adherence by drug class, admissions and payer partners",
+    ],
+    1600,
+    true,
+  ),
+  "afthab-tours": workGallery(
+    "afthab-tours",
+    "afthab",
+    {
+      alt: "Afthab Tours Instagram posts, stories, Meta ads and LinkedIn pages",
+      width: 2400,
+      height: 1529,
+      hotspot: { x: 0.5, y: 0.5 },
+      // The desktop frame designed in Figma; its square version on phones.
+      size: "original",
+      phone: true,
+    },
+    [
+      "An Instagram carousel: five things not to miss in Azerbaijan",
+      "The Instagram profile grid and a carousel post on two phones",
+      "A week of Instagram stories: a poll, a quiz, a reveal, this or that, a travel tip and an enquiry",
+      "UAE National Day package ads for Azerbaijan, Thailand, Almaty and Georgia",
+      "The Georgia package as a story, a feed post, a square and a landscape ad",
+      "A UAE Flag Day greeting, brand posts and tour package ads",
+      "A LinkedIn carousel for companies: the offsite checklist",
+      "LinkedIn posts on incentive travel and the corporate desk",
+      "The brand film, Travel beyond boundaries",
+      "Story ads for Azerbaijan, Thailand and Almaty on three phones",
+      "A wall of Instagram posts, ads and LinkedIn pages",
     ],
     1600,
     true,
@@ -1943,8 +1986,9 @@ const CASE_STUDIES: ProjectInput[] = [
     name: "Afthab Tours",
     slug: "afthab-tours",
     industry: "Travel",
-    services: ["ai-social-media-marketing"],
-    summary: "Social media content for Afthab Tours, a travel company.",
+    services: ["ai-social-media-marketing", "digital-marketing", "ai-video-production"],
+    summary:
+      "Social media, Meta ads and video for Afthab Tours, a travel agency in Dubai. We gave every post, story, ad and LinkedIn page one look, from holiday packages to business travel.",
     liveUrl: "https://www.afthabtours.com/",
   },
   {
