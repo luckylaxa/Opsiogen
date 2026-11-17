@@ -25,7 +25,7 @@ const GLOW: React.CSSProperties = {
 
 /**
  * Our character, drawn live as a real 3D model, in the Home picture. It faces the visitor and its eye
- * follows the pointer straight away; a click makes its eye blink. A pool of coloured light sits on the
+ * follows the pointer straight away; a click makes its eye blink and turns it to look a new way for a moment. A pool of coloured light sits on the
  * ground below it. As the visitor scrolls through the hero it turns and flies off into the scene, and only
  * while it moves fast does a fan of rainbow light pour from its back. The 3D code and the model load after the page has loaded, so the first screen never
  * waits for them; until then, and where 3D cannot be drawn, a still picture shows instead.
@@ -63,7 +63,9 @@ export function HeroCharacter({ className }: { className?: string }) {
       for (const r of rush) { const u = (narrow && r.dataset.narrow) || r.dataset.wide; if (u) r.style.backgroundImage = `url("${u}")`; }
     };
 
-    let want = [0, 0], blink = 0, blinkAt = 2, over = 0;
+    let want = [0, 0], blink = 0, blinkAt = 2, over = 0, turnTo = -1, poseUntil = 0;
+    // Where it looks after each press (turn, tilt), in order.
+    const POSES = [[0.95, -0.12], [-0.95, 0.1], [0.55, -0.42], [-0.6, 0.34], [1.25, 0.05], [-1.2, -0.08]];
     // The points in the picture: when the pointer goes to one, the character looks at it and its little screen opens.
     // Left alone for a while it shows them one by one itself; a press on the character shows the next one beside it.
     const spots = stage ? Array.from(stage.querySelectorAll<HTMLElement>("[data-hero-spot]")) : [];
@@ -99,8 +101,9 @@ export function HeroCharacter({ className }: { className?: string }) {
     };
     const onLeave = () => { want = [0, 0]; over = 0; };
     const greet = () => {
-      // A press is a blink of its eye light, nothing more: no hop and no spin.
+      // A press: its eye blinks and it turns to look a new way for a moment, a different way each time. One calm turn, never a spin.
       blink = 1; lastMove = performance.now(); show(true);
+      turnTo = (turnTo + 1) % POSES.length; poseUntil = performance.now() + 1500;
       // Tell the background light where the press came from (Home's glow listens for this).
       const r = el.getBoundingClientRect();
       window.dispatchEvent(new CustomEvent("hero:pulse", { detail: { x: r.left + r.width / 2, y: r.top + r.height / 2 } }));
@@ -199,8 +202,9 @@ export function HeroCharacter({ className }: { className?: string }) {
         if (hover) lookAt(hover); else if (shown) lookAt(shown); else if (now - lastMove > 6000) want = [0, 0];
         const follow = 1 - Math.pow(1e-7, dt);
         lean = [lean[0] + (want[0] - lean[0]) * follow, lean[1] + (want[1] - lean[1]) * follow];
-        const aimY = (1 - away) * lean[0] * 0.95 + away * AWAY, aimX = (1 - away) * lean[1] * 0.55 + away * 0.05;
-        const k = 420, c = 2 * Math.sqrt(k) * 0.95;
+        const pose = now < poseUntil ? POSES[turnTo] : null;
+        const aimY = (1 - away) * (pose ? pose[0] : lean[0] * 0.95) + away * AWAY, aimX = (1 - away) * (pose ? pose[1] : lean[1] * 0.55) + away * 0.05;
+        const k = pose ? 70 : 420, c = 2 * Math.sqrt(k) * 0.95;
         yawV += ((aimY - yaw) * k - yawV * c) * dt; yaw += yawV * dt; pitchV += ((aimX - pitch) * k - pitchV * c) * dt; pitch += pitchV * dt;
         if (Math.cos(yaw) > 0.9 && t > blinkAt && away < 0.1) { blink = 1; blinkAt = t + 3 + Math.random() * 3.5; }
         blink = Math.max(0, blink - dt / 0.3);                                  // a blink of light, not lids
