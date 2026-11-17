@@ -12,22 +12,22 @@ export function generateMetadata() {
  */
 const HERO_IMAGE = {
   image: {
-    url: "/home/hero-launch.jpg",
+    url: "/home/hero-pavilion.jpg",
     width: 2560,
-    height: 1432,
-    alt: "A green electric coupe on a show stand by the marina at night, under the brand's wall, banner and counter",
+    height: 1440,
+    alt: "A brand launch pavilion on a marina quay at sunset: a logo wall, flags, a brand guide on an easel and a welcome desk",
   },
-  phone: { url: "/home/hero-launch-phone.jpg", width: 1000, height: 1440 },
-  // The launch of a car brand we made up to show our work: it is ours, not a client.
+  phone: { url: "/home/hero-pavilion-phone.jpg", width: 1000, height: 1440 },
+  // Stop 01, Brand: the launch pavilion of a brand we made up to show our work. It is ours, not a client; the car comes at a later stop.
   caption: "Vaelo is a concept brand we designed to show our work.",
   character: true,
   // Points on the brand items in the picture (left and top as a share of the wide picture).
   spots: [
-    { x: 64.7, y: 15.7, title: "Logo", text: "A name and a mark people know at a glance." },
-    { x: 80, y: 27, title: "Event stand", text: "The wall, the lights and the counter, all in one look.", side: "left" as const },
-    { x: 92.8, y: 33, title: "Print", text: "Banners, brochures and posters, designed and ready to print.", side: "left" as const },
-    { x: 32.4, y: 54.7, title: "Badge", text: "The mark made into a badge for the car itself." },
-    { x: 13, y: 58, title: "Launch day", text: "Invitations, the welcome desk and every detail in the brand." },
+    { x: 77.5, y: 33, title: "Logo", text: "A name and a mark people know at a glance.", side: "left" as const },
+    { x: 53.5, y: 20, title: "Flags and signs", text: "The brand outdoors, readable from across the quay." },
+    { x: 92.7, y: 52, title: "Brand guide", text: "Colours, type and rules in one guide, so everything matches.", side: "left" as const },
+    { x: 15.6, y: 57.5, title: "Stationery", text: "Cards, brochures and letterheads in the same look." },
+    { x: 82.8, y: 55.4, title: "Merchandise", text: "Bags, cups and gifts that carry the brand.", side: "left" as const },
   ],
   after: "Brand, websites and apps, print, automation, social and video. All in one place.",
 };
