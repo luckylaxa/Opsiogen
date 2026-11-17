@@ -111,10 +111,17 @@ export function HeroCharacter({ className }: { className?: string }) {
         const r = el.getBoundingClientRect();
         const dx = Math.sin(pose[0]) * r.width * 0.3, dy = Math.sin(pose[1]) * r.height * 0.3;
         window.dispatchEvent(new CustomEvent("hero:pulse", { detail: { x: r.left + r.width / 2 + dx, y: r.top + r.height / 2 + dy } }));
+        // Thin beams of colour shoot a short way out of the eye, the way it is looking, then fade.
         const fl = el.querySelector<HTMLElement>("[data-flash]");
         if (fl && !reduce) {
           fl.style.left = `${r.width / 2 + dx}px`; fl.style.top = `${r.height / 2 + dy}px`;
-          fl.animate([{ transform: "translate(-50%,-50%) scale(0.15)", opacity: 1 }, { transform: "translate(-50%,-50%) scale(1.8)", opacity: 0.85, offset: 0.4 }, { transform: "translate(-50%,-50%) scale(5)", opacity: 0 }], { duration: 1200, easing: "ease-out" });
+          fl.style.rotate = `${Math.atan2(Math.sin(pose[1]), Math.sin(pose[0]))}rad`;
+          Array.from(fl.children).forEach((beam, n) => {
+            (beam as HTMLElement).animate(
+              [{ scale: "0 1", opacity: 1 }, { scale: "1 1", opacity: 1, offset: 0.35 }, { scale: "1.08 1", opacity: 0 }],
+              { duration: 620, delay: n * 45, easing: "cubic-bezier(0.2,0.8,0.2,1)" },
+            );
+          });
         }
       }, 380);
     };
@@ -284,8 +291,16 @@ export function HeroCharacter({ className }: { className?: string }) {
         <span className="block text-[11px] font-semibold tracking-[0.16em] text-white/70 uppercase" />
         <span className="mt-1 block text-[15px] leading-snug font-medium text-white" />
       </span>
-      {/* The burst of colour that leaves its eye on a press: in front of it, so it reads as coming from the eye. */}
-      <span data-flash aria-hidden="true" className="pointer-events-none absolute z-10 aspect-square w-[70%] rounded-full opacity-0" style={{ background: "radial-gradient(closest-side, rgb(255 255 255 / 0.9) 0%, #5cf2e6 20%, #a98bff 46%, rgb(255 122 200 / 0.7) 68%, transparent 100%)", transform: "translate(-50%,-50%) scale(0.15)" }} />
+      {/* The beams of colour that shoot from its eye on a press: in front of it, a short way out. */}
+      <span data-flash aria-hidden="true" className="pointer-events-none absolute z-10 block size-0">
+        {[["#35d4ff", -16], ["#5a7dff", -8], ["#b667ff", 0], ["#ff5fb4", 8], ["#ff9a3c", 16]].map(([c, a]) => (
+          <span
+            key={c}
+            className="absolute top-0 left-0 block h-[3px] w-[calc(var(--w)*1.5)] origin-left rounded-full opacity-0"
+            style={{ rotate: `${a}deg`, translate: "0 -50%", background: `linear-gradient(90deg, #fff 0%, ${c} 18%, ${c} 70%, transparent 100%)`, boxShadow: `0 0 10px 1px ${c}` }}
+          />
+        ))}
+      </span>
       {/* eslint-disable-next-line @next/next/no-img-element -- a small still that only shows until the 3D model is drawn */}
       <img ref={still} src="/home/character-front.webp" alt="" width={420} height={420} className="absolute inset-0 size-full object-contain transition-opacity duration-300" />
       <canvas ref={canvas} aria-hidden="true" className="absolute inset-0 size-full opacity-0 transition-opacity duration-300" />
