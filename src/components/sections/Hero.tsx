@@ -40,7 +40,6 @@ export function Hero({
 }) {
   if (image) {
     const label = image.eyebrow ?? section.label;
-    const edge = "clamp(20px,calc(2.6vw+10px),48px)";
     return (
       <>
         {/* The picture fills the first screen and runs up under the clear header. */}
@@ -58,8 +57,7 @@ export function Hero({
           )}
           {/* Phones: the words sit in the sky. Larger screens: bottom left, over the water. */}
           <div
-            className="absolute inset-x-0 top-[calc(var(--header-h)+12px)] md:top-auto md:right-auto md:bottom-0 md:max-w-[min(34vw,520px)]"
-            style={{ padding: edge }}
+            className="absolute inset-x-0 top-[calc(var(--header-h)+12px)] p-[clamp(20px,calc(2.6vw+10px),48px)] md:top-auto md:right-auto md:bottom-0 md:max-w-[min(38vw,560px)]"
           >
             {label && <p className="mb-[clamp(12px,1.2vw,20px)] text-[13px] tracking-[0.2em] text-white/80 uppercase">{label}</p>}
             <h1 className="max-w-[13ch] text-[length:clamp(31px,calc(2.2vw+13px),52px)] leading-[1] font-bold tracking-[-0.02em] uppercase">
@@ -78,8 +76,7 @@ export function Hero({
           )}
           {/* Note and buttons: above the floating bar on phones, bottom right on larger screens. */}
           <div
-            className="absolute inset-x-0 bottom-[92px] flex flex-col items-start gap-3 md:right-0 md:bottom-0 md:left-auto md:items-end"
-            style={{ padding: edge }}
+            className="absolute inset-x-0 bottom-[92px] flex flex-col items-start gap-3 p-[clamp(20px,calc(2.6vw+10px),48px)] md:right-0 md:bottom-0 md:left-auto md:items-end"
           >
             {image.note && <p className="max-w-[30ch] text-[13px] leading-[1.35] text-white/75 md:text-right">{image.note}</p>}
             <div className="flex flex-wrap gap-3">
