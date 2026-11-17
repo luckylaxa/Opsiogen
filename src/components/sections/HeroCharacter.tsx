@@ -212,8 +212,9 @@ export function HeroCharacter() {
         tr.style.opacity = (clamp((v - 0.08) / 0.4, 0, 1) * clamp(away * 3, 0, 1) * 0.72).toFixed(3);
         tr.style.transform = `translateY(-50%) rotate(-17deg) scale(${((0.6 + v * 0.45) / fs).toFixed(3)},${((0.9 + v * 0.15) / fs).toFixed(3)})`;
         // The pool of light on the ground: it stays put while the character bobs and hops above it, and breathes a little.
+        // It belongs to standing still, so it goes as soon as the character flies fast and comes back when it stops.
         const lift = (bob + hop) / Math.max(1, size);
-        gw.style.opacity = (0.86 - Math.min(0.3, -hop / 60) + (reduce ? 0 : Math.sin(t * 1.7) * 0.06)).toFixed(3);
+        gw.style.opacity = ((0.86 - Math.min(0.3, -hop / 60) + (reduce ? 0 : Math.sin(t * 1.7) * 0.06)) * (1 - clamp(v * 4, 0, 1))).toFixed(3);
         gw.style.transform = `translateY(${(-(bob + hop)).toFixed(1)}px) scale(${(1 + lift * 0.6).toFixed(3)})`;
         for (const r of rush) r.style.opacity = (clamp((v - 0.05) / 0.5, 0, 1) * 0.16).toFixed(3);
         fit();
