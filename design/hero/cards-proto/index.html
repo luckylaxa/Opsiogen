@@ -1,0 +1,148 @@
+<title>Opsiogen Card Wave</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap">
+<style>
+  /* Layout: one pinned first screen. The big heading stays in front; behind and below it a
+     ribbon of our work cards stands on edge, and on scroll the cards land flat on a tilted board. */
+  :root {
+    --bg: #121115;        /* the site's dark band */
+    --page: #0a090d;
+    --ink: #f8f6f8;
+    --mute: #a2a0a6;
+    --line: rgb(248 246 248 / 0.14);
+    --plate: #1b1a1e;
+    --display: "Outfit", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--ink); font-family: var(--display); margin: 0; }
+  .gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+  .stage { height: 340vh; position: relative; }
+  .pin { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+
+  .bar { position: absolute; inset: 0 0 auto; z-index: 5; display: flex; align-items: center; gap: clamp(16px, 2.4vw, 40px); height: clamp(64px, 6vw, 88px); padding-inline: clamp(16px, 3.4vw, 65px); }
+  .bar img { height: clamp(22px, 2.6vw, 38px); width: auto; }
+  .bar nav { display: flex; gap: clamp(14px, 2vw, 28px); font-size: clamp(14px, 1.2vw, 18px); color: var(--ink); }
+  .bar .cta { margin-left: auto; background: var(--ink); color: var(--page); border-radius: 8px; padding: 0.7em 1.15em; font-weight: 500; font-size: clamp(14px, 1.2vw, 18px); white-space: nowrap; }
+  @media (max-width: 640px) { .bar nav { display: none; } }
+
+  .words { position: absolute; inset: 0; z-index: 4; display: flex; flex-direction: column; align-items: center; text-align: center; padding-top: clamp(88px, 12.5vh, 150px); pointer-events: none; will-change: transform, opacity; }
+  .pill { border: 1px solid rgb(248 246 248 / 0.25); border-radius: 4px; padding: 0.15em 0.6em; font-size: clamp(14px, 1.2vw, 18px); margin: 0 0 clamp(20px, 3vh, 44px); }
+  h1 { margin: 0; font-weight: 700; text-transform: uppercase; line-height: 0.95; letter-spacing: -0.02em; font-size: clamp(38px, min(8.2vw, 13.6vh), 128px); text-wrap: balance; max-width: 13ch; }
+  .go { pointer-events: auto; margin-top: clamp(18px, 2.8vh, 36px); background: var(--ink); color: var(--page); border-radius: 8px; padding: 0.8em 1.3em; font-weight: 500; font-size: clamp(15px, 1.2vw, 18px); text-decoration: none; }
+  .go:focus-visible { outline: 2px solid #d8ff3e; outline-offset: 3px; }
+
+  .space { position: absolute; inset: 0; z-index: 2; perspective: 1900px; perspective-origin: 50% 46%; }
+  .world { position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform-style: preserve-3d; }
+  .card, .plate, .tag { position: absolute; left: 0; top: 0; will-change: transform; backface-visibility: visible; }
+  .card { width: 200px; height: 150px; margin: -75px 0 0 -100px; border-radius: 10px; overflow: hidden; background: var(--plate); box-shadow: 0 0 0 1px rgb(255 255 255 / 0.10); }
+  .card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .plate { border-radius: 30px; background: var(--plate); box-shadow: 0 0 0 1px var(--line); opacity: 0; }
+  .tag { width: 200px; margin-left: -100px; text-align: center; color: var(--ink); font-size: 24px; font-weight: 500; opacity: 0; white-space: nowrap; }
+
+  .hint { position: absolute; left: 50%; bottom: max(22px, env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 5; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--mute); }
+
+  .after { background: var(--page); border-top: 1px solid var(--line); padding-block: clamp(56px, 9vw, 120px); }
+  .after p { max-width: 60ch; margin: 0 auto; color: var(--mute); font-size: clamp(16px, 1.4vw, 20px); line-height: 1.45; text-align: center; }
+</style>
+
+<section class="stage" id="stage" aria-label="Home hero prototype">
+  <div class="pin">
+    <div class="bar">
+      <img src="img/logo.png" alt="Opsiogen">
+      <nav aria-label="Main"><span>Work</span><span>Services</span><span>About</span></nav>
+      <span class="cta">Start a project</span>
+    </div>
+
+    <div class="words" id="words">
+      <p class="pill">AI-first design and digital company</p>
+      <h1>Your digital department, without the hiring.</h1>
+      <a class="go" href="#after">See our work</a>
+    </div>
+
+    <div class="space" aria-hidden="true"><div class="world" id="world"></div></div>
+    <p class="hint" id="hint">Scroll</p>
+  </div>
+</section>
+
+<section class="after" id="after">
+  <div class="gutter"><p>Prototype only. The featured project and the rest of Home follow here.</p></div>
+</section>
+
+<script>
+(function () {
+  var GROUPS = ["Websites", "Product & apps", "Brand", "Social & marketing", "Video", "Automation"];
+  var CW = 200, CH = 150, GAP = 26, A = 58, B = -30;           // card size, gap, and the board's tilt
+  var world = document.getElementById("world"), words = document.getElementById("words"), hint = document.getElementById("hint"), stage = document.getElementById("stage");
+  var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var cards = [], tags = [], plate, L = null;
+
+  function build() {
+    var narrow = window.innerWidth < 700;
+    var cols = narrow ? 3 : 6, rows = 4;
+    world.textContent = ""; cards = []; tags = [];
+    plate = document.createElement("div"); plate.className = "plate"; world.appendChild(plate);
+    for (var c = 0; c < cols; c++) {
+      for (var r = 0; r < rows; r++) {
+        var el = document.createElement("div"); el.className = "card";
+        var im = document.createElement("img"); im.alt = ""; im.decoding = "async";
+        // narrow screens show every second group, so all six kinds of work still appear across the two halves
+        var g = narrow ? c * 2 + (r > 1 ? 1 : 0) : c, k = narrow ? r % 2 : r;
+        im.src = "img/c" + String(g * 4 + k).padStart(2, "0") + ".jpg";
+        el.appendChild(im); world.appendChild(el); cards.push({ el: el, c: c, r: r });
+      }
+      if (!narrow) { var t = document.createElement("div"); t.className = "tag"; t.textContent = GROUPS[c]; world.appendChild(t); tags.push({ el: t, c: c }); }
+    }
+    var W = window.innerWidth, H = window.innerHeight, n = cards.length;
+    var bw = cols * CW + (cols - 1) * GAP, bh = rows * CH + (rows - 1) * GAP + (narrow ? 0 : 60);
+    var a = A * Math.PI / 180, b = Math.abs(B) * Math.PI / 180;
+    var pw = bw * Math.cos(b) + bh * Math.sin(b), ph = (bw * Math.sin(b) + bh * Math.cos(b)) * Math.cos(a);
+    L = { W: W, H: H, n: n, cols: cols, rows: rows, bw: bw, bh: bh,
+          sB: Math.min(1.05, W * 0.84 / pw, H * 0.54 / ph),          // board fits the screen
+          sA: Math.max(0.4, Math.min(0.84, W / 1440 * 0.8)),              // cards in the ribbon
+          step: W * 0.94 / n, waveY: H * (narrow ? 0.3 : 0.355), amp: Math.max(20, Math.min(46, H * 0.048)), boardY: -H * 0.03 };
+    plate.style.width = (bw + 90) + "px"; plate.style.height = (bh + 90) + "px";
+    plate.style.margin = (-(bh + 90) / 2) + "px 0 0 " + (-(bw + 90) / 2) + "px";
+  }
+
+  function onPlane(gx, gy, s) {                                       // a point on the tilted board, in screen space
+    var a = A * Math.PI / 180, b = B * Math.PI / 180;
+    var x = gx * Math.cos(b) - gy * Math.sin(b), y = gx * Math.sin(b) + gy * Math.cos(b);
+    return [x * s, y * Math.cos(a) * s + L.boardY, y * Math.sin(a) * s];
+  }
+  function clamp(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+  function ease(v) { return v * v * (3 - 2 * v); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  function frame(now) {
+    var rect = stage.getBoundingClientRect(), span = rect.height - L.H;
+    var p = span > 0 ? clamp(-rect.top / span) : 0, t = still ? 0 : now / 1000;
+    for (var i = 0; i < cards.length; i++) {
+      var d = cards[i], f = i / (L.n - 1), e = ease(clamp((p - 0.08 - 0.26 * f) / 0.5));
+      var ph = i * 0.55 + t * 0.9;
+      // ribbon: standing on edge, rising and falling, turning a little as the wave passes
+      var xa = (i - (L.n - 1) / 2) * L.step, ya = L.waveY + Math.sin(ph) * L.amp, rya = 74 + 12 * Math.sin(i * 0.4 + t * 0.6), rza = 9 * Math.cos(ph);
+      // board: flat in its column and row
+      var gx = (d.c - (L.cols - 1) / 2) * (CW + GAP), gy = (d.r - (L.rows - 1) / 2) * (CH + GAP) - (L.cols > 3 ? 30 : 0), q = onPlane(gx, gy, L.sB);
+      var lift = Math.sin(Math.PI * e) * 240;
+      d.el.style.transform = "translate3d(" + lerp(xa, q[0], e).toFixed(1) + "px," + (lerp(ya, q[1], e) - lift * 0.25).toFixed(1) + "px," + (lerp(0, q[2], e) + lift).toFixed(1) + "px) rotateX(" + lerp(0, A, e).toFixed(2) + "deg) rotateY(" + lerp(rya, 0, e).toFixed(2) + "deg) rotateZ(" + lerp(rza, B, e).toFixed(2) + "deg) scale(" + lerp(L.sA, L.sB, e).toFixed(3) + ")";
+    }
+    var settle = ease(clamp((p - 0.62) / 0.25)), c0 = onPlane(0, 0, L.sB);
+    plate.style.opacity = settle.toFixed(3);
+    plate.style.transform = "translate3d(" + c0[0] + "px," + c0[1] + "px," + (c0[2] - 6) + "px) rotateX(" + A + "deg) rotateZ(" + B + "deg) scale(" + L.sB.toFixed(3) + ")";
+    for (var j = 0; j < tags.length; j++) {
+      var g = tags[j], tq = onPlane((g.c - (L.cols - 1) / 2) * (CW + GAP), (L.rows / 2) * (CH + GAP) - 12, L.sB);
+      g.el.style.opacity = (settle * 0.8).toFixed(3);
+      g.el.style.transform = "translate3d(" + tq[0].toFixed(1) + "px," + tq[1].toFixed(1) + "px," + tq[2].toFixed(1) + "px) rotateX(" + A + "deg) rotateZ(" + B + "deg) scale(" + L.sB.toFixed(3) + ")";
+    }
+    // the heading steps back as the cards take the screen
+    var away = ease(clamp((p - 0.04) / 0.3));
+    words.style.opacity = (1 - away).toFixed(3); words.style.transform = "translateY(" + (-away * 60).toFixed(1) + "px)";
+    hint.style.opacity = (1 - clamp(p / 0.05)).toFixed(2);
+    requestAnimationFrame(frame);
+  }
+
+  build(); requestAnimationFrame(frame);
+  var timer; window.addEventListener("resize", function () { clearTimeout(timer); timer = setTimeout(build, 120); });
+})();
+</script>
