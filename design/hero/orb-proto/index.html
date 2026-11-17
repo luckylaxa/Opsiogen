@@ -98,8 +98,8 @@
 
 <script>
 (function () {
-  // The character is the owner's artwork. Three of their views (front, side, back) are wrapped round a sphere,
-  // so it can turn smoothly between them; at rest each view shows exactly as drawn.
+  // The character is the owner's artwork. Their front, side and back views are wrapped into one map of the whole sphere
+  // (design/hero/character/wrap.py), so it turns as one solid body; at rest the front and back views show exactly as drawn.
   var canvas = document.getElementById("ball"), fallback = document.getElementById("fallback"), orb = document.getElementById("orb"), ground = document.getElementById("ground"),
       trail = document.getElementById("trail"), world = document.getElementById("world"), rays = document.getElementById("rays");
   var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -108,29 +108,34 @@
   var VS = "attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}";
   var FS = [
     "precision highp float;",
-    "uniform vec2 uRes; uniform float uYaw, uBlink; uniform vec2 uLook; uniform sampler2D uF, uS, uB;",
+    "uniform vec2 uRes; uniform float uYaw, uBlink, uFlash; uniform vec2 uLook; uniform sampler2D uF, uW, uB;",
     "void main(){",
     "  vec2 p=(gl_FragCoord.xy-.5*uRes)/(.5*uRes.x); float R=.84; float r=length(p)/R;",   // the sphere fills the same part of the box as in the artwork
     "  if(r>1.){ gl_FragColor=vec4(0.); return; }",
     "  vec3 n=vec3(p/R, sqrt(max(0.,1.-r*r)));",
     "  float c=cos(uYaw), s=sin(uYaw);",
     "  vec3 o=vec3(dot(n,vec3(c,0.,s)), n.y, dot(n,vec3(-s,0.,c)));",               // the same point on the character itself
-    "  float q=uYaw/1.5708;",                                                       // 0 front, 1 side, 2 back
-    "  float gF=clamp(1.-abs(q),0.,1.), gS=clamp(1.-abs(q-1.),0.,1.), gB=clamp(q-1.,0.,1.);",   // how close the pose is to each of the three views
-    "  float tF=.5*(1.-gF), tS=.5*(1.-gS), tB=.5*(1.-gB);",                         // away from its own pose a view gives only its middle, never its rim
-    "  float wF=gF*smoothstep(tF,tF+mix(.34,.1,gF),o.z), wS=gS*smoothstep(tS,tS+mix(.34,.1,gS),o.x), wB=gB*smoothstep(tB,tB+mix(.34,.1,gB),-o.z);",   // joined softly, so no line shows where two views meet
-    "  float rho=length(o.xy);",
-    "  vec2 fo=o.xy-uLook*(1.-smoothstep(.24,.50,rho))*step(0.,o.z);",              // the light inside the eye slides toward what it looks at
-    "  vec3 cF=texture2D(uF,.5+.42*fo).rgb, cS=texture2D(uS,.5+.42*vec2(-o.z,o.y)).rgb, cB=texture2D(uB,.5+.42*vec2(-o.x,o.y)).rgb;",
-    "  float fF=pow(max(o.z,0.),3.)+.0005, fS=pow(abs(o.x),3.)+.0005, fB=pow(max(-o.z,0.),3.)+.0005;",
-    "  vec3 fill=(cF*fF+cS*fS+cB*fB)/(fF+fS+fB);",                                  // every part of the body has something to show, so no patches
-    "  float w=wF+wS+wB;",
-    "  vec3 col=mix(fill, (cF*wF+cS*wS+cB*wB)/max(w,.0001), smoothstep(0.,.5,w));",
-    "  float edge=(1.-uBlink)*.56;",                                                // the lids, closing over the eye
-    "  float span=sqrt(max(0.,1.-o.x*o.x/.3136));",                                 // the lids follow the round of the eye
-    "  float lid=step(0.,o.z)*smoothstep(.565,.545,rho)*smoothstep(0.,.03,abs(o.y)-edge*span);",
-    "  vec3 lc=vec3(.90,.915,.94)*(.88+.12*n.y)*(1.-.3*smoothstep(.045,.0,abs(abs(o.y)-edge*span)));",
-    "  col=mix(col,lc,lid);",
+    "  float q=uYaw/1.5708, rho=length(o.xy);",                                     // q: 0 front, 1 side, 2 back
+    // one solid body: the drawn features sit on the sphere and turn with it; the soft white shading is lit here, so it stays put
+    "  float lon=atan(o.x,o.z); if(lon<-1.5708) lon+=6.2832;",
+    "  vec4 wr=texture2D(uW, vec2((lon+1.5708)/6.2832, asin(clamp(o.y,-1.,1.))/3.1416+.5));",
+    "  float lam=dot(n,normalize(vec3(-.45,.6,.66)));",
+    "  vec3 sh=mix(vec3(.80,.83,.90), vec3(.985,.99,1.), smoothstep(-.3,.85,lam));",
+    "  sh*=1.-.06*smoothstep(.82,1.,r); sh+=.05*smoothstep(.3,0.,length(n.xy-vec2(-.35,.5)));",
+    "  sh=mix(sh, vec3(.66,.66,.95), smoothstep(-.5,-1.,n.y)*.55);",                 // the glow underneath, catching the underside
+    "  vec3 col=wr.rgb*mix(sh,vec3(1.),wr.a);",
+    // the eye is the front view itself; the light inside it slides toward what it looks at
+    "  vec2 fo=o.xy-uLook*(1.-smoothstep(.24,.50,rho))*step(0.,o.z);",
+    "  vec3 cF=texture2D(uF,.5+.42*fo).rgb, cB=texture2D(uB,.5+.42*vec2(-o.x,o.y)).rgb;",
+    "  col=mix(col, cF, step(0.,o.z)*smoothstep(.67,.61,rho));",
+    // at rest the two main views show exactly as drawn
+    "  col=mix(col, cF, (1.-smoothstep(.06,.3,abs(q)))*smoothstep(0.,.22,o.z));",
+    "  col=mix(col, cB, smoothstep(1.7,1.94,q)*smoothstep(0.,.22,-o.z));",
+    // a digital blink: the eye's light drops to one thin line, then comes back with a flash
+    "  vec3 GL=vec3(.3,.92,1.); float eye=step(0.,o.z)*smoothstep(.55,.51,rho);",
+    "  vec3 off=col*.10+GL*smoothstep(.022,.0,abs(o.y))*smoothstep(.47,.15,abs(o.x))*1.3;",
+    "  col=mix(col, off, uBlink*eye);",
+    "  col+=GL*uFlash*(eye*exp(-pow(rho/.30,2.))*.9+step(0.,o.z)*smoothstep(.80,.55,rho)*.10);",
     "  gl_FragColor=vec4(col, smoothstep(1.,.985,r));",
     "}"].join("\n");
 
@@ -142,9 +147,9 @@
       gl.useProgram(prog);
       var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
       var loc = gl.getAttribLocation(prog, "a"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-      ["uRes", "uYaw", "uBlink", "uLook", "uF", "uS", "uB"].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
+      ["uRes", "uYaw", "uBlink", "uFlash", "uLook", "uF", "uW", "uB"].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
       gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-      ["front", "side", "back"].forEach(function (name, i) {
+      ["front.webp", "wrap.png", "back.webp"].forEach(function (name, i) {
         var tex = gl.createTexture(), im = new Image();
         im.onload = function () {
           gl.activeTexture(gl.TEXTURE0 + i); gl.bindTexture(gl.TEXTURE_2D, tex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
@@ -153,7 +158,7 @@
           gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
           if (++loaded === 3) { ready = true; canvas.hidden = false; fallback.hidden = true; }
         };
-        im.src = "img/" + name + ".webp";
+        im.src = "img/" + name;
       });
     }
   }
@@ -165,6 +170,7 @@
     want = [dx / window.innerWidth, dy / window.innerHeight]; over = Math.hypot(dx, dy) < r.width * 0.42 ? 1 : 0;
   }, { passive: true });
   function greet() { hello = performance.now() / 1000; blink = 1; }
+  orb.addEventListener("pointerdown", function (e) { e.preventDefault(); });   // a click does not leave a focus ring; the keyboard still can
   orb.addEventListener("click", greet);
   orb.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); greet(); } });
   function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
@@ -172,19 +178,20 @@
   var prev = performance.now(), grow = 0;
   function frame(now) {
     var dt = Math.min(0.05, (now - prev) / 1000); prev = now; var t = now / 1000;
-    var moving = !still && now - lastMove < 260;
+    var moving = !still && now - lastMove < 750;                      // short gaps between scroll steps do not count as stopping
     speed *= Math.pow(0.02, dt); var v = still ? 0 : Math.min(1, speed / 90);
     var since = t - hello, wiggle = since < 1.1 ? Math.sin(since * 13) * 0.5 * (1 - since / 1.1) : 0;       // a tap: it shakes its head and blinks twice
-    if (since > 0.28 && since < 0.32) blink = 1;
-    var target = moving ? Math.PI : clamp(-want[0] * 0.7, -0.3, 0.3) + wiggle;                              // looks ahead while moving, else toward the pointer
-    yaw += (target - yaw) * (1 - Math.pow(0.004, dt));
+    if (since > 0.44 && since < 0.48) blink = 1;
+    var target = moving ? Math.PI : clamp(-want[0] * 0.6, -0.22, 0.22) + wiggle;                              // looks ahead while moving, else toward the pointer
+    yaw += (target - yaw) * (1 - Math.pow(moving ? 0.003 : 0.03, dt));                                         // quick to look ahead, gentler coming back
     if (typeof window.__testYaw === "number") yaw = window.__testYaw;                                          // for checking a pose
     var lx = moving ? 0 : clamp(want[0] * 0.5, -0.1, 0.1), ly = moving ? 0 : clamp(-want[1] * 0.5, -0.1, 0.1);
     look[0] += (lx - look[0]) * 0.14; look[1] += (ly - look[1]) * 0.14;
-    if (wasMoving && !moving) blinkAt = t + 0.45;                                                             // it blinks as it comes round to you
+    if (wasMoving && !moving) blinkAt = t + 1.6;                                                              // no blink while it is still coming round
     wasMoving = moving;
-    if (!moving && t > blinkAt) { blink = 1; blinkAt = t + 2.4 + Math.random() * 3.2; }
-    blink = Math.max(0, blink - dt * 6.5);
+    if (!moving && Math.abs(yaw) < 0.4 && t > blinkAt) { blink = 1; blinkAt = t + 3 + Math.random() * 3.5; }
+    blink = Math.max(0, blink - dt / 0.34);                              // one blink lasts about a third of a second
+    var ph = 1 - blink, dim = blink <= 0 ? 0 : ph < 0.3 ? ph / 0.3 : ph < 0.5 ? 1 : Math.max(0, 1 - (ph - 0.5) / 0.12), flash = blink > 0 && ph > 0.55 ? Math.sin((ph - 0.55) / 0.45 * Math.PI) : 0;
     grow += ((over && !moving ? 1 : 0) - grow) * 0.12;
     var bob = still ? 0 : Math.sin(t * 1.7) * 6, push = v * 10, hop = since < 0.5 ? -Math.sin(since / 0.5 * Math.PI) * 14 : 0;
     orb.style.transform = "translate(-50%,-50%) translate(" + (push * 0.6).toFixed(1) + "px," + (bob - push * 0.3 + hop).toFixed(1) + "px) rotate(" + (v * -4 + (moving ? 0 : want[1] * -6)).toFixed(2) + "deg) scale(" + (1 + grow * 0.06).toFixed(3) + ")";
@@ -196,8 +203,8 @@
       var w = canvas.clientWidth * Math.min(2, window.devicePixelRatio || 1) | 0;
       if (canvas.width !== w && w > 0) { canvas.width = w; canvas.height = w; }
       gl.viewport(0, 0, canvas.width, canvas.height); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
-      gl.uniform2f(U.uRes, canvas.width, canvas.height); gl.uniform1f(U.uYaw, yaw); gl.uniform1f(U.uBlink, Math.sin(Math.min(1, blink) * Math.PI));
-      gl.uniform2f(U.uLook, look[0], look[1]); gl.uniform1i(U.uF, 0); gl.uniform1i(U.uS, 1); gl.uniform1i(U.uB, 2);
+      gl.uniform2f(U.uRes, canvas.width, canvas.height); gl.uniform1f(U.uYaw, yaw); gl.uniform1f(U.uBlink, dim); gl.uniform1f(U.uFlash, flash);
+      gl.uniform2f(U.uLook, look[0], look[1]); gl.uniform1i(U.uF, 0); gl.uniform1i(U.uW, 1); gl.uniform1i(U.uB, 2);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
     requestAnimationFrame(frame);
