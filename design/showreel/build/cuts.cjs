@@ -4,6 +4,6 @@ const { chromium } = require('playwright');
   const b = await chromium.launch(); const p = await b.newPage();
   await p.goto('file://' + require('path').join(__dirname, 'reel.html'));
   await p.evaluate(() => window.ready);
-  console.log(JSON.stringify(await p.evaluate(() => ({ dur: window.DUR, cuts: window.CUTS, kinds: window.KINDS }))));
+  console.log(JSON.stringify(await p.evaluate(() => ({ dur: window.DUR, q: window.Q, cuts: window.CUTS, kinds: window.KINDS }))));
   await b.close();
 })();

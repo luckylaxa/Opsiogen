@@ -27,9 +27,9 @@ const el=(tag,cls,parent,style)=>{const e=document.createElement(tag);if(cls)e.c
 const img=(k,parent,w,h,style)=>{const i=el('img','',parent,Object.assign({width:w+'px',height:h+'px',objectFit:'cover'},style||{}));i.src=A+k+(k.startsWith('ch-')?'.png':'.jpg');return i};
 // Never larger than the image itself, so nothing is blown up and soft.
 const cap=(k,w)=>Math.min(w,MAN[k][0]);
-// Every shot lasts a whole number of half-beats (0.25s at 120 beats a minute), so each cut lands on the music.
-let KIND='shot';
-function add(dur,build,flex){dur=Math.max(.25,Math.round(dur/.25)*.25);const root=el('div','s',document.body);if(flex){root.dataset.flex=1;Object.assign(root.style,{alignItems:'center',justifyContent:'center',flexDirection:'column'})}const draw=build(root);scenes.push({t0:T,t1:T+dur,root,draw,kind:KIND});KIND='shot';T+=dur}
+// Every shot lasts a whole number of half-beats of the music (140 beats a minute), so each cut lands on it.
+const Q=60/140/2;let KIND='shot';
+function add(dur,build,flex){dur=Math.max(1,Math.round(dur/Q))*Q;const root=el('div','s',document.body);if(flex){root.dataset.flex=1;Object.assign(root.style,{alignItems:'center',justifyContent:'center',flexDirection:'column'})}const draw=build(root);scenes.push({t0:T,t1:T+dur,root,draw,kind:KIND});KIND='shot';T+=dur}
 const box=(k,root,w,x,y,rad)=>{const [iw,ih]=MAN[k];const h=w*ih/iw;const b=el('div','abs',root,{width:w+'px',height:h+'px',left:x-w/2+'px',top:y-h/2+'px',borderRadius:(rad??20)+'px',overflow:'hidden'});img(k,b,w,h);return b};
 const words=(text,parent,style)=>{const h=el('div','big',parent,style);return [h,text.split(' ').map((w,i,a)=>{const s=el('span','',h);s.textContent=w+(i<a.length-1?' ':'');return s})]};
 const rise=(ws,tt,step=.05,d=.24,dy=90)=>ws.forEach((s,i)=>{const q=ease((tt-i*step)/d);s.style.transform=`translateY(${(1-q)*dy}px)`;s.style.opacity=q});
@@ -93,7 +93,7 @@ function stack(dur,keys,bg){add(dur,root=>{root.style.background=bg;const items=
 
 // The closing: the words over a wall of the work, one line, then our logo exactly as it is.
 function closing(columns){
-  add(2.5,root=>{root.style.background=COAL;const n=columns.length,gap=22,cw=430;const wall=el('div','abs',root,{left:W/2+'px',top:H/2+'px'});
+  add(2.3,root=>{root.style.background=COAL;const n=columns.length,gap=22,cw=430;const wall=el('div','abs',root,{left:W/2+'px',top:H/2+'px'});
     const cs=columns.map((keys,ci)=>{const c=el('div','abs',wall,{left:(ci-(n-1)/2)*(cw+gap)-cw/2+'px',width:cw+'px'});let y=0;keys.concat(keys).forEach(k=>{const [iw,ih]=MAN[k];const h=cw*ih/iw;const b=el('div','',c,{width:cw+'px',height:h+'px',marginBottom:gap+'px',borderRadius:'14px',overflow:'hidden'});img(k,b,cw,h);y+=h+gap});return {c,half:y/2}});
     const shade=el('div','abs',root,{width:W+'px',height:H+'px',background:COAL,opacity:.7});
     const bx=el('div','abs',root,{width:W+'px',height:H+'px',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'});
@@ -103,7 +103,7 @@ function closing(columns){
     return (p,tt)=>{wall.style.transform=`rotate(-9deg) scale(${lerp(1.25,.9,io(p))})`;cs.forEach(({c,half},i)=>{c.style.transform=`translateY(${-half*.5-(i%3)*80+(i%2?1:-1)*(p-.5)*300-H*.25}px)`});
       const q1=ease(tt/.22);l1.style.transform=`translateY(${(1-q1)*70}px)`;l1.style.opacity=q1;
       ws.forEach((s,i)=>{const q=ease((tt-.35-i*.26)/.2);s.style.transform=`translateY(${(1-q)*60}px)`;s.style.opacity=q})}});
-  add(1.3,root=>{root.style.background=COAL;const a=el('div','big',root,{color:PAPER,fontSize:'150px'});a.textContent='One partner.';const b=el('div','big',root,{color:AQUA,fontSize:'150px',marginTop:'14px'});b.textContent='Every digital need.';
+  add(1.07,root=>{root.style.background=COAL;const a=el('div','big',root,{color:PAPER,fontSize:'150px'});a.textContent='One partner.';const b=el('div','big',root,{color:AQUA,fontSize:'150px',marginTop:'14px'});b.textContent='Every digital need.';
     return (p,tt)=>{const q=ease(tt/.2);a.style.transform=`translateX(${(1-q)*-700}px)`;a.style.opacity=q;const r=ease((tt-.07)/.2);b.style.transform=`translateX(${(1-r)*700}px)`;b.style.opacity=r}},true);
   add(2.6,root=>{root.style.background=COAL;const ch=character(root,250,W/2,300,'front2');
     // The logo keeps its own shape: its real size, no scaling or turning, only fading in.
@@ -169,6 +169,6 @@ function build(){
   closing([['omg-16','bt-01','af-az1','sl-05','mf-03'],['cn-01','af-ad-ge','rx-02','nc-13','omg-09'],['tv-identity','care-02','ev-01','af-s1','rs-09'],['surgo-03','cbb-03','omg-17','cb-01','af-ad-th'],['af-li-a2','sl-02','bt-04','omg-01','tv-rollout'],['rs-12','mf-06','af-plan','cn-05','care-06']]);
 }
 window.setT=t=>{for(const s of scenes){const on=t>=s.t0&&t<s.t1;s.root.style.display=on?(s.root.dataset.flex?'flex':'block'):'none';if(on){const tt=t-s.t0;s.draw(tt/(s.t1-s.t0),tt)}}};
-window.ready=(async()=>{build();window.DUR=T;window.CUTS=scenes.map(s=>+s.t0.toFixed(2));window.KINDS=scenes.map(s=>s.kind);await document.fonts.load('700 100px Outfit');await document.fonts.ready;
+window.ready=(async()=>{build();window.DUR=T;window.CUTS=scenes.map(s=>+s.t0.toFixed(4));window.Q=Q;window.KINDS=scenes.map(s=>s.kind);await document.fonts.load('700 100px Outfit');await document.fonts.ready;
   await Promise.all([...document.images].map(i=>i.decode?i.decode().catch(()=>{}):0));window.setT(0);return {shots:scenes.length,dur:T}})();
 </script>

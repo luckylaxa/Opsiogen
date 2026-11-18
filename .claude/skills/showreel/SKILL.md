@@ -125,6 +125,15 @@ Afthab's creatives. `python3 clean.py raw/clean` then `python3 build/assets.py` 
 - **Our character presents**: in the opening, on each chapter card and beside the logo at the end
   (`build/character.cjs` cuts its poses out of the live Home hero; the artwork is never redrawn).
 
+## Music (18 Nov)
+
+Lucky supplied a library track: `design/showreel/music/fast-percussion.mp3` (30 seconds, 140 beats a minute).
+The film's shots are whole half-beats of it (`Q` in `reel.html`). `node cuts.cjs > cuts.json`, then
+`python3 track.py cuts.json ../music/fast-percussion.mp3 ../out/showreel-music.wav` fits it: it starts on the
+track's first beat, repeats once on a bar line and puts the track's last hit on the logo. If the cut changes
+length, the logo must start 6 half-beats past a bar (track.py stops if it does not). The music tools had no
+credits, so no generated track was used.
+
 ## What to deliver
 
 1. The 60-second film with sound.
