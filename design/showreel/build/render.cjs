@@ -7,7 +7,7 @@ const FPS = 30; let N = 0;
   const b = await chromium.launch();
   await Promise.all([...Array(workers)].map(async (_, w) => {
     const p = await b.newPage({ viewport: { width: 1920, height: 1080 } });
-    await p.goto('file://' + path.join(__dirname, 'reel.html'));
+    await p.goto('file://' + path.join(__dirname, 'reel.html') + (process.env.REEL_QUERY || ''));
     N = Math.round((await p.evaluate(() => window.ready)).dur * FPS);
     for (let f = w; f < N; f += workers) {
       await p.evaluate((v) => window.setT(v), f / FPS);

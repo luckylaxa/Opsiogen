@@ -5,7 +5,7 @@ const { chromium } = require('playwright');
   const b = await chromium.launch();
   const p = await b.newPage({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 0.5 });
   p.on('pageerror', (e) => console.log('ERR', e.message));
-  await p.goto('file://' + require('path').join(__dirname, 'reel.html'));
+  await p.goto('file://' + require('path').join(__dirname, 'reel.html') + (process.env.REEL_QUERY || ''));
   const info = await p.evaluate(() => window.ready); console.log(JSON.stringify(info));
   const cuts = await p.evaluate(() => window.CUTS.concat(window.DUR));
   for (let i = 0; i < cuts.length - 1; i++) {

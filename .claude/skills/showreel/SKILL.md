@@ -127,11 +127,12 @@ Afthab's creatives. `python3 clean.py raw/clean` then `python3 build/assets.py` 
 
 ## Music (18 Nov)
 
-Lucky supplied a library track: `design/showreel/music/fast-percussion.mp3` (30 seconds, 140 beats a minute).
-The film's shots are whole half-beats of it (`Q` in `reel.html`). `node cuts.cjs > cuts.json`, then
-`python3 track.py cuts.json ../music/fast-percussion.mp3 ../out/showreel-music.wav` fits it: it starts on the
-track's first beat, repeats once on a bar line and puts the track's last hit on the logo. If the cut changes
-length, the logo must start 6 half-beats past a bar (track.py stops if it does not). The music tools had no
+Lucky supplied two library tracks in `design/showreel/music/`: `fast-percussion.mp3` (140 beats a minute) and
+`fast-dynamic-rhythmic.mp3` (134). The film's shots are whole half-beats of the track, so render it at the
+track's tempo: set `REEL_QUERY` for `cuts.cjs`, `sheet.cjs` and `render.cjs` (nothing for the first track,
+`?bpm=134&pad=-2` for the second), then `python3 track.py CUTS.json percussion|rhythmic OUT.wav`. track.py
+starts on the track's first beat, repeats it on bar lines and puts its last hit on the logo; if the cut
+changes length it says by how many half-beats to move the logo (change `pad`). The music tools had no
 credits, so no generated track was used.
 
 ## The car brand (18 Nov)
