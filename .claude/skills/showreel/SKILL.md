@@ -96,6 +96,13 @@ panels and the client name above each screen); Afthab's frames without their hea
 
 ## How to build it
 
+**The build lives in `design/showreel/build/`** (18 Nov): `reel.html` is the whole 60-second timeline
+(`window.setT(seconds)` draws any moment), `sheet.cjs` makes check stills, `render.cjs` renders the
+1,800 frames, then ffmpeg joins them. Its images are the raw designs with no mockup backgrounds:
+`raw/product/` (screens exported from the product Figma files: Oh My Glam, Meetingful, RxLive, Care
+Connect, Surgo), websites and brand photos from `clean.py` (into `raw/clean`), the Torvi tiles and
+Afthab's creatives. `python3 clean.py raw/clean` then `python3 build/assets.py` rebuild `build/a`.
+
 - Every shot from the sources above, animated in code: pans, zooms, sliding grids and moving
   type on an HTML page, captured frame by frame with the pre-installed Playwright Chromium and
   joined with ffmpeg. No image or video credits.

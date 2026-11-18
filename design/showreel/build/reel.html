@@ -1,0 +1,142 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Opsiogen showreel</title>
+<style>
+@font-face{font-family:Outfit;src:url(../../../src/fonts/Outfit-Variable.woff2) format("woff2");font-weight:100 900}
+*{margin:0;box-sizing:border-box}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#08080c;font-family:Outfit,sans-serif}
+.s{position:absolute;inset:0;overflow:hidden;display:none}
+.s img{display:block}
+.abs{position:absolute;left:0;top:0;will-change:transform}
+.card{display:none;align-items:center;justify-content:center;text-align:center}
+.card h1{font-weight:700;font-size:190px;line-height:.95;letter-spacing:-.035em;text-transform:uppercase;padding:0 120px}
+.card h1 span{display:inline-block;white-space:pre}
+.r{border-radius:22px;overflow:hidden}
+</style>
+<body>
+<script src="manifest.js"></script>
+<script>
+const W=1920,H=1080,A='a/';
+const COAL='#08080c',PAPER='#f4f2ee',PINK='#ff4f9b',VIOLET='#a98bff',AQUA='#5cf2e6',BLUE='#3f7bff',ORANGE='#ff8a3c',SUN='#ffd75e',LIME='#b6f36a';
+const ease=p=>1-Math.pow(1-Math.min(1,Math.max(0,p)),3), io=p=>p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2, lerp=(a,b,p)=>a+(b-a)*p;
+const scenes=[]; let MAN={};
+const el=(tag,cls,parent,style)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(style)Object.assign(e.style,style);parent&&parent.appendChild(e);return e};
+const img=(k,parent,w,h,style)=>{const i=el('img','',parent,Object.assign({width:w+'px',height:h+'px',objectFit:'cover'},style||{}));i.src=A+k+'.jpg';return i};
+function add(t0,t1,build){const root=el('div','s',document.body);const draw=build(root);scenes.push({t0,t1,root,draw})}
+
+// Large words on one flat colour; each word rises in.
+function card(t0,t1,text,bg,fg,size){add(t0,t1,root=>{root.classList.add('card');root.style.background=bg;root.dataset.flex=1;
+  const h=el('h1','',root,{color:fg,fontSize:(size||190)+'px'});const ws=text.split(' ').map((w,i,a)=>{const s=el('span','',h);s.textContent=w+(i<a.length-1?' ':'');return s});
+  return (p,tt)=>{ws.forEach((s,i)=>{const q=ease((tt-i*.09)/.42);s.style.transform=`translateY(${(1-q)*90}px)`;s.style.opacity=q});h.style.transform=`scale(${1+p*.035})`}})}
+
+// One picture filling the screen, slowly moving.
+function full(t0,t1,k,o={}){add(t0,t1,root=>{root.style.background=o.bg||COAL;const [iw,ih]=MAN[k];const sc=Math.max(W/iw,H/ih);const w=iw*sc,h=ih*sc;
+  const i=img(k,root,w,h,{position:'absolute',left:(W-w)/2+'px',top:(H-h)/2+'px',transformOrigin:(o.ox??50)+'% '+(o.oy??50)+'%'});
+  const s0=o.s0||1.02,s1=o.s1||1.1,y0=o.y0||0,y1=o.y1||0;
+  return p=>{i.style.transform=`translateY(${lerp(y0,y1,p)*(h-H)/2}px) scale(${lerp(s0,s1,p)})`}})}
+
+// A desktop screen as a card on a flat colour.
+function screen(t0,t1,k,bg,o={}){add(t0,t1,root=>{root.style.background=bg;const [iw,ih]=MAN[k];const w=o.w||1500,h=w*ih/iw;
+  const b=el('div','abs r',root,{width:w+'px',height:h+'px',left:(W-w)/2+'px',top:(H-h)/2+(o.dy||30)+'px',boxShadow:'none'});img(k,b,w,h);
+  return (p,tt)=>{const q=ease(tt/.45);b.style.transform=`translateY(${(1-q)*260-p*40}px) scale(${lerp(.94,1,q)+p*.03}) rotate(${(o.rot||0)*(1-q)}deg)`}})}
+
+// Two screens, one over the other, sliding apart.
+function duo(t0,t1,ka,kb,bg){add(t0,t1,root=>{root.style.background=bg;const mk=(k,x,y,w)=>{const [iw,ih]=MAN[k];const h=w*ih/iw;const b=el('div','abs r',root,{width:w+'px',height:h+'px',left:x+'px',top:y+'px'});img(k,b,w,h);return b};
+  const a=mk(ka,110,110,1120),b=mk(kb,700,330,1120);
+  return (p,tt)=>{const q=ease(tt/.5);a.style.transform=`translate(${-(1-q)*300-p*30}px,${-p*20}px)`;b.style.transform=`translate(${(1-q)*420+p*30}px,${(1-q)*120+p*10}px)`}})}
+
+// A row of tall screens (phones, stories) sliding sideways.
+function row(t0,t1,keys,bg,o={}){add(t0,t1,root=>{root.style.background=bg;const h=o.h||860,gap=o.gap||44,rad=o.rad||46;const wrap=el('div','abs',root,{top:(H-h)/2+'px',height:h+'px',display:'flex',gap:gap+'px',transformOrigin:'50% 50%'});let total=0;
+  const items=keys.map(k=>{const [iw,ih]=MAN[k];const w=h*iw/ih;const b=el('div','',wrap,{width:w+'px',height:h+'px',borderRadius:rad+'px',overflow:'hidden',flex:'none'});img(k,b,w,h);total+=w+gap;return b});
+  const x0=o.x0??80,x1=o.x1??(W-total-40);
+  return (p,tt)=>{wrap.style.transform=`translateX(${lerp(x0,x1,io(p*.9+.05))}px) rotate(${o.rot||0}deg)`;items.forEach((b,i)=>{const q=ease((tt-i*.05)/.5);b.style.transform=`translateY(${(1-q)*(i%2?160:-160)}px)`})}})}
+
+// Three phones, the middle one larger, rising one after another.
+function trio(t0,t1,keys,bg){add(t0,t1,root=>{root.style.background=bg;const hs=[760,940,760],xs=[430,960,1490];
+  const items=keys.map((k,i)=>{const [iw,ih]=MAN[k];const h=hs[i],w=h*iw/ih;const b=el('div','abs',root,{width:w+'px',height:h+'px',left:xs[i]-w/2+'px',top:(H-h)/2+'px',borderRadius:'52px',overflow:'hidden'});img(k,b,w,h);return b});
+  return (p,tt)=>{items.forEach((b,i)=>{const q=ease((tt-[.12,0,.24][i])/.5);b.style.transform=`translateY(${(1-q)*700-p*[30,55,30][i]}px) rotate(${[-5,0,5][i]}deg)`})}})}
+
+// Columns of work moving up and down past each other, the whole wall turned a little.
+function cols(t0,t1,columns,bg,o={}){add(t0,t1,root=>{root.style.background=bg;const n=columns.length,gap=o.gap||28,cw=o.cw||((W*1.25-gap*(n-1))/n);const wall=el('div','abs',root,{left:W/2+'px',top:H/2+'px'});
+  const cs=columns.map((keys,ci)=>{const c=el('div','abs',wall,{left:(ci-(n-1)/2)*(cw+gap)-cw/2+'px',width:cw+'px'});let y=0;keys.concat(keys).forEach(k=>{const [iw,ih]=MAN[k];const h=cw*ih/iw;const b=el('div','',c,{width:cw+'px',height:h+'px',marginBottom:gap+'px',borderRadius:(o.rad||18)+'px',overflow:'hidden'});img(k,b,cw,h);y+=h+gap});return {c,half:y/2}});
+  const travel=o.travel||520,rot=o.rot??-9,s0=o.s0||1,s1=o.s1||1;
+  return (p,tt)=>{wall.style.transform=`rotate(${rot}deg) scale(${lerp(s0,s1,io(p))})`;cs.forEach(({c,half},i)=>{const dir=i%2?1:-1;const base=-half*.5-(i%3)*90;c.style.transform=`translateY(${base+dir*(p-.5)*travel-H*.25}px)`;})}})}
+
+// One creative, large, on a flat colour.
+function poster(t0,t1,k,bg,o={}){add(t0,t1,root=>{root.style.background=bg;const [iw,ih]=MAN[k];const h=o.h||900,w=h*iw/ih;const b=el('div','abs',root,{width:w+'px',height:h+'px',left:(W-w)/2+'px',top:(H-h)/2+'px',borderRadius:'20px',overflow:'hidden'});img(k,b,w,h);
+  return p=>{b.style.transform=`scale(${lerp(1.06,1,ease(p*2.5))}) rotate(${(o.rot||0)}deg)`}})}
+
+// Three landscape ads stepping in.
+function stack(t0,t1,keys,bg){add(t0,t1,root=>{root.style.background=bg;const items=keys.map((k,i)=>{const [iw,ih]=MAN[k];const w=980,h=w*ih/iw;const b=el('div','abs',root,{width:w+'px',height:h+'px',left:170+i*300+'px',top:90+i*190+'px',borderRadius:'16px',overflow:'hidden'});img(k,b,w,h);return b});
+  return (p,tt)=>{items.forEach((b,i)=>{const q=ease((tt-i*.14)/.4);b.style.transform=`translateX(${(1-q)*(i%2?900:-900)}px)`})}})}
+
+// The closing words over the wall of work, then our logo.
+function closing(t0,t1,columns){add(t0,t1,root=>{root.style.background=COAL;const n=columns.length,gap=22,cw=(W*1.5-gap*(n-1))/n;const wall=el('div','abs',root,{left:W/2+'px',top:H/2+'px'});
+  const cs=columns.map((keys,ci)=>{const c=el('div','abs',wall,{left:(ci-(n-1)/2)*(cw+gap)-cw/2+'px',width:cw+'px'});let y=0;keys.concat(keys).forEach(k=>{const [iw,ih]=MAN[k];const h=cw*ih/iw;const b=el('div','',c,{width:cw+'px',height:h+'px',marginBottom:gap+'px',borderRadius:'14px',overflow:'hidden'});img(k,b,cw,h);y+=h+gap});return {c,half:y/2}});
+  const shade=el('div','abs',root,{width:W+'px',height:H+'px',background:COAL});
+  const box=el('div','abs',root,{width:W+'px',top:'0',height:H+'px',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:'center',color:PAPER,textTransform:'uppercase',fontWeight:700,letterSpacing:'-.035em'});
+  const l1=el('div','',box,{fontSize:'150px',lineHeight:1});l1.textContent='Your idea.';
+  const l2=el('div','',box,{fontSize:'84px',lineHeight:1.05,marginTop:'30px',display:'flex',gap:'30px'});const cl=[VIOLET,AQUA,ORANGE,SUN];
+  const ws=['Designed.','Built.','Branded.','Launched.'].map((w,i)=>{const s=el('span','',l2,{color:cl[i]});s.textContent=w;return s});
+  const end=el('div','abs',root,{width:W+'px',height:H+'px',background:COAL,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'});
+  const logo=el('img','',end,{width:'760px',height:'auto'});logo.src='../../../src/assets/opsiogen-logo-on-dark.png';
+  const tag=el('div','',end,{color:PAPER,fontSize:'54px',fontWeight:500,letterSpacing:'-.01em',marginTop:'54px'});tag.textContent='Let’s make yours.';
+  const D=t1-t0;
+  return (p,tt)=>{wall.style.transform=`rotate(-9deg) scale(${lerp(1.5,.72,io(Math.min(1,tt/2.6)))})`;cs.forEach(({c,half},i)=>{c.style.transform=`translateY(${-half*.5-(i%3)*80+(i%2?1:-1)*(tt/D-.5)*260-H*.25}px)`});
+    shade.style.opacity=lerp(.25,.72,ease(tt/.6));
+    const q1=ease(tt/.4);l1.style.transform=`translateY(${(1-q1)*70}px)`;l1.style.opacity=q1;
+    ws.forEach((s,i)=>{const q=ease((tt-.55-i*.34)/.3);s.style.transform=`translateY(${(1-q)*60}px)`;s.style.opacity=q});
+    const out=ease((tt-2.55)/.35);box.style.opacity=1-out;
+    const e=ease((tt-2.75)/.45);end.style.opacity=e;logo.style.transform=`scale(${lerp(.9,1,e)})`;const tq=ease((tt-3.15)/.4);tag.style.opacity=tq;tag.style.transform=`translateY(${(1-tq)*30}px)`}})}
+
+// The opening: two lines, then our mark.
+function opening(){
+  card(0,2.3,'You bring the idea.',COAL,PAPER,200);
+  add(2.3,5,root=>{root.style.background=COAL;root.style.alignItems='center';root.style.justifyContent='center';root.dataset.flex=1;root.style.flexDirection='column';
+    const h=el('div','',root,{color:PAPER,fontWeight:700,fontSize:'180px',lineHeight:.95,letterSpacing:'-.035em',textTransform:'uppercase',textAlign:'center'});
+    const ws='We take it from here.'.split(' ').map((w,i,a)=>{const s=el('span','',h,{display:'inline-block',whiteSpace:'pre'});s.textContent=w+(i<a.length-1?' ':'');return s});
+    const m=el('img','',root,{width:'150px',height:'150px',marginTop:'70px'});m.src='../../../src/assets/opsiogen-mark.png';
+    return (p,tt)=>{ws.forEach((s,i)=>{const q=ease((tt-i*.08)/.4);s.style.transform=`translateY(${(1-q)*90}px)`;s.style.opacity=q});const q=ease((tt-.7)/.6);m.style.opacity=q;m.style.transform=`rotate(${(1-q)*-200+tt*40}deg) scale(${lerp(.3,1,q)})`}})}
+
+function build(){
+  opening();
+  // Teaser: six flashes
+  const f=1/3;let t=5;
+  trio(t,t+=f,['omg-17','omg-16','omg-19'],PINK);
+  full(t,t+=f,'bt-01');full(t,t+=f,'tv-identity');full(t,t+=f,'sl-05');
+  poster(t,t+=f,'af-az1',BLUE);full(t,t=7,'rs-09');
+  // We design it.
+  card(7,9,'We design it.',VIOLET,COAL);
+  row(9,11.3,['omg-01','omg-02','omg-08','omg-09','omg-13','omg-16','omg-17','omg-19','omg-33'],COAL,{rot:-4});
+  trio(11.3,12.6,['omg-18','omg-16','omg-20'],SUN);
+  screen(12.6,13.7,'mf-03','#17171c');
+  duo(13.7,15,'rx-02','rx-03','#e9edf5');
+  screen(15,16.1,'care-02',BLUE);
+  full(16.1,17.3,'surgo-03',{s0:1.0,s1:1.14,ox:62,oy:55});
+  cols(17.3,20,[['rx-05','mf-05','care-06','surgo-04'],['mf-06','care-03','surgo-06','rx-07'],['care-10','surgo-01','rx-09','mf-08'],['surgo-08','rx-10','mf-10','care-07']],'#101016',{rot:-8,travel:620});
+  // We build it.
+  card(20,22,'We build it.',AQUA,COAL);
+  full(22,23,'bt-01',{s0:1.0,s1:1.08,y0:1,y1:.7,oy:0});full(23,24,'cn-01',{s0:1.08,s1:1.0,y0:1,y1:.7,oy:0});full(24,25,'ev-01',{s0:1.0,s1:1.06,y0:1,y1:.6,oy:0});full(25,26,'cb-01',{s0:1.06,s1:1.0,y0:1,y1:.6,oy:0});
+  cols(26,29,[['bt-02','cn-03','ev-04','cb-05'],['cn-02','ev-02','cb-03','bt-05'],['ev-03','cb-02','bt-04','cn-06'],['cb-04','bt-03','cn-05','ev-06']],'#0d1117',{rot:-9,travel:680});
+  duo(29,30.3,'bt-06','bt-08',ORANGE);
+  screen(30.3,31.2,'cn-08','#1a1410');
+  duo(31.2,32.2,'ev-08','ev-10',PAPER);
+  screen(32.2,33,'cb-08',BLUE);
+  // We brand it.
+  card(33,35,'We brand it.',ORANGE,COAL);
+  let b=35;for(const k of ['tv-strategy','tv-identity','tv-guidelines','tv-assets','tv-rollout'])full(b,b+=.8,k,{s0:1.0,s1:1.06});
+  full(39,40,'sl-05',{s0:1.06,s1:1.0});full(40,41,'nc-13',{s0:1.0,s1:1.08});full(41,42,'rs-09',{s0:1.08,s1:1.0});full(42,43,'cbb-03',{s0:1.0,s1:1.08});
+  cols(43,46,[['sl-02','nc-04','rs-03','cbb-05','sl-09'],['nc-02','rs-06','cbb-02','sl-12','nc-08'],['rs-12','sl-07','nc-11','cbb-07','rs-15'],['cbb-09','nc-15','sl-15','rs-20','nc-06'],['sl-18','rs-23','cbb-01','nc-10','rs-01']],'#0b0b10',{rot:-9,travel:700,cw:440});
+  // We launch it.
+  card(46,48,'We launch it.',SUN,COAL);
+  cols(48,50.3,[['af-az1','af-ad-ge','af-li-a2','af-escape'],['af-ad-th','af-az3','af-plan','af-li-a4'],['af-968_35','af-ad-mv','af-az5','af-li-b1'],['af-ad-az','af-li-a6','af-az7','af-ad-al'],['af-li-desk','af-az2','af-ad-all','af-li-brief']],'#0d2a44',{rot:-8,travel:900,cw:420,rad:14});
+  row(50.3,52.3,['af-s1','af-st-az','af-s3','af-st-mv','af-s5','af-st-th','af-s2','af-st-al','af-s6'],BLUE,{h:820,rad:28,gap:36,rot:3});
+  const fl=[['af-ad-ge',SUN],['af-az4',PINK],['af-li-a3',AQUA],['af-fdA',VIOLET],['af-ad-mv',ORANGE],['af-sq-az',LIME],['af-li-b2',BLUE],['af-ad-th',SUN],['af-az6',PINK],['af-sq-th',AQUA]];
+  let x=52.3;const d=2.5/fl.length;fl.forEach(([k,c],i)=>poster(x,x+=d,k,c,{rot:i%2?2:-2}));
+  stack(54.8,56,['af-ls-az','af-ls-ge','af-ls-th'],COAL);
+  closing(56,60,[['omg-16','bt-01','af-az1','sl-05','mf-03'],['cn-01','af-ad-ge','rx-02','nc-13','omg-09'],['tv-identity','care-02','ev-01','af-s1','rs-09'],['surgo-03','cbb-03','omg-17','cb-01','af-ad-th'],['af-li-a2','sl-02','bt-04','omg-01','tv-rollout'],['rs-12','mf-06','af-plan','cn-05','care-06']]);
+}
+window.setT=t=>{for(const s of scenes){const on=t>=s.t0&&t<s.t1;s.root.style.display=on?(s.root.dataset.flex?'flex':'block'):'none';if(on){const tt=t-s.t0;s.draw(tt/(s.t1-s.t0),tt)}}};
+window.ready=(async()=>{MAN=window.MANIFEST;build();await document.fonts.load('700 100px Outfit');await document.fonts.ready;
+  await Promise.all([...document.images].map(i=>i.decode?i.decode().catch(()=>{}):0));window.setT(0);return scenes.length})();
+</script>
