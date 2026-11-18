@@ -144,6 +144,9 @@ is never labelled as a client.
 
 ## Rule from 18 Nov: Figma first, no video work without a yes
 
+**Read `design/showreel/EDIT-PLAN.md` first:** the reference studied frame by frame, the fresh shot list, the
+stock picks (free Adobe Stock, one or two people, nothing crowded) and every decision Lucky made on 18 Nov.
+
 Cut six was rejected and cut five restored as the current version. Before any more rendering:
 1. Build the video artboards in Figma (1920 x 1080, one per shot), customised for the film from the original
    work in the Figma links Lucky gave. No case study images with their backgrounds, no service tiles, no
