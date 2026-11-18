@@ -142,6 +142,19 @@ Lucky asked for "the new car work" in the film: Vaelo, our made-up car brand fro
 and gives "AI Automation" its picture (the test-drive booking flow). Like Torvi, it is our design work and
 is never labelled as a client.
 
+## Lucky's notes on cut five (18 Nov)
+
+- Variety over repeats: every design once (the closing wall aside), never a run of similar white screens.
+- Do not use the case study gallery mockups (designs sitting on photo backgrounds) as they are: take the
+  original work from Figma. Websites come from the sites' own films (`build/a/clips`, cut from
+  `public/work/<slug>/<slug>-flow.mp4`, played frame by frame on a canvas); Cabot only once.
+- Mix in brand, logo, print and video work: the SandLogic guideline and rebrand pages (Figma
+  `r1PdI95t8BLarsJ9ubPMCW`, in `raw/sl`, without pages showing placeholder text or another company's name),
+  Torvi, Vaelo, and our own service artwork (`design/tiles/out/figma-*`). Afthab only a little.
+- Do not redesign client screens (no recoloured versions).
+- Do not use the hero concept renders (character line-up, ribbon and lobby scenes) as illustration. New
+  illustration only if made for this, otherwise none.
+
 ## What to deliver
 
 1. The 60-second film with sound.
