@@ -142,6 +142,15 @@ Lucky asked for "the new car work" in the film: Vaelo, our made-up car brand fro
 and gives "AI Automation" its picture (the test-drive booking flow). Like Torvi, it is our design work and
 is never labelled as a client.
 
+## Rule from 18 Nov: Figma first, no video work without a yes
+
+Cut six was rejected and cut five restored as the current version. Before any more rendering:
+1. Build the video artboards in Figma (1920 x 1080, one per shot), customised for the film from the original
+   work in the Figma links Lucky gave. No case study images with their backgrounds, no service tiles, no
+   sample designs he has not approved for the reel.
+2. Lucky approves the artboards in Figma.
+3. Only then render (he switches the model for that step).
+
 ## Lucky's notes on cut five (18 Nov)
 
 - Variety over repeats: every design once (the closing wall aside), never a run of similar white screens.

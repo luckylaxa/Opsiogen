@@ -97,18 +97,6 @@ function full(dur,k){add(dur,root=>{root.style.background=COAL;const [iw,ih]=MAN
 function webapp(dur,kw,kp,bg){add(dur,root=>{root.style.background=bg;const a=box(kw,root,cap(kw,1240),760,H/2),b=box(kp,root,cap(kp,390),1640,H/2,44);
   return (p,tt)=>{const q=pop(tt/IN),r=pop((tt-.07)/IN);a.style.transform=`translateX(${(1-q)*-900}px)`;b.style.transform=`translateY(${(1-r)*900}px)`}})}
 
-// A website clip playing in a browser card: the frames are drawn on a canvas, so every frame is exact.
-const CLIPS={};
-function clip(dur,k,bg,o={}){add(dur,root=>{root.style.background=bg;const [iw,ih,n]=MAN[k];const w=Math.min(o.w||1500,iw),h=w*ih/iw;
-  const b=el('div','abs',root,{width:w+'px',height:h+'px',left:(W-w)/2+'px',top:(H-h)/2+'px',borderRadius:'18px',overflow:'hidden',background:'#fff'});
-  const c=el('canvas','',b,{width:w+'px',height:h+'px',display:'block'});c.width=iw;c.height=ih;const ctx=c.getContext('2d');
-  const fr=CLIPS[k]||(CLIPS[k]=[...Array(n)].map((_,i)=>{const im=new Image();im.src=A+'clips/'+k.slice(5)+'/f'+String(i+1).padStart(3,'0')+'.jpg';return im}));
-  return (p,tt)=>{const q=pop(tt/IN);b.style.transform=`translateY(${(1-q)*(o.from??380)}px) scale(${lerp(.9,1,q)})`;const im=fr[Math.min(n-1,Math.floor((tt+(o.start||0))*30))];if(im.complete)ctx.drawImage(im,0,0)}})}
-
-// A piece of illustration, large and still, with a slow push in.
-function art(dur,k,bg){add(dur,root=>{root.style.background=bg;const b=box(k,root,cap(k,1280),W/2,H/2,22);
-  return (p,tt)=>{const q=pop(tt/IN);b.style.transform=`scale(${lerp(.86,1,q)+p*.05})`}})}
-
 // Three landscape ads stepping in.
 function stack(dur,keys,bg){add(dur,root=>{root.style.background=bg;const items=keys.map((k,i)=>box(k,root,cap(k,720),520+i*440,300+i*240,14));
   return (p,tt)=>{items.forEach((b,i)=>{const q=pop((tt-i*.07)/IN);b.style.transform=`translateX(${(1-q)*(i%2?1100:-1100)}px)`})}})}
@@ -135,74 +123,67 @@ function closing(columns){
 
 function build(){
   opening();
-  // Teaser: eight flashes, each a different kind of work.
+  // Teaser: eight flashes, one from each kind of work.
   const f=.2;
-  trio(f,['omg-17','omg-16','omg-19'],PINK,true);screen(f,'t-pd-product',BLUE,{from:0,w:1300});screen(f,'slp-mark','#16113a',{from:0});screen(f,'slp-board','#16113a',{from:0});
-  full(f,'va-hero');screen(f,'t-print-packaging',SUN,{from:0,w:1300});screen(f,'tv-identity','#17171c',{from:0,w:1300});poster(f,'af-az1',BLUE);
+  trio(f,['omg-17','omg-16','omg-19'],PINK,true);screen(f,'bt-01',COAL,{from:0});tiles(f,['sl-05'],BLUE,{w:900});poster(f,'af-az1',SUN);
+  full(f,'va-hero');tiles(f,['nc-13'],ORANGE,{w:900});screen(f,'tv-identity','#17171c',{from:0,w:1300});poster(f,'af-ad-ge',VIOLET);
 
   word(.95,'We design it.',VIOLET);
   msg(.7,'AI Product Design','& Design Systems',COAL,VIOLET);
-  row(1.05,['omg-01','omg-02','omg-04','omg-06','omg-10','omg-12','omg-15','omg-22','omg-34'],'#141418',{rot:-4});
+  row(1.05,['omg-01','omg-02','omg-08','omg-09','omg-13','omg-16','omg-17','omg-19','omg-33'],'#141418',{rot:-4});
+  trio(.55,['omg-18','omg-16','omg-20'],SUN);
+  trio(.55,['omg-09','omg-13','omg-10'],PINK);
   screen(.55,'mf-03','#1c1c22');
-  clip(.75,'clip-sf','#0f3a2c',{start:.3});
-  trio(.55,['omg-21','omg-18','omg-14'],SUN);
+  duo(.6,'rx-02','rx-03','#e6ebf4');
+  screen(.5,'care-02',BLUE);
   screen(.55,'surgo-03','#0f2a1e');
-  screen(.55,'t-pd-system',ORANGE,{w:1400});
-  screen(.5,'mf-06','#1c1c22');
+  trio(.5,['omg-33','omg-08','omg-35'],VIOLET);
   msg(.7,'AI MVPs','& Business Apps',COAL,SUN);
-  screen(.55,'t-mvp-booking',AQUA,{w:1400});
+  screen(.5,'mf-06','#1c1c22');
+  duo(.55,'care-03','care-10',AQUA);
+  screen(.5,'surgo-04','#0f2a1e');
+  screen(.5,'rx-07',ORANGE);
   webapp(.6,'va-web','va-app','#0e3d2b');
-  screen(.55,'t-mvp-portal',PINK,{w:1400});
-  trio(.5,['omg-31','omg-11','omg-36'],VIOLET);
-  msg(.7,'AI','Automation',COAL,BLUE);
-  screen(.6,'va-auto','#0e3d2b',{w:1400});
-  screen(.55,'t-automation-dashboards',SUN,{w:1400});
+  cols(1.15,[['rx-05','mf-05','care-06','surgo-04'],['mf-06','care-03','surgo-06','rx-07'],['care-10','surgo-01','rx-09','mf-08'],['surgo-08','rx-10','mf-10','care-07']],'#101016',{rot:-8});
 
   word(.95,'We build it.',AQUA);
   msg(.7,'AI Websites','& Revamps',COAL,AQUA);
-  clip(.85,'clip-bt','#0b1020');
-  clip(.75,'clip-cn','#2a0f0e',{start:.2});
-  screen(.5,'w-oriel',SUN,{w:1400});
-  clip(.75,'clip-ev',PAPER,{start:.4});
-  screen(.5,'w-avelle-v2','#13324a',{w:1400});
-  clip(.6,'clip-cb',BLUE,{start:.3});
+  screen(.5,'bt-01','#0b1020');screen(.5,'cn-01','#15110d');screen(.5,'ev-01',PAPER);screen(.5,'cb-01',BLUE);
+  duo(.6,'bt-06','bt-08',ORANGE);
+  cols(1.15,[['bt-02','cn-03','ev-04','cb-05'],['cn-02','ev-02','cb-03','bt-05'],['ev-03','cb-02','bt-04','cn-06'],['cb-04','bt-03','cn-05','ev-06']],'#0d1117',{rot:-9});
+  screen(.45,'cn-08','#15110d');
+  duo(.55,'ev-08','ev-10',SUN);
+  screen(.45,'cb-08','#0b1020');
+  duo(.55,'cn-04','bt-10',VIOLET);
+  msg(.7,'AI','Automation',COAL,BLUE);
+  screen(.85,'va-auto','#0e3d2b',{w:1400});
 
   word(.95,'We brand it.',ORANGE);
   msg(.7,'AI Brand','Services',COAL,ORANGE);
-  screen(.5,'slg-cover',PAPER,{w:1500});
-  screen(.45,'slg-logo2','#16113a',{w:1500});
-  screen(.45,'slg-colours',PAPER,{w:1500});
-  screen(.45,'slg-gradient','#16113a',{w:1500});
-  screen(.45,'slp-system',VIOLET,{w:1500});
-  screen(.45,'slp-colour','#0f0d24',{w:1500});
-  screen(.45,'tv-guidelines','#17171c',{w:1500});
-  screen(.45,'va-badge','#0e3d2b',{w:1500});
+  for(const k of ['tv-strategy','tv-identity','tv-guidelines','tv-assets','tv-rollout'])screen(.42,k,'#17171c',{w:1600,from:200});
+  full(.85,'va-hero');
+  screen(.45,'va-brand','#0e3d2b');
+  screen(.45,'va-badge','#141418');
+  tiles(.6,['sl-05','sl-02','sl-09'],'#0f1120');
+  tiles(.6,['nc-13','nc-02','nc-04'],BLUE);
+  tiles(.6,['rs-09','rs-03','rs-12'],'#101418');
   msg(.7,'AI Print','& Collateral Design',COAL,PINK);
-  screen(.45,'slp-brochure','#16113a',{w:1500});
-  screen(.45,'t-print-stationery',ORANGE,{w:1400});
-  screen(.45,'slp-stationery',PAPER,{w:1500});
-  screen(.45,'t-print-merch',BLUE,{w:1400});
-  screen(.45,'t-print-posters',SUN,{w:1400});
-  screen(.45,'t-print-events',VIOLET,{w:1400});
+  tiles(.55,['cbb-03','cbb-05','cbb-02'],PAPER);
+  tiles(.55,['sl-12','nc-08','rs-15','cbb-07'],ORANGE,{w:420});
+  cols(1.15,[['sl-02','nc-04','rs-03','cbb-05','sl-09'],['nc-02','rs-06','cbb-02','sl-12','nc-08'],['rs-12','sl-07','nc-11','cbb-07','rs-15'],['cbb-09','nc-15','sl-15','rs-20','nc-06'],['sl-18','rs-23','cbb-01','nc-10','rs-01']],'#0b0b10',{rot:-9,cw:420});
 
   word(.95,'We launch it.',SUN);
   msg(.7,'AI Social Media','Marketing',COAL,SUN);
-  screen(.55,'slp-social','#16113a',{w:1500});
-  screen(.5,'t-social-posts',PINK,{w:1400});
-  row(.95,['af-s1','af-st-az','af-s3','af-st-mv','af-s5','af-st-th'],BLUE,{h:800,rad:26,gap:34,rot:3});
-  screen(.5,'t-social-reels',AQUA,{w:1400});
-  [['va-post','#0e3d2b'],['af-ad-ge',SUN],['slg-social',PAPER],['af-az4',PINK]].forEach(([k,c],i)=>MAN[k][0]>=MAN[k][1]*1.4?screen(.3,k,c,{w:1500,from:0}):poster(.3,k,c,{rot:i%2?2:-2}));
-  msg(.7,'AI Video','Production',COAL,ORANGE);
-  screen(.5,'t-video-ads',VIOLET,{w:1400});
-  screen(.5,'t-video-motion',SUN,{w:1400});
-  screen(.5,'t-video-explainer',BLUE,{w:1400});
+  cols(1.1,[['af-az1','af-ad-ge','af-li-a2','af-escape'],['af-ad-th','af-az3','af-plan','af-li-a4'],['af-968_35','af-ad-mv','af-az5','af-li-b1'],['af-ad-az','af-li-a6','af-az7','af-ad-al'],['af-li-desk','af-az2','af-ad-all','af-li-brief']],'#0d2a44',{rot:-8,cw:400,rad:14,travel:1100});
+  row(1,['af-s1','af-st-az','af-s3','af-st-mv','af-s5','af-st-th','af-s2','af-st-al','af-s6'],BLUE,{h:800,rad:26,gap:34,rot:3});
+  [['af-ad-ge',SUN],['af-az4',PINK],['af-li-a3',AQUA],['af-fdA',VIOLET],['af-ad-mv',ORANGE],['af-sq-az',LIME],['af-li-b2',BLUE],['af-az6',PINK]].forEach(([k,c],i)=>poster(.22,k,c,{rot:i%2?2:-2}));
   msg(.7,'Digital','Marketing',COAL,LIME);
-  screen(.5,'t-digital-email',ORANGE,{w:1400});
-  screen(.45,'va-billboard','#0e3d2b',{w:1500});
-  screen(.5,'t-digital-analytics',AQUA,{w:1400});
-  screen(.45,'t-subscription-ads',PINK,{w:1400});
+  stack(.75,['af-ls-az','af-ls-ge','af-ls-th'],'#141418');
+  screen(.45,'va-billboard','#0e3d2b');
+  tiles(.55,['af-ad-th','af-ad-az','af-ad-al','af-ad-all'],PINK,{w:400,rad:14});
+  [['va-post','#0e3d2b'],['af-sq-th',AQUA],['va-poster','#141418'],['af-968_35',SUN],['va-story','#0e3d2b'],['af-plan',ORANGE]].forEach(([k,c],i)=>poster(.22,k,c,{rot:i%2?-2:2}));
 
-  closing([['omg-16','slp-mark','af-az1','t-print-packaging','mf-03'],['w-oriel','tv-identity','omg-09','slg-gradient','t-social-posts'],['slp-mobile','surgo-03','va-hero','af-s1','slp-board'],['t-video-ads','omg-17','slp-colour','va-post','t-mvp-booking'],['af-ad-ge','slg-logo2','w-avelle-v2','omg-01','t-print-merch'],['tv-rollout','mf-06','af-plan','slp-social','t-pd-redesign']]);
+  closing([['omg-16','bt-01','af-az1','sl-05','mf-03'],['cn-01','af-ad-ge','rx-02','nc-13','omg-09'],['tv-identity','care-02','ev-01','af-s1','rs-09'],['va-post','cbb-03','omg-17','va-brand','af-ad-th'],['af-li-a2','sl-02','bt-04','omg-01','tv-rollout'],['rs-12','mf-06','af-plan','cn-05','care-06']]);
 }
 window.setT=t=>{for(const s of scenes){const on=t>=s.t0&&t<s.t1;s.root.style.display=on?(s.root.dataset.flex?'flex':'block'):'none';if(on){const tt=t-s.t0;s.draw(tt/(s.t1-s.t0),tt)}}};
 window.ready=(async()=>{build();window.DUR=T;window.CUTS=scenes.map(s=>+s.t0.toFixed(4));window.Q=Q;window.KINDS=scenes.map(s=>s.kind);await document.fonts.load('700 100px Outfit');await document.fonts.ready;
