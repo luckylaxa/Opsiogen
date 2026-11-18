@@ -109,7 +109,11 @@ export function HeroGlow({ short = false }: {
               key={b.n}
               data-blob
               data-drift={b.drift}
-              className={cn("absolute aspect-square rounded-full opacity-90 will-change-transform dark:opacity-70 max-md:dark:opacity-85", !short && "max-md:mb-[30svh]")}
+              className={cn(
+                "absolute aspect-square rounded-full will-change-transform",
+                // Softer on the inner pages than on Home.
+                short ? "opacity-50 dark:opacity-40" : "opacity-90 max-md:mb-[30svh] dark:opacity-70 max-md:dark:opacity-85",
+              )}
               style={{
                 left: b.left, bottom: b.bottom, width: b.size,
                 background: `radial-gradient(closest-side, var(--c${b.n}) 0%, color-mix(in srgb, var(--c${b.n}) 62%, transparent) 42%, transparent 100%)`,
