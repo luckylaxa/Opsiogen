@@ -21,12 +21,12 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#0a090d;font-fam
 </style></head><body><div id="f"></div>
 <script>
 const COAL='#0a090d',PAPER='#f8f6f8',PINK='#ff4f9b',VIOLET='#a98bff',AQUA='#5cf2e6',BLUE='#3f7bff',ORANGE='#ff8a3c',SUN='#ffd75e',LIME='#d8ff3e';
-const A='a/',T='../../tiles/out/',S='../raw/',LOGO='../../../src/assets/opsiogen-logo-on-dark.png';
+const W='../../../public/work/',A='a/',T='../../tiles/out/',S='../raw/',LOGO='../../../src/assets/opsiogen-logo-on-dark.png';
 const f=document.getElementById('f');
 const el=(tag,cls,parent,st={})=>{const e=document.createElement(tag);if(cls)e.className=cls;Object.assign(e.style,st);(parent||f).appendChild(e);return e};
 const img=(src,parent,st={},cls='')=>{const i=el('img',cls,parent,st);i.src=src;return i};
 const bg=c=>{f.style.background=c};
-const full=src=>{img(src,f,{},'cover')};
+const full=(src,pos)=>{img(src,f,pos?{objectPosition:pos}:{},'cover')};
 // Type on one flat colour; parts are [text, weight, colour].
 const type=(c,lines,size=140,align='center')=>{bg(c);const box=el('div','abs',f,{inset:'0',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:align==='center'?'center':'flex-start',padding:'0 150px',gap:'6px'});
   for(const parts of lines){const l=el('div','',box,{fontSize:size+'px',letterSpacing:'-.035em',lineHeight:'1.05',whiteSpace:'nowrap'});for(const [t,w,col] of parts){const s=el('span','',l,{fontWeight:w,color:col});s.textContent=t}}return box};
@@ -44,7 +44,6 @@ const pair=(a,b)=>{for(const [k,src] of [[0,a],[1,b]]){const h=el('div','abs',f,
 const grid=(srcs,cols,gap=14,c=COAL,rad=12)=>{bg(c);const rows=Math.ceil(srcs.length/cols);const w=(1920-gap*(cols+1))/cols,h=(1080-gap*(rows+1))/rows;
   srcs.forEach((s,i)=>card(s,gap+(i%cols)*(w+gap),gap+Math.floor(i/cols)*(h+gap),w,h,0,rad))};
 const caption=(t,c=PAPER)=>{const d=el('div','abs',f,{left:'90px',bottom:'80px',fontSize:'64px',fontWeight:500,color:c,letterSpacing:'-.03em',lineHeight:1.05});d.innerHTML=t};
-const W=(t,w=600)=>[t,w];
 
 const SHOTS=[
 ['Open', 'Opening line', ()=>type(COAL,[[['You bring the ',300,PAPER],['idea.',700,AQUA]]],150)],
@@ -55,7 +54,7 @@ const SHOTS=[
 ['Burst', 'Vaelo, the car', ()=>full(A+'va-hero.jpg')],
 ['Brand', 'Chapter word', ()=>word('We brand it.',ORANGE)],
 ['Brand', 'Service artwork: brand', ()=>full(A+'z-page-brand.jpg')],
-['Brand', 'Torvi: site, identity, guidelines, ads', ()=>{bg('#1d1f24');const g=24,w=(1920-3*g)/2,h=(1080-3*g)/2;[['crop-tv-rollout',0],['crop-tv-identity',1],['crop-tv-guidelines',2],['crop-tv-assets',3]].forEach(([k,i])=>fit(A+k+'.jpg',g+(i%2)*(w+g),g+Math.floor(i/2)*(h+g),w,h))}],
+['Brand', 'Torvi: site, identity, guidelines, ads', ()=>{bg('#1d1f24');const g=24,w=(1920-3*g)/2,h=(1080-3*g)/2;[['crop-tv-rollout',0],['crop-tv-strategy',1],['crop-tv-guidelines',2],['crop-tv-assets',3]].forEach(([k,i])=>fit(A+k+'.jpg',g+(i%2)*(w+g),g+Math.floor(i/2)*(h+g),w,h))}],
 ['Brand', 'Vaelo: billboard, badge, brand, poster', ()=>{bg('#0e3d2b');card(A+'va-billboard.jpg',90,90,1140);card(A+'va-badge.jpg',90,690,535);card(A+'va-brand.jpg',695,690,535);card(A+'va-poster.jpg',1290,120,560)}],
 ['Brand', 'SandLogic: guideline pages', ()=>{bg('#0f1120');const g=20,w=(1920-3*g)/2,h=w*9/16,t=(1080-2*h-g)/2;[['slg-logo1',0],['slg-colours',1],['slg-gradient',2],['slp-system',3]].forEach(([k,i])=>card(A+k+'.jpg',g+(i%2)*(w+g),t+Math.floor(i/2)*(h+g),w,0,0,12))}],
 ['Brand', 'SandLogic: stationery', ()=>full(A+'slp-stationery.jpg')],
@@ -64,19 +63,20 @@ const SHOTS=[
 ['Design', 'Chapter word', ()=>word('We design it.',VIOLET)],
 ['Design', 'Stock: her smile, then the app (Pixabay 208770, 4.5-6.0 s)', ()=>full(S+'stock/stills/design.jpg')],
 ['Design', 'Oh My Glam: three screens', ()=>{bg(PINK);phone(A+'omg-01.jpg',380,140,400,-6);phone(A+'omg-08.jpg',760,90,420,0);phone(A+'omg-13.jpg',1160,140,400,6)}],
-['Design', 'Meetingful: web app and phone', ()=>{bg('#1c1b21');browser(A+'mf-03.jpg',150,150,1350);phone(A+'mf-m1.jpg',1420,330,330,0)}],
-['Design', 'RxLive and Care Connect', ()=>{bg('#1f4d45');browser(A+'rx-02.jpg',110,110,1150);browser(A+'care-03.jpg',700,380,1150)}],
-['Design', 'Surgo: two screens', ()=>{bg('#3e6955');browser(A+'surgo-03.jpg',110,120,1100);browser(A+'surgo-04.jpg',720,360,1100)}],
+['Design', 'Meetingful (case study mockup)', ()=>full(W+'meetingful/meetingful-5-wide.jpg','center top')],
+['Design', 'RxLive (case study mockup)', ()=>full(W+'rxlive/rx-1-wide.jpg','center top')],
+['Design', 'Care Connect (case study mockup)', ()=>full(W+'care-connect/care-1-wide.jpg','center top')],
+['Design', 'Surgo (case study mockup)', ()=>full(W+'surgo-health/surgo-6-wide.jpg','center top')],
 ['Design', 'Service artwork: product design', ()=>full(A+'z-page-pd.jpg')],
 ['Design', 'Service artwork: MVPs and apps', ()=>full(A+'z-page-mvp.jpg')],
 ['Design', 'Service artwork: AI automation', ()=>full(A+'z-page-automation.jpg')],
 ['Build', 'Chapter word', ()=>word('We build it.',AQUA)],
 ['Build', 'Stock: laughing at the laptop (Pexels 5137353, 9.2-10.7 s)', ()=>full(S+'stock/stills/build.jpg')],
-['Build', 'Website 1 (site film)', ()=>{bg('#0b1020');browser(A+'bt-01.jpg',150,100,1620)}],
-['Build', 'Website 2 (site film)', ()=>{bg(BLUE);browser(A+'cb-05.jpg',150,100,1620)}],
-['Build', 'Website 3 (site film)', ()=>{bg('#2a2018');browser(A+'cn-01.jpg',150,100,1620)}],
-['Build', 'Website 4 (site film)', ()=>{bg('#1d3557');browser(A+'ev-02.jpg',150,100,1620)}],
-['Build', 'Website 5 (site film)', ()=>{bg(VIOLET);browser(A+'clips/sf/f030.jpg',150,100,1620)}],
+['Build', 'Website 1: BigTapp (case study mockup)', ()=>full(W+'bigtapp/bigtapp-1-wide.jpg','center top')],
+['Build', 'Website 2: Engel & Völkers (case study mockup)', ()=>full(W+'engel-volkers/ev-2-wide.jpg','center top')],
+['Build', 'Website 3: Carlton Noble (case study mockup)', ()=>full(W+'carlton-noble/carlton-12-wide.jpg','center top')],
+['Build', 'Website 4: Engel & Völkers (case study mockup)', ()=>full(W+'engel-volkers/ev-1-wide.jpg','center top')],
+['Build', 'Website 5: Sifio (case study mockup)', ()=>full(W+'sifio-health/sifioweb-1-wide.jpg','center top')],
 ['Build', 'Vaelo: site and app', ()=>{bg('#0e3d2b');browser(A+'va-web.jpg',120,130,1350);phone(A+'va-app.jpg',1400,250,380,0)}],
 ['Launch', 'Chapter word', ()=>word('We launch it.',SUN)],
 ['Launch', 'Stock: it is live (Pexels 15909403, 2.5-4.0 s)', ()=>full(S+'stock/stills/launch.jpg')],
@@ -85,7 +85,7 @@ const SHOTS=[
 ['Launch', 'Service artwork: video', ()=>full(A+'z-page-video.jpg')],
 ['Launch', 'Service artwork: digital marketing', ()=>full(A+'z-page-digital.jpg')],
 ['Launch', 'Service artwork: creative subscription', ()=>full(A+'z-page-subscription.jpg')],
-['Launch', 'Wall of the work, zooms out', ()=>wall(['Meetingful','Service artwork: MVP','Website 2','Torvi','Service artwork: video','RxLive','Website 4','Service artwork: digital','Surgo'],3)],
+['Launch', 'Wall of the work, zooms out', ()=>wall(['Meetingful','Service artwork: MVP','Website 2','Torvi','Service artwork: video','Care Connect','Website 4','Service artwork: digital','Surgo'],3)],
 ['Close', 'Stock: two people laughing (Pexels 4053012, 4.8-6.3 s)', ()=>full(S+'stock/stills/close.jpg')],
 ['Close', 'The spine, typed', ()=>type(COAL,[[['Your idea. ',300,PAPER]],[['Branded. ',700,ORANGE],['Designed. ',700,VIOLET]],[['Built. ',700,AQUA],['Launched.',700,SUN]]],128,'left')],
 ['Close', 'One partner', ()=>type(COAL,[[['One partner.',300,PAPER]],[['Every digital need.',700,AQUA]]],140)],
