@@ -63,7 +63,9 @@ export function HeroGlow({ short = false }: {
         const r = el.getBoundingClientRect();
         burst.style.left = `${at.x - r.left}px`; burst.style.top = `${at.y - r.top}px`;
         burst.style.background = `radial-gradient(closest-side, ${p[1]} 0%, ${p[2]} 30%, ${p[3]} 52%, transparent 72%)`;
-        burst.animate([{ transform: "translate(-50%,-50%) scale(0.08)", opacity: 0.95 }, { transform: "translate(-50%,-50%) scale(1)", opacity: 0 }], { duration: 1300, easing: "cubic-bezier(0.16,0.7,0.2,1)" });
+        // On black the ring of colour is kept as soft as the light itself (Lucky, 18 Nov).
+        const peak = document.documentElement.dataset.theme === "light" ? 0.95 : 0.4;
+        burst.animate([{ transform: "translate(-50%,-50%) scale(0.08)", opacity: peak }, { transform: "translate(-50%,-50%) scale(1)", opacity: 0 }], { duration: 1300, easing: "cubic-bezier(0.16,0.7,0.2,1)" });
       }
     };
     const loop = () => {
@@ -103,7 +105,9 @@ export function HeroGlow({ short = false }: {
       style={{ maskImage: short ? SHORT_MASK : MASK, WebkitMaskImage: short ? SHORT_MASK : MASK }}
     >
       {[0, 1].map((k) => (
-        <div key={k} data-layer style={{ ...vars(PALETTES[0]), opacity: k === 0 ? 1 : 0 }} className={cn("absolute inset-x-0 top-0 transition-opacity duration-[1200ms] ease-out", short ? "h-[calc(100%-min(36vh,320px))]" : "h-[100svh] min-h-[560px]")}>
+        // Phones (Home): the hero is only as tall as its words, so the light rises from just under its button, behind
+        // our character, rather than from the bottom of the screen.
+        <div key={k} data-layer style={{ ...vars(PALETTES[0]), opacity: k === 0 ? 1 : 0 }} className={cn("absolute inset-x-0 top-0 transition-opacity duration-[1200ms] ease-out", short ? "h-[calc(100%-min(36vh,320px))]" : "h-[100svh] min-h-[560px] max-sm:h-[440px] max-sm:min-h-0")}>
           {BLOBS.map((b) => (
             <span
               key={b.n}
@@ -111,8 +115,9 @@ export function HeroGlow({ short = false }: {
               data-drift={b.drift}
               className={cn(
                 "absolute aspect-square rounded-full will-change-transform",
-                // Softer on the inner pages than on Home.
-                short ? "opacity-50 dark:opacity-40" : "opacity-90 max-md:mb-[30svh] dark:opacity-70 max-md:dark:opacity-85",
+                // Softer on the inner pages than on Home. On black only a faint wash of colour (Lucky, 18 Nov: the
+                // dark theme matters most, and the light there was too strong); the light theme is as it was.
+                short ? "opacity-50 dark:opacity-[0.12]" : "opacity-90 sm:max-md:mb-[30svh] dark:opacity-[0.2]",
               )}
               style={{
                 left: b.left, bottom: b.bottom, width: b.size,

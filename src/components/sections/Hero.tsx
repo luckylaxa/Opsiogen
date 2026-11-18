@@ -286,6 +286,9 @@ export function Hero({
         "-mt-[var(--header-h)] pt-[calc(var(--header-h)+clamp(64px,calc(3.14vw+52px),112px))]",
         // Phones (Home): the hero takes only the room it needs, so the showreel follows on the first screen.
         glow && "max-sm:pt-[calc(var(--header-h)+56px)]",
+        // Our character sits near the right edge, and its flash and note would reach past the screen: keep the page
+        // from growing sideways (on iPhones it let the page slide and showed an edge).
+        glow && "overflow-x-clip",
         glow || light ? "relative isolate bg-page" : "bg-band",
         children
           ? "pb-[clamp(40px,calc(2.3vw+31.4px),76px)]"
