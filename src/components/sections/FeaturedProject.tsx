@@ -32,7 +32,8 @@ export function FeaturedProject({ project, priority = true }: { project?: Projec
           />
         </div>
       </div>
-      <div className="flex flex-col gap-5 px-[clamp(16px,7.5%,142px)] py-[clamp(24px,calc(3.6vw+10.5px),80px)] sm:flex-row sm:items-end sm:justify-between">
+      {/* The details on the left and the button on the right, on phones too (Lucky, 18 Nov). */}
+      <div className="flex items-end justify-between gap-4 px-[clamp(16px,7.5%,142px)] py-[clamp(24px,calc(3.6vw+10.5px),80px)] sm:gap-5">
         <div className="min-w-0">
           {tags && <p className="mb-2 text-small uppercase tracking-[0.06em] text-white/60">{tags}</p>}
           <h2 className="text-[length:clamp(24px,calc(1.05vw+20px),40px)] font-medium leading-tight tracking-[-0.01em]">
