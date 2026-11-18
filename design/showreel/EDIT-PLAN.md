@@ -103,7 +103,14 @@ the reference's words ("shareable" and others) are never used.
 - Client names never on screen. Torvi, Vaelo, Maison Avelle and Oriel are our design work and are never
   labelled as clients.
 
-## Stock picks (free Adobe Stock, one or two people only)
+## Final shots (18 Nov, for approval)
+
+Figma page "03 · Final shots (for approval)" holds all 45 shots in film order, made by `build/frames.html`
+(`node build/frames.cjs OUT` saves them). Stock video in five places only, all Pexels (free licence, no credit):
+see `stock/picks.tsv`. The full list of options Lucky's other chat found is the "Showreel stock picks" sheet
+(claude.ai artifact PWZnZi5xDTJn2p9YcVqxzc). The clips live in `raw/stock` (not in git), stills in `raw/stock/stills`.
+
+## Stock picks (one or two people only)
 
 **Lucky, 18 Nov:** stock only in a few places, where the story needs it. Minimal, modern, high standard, no
 old-looking footage. Smiling or laughing people, to bring emotion. Kept from the first set: S03 and S04 only.

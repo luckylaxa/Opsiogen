@@ -1,11 +1,6 @@
-code	adobe_stock_id	shows	where	status
-S03	303759063	hands scrolling a phone by a window	Open, under "You bring the idea."	liked by Lucky
-S04	616494463	pink and purple neon phone scroll	Launch, before the social work	liked by Lucky
-P1	361294477	woman smiling at her phone, close	Design, match cut into the app screen	for review
-P2	375873286	man smiling at his laptop	Build, before the website artboards	for review
-P3	553262891	girl lit by her phone at night, smiling	Launch, next to S04	for review
-P4	542318615	two people laughing at a laptop	Close, before "Let's make yours."	for review
-A1	410028326	woman smiling at phone in an office	alternate for P1	for review
-A2	397847459	woman laughing on pink	alternate, chapter word	for review
-A3	601498110	woman smiling on violet	alternate, chapter word	for review
-A4	398144840	man smiling at laptop, home office	alternate for P2	for review
+code	source	id	shows	where	in-out (s)	status
+P1	Pexels	7447931	man by a window looking up, phone in hand	Open, under "You bring the idea." (shot 02)	6.5-8.0	chosen
+P2	Pexels	6612209	woman holding up a blank phone	Burst, match cut into the Oh My Glam app (shot 04)	3.0-4.5	chosen
+P3	Pexels	5137353	woman laughing at a laptop	Build, after "We build it." (shot 17)	9.2-10.7	chosen
+P4	Pexels	15909403	woman thrilled by her phone, blue wall	Launch, after "We launch it." (shot 34)	2.5-4.0	chosen
+P5	Pexels	4053012	man and woman laughing at a laptop	Close, before the typed spine (shot 42)	4.8-6.3	chosen

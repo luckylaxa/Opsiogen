@@ -1,0 +1,101 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- The final shot list as still frames, one per shot, for Lucky's review in Figma (18 Nov).
+     Open frames.html#N to see shot N; frames.cjs saves them all. Outfit only, our colours, our work. -->
+<style>
+@font-face{font-family:Outfit;src:url(../../../src/fonts/Outfit-Variable.woff2) format('woff2');font-weight:100 900}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#0a090d;font-family:Outfit,sans-serif}
+#f{position:absolute;inset:0;overflow:hidden}
+.abs{position:absolute}
+.cover{width:100%;height:100%;object-fit:cover;display:block}
+.word{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:190px;font-weight:600;letter-spacing:-.04em;line-height:1}
+.phone{position:absolute;background:#0b0b0e;border-radius:64px;padding:13px;box-shadow:0 30px 80px rgba(0,0,0,.35)}
+.phone img{display:block;width:100%;border-radius:52px}
+.browser{position:absolute;background:#16151a;border-radius:20px;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.35)}
+.browser .bar{height:46px;display:flex;align-items:center;gap:10px;padding:0 20px}
+.browser .bar i{width:13px;height:13px;border-radius:50%;background:#3a393e}
+.browser img{display:block;width:100%}
+.card{position:absolute;border-radius:18px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.3)}
+.card img{display:block;width:100%;height:100%;object-fit:cover}
+</style></head><body><div id="f"></div>
+<script>
+const COAL='#0a090d',PAPER='#f8f6f8',PINK='#ff4f9b',VIOLET='#a98bff',AQUA='#5cf2e6',BLUE='#3f7bff',ORANGE='#ff8a3c',SUN='#ffd75e',LIME='#d8ff3e';
+const A='a/',T='../../tiles/out/',S='../raw/',LOGO='../../../src/assets/opsiogen-logo-on-dark.png';
+const f=document.getElementById('f');
+const el=(tag,cls,parent,st={})=>{const e=document.createElement(tag);if(cls)e.className=cls;Object.assign(e.style,st);(parent||f).appendChild(e);return e};
+const img=(src,parent,st={},cls='')=>{const i=el('img',cls,parent,st);i.src=src;return i};
+const bg=c=>{f.style.background=c};
+const full=src=>{img(src,f,{},'cover')};
+// Type on one flat colour; parts are [text, weight, colour].
+const type=(c,lines,size=140,align='center')=>{bg(c);const box=el('div','abs',f,{inset:'0',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:align==='center'?'center':'flex-start',padding:'0 150px',gap:'6px'});
+  for(const parts of lines){const l=el('div','',box,{fontSize:size+'px',letterSpacing:'-.035em',lineHeight:'1.05',whiteSpace:'nowrap'});for(const [t,w,col] of parts){const s=el('span','',l,{fontWeight:w,color:col});s.textContent=t}}return box};
+const word=(t,c,ink=COAL)=>{bg(c);const w=el('div','word',f,{color:ink});w.textContent=t};
+const phone=(src,x,y,w,rot=0,parent=f)=>{const p=el('div','phone',parent,{left:x+'px',top:y+'px',width:w+'px',transform:`rotate(${rot}deg)`});img(src,p);return p};
+const browser=(src,x,y,w,parent=f)=>{const b=el('div','browser',parent,{left:x+'px',top:y+'px',width:w+'px'});const bar=el('div','bar',b);for(let i=0;i<3;i++)el('i','',bar);img(src,b);return b};
+const card=(src,x,y,w,h,rot=0,rad=18)=>{const c=el('div','card',f,{left:x+'px',top:y+'px',width:w+'px',height:h+'px',transform:`rotate(${rot}deg)`,borderRadius:rad+'px'});img(src,c);return c};
+// Two service tiles, side by side, edge to edge.
+const pair=(a,b)=>{for(const [k,src] of [[0,a],[1,b]]){const h=el('div','abs',f,{left:k*960+'px',top:0,width:'960px',height:'1080px',overflow:'hidden'});img(src,h,{},'cover')}};
+const grid=(srcs,cols,gap=14,c=COAL,rad=12)=>{bg(c);const rows=Math.ceil(srcs.length/cols);const w=(1920-gap*(cols+1))/cols,h=(1080-gap*(rows+1))/rows;
+  srcs.forEach((s,i)=>card(s,gap+(i%cols)*(w+gap),gap+Math.floor(i/cols)*(h+gap),w,h,0,rad))};
+const caption=(t,c=PAPER)=>{const d=el('div','abs',f,{left:'90px',bottom:'80px',fontSize:'64px',fontWeight:500,color:c,letterSpacing:'-.03em',lineHeight:1.05});d.innerHTML=t};
+const W=(t,w=600)=>[t,w];
+
+const SHOTS=[
+// Open
+['Open', 'Opening line', ()=>type(COAL,[[['You bring the ',300,PAPER],['idea.',700,AQUA]]],150)],
+['Open', 'Stock: the idea (Pexels 7447931, 6.5-8.0 s)', ()=>{full(S+'stock/stills/open.jpg');const t=el('div','abs',f,{left:'110px',top:'420px',fontSize:'110px',fontWeight:300,color:COAL,letterSpacing:'-.035em',lineHeight:1});t.innerHTML='You bring<br>the <b style="font-weight:700">idea.</b>'}],
+['Open', 'We take it from here, the character', ()=>{type(COAL,[[['We take it ',300,PAPER],['from here.',700,PAPER]]],130);img(A+'ch-front.png',f,{position:'absolute',width:'330px',left:'795px',top:'90px'})}],
+// Burst
+['Burst', 'Match cut: blank phone, then our app (Pexels 6612209, 3.0-4.5 s)', ()=>full(S+'comps/c-design-phone.jpg')],
+['Burst', 'Grid of the work, reshuffles twice', ()=>grid([A+'omg-08.jpg',A+'va-poster.jpg',A+'af-ad-ge.jpg',A+'tv-identity.jpg',A+'w-oriel.jpg',A+'t-print-packaging.jpg',A+'slg-cover.jpg',A+'mf-03.jpg',A+'t-social-posts.jpg'],3)],
+['Burst', 'Vaelo, the car', ()=>full(A+'va-hero.jpg')],
+// Design
+['Design', 'Chapter word', ()=>word('We design it.',VIOLET)],
+['Design', 'Oh My Glam: three screens', ()=>{bg(PINK);phone(A+'omg-01.jpg',380,140,400,-6);phone(A+'omg-08.jpg',760,90,420,0);phone(A+'omg-13.jpg',1160,140,400,6)}],
+['Design', 'Meetingful: web app and phone', ()=>{bg('#1c1b21');browser(A+'mf-03.jpg',150,150,1350);phone(A+'mf-m1.jpg',1420,330,330,0)}],
+['Design', 'RxLive and Care Connect', ()=>{bg('#dfe6f3');browser(A+'rx-02.jpg',110,110,1150);browser(A+'care-03.jpg',700,380,1150)}],
+['Design', 'Surgo: two screens', ()=>{bg('#0f2a1e');browser(A+'surgo-03.jpg',110,120,1100);browser(A+'surgo-04.jpg',720,360,1100)}],
+['Design', 'Service artwork: product design', ()=>full(T+'figma-pd/page.jpg')],
+['Design', 'Service artwork: MVPs and apps', ()=>full(T+'figma-mvp/page.jpg')],
+['Design', 'Service artwork: AI automation', ()=>full(T+'figma-automation/page.jpg')],
+['Design', 'Service artwork: travel app', ()=>full(A+'t-pd-product.jpg')],
+// Build
+['Build', 'Chapter word', ()=>word('We build it.',AQUA)],
+['Build', 'Stock: laughing at the laptop (Pexels 5137353, 9.2-10.7 s)', ()=>full(S+'stock/stills/build.jpg')],
+['Build', 'Website 1 (site film)', ()=>{bg('#0b1020');browser(A+'clips/bt/f030.jpg',260,110,1400)}],
+['Build', 'Website 2 (site film)', ()=>{bg(BLUE);browser(A+'clips/cb/f030.jpg',260,110,1400)}],
+['Build', 'Website 3 (site film)', ()=>{bg('#2a2018');browser(A+'clips/cn/f030.jpg',260,110,1400)}],
+['Build', 'Website 4 (site film)', ()=>{bg(PAPER);browser(A+'clips/ev/f030.jpg',260,110,1400)}],
+['Build', 'Website 5 (site film)', ()=>{bg(VIOLET);browser(A+'clips/sf/f030.jpg',260,110,1400)}],
+['Build', 'Our sample sites: Maison Avelle and Oriel', ()=>{bg(SUN);browser(A+'w-avelle-v2.jpg',90,140,1000);browser(A+'w-oriel.jpg',830,330,1000)}],
+['Build', 'Vaelo: site and app', ()=>{bg('#0e3d2b');browser(A+'va-web.jpg',120,130,1350);phone(A+'va-app.jpg',1400,250,380,0)}],
+// Brand and print
+['Brand', 'Chapter word', ()=>word('We brand it.',ORANGE)],
+['Brand', 'Service artwork: brand', ()=>full(T+'figma-brand/page.jpg')],
+['Brand', 'Torvi: identity', ()=>full(A+'tv-identity.jpg')],
+['Brand', 'Vaelo: badge, poster, billboard', ()=>{bg('#0e3d2b');card(A+'va-badge.jpg',70,170,560,740);card(A+'va-poster.jpg',680,170,560,740);card(A+'va-billboard.jpg',1290,170,560,740)}],
+['Brand', 'SandLogic: guideline pages', ()=>grid([A+'slg-cover.jpg',A+'slg-logo1.jpg',A+'slg-colours.jpg',A+'slg-gradient.jpg'],2,14,'#0f1120')],
+['Brand', 'SandLogic: stationery', ()=>full(A+'slp-stationery.jpg')],
+['Brand', 'Service artwork: print', ()=>full(T+'figma-print/page.jpg')],
+['Brand', 'Print: packaging', ()=>full(A+'t-print-packaging.jpg')],
+// Launch
+['Launch', 'Chapter word', ()=>word('We launch it.',SUN)],
+['Launch', 'Stock: it is live (Pexels 15909403, 2.5-4.0 s)', ()=>full(S+'stock/stills/launch.jpg')],
+['Launch', 'Afthab: four ads', ()=>{bg('#0d2a44');[['af-ad-ge',-3],['af-ad-mv',2],['af-ad-th',-2],['af-ad-az',3]].forEach(([k,r],i)=>card(A+k+'.jpg',80+i*450,215,400,500,r,14))}],
+['Launch', 'Service artwork: social', ()=>full(T+'figma-social/page.jpg')],
+['Launch', 'Social: reels', ()=>full(A+'t-social-reels.jpg')],
+['Launch', 'Service artwork: video', ()=>full(T+'figma-video/page.jpg')],
+['Launch', 'Service artwork: digital marketing', ()=>full(T+'figma-digital/page.jpg')],
+['Launch', 'Service artwork: creative subscription', ()=>full(T+'figma-subscription/page.jpg')],
+['Launch', 'Wall of the work, zooms out', ()=>grid([A+'omg-13.jpg',A+'va-story.jpg',A+'t-video-ads.jpg',A+'af-ad-th.jpg',A+'tv-assets.jpg',A+'t-subscription-decks.jpg',A+'slg-social.jpg',A+'w-avelle-v2.jpg',A+'t-digital-analytics.jpg',A+'va-post.jpg',A+'t-automation-dashboards.jpg',A+'omg-16.jpg'],4,12)],
+// Close
+['Close', 'Stock: two people laughing (Pexels 4053012, 4.8-6.3 s)', ()=>full(S+'stock/stills/close.jpg')],
+['Close', 'The spine, typed', ()=>type(COAL,[[['Your idea. ',300,PAPER]],[['Designed. ',700,VIOLET],['Built. ',700,AQUA]],[['Branded. ',700,ORANGE],['Launched.',700,SUN]]],128,'left')],
+['Close', 'One partner', ()=>type(COAL,[[['One partner.',300,PAPER]],[['Every digital need.',700,AQUA]]],140)],
+['Close', 'Logo, character, call', ()=>{bg(COAL);img(A+'ch-front.png',f,{position:'absolute',width:'260px',left:'830px',top:'150px'});img(LOGO,f,{position:'absolute',width:'800px',left:'560px',top:'470px'});const t=el('div','abs',f,{left:0,right:0,top:'700px',textAlign:'center',fontSize:'64px',fontWeight:300,color:PAPER,letterSpacing:'-.03em'});t.innerHTML='Let’s make <b style="font-weight:700">yours.</b>'}],
+];
+window.SHOTS=SHOTS.map(([sec,name])=>({sec,name}));
+const n=parseInt(location.hash.slice(1)||'0');SHOTS[n][2]();
+window.ready=Promise.all([...document.images].map(i=>i.decode().catch(()=>console.log('MISSING '+i.src)))).then(()=>document.fonts.ready);
+</script></body></html>
