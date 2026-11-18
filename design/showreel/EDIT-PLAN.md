@@ -105,7 +105,7 @@ the reference's words ("shareable" and others) are never used.
 
 ## Final shots (18 Nov, for approval)
 
-Figma page "03 · Final shots (for approval)" holds all 92 shots (v9) in film order, made by `build/frames.html`
+Figma page "03 · Final shots (for approval)" holds all 93 shots (v10) in film order, made by `build/frames.html`
 (`node build/frames.cjs OUT` saves them). Stock video in five places only, all Pexels (free licence, no credit):
 see `stock/picks.tsv`. The full list of options Lucky's other chat found is the "Showreel stock picks" sheet
 (claude.ai artifact PWZnZi5xDTJn2p9YcVqxzc). The clips live in `raw/stock` (not in git), stills in `raw/stock/stills`.
@@ -128,6 +128,9 @@ phone, laughing together; only one woman with a phone (Lucky: "all women looking
 Norsecom and Rohde & Schwarz pairs, SandLogic pieces, Vaelo post and story, Oh My Glam screens, single service tiles.
 **v6:** website mockups never show their right-hand caption panel: `build/site16x9.py` takes the screen alone
 onto the mockup's own colour (`build/a/s-*.jpg`). No Afthab in the campaign shot (Torvi ads and the lipstick ads).
+
+**v10 (18 Nov):** Lucky: "all models are looking into mobile and laptop". Stock now shows different moments: a smile
+to camera, a win, sketching, arms open, a high five, laughter; only three clips with a screen.
 
 ## Stock picks (one or two people only)
 
