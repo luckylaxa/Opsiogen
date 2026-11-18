@@ -158,7 +158,7 @@ File: https://www.figma.com/design/N0FMCGKpSEZ0PVBoQDCVdc ("Opsiogen · Showreel
 Design" holds A01-A18: the opening, the burst and the "We design it" chapter. Each artboard is 1920 x 1080, the
 work placed in named image slots (`img:<key>`, files in `build/a`), and a small grey note at the bottom left
 that is not part of the film. Stock artboards are placeholders with the clip's ID until the stills can be shown.
-Type: **Outfit only** (Lucky, 18 Nov: "use only our fonts"). Emphasis comes from weight (Light against Bold)
+Type: **Outfit Bold only** (Lucky, 18 Nov: "use only our bold font or website type font"); before that, Outfit only (Lucky, 18 Nov: "use only our fonts"). Emphasis comes from weight (Light against Bold)
 and colour, never from another typeface. Next pages, after Lucky approves the direction: 02 Build, 03 Brand and print,
 04 Launch, 05 Close.
 
