@@ -301,8 +301,20 @@ export function Hero({
         heading={section.heading}
         accent={section.accent}
         text={section.text}
-        // Full screen: the heading fills the first screen, centred above the floating bar.
-        className={full ? "min-h-[calc(100svh-var(--header-h)-clamp(64px,calc(3.14vw+52px),112px))] justify-center pb-[clamp(96px,12vh,160px)]" + (glow ? " -translate-y-[clamp(12px,3.5svh,44px)]" : "") : undefined}
+        // Full screen: the heading fills the first screen, centred above the floating bar. With something below it in
+        // the band (Home's showreel), the first screen ends a little early so its top edge already shows, just under
+        // our character, instead of a band of empty space (Lucky, 18 Nov).
+        className={
+          full
+            ? cn(
+                children
+                  ? "min-h-[calc(100svh-var(--header-h)-clamp(64px,calc(3.14vw+52px),112px)-clamp(48px,calc(2.88vw+37.2px),92px)-clamp(28px,4svh,48px))]"
+                  : "min-h-[calc(100svh-var(--header-h)-clamp(64px,calc(3.14vw+52px),112px))]",
+                "justify-center pb-[clamp(96px,12vh,160px)]",
+                glow && "-translate-y-[clamp(12px,3.5svh,44px)]",
+              )
+            : undefined
+        }
       >
         {section.button?.href && section.button.label && (
           <ButtonLink href={section.button.href} className="mt-[clamp(28px,calc(1.7vw+21.6px),54px)]">

@@ -57,11 +57,17 @@ export async function SectionRenderer({
     const next = sections[i + 1];
     switch (section._type) {
       case "hero": {
-        if (next?._type === "featuredProject") {
+        // A featured project or the video card right after the hero shares the hero's band, close under it
+        // (Home: the showreel since 18 Nov, in the place the featured project had).
+        if (next?._type === "featuredProject" || next?._type === "showreel") {
           out.push(
             <section key={section._key} data-band>
               <Hero section={section} full={layout.heroFull && i === 0} glow={layout.heroGlow && i === 0} light={layout.heroLight && i === 0} image={i === 0 ? layout.heroImage : undefined}>
-                <FeaturedProject project={next.project} priority={!layout.heroFull && !layout.heroImage} />
+                {next._type === "featuredProject" ? (
+                  <FeaturedProject project={next.project} priority={!layout.heroFull && !layout.heroImage} />
+                ) : (
+                  <Showreel section={next} />
+                )}
               </Hero>
             </section>,
           );
