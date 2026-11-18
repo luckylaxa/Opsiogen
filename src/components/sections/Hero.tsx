@@ -284,6 +284,8 @@ export function Hero({
     <div
       className={cn(
         "-mt-[var(--header-h)] pt-[calc(var(--header-h)+clamp(64px,calc(3.14vw+52px),112px))]",
+        // Phones (Home): the hero takes only the room it needs, so the showreel follows on the first screen.
+        glow && "max-sm:pt-[calc(var(--header-h)+28px)]",
         glow || light ? "relative isolate bg-page" : "bg-band",
         children
           ? "pb-[clamp(40px,calc(2.3vw+31.4px),76px)]"
@@ -311,7 +313,7 @@ export function Hero({
                   ? "min-h-[calc(100svh-var(--header-h)-clamp(64px,calc(3.14vw+52px),112px)-clamp(48px,calc(2.88vw+37.2px),92px)-clamp(28px,4svh,48px))]"
                   : "min-h-[calc(100svh-var(--header-h)-clamp(64px,calc(3.14vw+52px),112px))]",
                 "justify-center pb-[clamp(96px,12vh,160px)]",
-                glow && "-translate-y-[clamp(12px,3.5svh,44px)]",
+                glow && "-translate-y-[clamp(12px,3.5svh,44px)] max-sm:min-h-0 max-sm:translate-y-0 max-sm:pb-0",
               )
             : undefined
         }
@@ -322,12 +324,13 @@ export function Hero({
           </ButtonLink>
         )}
       </GiantHeading>
+      {/* Our character, bottom right of the first screen; on phones it sits just under the button, on the right. */}
       {glow && (
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-[100svh] min-h-[560px]">
-          <HeroCharacter className="pointer-events-auto right-[clamp(14px,8vw,130px)] bottom-[clamp(100px,8svh,120px)] [--w:clamp(92px,min(10.5vw,18svh),160px)]" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-[100svh] min-h-[560px] max-sm:static max-sm:h-auto max-sm:min-h-0 max-sm:pt-2">
+          <HeroCharacter className="pointer-events-auto right-[clamp(14px,8vw,130px)] bottom-[clamp(100px,8svh,120px)] [--w:clamp(92px,min(10.5vw,18svh),160px)] max-sm:relative max-sm:right-auto max-sm:bottom-auto max-sm:mr-[clamp(14px,8vw,130px)] max-sm:ml-auto" />
         </div>
       )}
-      {children && <div className="mt-[clamp(48px,calc(2.88vw+37.2px),92px)]">{children}</div>}
+      {children && <div className={cn("mt-[clamp(48px,calc(2.88vw+37.2px),92px)]", glow && "max-sm:mt-6")}>{children}</div>}
     </div>
   );
 }
