@@ -88,7 +88,7 @@ export function HeroGlow() {
               key={b.n}
               data-blob
               data-drift={b.drift}
-              className="absolute aspect-square rounded-full opacity-90 will-change-transform dark:opacity-70"
+              className="absolute aspect-square rounded-full opacity-90 will-change-transform max-md:mb-[30svh] dark:opacity-70 max-md:dark:opacity-85"
               style={{
                 left: b.left, bottom: b.bottom, width: b.size,
                 background: `radial-gradient(closest-side, var(--c${b.n}) 0%, color-mix(in srgb, var(--c${b.n}) 62%, transparent) 42%, transparent 100%)`,
