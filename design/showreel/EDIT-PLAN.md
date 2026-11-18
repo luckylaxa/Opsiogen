@@ -105,10 +105,16 @@ the reference's words ("shareable" and others) are never used.
 
 ## Final shots (18 Nov, for approval)
 
-Figma page "03 · Final shots (for approval)" holds all 45 shots in film order, made by `build/frames.html`
-(`node build/frames.cjs OUT` saves them). Stock video in five places only, all Pexels (free licence, no credit):
+Figma page "03 · Final shots (for approval)" holds all 43 shots (v2) in film order, made by `build/frames.html`
+(`node build/frames.cjs OUT` saves them). Stock video in four places only, all Pexels (free licence, no credit):
 see `stock/picks.tsv`. The full list of options Lucky's other chat found is the "Showreel stock picks" sheet
 (claude.ai artifact PWZnZi5xDTJn2p9YcVqxzc). The clips live in `raw/stock` (not in git), stills in `raw/stock/stills`.
+
+**Lucky's rules from the v1 review (18 Nov):** every piece of work is shown whole: no crops, no cut posters or
+cut branding; no shadows on any mockup; no empty areas (tiles are zoomed into their own work with
+`build/zoom16x9.py`, which writes `build/a/z-*.jpg` from the tiles and page images; the Torvi crops `build/a/crop-tv-*.jpg` come the same way), and a tile that cannot fill 16:9 without cutting the work is left out); backgrounds take
+the project's own colour; no blank or cover-only pages; no match cut on a stock phone (too small to stay sharp).
+Walls of work are made only of our own finished 16:9 frames.
 
 ## Stock picks (one or two people only)
 

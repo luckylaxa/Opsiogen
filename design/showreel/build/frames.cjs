@@ -9,8 +9,9 @@ const path = require('path');
   const url = 'file://' + path.join(__dirname, 'frames.html');
   await p.goto(url + '#0'); await p.evaluate(() => window.ready);
   const shots = await p.evaluate(() => window.SHOTS);
-  for (let i = 0; i < shots.length; i++) {
-    await p.goto('about:blank'); await p.goto(url + '#' + i); await p.evaluate(() => window.ready);
+  // Two passes: the walls of frames (shots 05 and 41) show the frames saved in the first pass.
+  for (const pass of [0, 1]) for (let i = 0; i < shots.length; i++) {
+    await p.goto('about:blank'); await p.goto(url + '#' + i + '|' + encodeURIComponent(path.resolve(out))); await p.evaluate(() => window.ready);
     await p.screenshot({ path: `${out}/${String(i + 1).padStart(2, '0')}.jpg`, type: 'jpeg', quality: 90 });
   }
   require('fs').writeFileSync(`${out}/shots.json`, JSON.stringify(shots, null, 1));
