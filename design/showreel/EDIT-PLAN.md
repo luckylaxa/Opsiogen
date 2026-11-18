@@ -136,6 +136,27 @@ to camera, a win, sketching, arms open, a high five, laughter; only three clips 
 belongs to: cycling before Torvi, the open road before Vaelo, family before the health apps, the beach before the
 travel and property sites. No posed studio gestures repeated (no second fists-up, no thumbs-up, no arms-open).
 
+## Cut 7 (18 Nov): our own motion, with our character
+
+Lucky on cut six: "not happy with animation. its just slide animation. first version animation was far better",
+then "check superside video as well" and "dont have to copy same. we can have our own style and dont forget to add
+our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and changes only the motion.
+
+- **The spring (cut five's feel).** Every piece springs in fast (0.2 s, a little overshoot) and keeps drifting;
+  pairs, phones, browsers and the pieces of a collage each take their own entrance.
+- **The lens (our circle).** The character's eye is a camera, so our circle is its lens: the opening clip and each
+  chapter card open in a crisp growing circle; after "We take it from here." the camera dives into its eye and the
+  burst opens out of its pupil.
+- **The hop.** It hops along each chapter line on the eighths and stamps the words in, springs out of the top, and
+  falls into the next scene beside the people (the cheering man after Brand, the woman on blue after Design). On
+  Brand / Design / Build / Launch it bounces once a beat.
+- **The touch.** It zips through the burst grid and the work changes in its wake.
+- **The look.** It pops up beside the woman with the idea and turns to her; it watches the closing lines type (a nod
+  for each word, eyes following the lines), then turns to us and winks; it lands with the logo, reads the call and
+  blinks. Only on plain studio backdrops, never pasted into real scenes (office, jeep, home).
+- The logo only fades in (its own shape and size). Nothing is shown larger than its own size: the dive uses a
+  close-up capture of the character (`a/ch-front-hd.png`).
+
 ## Stock picks (one or two people only)
 
 **Lucky, 18 Nov:** stock only in a few places, where the story needs it. Minimal, modern, high standard, no

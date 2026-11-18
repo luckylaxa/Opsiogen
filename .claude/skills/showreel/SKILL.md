@@ -167,6 +167,20 @@ Cut six was rejected and cut five restored as the current version. Before any mo
 - Do not use the hero concept renders (character line-up, ribbon and lobby scenes) as illustration. New
   illustration only if made for this, otherwise none.
 
+## Cut 7 (18 Nov): how the motion is built
+
+The motion language is in `design/showreel/EDIT-PLAN.md` ("Cut 7"). Everything below is in `design/showreel/build`:
+1. `node frames.cjs OUT` saves the approved stills, one per shot (the walls reuse them). They never move.
+2. `python3 film.py OUT ../out/opsiogen-showreel-vN.mp4` makes the film. `render-anim.cjs` draws every still shot
+   frame by frame from `frames.html` (address `#i|OUT|under|anim`: the motion block at its end runs only then), each
+   one revealing itself over the true last frame of the shot before; `|alpha` draws only the character, which is
+   laid over the stock clips it joins (`OVER` in film.py). Stock clips get a punch-in, or the push up after a
+   chapter card. Cuts land on the 140 bpm beat and `track.py` puts the track's last hit on the logo.
+3. The character: `character.cjs` cuts its poses from the live Home hero into `a/ch-*.png` (never redrawn);
+   `ball.py` splits each into the ball and its glow, all one size (`a/ball-*.png`), so it can hop, squash and look
+   around. `pieces.py` finds the separate pieces in flat-colour images (`a/pieces.js`) so each can move on its own.
+   `build/a` is not in git; these scripts rebuild it.
+
 ## What to deliver
 
 1. The 60-second film with sound.
