@@ -27,7 +27,9 @@ const el=(tag,cls,parent,style)=>{const e=document.createElement(tag);if(cls)e.c
 const img=(k,parent,w,h,style)=>{const i=el('img','',parent,Object.assign({width:w+'px',height:h+'px',objectFit:'cover'},style||{}));i.src=A+k+(k.startsWith('ch-')?'.png':'.jpg');return i};
 // Never larger than the image itself, so nothing is blown up and soft.
 const cap=(k,w)=>Math.min(w,MAN[k][0]);
-function add(dur,build,flex){const root=el('div','s',document.body);if(flex){root.dataset.flex=1;Object.assign(root.style,{alignItems:'center',justifyContent:'center',flexDirection:'column'})}const draw=build(root);scenes.push({t0:T,t1:T+dur,root,draw});T+=dur}
+// Every shot lasts a whole number of half-beats (0.25s at 120 beats a minute), so each cut lands on the music.
+let KIND='shot';
+function add(dur,build,flex){dur=Math.max(.25,Math.round(dur/.25)*.25);const root=el('div','s',document.body);if(flex){root.dataset.flex=1;Object.assign(root.style,{alignItems:'center',justifyContent:'center',flexDirection:'column'})}const draw=build(root);scenes.push({t0:T,t1:T+dur,root,draw,kind:KIND});KIND='shot';T+=dur}
 const box=(k,root,w,x,y,rad)=>{const [iw,ih]=MAN[k];const h=w*ih/iw;const b=el('div','abs',root,{width:w+'px',height:h+'px',left:x-w/2+'px',top:y-h/2+'px',borderRadius:(rad??20)+'px',overflow:'hidden'});img(k,b,w,h);return b};
 const words=(text,parent,style)=>{const h=el('div','big',parent,style);return [h,text.split(' ').map((w,i,a)=>{const s=el('span','',h);s.textContent=w+(i<a.length-1?' ':'');return s})]};
 const rise=(ws,tt,step=.05,d=.24,dy=90)=>ws.forEach((s,i)=>{const q=ease((tt-i*step)/d);s.style.transform=`translateY(${(1-q)*dy}px)`;s.style.opacity=q});
@@ -45,11 +47,11 @@ function opening(){
     return (p,tt)=>{ch(tt+1,9);rise(ws,tt)}})}
 
 // A chapter's words on one flat colour, the character looking on.
-function word(dur,text,bg){add(dur,root=>{root.style.background=bg;const [h,ws]=words(text,root,{color:COAL,fontSize:'210px',padding:'0 100px'});const ch=character(root,230,W-250,H-230,'upleft');
+function word(dur,text,bg){KIND='word';add(dur,root=>{root.style.background=bg;const [h,ws]=words(text,root,{color:COAL,fontSize:'210px',padding:'0 100px'});const ch=character(root,230,W-250,H-230,'upleft');
   return (p,tt)=>{rise(ws,tt,.06,.22,120);h.style.transform=`scale(${1+p*.03})`;ch(tt,.5)}},true)}
 
 // A service name: two short lines snapping in from opposite sides.
-function msg(dur,l1,l2,bg,fg){add(dur,root=>{root.style.background=bg;const a=el('div','big',root,{color:fg,fontSize:'150px'});a.textContent=l1;const b=l2?el('div','big',root,{color:PAPER,fontSize:'150px',marginTop:'14px'}):null;if(b)b.textContent=l2;
+function msg(dur,l1,l2,bg,fg){KIND='msg';add(dur,root=>{root.style.background=bg;const a=el('div','big',root,{color:fg,fontSize:'150px'});a.textContent=l1;const b=l2?el('div','big',root,{color:PAPER,fontSize:'150px',marginTop:'14px'}):null;if(b)b.textContent=l2;
   return (p,tt)=>{const q=ease(tt/.2);a.style.transform=`translateX(${(1-q)*-700}px)`;a.style.opacity=q;if(b){const r=ease((tt-.07)/.2);b.style.transform=`translateX(${(1-r)*700}px)`;b.style.opacity=r}}},true)}
 
 // One desktop screen as a card.
@@ -167,6 +169,6 @@ function build(){
   closing([['omg-16','bt-01','af-az1','sl-05','mf-03'],['cn-01','af-ad-ge','rx-02','nc-13','omg-09'],['tv-identity','care-02','ev-01','af-s1','rs-09'],['surgo-03','cbb-03','omg-17','cb-01','af-ad-th'],['af-li-a2','sl-02','bt-04','omg-01','tv-rollout'],['rs-12','mf-06','af-plan','cn-05','care-06']]);
 }
 window.setT=t=>{for(const s of scenes){const on=t>=s.t0&&t<s.t1;s.root.style.display=on?(s.root.dataset.flex?'flex':'block'):'none';if(on){const tt=t-s.t0;s.draw(tt/(s.t1-s.t0),tt)}}};
-window.ready=(async()=>{build();window.DUR=T;window.CUTS=scenes.map(s=>+s.t0.toFixed(2));await document.fonts.load('700 100px Outfit');await document.fonts.ready;
+window.ready=(async()=>{build();window.DUR=T;window.CUTS=scenes.map(s=>+s.t0.toFixed(2));window.KINDS=scenes.map(s=>s.kind);await document.fonts.load('700 100px Outfit');await document.fonts.ready;
   await Promise.all([...document.images].map(i=>i.decode?i.decode().catch(()=>{}):0));window.setT(0);return {shots:scenes.length,dur:T}})();
 </script>
