@@ -112,6 +112,14 @@ stock.adobe.com, or the final session shows them with the Adobe preview tool.
 
 ## Figma artboards
 
+**Style, after Lucky's review (18 Nov): like the reference, full-bleed photography.** Our designs live on
+real devices and objects in real places (a phone in a hand, a tablet held up, a laptop on a desk, print on a
+table), the way the Vaelo car frame does. No flat cards floating on a colour. Flat colour only for the single
+chapter word and the small opening type. `build/screen_fit.py` puts a screen onto a photo's blank screen in
+perspective (scene photos from Unsplash in `raw/scenes`, results in `raw/comps`). Page "00 · Samples in the
+reference style" holds the samples; page "x · First try" was rejected.
+
+
 File: https://www.figma.com/design/N0FMCGKpSEZ0PVBoQDCVdc ("Opsiogen · Showreel artboards"). Page "01 · Open and
 Design" holds A01-A18: the opening, the burst and the "We design it" chapter. Each artboard is 1920 x 1080, the
 work placed in named image slots (`img:<key>`, files in `build/a`), and a small grey note at the bottom left
