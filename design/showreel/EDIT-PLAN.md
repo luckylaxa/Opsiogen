@@ -154,6 +154,9 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
 - **The look.** It pops up beside the woman with the idea and turns to her; it watches the closing lines type (a nod
   for each word, eyes following the lines), then turns to us and winks; it lands with the logo, reads the call and
   blinks. Only on plain studio backdrops, never pasted into real scenes (office, jeep, home).
+- **Solid (cut 8).** Lucky: "It's solid character so you can't change the shape of the character ... may be you can
+  try rotation while landing or settle." It never squashes or stretches: it spins as it drops in, leans into a hop,
+  rocks on landing until it settles, rolls as it zips through the grid and turns into place as it pops up.
 - The logo only fades in (its own shape and size). Nothing is shown larger than its own size: the dive uses a
   close-up capture of the character (`a/ch-front-hd.png`).
 

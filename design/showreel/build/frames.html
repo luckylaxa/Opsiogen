@@ -180,27 +180,33 @@ const UNDER=decodeURIComponent(HASH[2]||'');
 let under=null;
 if(MOTION&&UNDER){under=document.createElement('img');under.src='file://'+UNDER;Object.assign(under.style,{position:'absolute',left:0,top:0,width:'1920px',height:'1080px',display:'none'});document.body.insertBefore(under,f)}
 // Our character: the ball in six poses (ball.py, all one size) and its glow. at(x,y,D,o) puts the sphere's centre at
-// x,y and makes it D across; o.pose, o.sx/o.sy (squash and stretch from the sphere's bottom), o.rot, o.mirror, o.op,
-// and o.floor: the line it stands on (its glow sits under it and shrinks as it jumps; no floor, no glow).
-const BALL=524/497,squash=dt=>{const a=dt<0?0:.22*Math.exp(-dt*28)*Math.cos(dt*45);return{sx:1+a*.8,sy:1-a,a}};
+// x,y and makes it D across; o.pose, o.rot (it turns about its centre), o.mirror, o.op, and o.floor: the line it
+// stands on (its glow sits under it and shrinks as it jumps; no floor, no glow). It is solid and never changes shape
+// (Lucky, 18 Nov): it spins as it drops in, leans into a hop and rocks on landing until it settles.
+const BALL=524/497,rock=(dt,dir=1,amp=10)=>dt<0?0:dir*amp*Math.exp(-dt*9)*Math.sin(dt*26);
+// The words it lands on give a little under it (they are type, not the character).
+const stamp=dt=>dt<0?0:.22*Math.exp(-dt*28)*Math.cos(dt*45);
 const makeBall=(hd=false)=>{const g=img(A+'ball-shadow.png',f,{position:'absolute',zIndex:8,display:'none'}),b=el('div','',f,{position:'absolute',zIndex:9,display:'none'}),poses={};
   for(const p of ['front','front2','blink','down','upleft','upright'])poses[p]=img(A+'ball-'+(p==='front'&&hd?'front-hd':p)+'.png',b,{position:'absolute',left:0,top:0,width:'100%',height:'100%',display:'none'});
   let cur=null;
   return{at(x,y,D,o={}){const S=D*BALL,p=o.pose||'front';if(p!==cur){if(cur)poses[cur].style.display='none';poses[p].style.display='block';cur=p}
-      Object.assign(b.style,{display:'block',left:x-S/2+'px',top:y-S/2+'px',width:S+'px',height:S+'px',opacity:o.op??1,transformOrigin:`50% ${50+50/BALL}%`,
-        transform:`rotate(${o.rot||0}deg) scale(${(o.sx||1)*(o.mirror?-1:1)},${o.sy||1})`});
+      Object.assign(b.style,{display:'block',left:x-S/2+'px',top:y-S/2+'px',width:S+'px',height:S+'px',opacity:o.op??1,transformOrigin:'50% 50%',
+        transform:`rotate(${o.rot||0}deg)${o.mirror?' scaleX(-1)':''}`});
       if(o.floor==null){g.style.display='none';return}
       const h=Math.max(0,o.floor-y-D/2),k=Math.max(.35,1-h/(2.2*D)),gw=.901*D*k,gh=.28*D*k;
       Object.assign(g.style,{display:'block',left:x-gw/2+'px',top:o.floor+.151*D-gh/2+'px',width:gw+'px',height:gh+'px',opacity:(o.op??1)*Math.max(.2,1-h/(2.5*D))})},
     hide(){b.style.display='none';g.style.display='none'}}};
 // Hops: keys [t,x,y] are where the sphere's centre is when it lands; h is how high it goes between them. Before the
-// first key it falls in from above the frame, starting at t0. Gives x, y and the squash (landing) or stretch (in the air).
-const hops=(keys,h,t0,D)=>t=>{const i=keys.findIndex(k=>k[0]>t);
-  if(i===0){const [tl,x,y]=keys[0],p=clamp((t-t0)/(tl-t0));return{x,y:-D+(y+D)*p*p,sx:.92,sy:1.12,off:t<t0}}
-  const [ta,xa,ya]=keys[i<0?keys.length-1:i-1],sq=squash(t-ta);
-  if(i<0)return{x:xa,y:ya,sx:sq.sx,sy:sq.sy};
-  const [tb,xb,yb]=keys[i],p=(t-ta)/(tb-ta),v=Math.abs((yb-ya)-h*4*(1-2*p))/(tb-ta),s=Math.min(.12,v/9000);
-  return{x:xa+(xb-xa)*p,y:ya+(yb-ya)*p-h*4*p*(1-p),sx:sq.sx*(1-s*.6),sy:sq.sy*(1+s)}};
+// first key it falls in from above the frame, starting at t0, turning through spin degrees on the way down. It leans
+// into each hop and rocks on each landing: onward when it travelled, else the other way from the landing before
+// (dir0 sets the first). Gives x, y and rot.
+const hops=(keys,h,t0,D,spin=-30,dir0=null)=>t=>{const i=keys.findIndex(k=>k[0]>t);
+  const dir=j=>{if(j===0)return dir0??(Math.sign(-spin)||1);const dx=keys[j][1]-keys[j-1][1];return Math.abs(dx)>20?Math.sign(dx):-dir(j-1)};
+  if(i===0){const [tl,x,y]=keys[0],p=clamp((t-t0)/(tl-t0));return{x,y:-D+(y+D)*p*p,rot:spin*(1-p),off:t<t0}}
+  const j=i<0?keys.length-1:i-1,[ta,xa,ya]=keys[j],r=rock(t-ta,dir(j));
+  if(i<0)return{x:xa,y:ya,rot:r};
+  const [tb,xb,yb]=keys[i],p=(t-ta)/(tb-ta),lean=Math.max(-14,Math.min(14,(xb-xa)*.05));
+  return{x:xa+(xb-xa)*p,y:ya+(yb-ya)*p-h*4*p*(1-p),rot:r+lean*Math.sin(Math.PI*p)}};
 window.anim=()=>{};
 if(MOTION)(()=>{
   const AN=[],late=[],add=fn=>AN.push(fn),T=NAME,base=e=>e.style.transform||'';
@@ -230,22 +236,22 @@ if(MOTION)(()=>{
     // It drops in and hops along the words on the eighths, stamping each one in, then springs up and out.
     const L=[BEAT/2,BEAT,BEAT*1.5],D=175;words.forEach(s=>{s.style.opacity=0});
     late.push(()=>{const keys=words.map((s,i)=>{const p=wtop(s);return[L[Math.min(i,2)]+.1*Math.max(0,i-2),p.x,p.y-D/2]}),path=hops(keys,130,.06,D),tl=keys[keys.length-1],t1=tl[0]+.06;
-      words.forEach((s,i)=>add(t=>{const dt=t-keys[i][0];s.style.opacity=dt<0?0:1;const q=.55+.45*pop(dt/.16),a=squash(dt).a;s.style.transformOrigin='50% 100%';s.style.transform=`scale(${q*(1+a*.4)},${q*(1-a*.6)})`}));
+      words.forEach((s,i)=>add(t=>{const dt=t-keys[i][0];s.style.opacity=dt<0?0:1;const q=.55+.45*pop(dt/.16),a=stamp(dt);s.style.transformOrigin='50% 100%';s.style.transform=`scale(${q*(1+a*.4)},${q*(1-a*.6)})`}));
       add((t,d)=>{if(t<t1){const p=path(t);ball.at(p.x,p.y,D,p);return}
-        const q=clamp((t-t1)/(d-t1));ball.at(tl[1],tl[2]-(tl[2]+D)*(1-Math.pow(1-q,2)),D,{sx:.9,sy:1.14})})})}
+        const q=clamp((t-t1)/(d-t1));ball.at(tl[1],tl[2]-(tl[2]+D)*(1-Math.pow(1-q,2)),D,{rot:rock(t-tl[0])+40*q})})})}
   else if(T.startsWith('Fast word')){
     // It bounces on the beat, one word per bounce; after the last it leaves up and to the right.
-    const D=175,first=T.endsWith('Brand'),last=T.endsWith('Launch'),t0=first?BEAT/4:0;
-    late.push(()=>{const p=wtop(words[0]),Y=p.y-D/2,path=hops([[t0,p.x,Y],[BEAT,p.x,Y]],170,0,D);
-      words.forEach(s=>add(t=>{const a=squash(t-t0).a;s.style.transformOrigin='50% 100%';s.style.transform=`scale(${1+a*.45},${1-a*.7})`}));
-      add(t=>{if(last){const q=clamp(t/BEAT),sq=squash(t);ball.at(p.x+700*q,Y-(Y+D)*(1-Math.pow(1-q,2)),D,{sx:sq.sx*.94,sy:sq.sy*1.08});return}
+    const D=175,first=T.endsWith('Brand'),last=T.endsWith('Launch'),t0=first?BEAT/4:0,side=T.endsWith('Design')||last?-1:1;
+    late.push(()=>{const p=wtop(words[0]),Y=p.y-D/2,path=hops([[t0,p.x,Y],[BEAT,p.x,Y]],170,0,D,-30,side);
+      words.forEach(s=>add(t=>{const a=stamp(t-t0);s.style.transformOrigin='50% 100%';s.style.transform=`scale(${1+a*.45},${1-a*.7})`}));
+      add(t=>{if(last){const q=clamp(t/BEAT);ball.at(p.x+700*q,Y-(Y+D)*(1-Math.pow(1-q,2)),D,{rot:rock(t,side)+50*q});return}
         const q=path(t);ball.at(q.x,q.y,D,q)})})}
   else if(T.startsWith('The spine')){const wt=words.map((s,i)=>i<2?i*.05-.1:(1+1.5*(i-2))*BEAT/2);words.forEach((s,i)=>rise(s,wt[i],80,.16));
     // It drops in beside the lines and watches each word arrive (a nod each time), then turns to us and winks.
     late.push(()=>{const R=Math.max(...words.map(s=>s.getBoundingClientRect().right)),D=Math.min(260,(1920-R)*.6),X=(R+1920)/2,Y=600,path=hops([[.14,X,Y]],0,0,D);
-      add(t=>{const p=path(t);let k=-1;wt.forEach((w,i)=>{if(t>=w)k=i});const nod=k>1?squash(t-wt[k]).a*.5:0,line=k<2?0:k<4?1:2;
+      add(t=>{const p=path(t);let k=-1;wt.forEach((w,i)=>{if(t>=w)k=i});const nod=k>1?rock(t-wt[k],-1,7):0,line=k<2?0:k<4?1:2;
         const pose=t<.14?'front':t>=1.4?(t>1.48&&t<1.56?'blink':'front'):line<2?'upleft':'down';
-        ball.at(p.x,p.y,D,{sx:p.sx*(1+nod*.8),sy:p.sy*(1-nod),pose,mirror:pose==='down',floor:Y+D/2})})})}
+        ball.at(p.x,p.y,D,{rot:p.rot+nod,pose,mirror:pose==='down',floor:Y+D/2})})})}
   else if(T==='One partner')words.forEach((s,i)=>rise(s,i<2?i*.05-.06:BEAT+(i-2)*.05,80,.18));
   else if(T.startsWith('Logo')){words.forEach((s,i)=>rise(s,2*BEAT+i*.06,40,.2));
     // It lands on the last hit, reads the call (left, then right), looks back at us and blinks, and hovers.
@@ -258,7 +264,7 @@ if(MOTION)(()=>{
     if(under&&T.includes('556948644')){under.style.display='block';add(t=>{const r=ease(t/.26)*1110;under.style.maskImage=under.style.webkitMaskImage=`radial-gradient(circle at 50% 50%, transparent ${r}px, #000 ${r+.5}px)`})}
     if(T.includes('556948644')){const X=1640,Y=600,D=300;   // she has the idea: it pops up beside her and turns to look at her
       add(t=>{const q=pop((t-.3)/.2);if(q<=0)return ball.hide();const bob=t>.55?5*(1-Math.cos((t-.55)*8)):0;
-        ball.at(X,Y-bob,D*q,{pose:t<.56?'front':'upleft',floor:Y+D*q/2})})}
+        ball.at(X,Y-bob,D*q,{pose:t<.56?'front':'upleft',rot:-25*(1-ease((t-.3)/.2)),floor:Y+D*q/2})})}
     if(T.includes('480737977')){const X=1720,Y=300,D=230,path=hops([.214,.429,.643,.857].map(t=>[t,X,Y]),90,.02,D);   // the win: it cheers with him
       add(t=>{const p=path(t);if(p.off)return ball.hide();ball.at(p.x,p.y,D,{...p,pose:'upleft'})})}
     if(T.includes('490354049')){const X=1620,Y=640,D=280,path=hops([[.214,X,Y],[.4,X,Y]],50,.02,D);   // her smile: it lands beside her and looks at her
@@ -294,7 +300,7 @@ if(MOTION)(()=>{
   if(tiles.length&&T.startsWith('Grid')){const D=240,bx=t=>-D+(1920+2*D)*(t-.3)/.45;
     tiles.forEach((e,i)=>{const col=i%3,dl=col*.04+Math.floor(i/3)*.02,dy=col%2?700:-700,ims=[...e.querySelectorAll('img')],cx=parseFloat(e.style.left)+parseFloat(e.style.width)/2;
       add(t=>{const q=pop((t-dl)/IN);e.style.transform=`translateY(${(1-q)*dy}px)`;const s=Math.min(ims.length-1,t<.26?0:bx(t)+D*.3<cx?1:2);ims.forEach((im,j)=>{im.style.display=j===s?'block':'none'})})});
-    add(t=>{if(t<.3||t>.76)return ball.hide();ball.at(bx(t),540-Math.sin(clamp((t-.3)/.45)*Math.PI)*40,D,{pose:'upright',rot:12,sx:1.12,sy:.9})})}
+    add(t=>{if(t<.3||t>.76)return ball.hide();ball.at(bx(t),540-Math.sin(clamp((t-.3)/.45)*Math.PI)*40,D,{pose:'upright',rot:4+16*clamp((t-.3)/.45)})})}
   else if(tiles.length)late.push(()=>{const S0=1920/tiles[0].offsetWidth*1.03;add((t,d)=>{const q=io(t/(d*.8));f.style.transform=`scale(${S0+(1-S0)*q})`})});
   // Pieces of a flat-colour image: a row springs up one after another; a single piece takes one of three entrances.
   const pcs=[...f.querySelectorAll('.piece')];
