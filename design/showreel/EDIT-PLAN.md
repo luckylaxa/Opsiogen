@@ -105,7 +105,7 @@ the reference's words ("shareable" and others) are never used.
 
 ## Final shots (18 Nov, for approval)
 
-Figma page "03 · Final shots (for approval)" holds all 93 shots (v10) in film order, made by `build/frames.html`
+Figma page "03 · Final shots (for approval)" holds all 95 shots (v11) in film order, made by `build/frames.html`
 (`node build/frames.cjs OUT` saves them). Stock video in five places only, all Pexels (free licence, no credit):
 see `stock/picks.tsv`. The full list of options Lucky's other chat found is the "Showreel stock picks" sheet
 (claude.ai artifact PWZnZi5xDTJn2p9YcVqxzc). The clips live in `raw/stock` (not in git), stills in `raw/stock/stills`.
