@@ -157,6 +157,15 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
 - **Solid (cut 8).** Lucky: "It's solid character so you can't change the shape of the character ... may be you can
   try rotation while landing or settle." It never squashes or stretches: it spins as it drops in, leans into a hop,
   rocks on landing until it settles, rolls as it zips through the grid and turns into place as it pops up.
+- **Cut 9: cut 5's moves back, and real spins.** Lucky on cut 8: "Still character 360 rotation/spinning is missing
+  and many of the v5 animations are missing. Missing snappy, bouncy type of creative animation is missing. Rest
+  looks good." Five shots became cut 5's montages, with their work kept: Oh My Glam's first trio is a tilted row of
+  phones sliding past (unused screens); the Surgo mockup is a tilted wall of product screens; the website collage is
+  a tilted wall of website pages; the last Rohde & Schwarz pair is a tilted wall of brand pieces (that pair in it);
+  the closing wall is cut 5's tilted wall pulling back (3 beats). Every entrance overshoots more (pop 2.5) and tilts
+  in and wobbles into place; a browser comes in from the left and its phone from below, as in cut 5. The character
+  spins a full turn as it drops in, rolls a full turn on each hop, spins on some bounces, rolls through the grid like
+  a ball and twirls in beside the woman, with its eye turned to one side while it spins so the turn shows.
 - The logo only fades in (its own shape and size). Nothing is shown larger than its own size: the dive uses a
   close-up capture of the character (`a/ch-front-hd.png`).
 

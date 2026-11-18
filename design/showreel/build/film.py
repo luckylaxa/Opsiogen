@@ -17,7 +17,7 @@ STOCK = {"556948644": ("as-556948644.mov", 2.5), "480737977": ("as-480737977.mov
          "150778364": ("as-150778364.mov", 4.0), "329117728": ("as-329117728.mov", 10.0), "577275631": ("as-577275631.mov", 3.2),
          "Pexels 4053012": ("4053012-uhd_3840_2160_25fps.mp4", 5.0)}
 OVER = ("556948644", "480737977", "490354049")  # stock clips the character joins
-MULTI = ("Grid of", "Wall of", "collage", "Torvi: site", "billboard, badge", "guideline pages", "Three apps")
+MULTI = ("Grid of", "collage", "mosaic", "row of", "Torvi: site", "billboard, badge", "guideline pages", "Three apps")
 def beats(n):
     if n == "Opening line": return 3
     if n.startswith("We take it"): return 2
@@ -26,6 +26,7 @@ def beats(n):
     if n.startswith("The spine"): return 4
     if n == "One partner": return 2
     if n.startswith("Logo"): return 6
+    if n.startswith("Wall of"): return 3   # the closing wall pulls back (cut 5)
     if n.startswith(("Stock", "Life")): return 2
     if any(m in n for m in MULTI): return 2
     return 1
