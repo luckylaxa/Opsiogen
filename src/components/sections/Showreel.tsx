@@ -92,7 +92,7 @@ export function Showreel({ section, className }: { section: ShowreelSection; cla
   };
 
   const button =
-    "grid size-[clamp(52px,3.6vw,68px)] place-items-center rounded-[8px] border border-white/20 bg-black/70 transition-colors duration-300 hover:border-white/50 hover:bg-black/60";
+    "grid size-11 place-items-center sm:size-[clamp(52px,3.6vw,68px)] rounded-[8px] border border-white/20 bg-black/70 transition-colors duration-300 hover:border-white/50 hover:bg-black/60";
 
   if (!video && !poster) return null;
   return (
@@ -124,12 +124,13 @@ export function Showreel({ section, className }: { section: ShowreelSection; cla
         )}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent max-sm:hidden"
         />
+        {/* On phones the card is too small to carry words over the film: the caption is kept for screen readers only. */}
         {(label || heading) && (
           <figcaption
             className={cn(
-              "absolute bottom-[clamp(16px,2.4vw,46px)] left-[clamp(16px,2.4vw,46px)]",
+              "absolute bottom-[clamp(16px,2.4vw,46px)] left-[clamp(16px,2.4vw,46px)] max-sm:sr-only",
               video && sound
                 ? "right-[calc(clamp(16px,2.4vw,46px)+2*clamp(52px,3.6vw,68px)+28px)]"
                 : "right-[calc(clamp(16px,2.4vw,46px)+clamp(52px,3.6vw,68px)+16px)]",
@@ -144,7 +145,7 @@ export function Showreel({ section, className }: { section: ShowreelSection; cla
           </figcaption>
         )}
         {video && (
-          <div className="absolute right-[clamp(16px,2.4vw,46px)] bottom-[clamp(16px,2.4vw,46px)] flex gap-3">
+          <div className="absolute right-[clamp(12px,2.4vw,46px)] bottom-[clamp(12px,2.4vw,46px)] flex gap-2 sm:gap-3">
             {sound && (
               <button type="button" onClick={toggleSound} aria-label={muted ? "Turn sound on" : "Turn sound off"} className={button}>
                 <svg viewBox="0 0 24 24" aria-hidden="true" className="size-[40%] fill-current">
