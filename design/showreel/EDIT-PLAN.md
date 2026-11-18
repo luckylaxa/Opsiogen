@@ -105,7 +105,7 @@ the reference's words ("shareable" and others) are never used.
 
 ## Final shots (18 Nov, for approval)
 
-Figma page "03 · Final shots (for approval)" holds all 44 shots (v3) in film order, made by `build/frames.html`
+Figma page "03 · Final shots (for approval)" holds all 43 shots (v4) in film order, made by `build/frames.html`
 (`node build/frames.cjs OUT` saves them). Stock video in five places only, all Pexels (free licence, no credit):
 see `stock/picks.tsv`. The full list of options Lucky's other chat found is the "Showreel stock picks" sheet
 (claude.ai artifact PWZnZi5xDTJn2p9YcVqxzc). The clips live in `raw/stock` (not in git), stills in `raw/stock/stills`.
@@ -118,7 +118,9 @@ Walls of work are made only of our own finished 16:9 frames.
 
 **v3 (18 Nov):** the chapters follow how a business grows: brand, design, build, launch. The closing line reads
 "Your idea. Branded. Designed. Built. Launched." Lucky likes the simple stock: one person, a plain colour wall,
-a real smile (Pixabay 208770, Pexels 5137353, Pexels 15909403). Campaign shots mix projects, never one client alone.
+a real smile (Pixabay 208770, Pexels 5137353, Pexels 15909403). Campaign shots mix projects, never one client alone: one Afthab piece at most.
+Websites show their colourful image sections (Carlton Noble: the luxury hero), never text-only parts. The
+Maison Avelle and Oriel shot is out.
 
 ## Stock picks (one or two people only)
 
