@@ -73,6 +73,14 @@ render = lambda name, jobs: (json.dump({"frames": FR, "out": os.path.join(WD, "f
 #    and a growing hole in it: the lens circle the clip opens in).
 opens = lambda i: i and shots[i - 1]["name"] == "Opening line"
 render("over.json", [[0, N[0], ""]] + [[i, N[i], last(i - 1) if opens(i) else "", "alpha"] for i in stock if stock[i] and over(i)])
+# A frame with nothing see-through is saved without its alpha channel, and ffmpeg drops a frame where the format
+# changes: keep every frame of a layer RGBA.
+from PIL import Image
+for i in stock:
+    if stock[i] and over(i):
+        for fn in sorted(os.listdir(over(i))):
+            im = Image.open(os.path.join(over(i), fn))
+            if im.mode != "RGBA": im.convert("RGBA").save(os.path.join(over(i), fn))
 # 1. Stock clips (plain), and the last frame of each, which the shot after reveals itself over.
 for i in stock:
     if stock[i]:
