@@ -197,6 +197,13 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   character arcs up and lands on top on the track's last hit. From there it is as before: a hop, a full turn, it
   reads the call, blinks and hovers. The large logo is drawn sharp at any size (`build/logo.py`: the master SVG's
   vector letters and O outline, the O's own colours inside).
+  Also from Lucky: "i see white dotted lines in each mockup edge. some screen cutting is not perfect check for other
+  screens too." The screens lifted from the case-study designs kept 5 to 9 px of the design's frame on each side
+  (white on Meetingful, grey on the others) and its background in their rounded corners: `screens.py` now finds
+  where each side's frame ends and cuts past it, and fills the corners from the screen. The service artwork frames
+  (`svc-*`) showed their tiles' own colour round the phones' and cards' rounded corners, and down one side of the
+  Ask People phone: `clean_panels.py` paints those pixels in the frame's colour. Every screen, phone and card now
+  stands cleanly on its colour.
 - The logo keeps its own shape; only at the very end (cut 11, as Lucky asked) is it shown larger, then settles at
   its own size. Otherwise it only fades in. Nothing else is shown larger than its own size.
 

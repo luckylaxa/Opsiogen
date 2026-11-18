@@ -183,7 +183,9 @@ The motion language is in `design/showreel/EDIT-PLAN.md` ("Cut 7"). Everything b
    blinks its light, and never changes shape. `ch3d-test.html` draws six poses side by side as a quick check.
    `pieces.py` finds the separate pieces in flat-colour images (`a/pieces.js`) so each can move on its own;
    `screens.py` lifts the screens out of the latest case-study designs (`a/scr-*.jpg`, `a/screens.js`) for the
-   single-screen shots, pairs and walls; `logo.py` builds the logo for the end (`a/logo.js`, `a/logo-ring.png`), sharp
+   single-screen shots, pairs and walls, cut past the design's frame with clean corners (no lines at the edges);
+   `clean_panels.py` paints the tile colour left round the phones and cards of the service artwork frames
+   (`a/svc-*.jpg`) in the frame's colour, then `pieces.py` runs again; `logo.py` builds the logo for the end (`a/logo.js`, `a/logo-ring.png`), sharp
    however large it is shown. `build/a` is not in git; these scripts rebuild it.
 
 ## What to deliver
