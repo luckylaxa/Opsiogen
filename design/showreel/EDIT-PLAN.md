@@ -157,15 +157,18 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
 - **Solid (cut 8).** Lucky: "It's solid character so you can't change the shape of the character ... may be you can
   try rotation while landing or settle." It never squashes or stretches: it spins as it drops in, leans into a hop,
   rocks on landing until it settles, rolls as it zips through the grid and turns into place as it pops up.
-- **Cut 9: cut 5's moves back, and real spins.** Lucky on cut 8: "Still character 360 rotation/spinning is missing
-  and many of the v5 animations are missing. Missing snappy, bouncy type of creative animation is missing. Rest
-  looks good." Five shots became cut 5's montages, with their work kept: Oh My Glam's first trio is a tilted row of
-  phones sliding past (unused screens); the Surgo mockup is a tilted wall of product screens; the website collage is
-  a tilted wall of website pages; the last Rohde & Schwarz pair is a tilted wall of brand pieces (that pair in it);
-  the closing wall is cut 5's tilted wall pulling back (3 beats). Every entrance overshoots more (pop 2.5) and tilts
-  in and wobbles into place; a browser comes in from the left and its phone from below, as in cut 5. The character
-  spins a full turn as it drops in, rolls a full turn on each hop, spins on some bounces, rolls through the grid like
-  a ball and twirls in beside the woman, with its eye turned to one side while it spins so the turn shows.
+- **Cut 9: cut 5's moves on the approved shots.** Lucky on cut 8: "Still character 360 rotation/spinning is missing
+  and many of the v5 animations are missing. Missing snappy, bouncy type of creative animation." Then: "Don't use old
+  files. Use only latest figma files, only change in animation" and "on landing or still phase we can rotate the
+  character and blink eye ... Don't have to rotate all the time." So the 103 approved Figma shots stay exactly as they
+  are (the stills match) and only the motion changes: every entrance overshoots more (pop 2.5) and tilts in and wobbles
+  into place; boards of four or more pieces (Torvi, Vaelo, SandLogic) and the burst grid come in as cut 5's tilted wall
+  and straighten; the closing wall starts as cut 5's tilted wall, close up with its columns sliding, and pulls back
+  into the approved grid (3 beats); some Oh My Glam trios slide in as cut 5's row; a browser comes from the left and
+  its phone from below. The character moves as in cut 8 and, when it lands or rests, spins a full turn (its eye turned
+  to one side while it spins, so the turn shows) and blinks: on "We take it from here.", beside the two women, on the
+  spine and on the logo; one cheer beside the man spins, and it rolls once through the grid. The opening clip starts on
+  the woman's laugh to camera (3.7 s), not her turn.
 - The logo only fades in (its own shape and size). Nothing is shown larger than its own size: the dive uses a
   close-up capture of the character (`a/ch-front-hd.png`).
 

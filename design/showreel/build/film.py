@@ -11,13 +11,13 @@ FR, OUT = os.path.abspath(sys.argv[1]), os.path.abspath(sys.argv[2])
 HERE = os.path.dirname(os.path.abspath(__file__)); ST = os.path.join(HERE, "../raw/stock/")
 BPM, FPS = 140, 30; BEAT = 60 / BPM
 # Stock: a word from the shot's name -> (file, in point in seconds). The green-screen clip is keyed onto our violet.
-STOCK = {"556948644": ("as-556948644.mov", 2.5), "480737977": ("as-480737977.mov", 13.6), "405010525": ("as-405010525.mov", 3.0),
+STOCK = {"556948644": ("as-556948644.mov", 3.7), "480737977": ("as-480737977.mov", 13.6), "405010525": ("as-405010525.mov", 3.0),
          "249372459": ("as-249372459.mov", 5.6), "191180958": ("as-191180958.mov", 3.4), "490354049": ("as-490354049.mov", 3.0),
          "Pixabay 208770": ("208770_large.mp4", 4.6), "294857367": ("as-294857367.mov", 7.0), "Pexels 5137353": ("5137353-uhd_3840_2160_30fps.mp4", 9.4),
          "150778364": ("as-150778364.mov", 4.0), "329117728": ("as-329117728.mov", 10.0), "577275631": ("as-577275631.mov", 3.2),
          "Pexels 4053012": ("4053012-uhd_3840_2160_25fps.mp4", 5.0)}
 OVER = ("556948644", "480737977", "490354049")  # stock clips the character joins
-MULTI = ("Grid of", "collage", "mosaic", "row of", "Torvi: site", "billboard, badge", "guideline pages", "Three apps")
+MULTI = ("Grid of", "collage", "Torvi: site", "billboard, badge", "guideline pages", "Three apps")
 def beats(n):
     if n == "Opening line": return 3
     if n.startswith("We take it"): return 2
@@ -26,7 +26,7 @@ def beats(n):
     if n.startswith("The spine"): return 4
     if n == "One partner": return 2
     if n.startswith("Logo"): return 6
-    if n.startswith("Wall of"): return 3   # the closing wall pulls back (cut 5)
+    if n.startswith("Wall of"): return 3   # the closing wall pulls back into the grid (cut 5's tilted wall)
     if n.startswith(("Stock", "Life")): return 2
     if any(m in n for m in MULTI): return 2
     return 1

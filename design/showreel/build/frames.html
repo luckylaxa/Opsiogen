@@ -53,19 +53,6 @@ const pair2=(a,b,c)=>{bg(c);const w=900,g=40,x0=(1920-2*w-g)/2;card(a,x0,90,w,0,
 const pair=(a,b)=>{for(const [k,src] of [[0,a],[1,b]]){const h=el('div','abs',f,{left:k*960+'px',top:0,width:'960px',height:'1080px',overflow:'hidden'});img(src,h,{},'cover')}};
 const grid=(srcs,cols,gap=14,c=COAL,rad=12)=>{bg(c);const rows=Math.ceil(srcs.length/cols);const w=(1920-gap*(cols+1))/cols,h=(1080-gap*(rows+1))/rows;
   srcs.forEach((s,i)=>card(s,gap+(i%cols)*(w+gap),gap+Math.floor(i/cols)*(h+gap),w,h,0,rad))};
-// Cut 5's moving walls and rows (Lucky, 18 Nov: bring them back). LAYOUT runs once the images are in, for the still.
-const LAYOUT=[];
-// A wall of our work turned a little, in columns that slide past one another. cols: lists of image keys in build/a.
-const mosaic=(cols,c,o={})=>{bg(c);const n=cols.length,gap=o.gap||26,cw=o.cw||520;
-  const wall=el('div','mwall',f,{position:'absolute',left:'960px',top:'540px',width:'0',height:'0',transform:`rotate(${o.rot??-9}deg)`});
-  const cs=cols.map((keys,ci)=>{const col=el('div','mcol',wall,{position:'absolute',left:(ci-(n-1)/2)*(cw+gap)-cw/2+'px',top:'0',width:cw+'px'});
-    keys.concat(keys).forEach(k=>{const b=el('div','',col,{width:cw+'px',marginBottom:gap+'px',borderRadius:(o.rad||16)+'px',overflow:'hidden'});img(A+k+'.jpg',b,{display:'block',width:'100%',height:'auto'})});return col});
-  LAYOUT.push(()=>cs.forEach((col,i)=>{col.dataset.half=col.offsetHeight/2;col.style.transform=`translateY(${-col.offsetHeight/4-(i%3)*90-270}px)`}))};
-// A row of phones turned a little, sliding past.
-const row=(keys,c,o={})=>{bg(c);const h=o.h||820,gap=o.gap||40;
-  const wrap=el('div','mrow',f,{position:'absolute',left:'0',top:(1080-h)/2+'px',height:h+'px',display:'flex',gap:gap+'px'});
-  keys.forEach(k=>{const b=el('div','mphone',wrap,{height:h+'px',borderRadius:(o.rad||44)+'px',overflow:'hidden',flex:'none'});img(A+k+'.jpg',b,{display:'block',height:'100%',width:'auto'})});
-  wrap.dataset.rot=o.rot||0;LAYOUT.push(()=>{const tw=wrap.scrollWidth;wrap.style.transform=`translateX(${(60+1920-tw-20)/2}px) rotate(${o.rot||0}deg)`})};
 const caption=(t,c=PAPER)=>{const d=el('div','abs',f,{left:'90px',bottom:'80px',fontSize:'64px',fontWeight:500,color:c,letterSpacing:'-.03em',lineHeight:1.05});d.innerHTML=t};
 
 const SHOTS=[
@@ -115,19 +102,19 @@ const SHOTS=[
 ['Brand', 'Rohde & Schwarz: cards and letterhead', ()=>pair2(A+'rs-11.jpg',A+'rs-12.jpg','#131b24')],
 ['Brand', 'Rohde & Schwarz: office and web', ()=>pair2(A+'rs-25.jpg',A+'rs-14.jpg','#121a2b')],
 ['Brand', 'Rohde & Schwarz: keynote and tablet', ()=>pair2(A+'rs-17.jpg',A+'rs-18.jpg','#00010c')],
-['Brand', 'Brand: mosaic across projects', ()=>mosaic([['sl-02','nc-04','rs-03','sl-09','rs-20'],['nc-02','rs-06','sl-12','nc-08','rs-21'],['rs-12','sl-07','nc-11','rs-15','sl-05'],['nc-15','sl-15','rs-23','nc-06','sl-18'],['sl-14','rs-01','nc-10','rs-09','nc-13']],'#0b0b10',{rot:-9,cw:420})],
+['Brand', 'Rohde & Schwarz: hardware and leaflets', ()=>pair2(A+'rs-20.jpg',A+'rs-21.jpg','#0e1317')],
 ['Brand', 'Life: the open road (Adobe Stock 191180958)', ()=>full(S+'stock/stills/life-drive.jpg')],
 ['Brand', 'Vaelo: front-view poster', ()=>{bg('#0e3d2b');fit(A+'va-poster.jpg',80,60,1760,960)}],
 ['Brand', 'Vaelo: autonomous', ()=>{bg('#0e3d2b');fit(A+'va-auto.jpg',80,80,1760,920)}],
 ['Design', 'Chapter word', ()=>word('We design it.',VIOLET)],
 ['Design', 'Stock: a confident smile (Adobe Stock 490354049)', ()=>full(S+'stock/stills/woman-blue.jpg')],
 ['Design', 'Stock: her smile, then the app (Pixabay 208770, 4.5-6.0 s)', ()=>full(S+'stock/stills/design.jpg')],
-['Design', 'Oh My Glam: row of screens', ()=>row(['omg-01','omg-15','omg-17','omg-21','omg-32','omg-13','omg-31','omg-22'],'#141418',{rot:-4,h:820})],
+['Design', 'Oh My Glam: three screens', ()=>{bg(PINK);phone(A+'omg-01.jpg',380,140,400,-6);phone(A+'omg-08.jpg',760,90,420,0);phone(A+'omg-13.jpg',1160,140,400,6)}],
 ['Design', 'Meetingful (case study mockup)', ()=>full(W+'meetingful/meetingful-5-wide.jpg','center top')],
 ['Design', 'Life: family time (Adobe Stock 294857367)', ()=>full(S+'stock/stills/life-family.jpg')],
 ['Design', 'RxLive (case study mockup)', ()=>full(W+'rxlive/rx-1-wide.jpg','center top')],
 ['Design', 'Care Connect (case study mockup)', ()=>full(W+'care-connect/care-1-wide.jpg','center top')],
-['Design', 'Product screens: mosaic across projects', ()=>mosaic([['rx-05','mf-05','care-06','surgo-04'],['mf-06','care-03','surgo-06','rx-07'],['care-10','surgo-01','rx-09','mf-08'],['surgo-08','rx-10','mf-10','care-07']],'#101016',{rot:-8})],
+['Design', 'Surgo (case study mockup)', ()=>full(W+'surgo-health/surgo-6-wide.jpg','center top')],
 ['Design', 'Service artwork: product design', ()=>full(A+'z-page-pd.jpg')],
 ['Design', 'Service artwork: MVPs and apps', ()=>full(A+'z-page-mvp.jpg')],
 ['Design', 'MVPs: booking, shop, shipments', ()=>full(A+'svc-mvp.jpg')],
@@ -151,7 +138,7 @@ const SHOTS=[
 ['Build', 'Website: Engel & Völkers, Portugal', ()=>full(A+'s-ev-8.jpg')],
 ['Build', 'Website: Carlton Noble, Travel House', ()=>full(A+'s-carlton-2.jpg')],
 ['Build', 'Carlton Noble: collage of pages', ()=>full(A+'col-carlton.jpg')],
-['Build', 'Websites: mosaic across projects', ()=>mosaic([['bt-02','cn-03','ev-04','d-sifio'],['cn-02','ev-02','bt-05','va-web'],['ev-03','bt-04','cn-06','ev-06'],['bt-03','cn-05','ev-08','bt-08']],'#0d1117',{rot:-9})],
+['Build', 'Websites: collage across projects', ()=>full(A+'col-sites.jpg')],
 ['Build', 'Website: BigTapp, platform features', ()=>full(A+'s-bigtapp-10.jpg')],
 ['Build', 'Website: Sifio, SurgiTwin', ()=>full(A+'s-sifioweb-6.jpg')],
 ['Launch', 'Chapter word', ()=>word('We launch it.',SUN)],
@@ -165,7 +152,7 @@ const SHOTS=[
 ['Launch', 'Video: AI video', ()=>full(A+'h-t-video-ai.jpg')],
 ['Launch', 'Video: motion', ()=>full(A+'h-t-video-motion.jpg')],
 ['Launch', 'Stock: the high five (Adobe Stock 577275631)', ()=>full(S+'stock/stills/high-five.jpg')],
-['Launch', 'Wall of the work, zooms out', ()=>mosaic([['omg-16','bt-01','sl-05','mf-03','va-post'],['cn-01','rx-02','nc-13','omg-09','tv-identity'],['tv-rollout','care-02','ev-01','rs-09','va-brand'],['va-poster','omg-17','sl-02','bt-04','care-06'],['omg-01','rs-12','mf-06','cn-05','surgo-01'],['ev-02','nc-04','rx-05','omg-33','slg-colours']],COAL,{rot:-9,cw:430,gap:22,rad:14})],
+['Launch', 'Wall of the work, zooms out', ()=>wall(['Meetingful','Service artwork: MVP','Website 2','Torvi','Service artwork: video','Care Connect','Website 5','Service artwork: digital','Surgo'],3)],
 ['Close', 'Stock: two people laughing (Pexels 4053012, 4.8-6.3 s)', ()=>full(S+'stock/stills/close.jpg')],
 ['Close', 'Fast word: Brand', ()=>word('Brand.',ORANGE)],
 ['Close', 'Fast word: Design', ()=>word('Design.',VIOLET)],
@@ -210,20 +197,23 @@ const makeBall=(hd=false)=>{const g=img(A+'ball-shadow.png',f,{position:'absolut
       Object.assign(g.style,{display:'block',left:x-gw/2+'px',top:o.floor+.151*D-gh/2+'px',width:gw+'px',height:gh+'px',opacity:(o.op??1)*Math.max(.2,1-h/(2.5*D))})},
     hide(){b.style.display='none';g.style.display='none'}}};
 // Hops: keys [t,x,y] are where the sphere's centre is when it lands; h is how high it goes between them. Before the
-// first key it falls in from above the frame, starting at t0, spinning o.fall degrees on the way down (a full turn).
-// A hop that travels rolls a full turn that way; a hop on the spot spins o.turn[j] degrees (0: it only rocks). It
-// rocks on each landing until it settles, onward after a turn, else the other way from the landing before.
-const hops=(keys,h,t0,D,o={})=>{const fall=o.fall??-360,dx=j=>j>0?keys[j][1]-keys[j-1][1]:0;
-  const spin=j=>j===0?fall:Math.abs(dx(j))>20?360*Math.sign(dx(j)):((o.turn||[])[j]||0);
-  const dir=j=>spin(j)?Math.sign(spin(j)):j===0?(o.dir0??1):-dir(j-1);
+// first key it falls in from above the frame, starting at t0, turning o.fall degrees on the way down. It leans into a
+// hop that travels; a hop on the spot can spin o.turn[j] degrees. It rocks on each landing until it settles: onward
+// after a travel or a turn, else the other way from the landing before (o.dir0 sets the first).
+const hops=(keys,h,t0,D,o={})=>{const fall=o.fall??-30,dx=j=>j>0?keys[j][1]-keys[j-1][1]:0;
+  const spin=j=>j===0?fall:((o.turn||[])[j]||0);
+  const dir=j=>spin(j)?Math.sign(spin(j)):Math.abs(dx(j))>20?Math.sign(dx(j)):j===0?(o.dir0??1):-dir(j-1);
   return t=>{const i=keys.findIndex(k=>k[0]>t);
-    if(i===0){const [tl,x,y]=keys[0],p=clamp((t-t0)/(tl-t0));return{x,y:-D+(y+D)*p*p,rot:fall*(p-1),off:t<t0,spinning:!!fall}}
+    if(i===0){const [tl,x,y]=keys[0],p=clamp((t-t0)/(tl-t0));return{x,y:-D+(y+D)*p*p,rot:fall*(p-1),off:t<t0,spinning:Math.abs(fall)>=180}}
     const j=i<0?keys.length-1:i-1,[ta,xa,ya]=keys[j],r=rock(t-ta,dir(j));
     if(i<0)return{x:xa,y:ya,rot:r};
     const [tb,xb,yb]=keys[i],p=(t-ta)/(tb-ta);
-    return{x:xa+(xb-xa)*p,y:ya+(yb-ya)*p-h*4*p*(1-p),rot:r+spin(i)*io(p),spinning:!!spin(i)}}};
-// While it spins its eye is turned to one side, so the turn shows; once it settles it looks at us again.
-const SPIN='down';
+    const lean=spin(i)?0:Math.max(-14,Math.min(14,(xb-xa)*.05));
+    return{x:xa+(xb-xa)*p,y:ya+(yb-ya)*p-h*4*p*(1-p),rot:r+spin(i)*io(p)+lean*Math.sin(Math.PI*p),spinning:Math.abs(spin(i))>=180}}};
+// Lucky: when it lands or rests it can spin a full turn and blink, now and then, not all the time. twirl(t,t0) is a
+// turn that starts at t0; while it spins its eye is turned to one side so the turn shows, then it looks at us again.
+const SPIN='down',twirl=(t,t0,dir=1,dur=.3)=>{const q=(t-t0)/dur;return q<0||q>1?{rot:0,on:false}:{rot:dir*360*io(q),on:true}};
+const blinkAt=(t,...at)=>at.some(b=>t>=b&&t<b+.08);
 window.anim=()=>{};
 if(MOTION)(()=>{
   const AN=[],late=[],add=fn=>AN.push(fn),T=NAME,base=e=>e.style.transform||'';
@@ -246,35 +236,35 @@ if(MOTION)(()=>{
   if(T==='Opening line')words.forEach((s,i)=>rise(s,.04+i*BEAT/2,60,.16));
   else if(T.startsWith('We take it')){words.forEach((s,i)=>rise(s,i*.05-.04));
     // It lands above the line, blinks, and the camera dives into its eye.
-    const k=330/720,X=795+359.5*k,Y=90+357*k,D=497*k,LX=X+1.5*k,LY=Y+8*k,path=hops([[BEAT/2,X,Y]],0,0,D);
-    add((t,d)=>{const p=path(t);ball.at(p.x,p.y,D,{...p,pose:p.spinning?SPIN:t>.44&&t<.52?'blink':'front',floor:Y+D/2});
+    const k=330/720,X=795+359.5*k,Y=90+357*k,D=497*k,LX=X+1.5*k,LY=Y+8*k,path=hops([[BEAT/4,X,Y]],0,0,D);
+    add((t,d)=>{const p=path(t),w=twirl(t,BEAT/4,-1);ball.at(p.x,p.y,D,{rot:p.rot+w.rot,pose:w.on?SPIN:blinkAt(t,.44)?'blink':'front',floor:Y+D/2});
       const q=clamp((t-.56)/(d-1/30-.56));if(q>0){f.style.transformOrigin=`${LX}px ${LY}px`;f.style.transform=`translate(0,${(540-LY)*io(q)}px) scale(${Math.pow(24,q*q)})`}})}
   else if(T==='Chapter word'){if(showUnder())add(t=>{f.style.clipPath=`circle(${ease(t/.22)*1110}px at 50% 50%)`});
     // It drops in and hops along the words on the eighths, stamping each one in, then springs up and out.
     const L=[BEAT/2,BEAT,BEAT*1.5],D=175;words.forEach(s=>{s.style.opacity=0});
     late.push(()=>{const keys=words.map((s,i)=>{const p=wtop(s);return[L[Math.min(i,2)]+.1*Math.max(0,i-2),p.x,p.y-D/2]}),path=hops(keys,130,.06,D),tl=keys[keys.length-1],t1=tl[0]+.06;
       words.forEach((s,i)=>add(t=>{const dt=t-keys[i][0];s.style.opacity=dt<0?0:1;const q=.55+.45*pop(dt/.16),a=stamp(dt);s.style.transformOrigin='50% 100%';s.style.transform=`scale(${q*(1+a*.4)},${q*(1-a*.6)})`}));
-      add((t,d)=>{if(t<t1){const p=path(t);ball.at(p.x,p.y,D,{...p,pose:p.spinning?SPIN:'front'});return}
-        const q=clamp((t-t1)/(d-t1));ball.at(tl[1],tl[2]-(tl[2]+D)*(1-Math.pow(1-q,2)),D,{rot:rock(t-tl[0])+360*io(q),pose:SPIN})})})}
+      add((t,d)=>{if(t<t1){const p=path(t);ball.at(p.x,p.y,D,{...p,pose:blinkAt(t,tl[0]+.01)?'blink':'front'});return}
+        const q=clamp((t-t1)/(d-t1));ball.at(tl[1],tl[2]-(tl[2]+D)*(1-Math.pow(1-q,2)),D,{rot:rock(t-tl[0])+40*q})})})}
   else if(T.startsWith('Fast word')){
     // It bounces on the beat, one word per bounce; after the last it leaves up and to the right.
     const D=175,first=T.endsWith('Brand'),last=T.endsWith('Launch'),t0=first?BEAT/4:0,side=T.endsWith('Design')||last?-1:1;
-    late.push(()=>{const p=wtop(words[0]),Y=p.y-D/2,path=hops([[t0,p.x,Y],[BEAT,p.x,Y]],170,0,D,{fall:-180,turn:[0,side*360],dir0:side});
+    late.push(()=>{const p=wtop(words[0]),Y=p.y-D/2,path=hops([[t0,p.x,Y],[BEAT,p.x,Y]],170,0,D,{dir0:side});
       words.forEach(s=>add(t=>{const a=stamp(t-t0);s.style.transformOrigin='50% 100%';s.style.transform=`scale(${1+a*.45},${1-a*.7})`}));
-      add(t=>{if(last){const q=clamp(t/BEAT);ball.at(p.x+700*q,Y-(Y+D)*(1-Math.pow(1-q,2)),D,{rot:rock(t,side)+540*io(q),pose:SPIN});return}
-        const q=path(t);ball.at(q.x,q.y,D,{...q,pose:q.spinning?SPIN:'front'})})})}
+      add(t=>{if(last){const q=clamp(t/BEAT);ball.at(p.x+700*q,Y-(Y+D)*(1-Math.pow(1-q,2)),D,{rot:rock(t,side)+50*q});return}
+        const q=path(t);ball.at(q.x,q.y,D,q)})})}
   else if(T.startsWith('The spine')){const wt=words.map((s,i)=>i<2?i*.05-.1:(1+1.5*(i-2))*BEAT/2);words.forEach((s,i)=>rise(s,wt[i],80,.16));
     // It drops in beside the lines and watches each word arrive (a nod each time), then turns to us and winks.
-    late.push(()=>{const R=Math.max(...words.map(s=>s.getBoundingClientRect().right)),D=Math.min(260,(1920-R)*.6),X=(R+1920)/2,Y=600,path=hops([[BEAT/2,X,Y]],0,0,D);
+    late.push(()=>{const R=Math.max(...words.map(s=>s.getBoundingClientRect().right)),D=Math.min(260,(1920-R)*.6),X=(R+1920)/2,Y=600,path=hops([[.14,X,Y]],0,0,D);
       add(t=>{const p=path(t);let k=-1;wt.forEach((w,i)=>{if(t>=w)k=i});const nod=k>1?rock(t-wt[k],-1,7):0,line=k<2?0:k<4?1:2;
-        const pose=p.spinning?SPIN:t<BEAT/2?'front':t>=1.4?(t>1.48&&t<1.56?'blink':'front'):line<2?'upleft':'down';
-        ball.at(p.x,p.y,D,{rot:p.rot+nod,pose,mirror:pose==='down',floor:Y+D/2})})})}
+        const w=twirl(t,.14,-1),pose=w.on?SPIN:t<.14?'front':t>=1.4?(t>1.48&&t<1.56?'blink':'front'):line<2?'upleft':'down';
+        ball.at(p.x,p.y,D,{rot:p.rot+nod+w.rot,pose,mirror:!w.on&&pose==='down',floor:Y+D/2})})})}
   else if(T==='One partner')words.forEach((s,i)=>rise(s,i<2?i*.05-.06:BEAT+(i-2)*.05,80,.18));
   else if(T.startsWith('Logo')){words.forEach((s,i)=>rise(s,2*BEAT+i*.06,40,.2));
     // It lands on the last hit, reads the call (left, then right), looks back at us and blinks, and hovers.
-    const k=260/720,X=830+359.5*k,Y=150+357*k,D=497*k,path=hops([[BEAT/2,X,Y],[BEAT*1.5,X,Y]],110,0,D,{turn:[0,360]});
-    add(t=>{const p=path(t),bob=t>1.9?6*(1-Math.cos((t-1.9)*7)):0,pose=p.spinning?SPIN:t<.9?'front':t<1.45?'down':t>1.75&&t<1.83?'blink':'front';
-      ball.at(p.x,p.y-bob,D,{...p,pose,mirror:t>=.9&&t<1.17,floor:Y+D/2})})}
+    const k=260/720,X=830+359.5*k,Y=150+357*k,D=497*k,path=hops([[.1,X,Y],[.3,X,Y]],34,0,D);
+    add(t=>{const p=path(t),bob=t>1.9?6*(1-Math.cos((t-1.9)*7)):0,w=twirl(t,.3),pose=w.on?SPIN:t<.9?'front':t<1.45?'down':blinkAt(t,1.75,2.3)?'blink':'front';
+      ball.at(p.x,p.y-bob,D,{rot:p.rot+w.rot,pose,mirror:t>=.9&&t<1.17,floor:Y+D/2})})}
   // Over the stock clips (|alpha): it meets the people. After the opening line the clip opens in our lens circle:
   // the line's last frame is drawn over the clip with a hole that grows from the middle.
   if(ALPHA){
@@ -282,10 +272,10 @@ if(MOTION)(()=>{
     if(T.includes('556948644')){const X=1640,Y=600,D=300;   // she has the idea: it pops up beside her and turns to look at her
       add(t=>{const q=pop((t-.3)/.2);if(q<=0)return ball.hide();const bob=t>.55?5*(1-Math.cos((t-.55)*8)):0;
         ball.at(X,Y-bob,D*q,{pose:t<.54?SPIN:t<.62?'front':'upleft',rot:360*(1-ease((t-.3)/.24)),floor:Y+D*q/2})})}
-    if(T.includes('480737977')){const X=1720,Y=300,D=230,path=hops([.214,.429,.643,.857].map(t=>[t,X,Y]),90,.02,D,{turn:[0,360,0,-360]});   // the win: it cheers with him
+    if(T.includes('480737977')){const X=1720,Y=300,D=230,path=hops([.214,.429,.643,.857].map(t=>[t,X,Y]),90,.02,D,{turn:[0,0,360,0]});   // the win: it cheers with him
       add(t=>{const p=path(t);if(p.off)return ball.hide();ball.at(p.x,p.y,D,{...p,pose:'upleft'})})}
-    if(T.includes('490354049')){const X=1620,Y=640,D=280,path=hops([[.214,X,Y],[.4,X,Y]],50,.02,D);   // her smile: it lands beside her and looks at her
-      add(t=>{const p=path(t);if(p.off)return ball.hide();ball.at(p.x,p.y,D,{...p,pose:p.spinning?SPIN:t<.42?'front':'upleft',floor:Y+D/2})})}
+    if(T.includes('490354049')){const X=1620,Y=640,D=280,path=hops([[.214,X,Y]],0,.02,D);   // her smile: it lands beside her and looks at her
+      add(t=>{const p=path(t);if(p.off)return ball.hide();const w=twirl(t,.214,-1);ball.at(p.x,p.y,D,{rot:p.rot+w.rot,pose:w.on?SPIN:t<.56?'front':'upleft',floor:Y+D/2})})}
   }
   if(!ALPHA){
   // The logo arrives on the last hit: it only fades in (Lucky: its own shape and size, no scaling).
@@ -295,6 +285,7 @@ if(MOTION)(()=>{
   if(T.startsWith('Three apps')&&showUnder())add(t=>{f.style.clipPath=`circle(${ease(t/.26)*1110}px at 50% 50%)`});
   phones.forEach((e,i)=>{const b=base(e);let dx=0,dy=760,dl=[.05,0,.1][i]??i*.05,dr=[[-18,6],[0,-14],[18,6]][i]||[0,0],r0=[-16,12,18][i]??0;
     if(browsers.length){dx=0;dy=900;dl=.07;dr=[0,-14];r0=10}
+    else if(n%3===2&&!T.startsWith('Three apps')){dx=1500+i*320;dy=i%2?220:-220;dl=i*.03;r0=i%2?10:-10}   // cut 5's row: in from the right as a row
     else if(n%2){dx=i===1?0:(i?900:-900);dy=i===1?-900:0;dl=[0,.05,0][i]??0}
     add((t,d)=>{const q=pop((t-dl)/IN),k=t/d;e.style.transform=`translate(${(1-q)*dx+dr[0]*k}px,${(1-q)*dy+dr[1]*k}px) rotate(${(1-q)*r0}deg) ${b}`});
     if(T.startsWith('Three apps')){const ov=el('div','',e,{position:'absolute',inset:'13px',borderRadius:'52px',background:'#0b0b0e'});const t0=.3+i*.07;add(t=>{ov.style.opacity=1-clamp((t-t0)/.08)})}});
@@ -306,7 +297,10 @@ if(MOTION)(()=>{
     add((t,d)=>{const q=pop((t-dl)/IN),kk=t/d;e.style.transform=`translate(${(1-q)*from[0]+dr*kk}px,${(1-q)*from[1]}px) rotate(${(1-q)*(i?9:-9)*(k===2?-1:1)}deg) scale(${s0+(1-s0)*q}) ${b}`;if(k===2)e.style.opacity=clamp((t-dl)/.08)})})}
   // Other cards and fitted pieces: each from its nearest edge, one after another, then they drift outward.
   const rest=cards.filter(e=>!e.classList.contains('pair')&&!e.classList.contains('tile'));
-  if(rest.length)late.push(()=>{const rs=rest.map(e=>e.getBoundingClientRect()),single=rest.length===1;
+  if(rest.length>=4)late.push(()=>{const rs=rest.map(e=>e.getBoundingClientRect());   // cut 5's tilted wall: it straightens into place
+    rest.forEach((e,i)=>{const r=rs[i],b=base(e),side=r.left+r.width/2<960?1:-1;e.style.transformOrigin=`${960-r.left}px ${540-r.top}px`;
+      add((t,d)=>{const q=pop((t-i*.03)/(IN*1.4)),k=t/d;e.style.transform=`rotate(${-9*(1-q)}deg) scale(${1+.22*(1-q)+.02*k}) translateY(${(1-q)*side*260}px) ${b}`})})});
+  else if(rest.length)late.push(()=>{const rs=rest.map(e=>e.getBoundingClientRect()),single=rest.length===1;
     rest.forEach((e,i)=>{const r=rs[i],b=base(e),cx=r.left+r.width/2-960,cy=r.top+r.height/2-540,len=Math.hypot(cx,cy)||1;
       let fx=0,fy=200;if(!single){if(Math.abs(cx)/960>Math.abs(cy)/540){fx=Math.sign(cx||1)*520;fy=0}else{fx=0;fy=Math.sign(cy||1)*460}}
       const s0=single?.84:.94,dl=i*.05,dx=cx/len*14,dy=cy/len*14;
@@ -316,25 +310,16 @@ if(MOTION)(()=>{
   const tiles=cards.filter(e=>e.classList.contains('tile'));
   if(tiles.length&&T.startsWith('Grid')){const D=240,bx=t=>-D+(1920+2*D)*(t-.3)/.45;
     tiles.forEach((e,i)=>{const col=i%3,dl=col*.04+Math.floor(i/3)*.02,dy=col%2?700:-700,ims=[...e.querySelectorAll('img')],cx=parseFloat(e.style.left)+parseFloat(e.style.width)/2;
-      add(t=>{const q=pop((t-dl)/IN);e.style.transform=`translateY(${(1-q)*dy}px) rotate(${(1-q)*(col%2?6:-6)}deg)`;const s=Math.min(ims.length-1,t<.26?0:bx(t)+D*.3<cx?1:2);ims.forEach((im,j)=>{im.style.display=j===s?'block':'none'})})});
-    add(t=>{if(t<.3||t>.76)return ball.hide();ball.at(bx(t),540-Math.sin(clamp((t-.3)/.45)*Math.PI)*40,D,{pose:SPIN,rot:(bx(t)+D)/(D/2)*180/Math.PI})})}
-  else if(tiles.length)late.push(()=>{const S0=1920/tiles[0].offsetWidth*1.03;add((t,d)=>{const q=io(t/(d*.8));f.style.transform=`scale(${S0+(1-S0)*q})`})});
+      e.style.transformOrigin=`${960-parseFloat(e.style.left)}px ${540-parseFloat(e.style.top)}px`;
+      add(t=>{const q=pop((t-dl)/IN);e.style.transform=`rotate(${-8*(1-q)}deg) translateY(${(1-q)*dy}px)`;const s=Math.min(ims.length-1,t<.26?0:bx(t)+D*.3<cx?1:2);ims.forEach((im,j)=>{im.style.display=j===s?'block':'none'})})});
+    add(t=>{if(t<.3||t>.76)return ball.hide();ball.at(bx(t),540-Math.sin(clamp((t-.3)/.45)*Math.PI)*40,D,{pose:SPIN,rot:360*clamp((t-.3)/.45)})})}
+  else if(tiles.length){tiles.forEach(e=>{e.style.transformOrigin=`${960-parseFloat(e.style.left)}px ${540-parseFloat(e.style.top)}px`});
+    add((t,d)=>{const q=io(t/(d*.85));tiles.forEach((e,i)=>{const col=i%3;e.style.transform=`rotate(${-9*(1-q)}deg) scale(${1+.6*(1-q)}) translateY(${(col%2?-1:1)*160*(1-q)}px)`})})}
   // Pieces of a flat-colour image: a row springs up one after another; a single piece takes one of three entrances.
   const pcs=[...f.querySelectorAll('.piece')];
   if(pcs.length>1)pcs.forEach((e,i)=>{const dy=i%2?-460:460,dl=i*.05,dr=(i-(pcs.length-1)/2)*8;add((t,d)=>{const q=pop((t-dl)/IN),k=t/d;e.style.transform=`translate(${dr*k}px,${(1-q)*dy}px) rotate(${(1-q)*(i%2?-7:7)}deg) scale(${.94+.06*q})`})});
   if(pcs.length===1){const e=pcs[0],k=n%3;add((t,d)=>{const q=pop(t/IN),kk=t/d;
     e.style.transform=k===0?`translateY(${(1-q)*380}px) rotate(${(1-q)*4}deg) scale(${(.9+.1*q)*(1+.025*kk)})`:k===1?`scale(${(1.2-.2*ease(t/.26))*(1+.02*kk)})`:`translateX(${(1-q)*640}px) scale(${1+.02*kk})`})}
-  // Cut 5's walls: the columns slide past one another; the closing wall also pulls back from a close-up.
-  const mcols=[...f.querySelectorAll('.mcol')];
-  if(mcols.length){const wall=f.querySelector('.mwall'),rot=wall.style.transform,closing=T.startsWith('Wall of');
-    late.push(()=>{const hs=mcols.map(c=>c.offsetHeight);add((t,d)=>{const p=t/d;
-      if(closing)wall.style.transform=`${rot} scale(${1.25-.35*io(p)})`;
-      mcols.forEach((c,i)=>{c.style.transform=`translateY(${-hs[i]/4-(i%3)*(closing?80:90)+(i%2?1:-1)*(p-.5)*(closing?300:900)-270}px)`})})})}
-  // Cut 5's rows: the row slides across, each phone popping up or down into place.
-  const mrow=f.querySelector('.mrow');
-  if(mrow){const rot=+mrow.dataset.rot||0,ph=[...mrow.children];late.push(()=>{const tw=mrow.scrollWidth;add((t,d)=>{const p=t/d;
-    mrow.style.transform=`translateX(${60+(1920-tw-80)*io(p)}px) rotate(${rot}deg)`;
-    ph.forEach((e,i)=>{const q=pop((t-i*.025)/IN);e.style.transform=`translateY(${(1-q)*(i%2?220:-220)}px) rotate(${(1-q)*(i%2?8:-8)}deg)`})})})}
   // Full frames take turns. Wipe, lens and push reveal it over the last frame of the shot before.
   const cover=f.querySelector('img.cover');
   if(cover){const mode=(under?['zoom','wipe','hold','iris','zoom','push']:['zoom','hold'])[n%(under?6:2)];
@@ -346,5 +331,5 @@ if(MOTION)(()=>{
   }
   window.anim=(t,d)=>{late.splice(0).forEach(fn=>fn());AN.forEach(a=>a(t,d))};
 })();
-window.ready=Promise.all([...document.images].map(i=>i.decode().catch(()=>console.log('MISSING '+i.src)))).then(()=>document.fonts.ready).then(()=>{LAYOUT.forEach(fn=>fn())});
+window.ready=Promise.all([...document.images].map(i=>i.decode().catch(()=>console.log('MISSING '+i.src)))).then(()=>document.fonts.ready).then(()=>{0});
 </script></body></html>
