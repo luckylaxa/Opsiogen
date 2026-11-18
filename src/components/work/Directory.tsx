@@ -13,20 +13,23 @@ type Props = {
   pageSize: number;
   /** The page title, rendered between the filter bar and the results. */
   children: React.ReactNode;
-  /** Shown between the title and the results (the video card), hidden while filtering. */
+  /** Shown between the title and the results (the featured project), hidden while filtering. */
   feature?: React.ReactNode;
+  /** The project shown big in `feature`: left out of the list below it until a filter or search is on. */
+  featured?: string;
 };
 
 const ALL = "";
 
 /**
  * The Work page laid out like the reference's directory: a filter bar
- * (service, industry, year and a search box), the giant title, the video
- * card, a results line, then every project as a big dark card, two per row,
- * and Load more. While a filter or search is on, the title and video step
- * aside so the results come straight after the filter bar.
+ * (service, industry, year and a search box), the giant title, the featured
+ * project, a results line, then every other project as a big dark card, two
+ * per row, and Load more. While a filter or search is on, the title and the
+ * featured card step aside so the results (every match, the featured project
+ * too) come straight after the filter bar.
  */
-export function Directory({ projects, services, pageSize, children, feature }: Props) {
+export function Directory({ projects, services, pageSize, children, feature, featured }: Props) {
   const [service, setService] = useState(ALL);
   const [industry, setIndustry] = useState(ALL);
   const [year, setYear] = useState(ALL);
@@ -52,7 +55,13 @@ export function Directory({ projects, services, pageSize, children, feature }: P
     });
   }, [projects, service, industry, year, query]);
 
-  const shown = filtered.slice(0, visible);
+  // Unfiltered, the featured project is already the big card above, so the list doesn't repeat it.
+  const listed = useMemo(
+    () => (filtering || !featured ? filtered : filtered.filter((p) => p.slug !== featured)),
+    [filtered, filtering, featured],
+  );
+  const shown = listed.slice(0, visible);
+  const count = filtering ? filtered.length : projects.length;
 
   const update = (fn: () => void) => {
     fn();
@@ -130,8 +139,8 @@ export function Directory({ projects, services, pageSize, children, feature }: P
         )}
       >
         <p role="status" aria-live="polite">
-          <span className="font-semibold tabular-nums">{filtered.length}</span>{" "}
-          <span className="text-ink-2">{filtered.length === 1 ? "project" : "projects"}</span>
+          <span className="font-semibold tabular-nums">{count}</span>{" "}
+          <span className="text-ink-2">{count === 1 ? "project" : "projects"}</span>
         </p>
         {filtering && (
           <button type="button" onClick={clear} className="link-underline">
@@ -159,7 +168,7 @@ export function Directory({ projects, services, pageSize, children, feature }: P
         )
       )}
 
-      {filtered.length > visible && (
+      {listed.length > visible && (
         <div className="mt-[clamp(48px,calc(3.14vw+36.2px),96px)] flex justify-center">
           <button type="button" onClick={() => setVisible((v) => v + pageSize)} className={buttonClass("outline", "md")}>
             <span className="btn-label">Load more</span>

@@ -2,11 +2,13 @@ import { notFound } from "next/navigation";
 import { cmsMetadata } from "@/components/CmsPage";
 import { SectionRenderer } from "@/components/sections/SectionRenderer";
 import { Showreel } from "@/components/sections/Showreel";
+import { FeaturedProject } from "@/components/sections/FeaturedProject";
 import { GiantHeading } from "@/components/ui/Headings";
 import { HeroGlow } from "@/components/sections/HeroGlow";
 import { Directory } from "@/components/work/Directory";
 import { getPage, getProjects, getServices } from "@/lib/data";
 import type {
+  FeaturedProjectSection,
   HeroSection,
   ProjectGridSection,
   ShowreelSection,
@@ -21,8 +23,9 @@ export function generateMetadata() {
 /**
  * Work, laid out like the reference's directory page. The title and intro
  * come from the page's hero section, the page size from its project grid,
- * and a video card (if the page has one) sits between the title and the
- * projects; any other sections (such as the call to action) follow below.
+ * and the featured project (Oh My Glam since 18 Nov, when the showreel moved
+ * to Home), or a video card, sits big between the title and the projects;
+ * any other sections (such as the call to action) follow below.
  */
 export default async function WorkPage() {
   const [page, projects, services] = await Promise.all([
@@ -39,9 +42,13 @@ export default async function WorkPage() {
   const reel = page.sections.find(
     (s): s is ShowreelSection => s._type === "showreel",
   );
-  const rest = page.sections.filter(
-    (s) => s !== hero && s !== grid && s !== reel,
+  const featured = page.sections.find(
+    (s): s is FeaturedProjectSection => s._type === "featuredProject",
   );
+  const rest = page.sections.filter(
+    (s) => s !== hero && s !== grid && s !== reel && s !== featured,
+  );
+  const spotlight = reel ? null : (featured?.project ?? null);
   const pageSize = grid?.limit && grid.limit > 0 ? grid.limit : 12;
 
   return (
@@ -55,12 +62,18 @@ export default async function WorkPage() {
           group,
         }))}
         pageSize={pageSize}
+        featured={spotlight?.slug}
         feature={
           reel ? (
             <Showreel
               section={reel}
+              priority
               className="mb-[clamp(40px,calc(2.6vw+30px),88px)]"
             />
+          ) : spotlight ? (
+            <div className="mb-[clamp(40px,calc(2.6vw+30px),88px)]">
+              <FeaturedProject project={spotlight} />
+            </div>
           ) : null
         }
       >

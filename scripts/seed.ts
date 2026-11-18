@@ -605,6 +605,29 @@ async function run() {
     `*[_type == "page" && _id in $ids]{ _id, "types": sections[]._type }`,
     { ids: PAGES.map((p) => p._id) },
   );
+
+  // 18 Nov (Lucky): the showreel moved to Home, right after the hero, in place of the featured project, and the
+  // Work page opens with the featured project instead. Done once, while each page still holds the section in its
+  // old place; the step below then sees Home's reel as there and doesn't add it a second time.
+  if (!OVERWRITE) {
+    const home = existingPages.find((p) => p._id === "page-home");
+    const work = existingPages.find((p) => p._id === "page-work");
+    const reel = PAGES.find((p) => p._id === "page-home")?.sections.find((s) => s._type === "showreel");
+    const feature = PAGES.find((p) => p._id === "page-work")?.sections.find((s) => s._type === "featuredProject");
+    if (reel && home?.types?.includes("featuredProject") && !home.types.includes("showreel")) {
+      const item = await sectionDoc(reel);
+      console.log("  moving the showreel to Home, after the hero");
+      tx.patch("page-home", (p) => p.insert("replace", 'sections[_type == "featuredProject"]', [item]));
+      home.types = home.types.filter((t) => t !== "featuredProject").concat("showreel");
+    }
+    if (feature && work?.types?.includes("showreel") && !work.types.includes("featuredProject")) {
+      const item = await sectionDoc(feature);
+      console.log("  the Work page opens with the featured project");
+      tx.patch("page-work", (p) => p.insert("replace", 'sections[_type == "showreel"]', [item]));
+      work.types = work.types.filter((t) => t !== "showreel").concat("featuredProject");
+    }
+  }
+
   for (const page of PAGES) {
     put(
       tx,
@@ -635,20 +658,20 @@ async function run() {
     );
   }
 
-  // The Work page's video card, re-made since an earlier seed (same file names, new content): swap in the new
-  // video, poster and sound setting while Studio still holds the seeded video.
+  // The video card (the showreel, on Home since 18 Nov), re-made since an earlier seed (same file names, new
+  // content): swap in the new video, poster and sound setting while Studio still holds the seeded video.
   if (!OVERWRITE) {
-    const reel = PAGES.find((p) => p._id === "page-work")?.sections.find((s) => s._type === "showreel");
+    const reel = PAGES.find((p) => p._id === "page-home")?.sections.find((s) => s._type === "showreel");
     const held = await client.fetch<{ key: string; file: string | null; refs: (string | null)[]; sound: boolean | null } | null>(
-      `*[_id == "page-work"][0].sections[_type == "showreel"][0]{ "key": _key, "file": video.asset->originalFilename, "refs": [video.asset._ref, videoWebm.asset._ref, poster.asset._ref], sound }`,
+      `*[_id == "page-home"][0].sections[_type == "showreel"][0]{ "key": _key, "file": video.asset->originalFilename, "refs": [video.asset._ref, videoWebm.asset._ref, poster.asset._ref], sound }`,
     );
     if (reel?._type === "showreel" && reel.video?.url && held?.file === path.basename(reel.video.url)) {
       const doc = (await sectionDoc(reel)) as Record<string, { asset: { _ref: string } } | undefined>;
       const refs = [doc.video, doc.videoWebm, doc.poster].map((f) => f?.asset._ref ?? null);
       if (JSON.stringify(refs) !== JSON.stringify(held.refs) || Boolean(reel.sound) !== Boolean(held.sound)) {
-        console.log("  updating the Work page's video card");
+        console.log("  updating the Home page's video card");
         const at = `sections[_key == "${held.key}"]`;
-        tx.patch("page-work", (p) =>
+        tx.patch("page-home", (p) =>
           p.set({
             ...(doc.video ? { [`${at}.video`]: doc.video } : {}),
             ...(doc.videoWebm ? { [`${at}.videoWebm`]: doc.videoWebm } : {}),

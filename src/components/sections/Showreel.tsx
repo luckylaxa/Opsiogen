@@ -28,7 +28,16 @@ type FullscreenVideo = HTMLVideoElement & {
  * screen with the film and its sound. Visitors who prefer less motion see the
  * poster until they press play. 16:9 on every screen, so a film is never cut.
  */
-export function Showreel({ section, className }: { section: ShowreelSection; className?: string }) {
+export function Showreel({
+  section,
+  className,
+  priority = false,
+}: {
+  section: ShowreelSection;
+  className?: string;
+  /** The poster is the page's main image (the card sits at the top of the page): load it first. */
+  priority?: boolean;
+}) {
   const { label, heading, video, videoWebm, poster, sound } = section;
   const ref = useRef<HTMLVideoElement>(null);
   // The file to play, picked once the card is near: MP4, or the WebM copy where MP4 can't play.
@@ -52,7 +61,7 @@ export function Showreel({ section, className }: { section: ShowreelSection; cla
         inView.current = entry.isIntersecting;
         if (!entry.isIntersecting) el.pause();
         else if (!el.getAttribute("src")) {
-          // The poster is the page's main image: let it finish before the video starts downloading.
+          // Let the page's main image finish before the video starts downloading.
           cancel();
           cancel = afterPageLoad(() => {
             if (inView.current) setSrc(chooseSrc(el, video, videoWebm));
@@ -148,7 +157,7 @@ export function Showreel({ section, className }: { section: ShowreelSection; cla
         data-reveal
         className="on-dark relative aspect-video overflow-hidden rounded-card bg-night text-white"
       >
-        {poster && <Media image={poster} sizes="(min-width: 1440px) 1440px, 100vw" priority />}
+        {poster && <Media image={poster} sizes="(min-width: 1440px) 1440px, 100vw" priority={priority} />}
         {video && (
           <video
             ref={ref}

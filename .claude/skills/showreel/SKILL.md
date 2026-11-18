@@ -196,7 +196,8 @@ The motion language is in `design/showreel/EDIT-PLAN.md` ("Cut 7"). Everything b
 
 ## Publishing
 
-The Work page reel is the `showreel` section in `src/content/seed-data.ts`:
+The reel is the `showreel` section of the Home page in `src/content/seed-data.ts` (since 18 Nov it sits right after
+the Home hero, and the Work page opens with the featured project, Oh My Glam, instead):
 `/work/showreel.mp4`, `/work/showreel.webm` and the poster `/work/showreel.jpg` (1920 x 1080, with
 alt text). Since 18 Nov (Lucky: "for time being you can put this video in website") it is the whole
 showreel with its music (now cut 12): the card plays it muted and shows a sound button and a full-view button
@@ -206,7 +207,7 @@ and VP9 CRF 36 with Opus (about 20 MB). The poster is the burst grid with our ch
 To change it, replace the three files under the same names (add mode swaps a re-made video card
 in while Studio still holds the seeded file), update the poster alt, then follow "Staging mode"
 in CLAUDE.md (typecheck, commit, push, Seed Sanity in add mode, deploy through the Vercel API)
-and check the live Work page on desktop and phone.
+and check the live Home page on desktop and phone.
 
 ## Order of work
 

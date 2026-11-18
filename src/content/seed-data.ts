@@ -2073,7 +2073,17 @@ export const PAGES: Page[] = [
         // See our work: the header and the floating bar already lead to Contact.
         button: { label: "See our work", href: "/work" },
       },
-      { _type: "featuredProject", _key: "featured", project: null },
+      // The showreel, right after the hero (18 Nov); its featured project moved to the Work page.
+      {
+        _type: "showreel",
+        _key: "reel",
+        label: "Showreel",
+        heading: "Our work, in motion.",
+        video: { url: "/work/showreel.mp4", mimeType: "video/mp4" },
+        videoWebm: { url: "/work/showreel.webm", mimeType: "video/webm" },
+        poster: img("/work/showreel.jpg", 1920, 1080, "A grid of our work, with our character flying across it"),
+        sound: true,
+      },
       {
         _type: "projectGrid",
         _key: "latest",
@@ -2099,16 +2109,8 @@ export const PAGES: Page[] = [
         heading: "Work",
         text: "Selected work across products, websites, marketing, brand and print.",
       },
-      {
-        _type: "showreel",
-        _key: "reel",
-        label: "Showreel",
-        heading: "Our work, in motion.",
-        video: { url: "/work/showreel.mp4", mimeType: "video/mp4" },
-        videoWebm: { url: "/work/showreel.webm", mimeType: "video/webm" },
-        poster: img("/work/showreel.jpg", 1920, 1080, "A grid of our work, with our character flying across it"),
-        sound: true,
-      },
+      // The Work page opens with the featured project (Oh My Glam, from the site settings); the showreel is on Home.
+      { _type: "featuredProject", _key: "featured", project: null },
       { _type: "projectGrid", _key: "grid", limit: 12, showFilters: true },
       { _type: "callToAction", _key: "cta" },
     ],
