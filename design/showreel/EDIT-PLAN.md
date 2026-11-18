@@ -123,6 +123,9 @@ Websites show their colourful image sections (Carlton Noble: the luxury hero), n
 Maison Avelle and Oriel shot is out. Cabot is out (Engel & Völkers instead).
 **v5:** product and website shots use the latest case study mockups (`public/work/<slug>/*-wide.jpg`) on their own
 brand colours, anchored to the top so headers and logos stay whole; no colours of our own behind client work.
+**v7 (18 Nov):** 72 shots (about 90 cuts with motion). Stock varies people and moments: men and women, laptop,
+phone, laughing together; only one woman with a phone (Lucky: "all women looking into phone, repeated"). New:
+Norsecom and Rohde & Schwarz pairs, SandLogic pieces, Vaelo post and story, Oh My Glam screens, single service tiles.
 **v6:** website mockups never show their right-hand caption panel: `build/site16x9.py` takes the screen alone
 onto the mockup's own colour (`build/a/s-*.jpg`). No Afthab in the campaign shot (Torvi ads and the lipstick ads).
 
