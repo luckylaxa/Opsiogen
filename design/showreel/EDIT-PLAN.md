@@ -171,6 +171,23 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   to camera is out (Lucky: "her turn. It's not good"): he picked a woman on a pink wall who points to her side
   (Adobe Stock 488563452, from 1.2 s, 3 beats); our character pops up where she points, she turns to look at it and it
   looks back at her.
+- **Cut 10: the 3D character and collages.** Lucky on cut 9: "make same movements for my character and use same
+  music ... design collage animation, snappy individual design works entrance to the screen. currently you show all in
+  creatives with background like slide animation ... repeatedly see same client works (for example rohde & shwaraz).
+  missing this rotation when entrance of the video and end of the video", with a clip of the Home hero's character
+  turning right round. So:
+  - The character is drawn live from the Home hero's own 3D model (`public/home/character.glb`, through
+    `build/character3d.js` with the hero's studio, lights and materials), so it turns right round in 3D the way a press
+    on the site turns it (0.8 s). It turns as it pops up where the opening woman points and as it lands on the logo at
+    the end (and once beside the man and the woman on blue); between, it hops, leans, looks about and blinks as before.
+  - Single designs fly in on their own and build collages, cut 5's way: tiles that drop in from above and below, pairs
+    that tilt in from both sides, rows of phones that pop in while the row pans, single product screens on their own
+    colour, and tilted walls across projects whose columns slide past each other. The screens are lifted from the
+    latest case-study designs (`build/screens.py` reads `public/work/<slug>/<n>-wide.jpg`).
+  - Clients mix, and none runs on: cut 9 had eleven Rohde & Schwarz boards (four and seven in a row) and seven
+    Norsecom ones. Now Rohde & Schwarz shows seven pieces in four places (two pairs, the out-of-home tiles and the
+    brand wall), always beside Norsecom or SandLogic, and no piece shows twice. The brand chapter is 25 shots, not 42.
+  - Same stock, same music, same beat.
 - The logo only fades in (its own shape and size). Nothing is shown larger than its own size: the dive uses a
   close-up capture of the character (`a/ch-front-hd.png`).
 

@@ -20,6 +20,8 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#0a090d;font-fam
 .card img{display:block;width:100%;height:100%;object-fit:cover}
 </style></head><body><div id="f"></div>
 <script src="a/pieces.js"></script>
+<script src="a/screens.js"></script>
+<script type="importmap">{"imports":{"three":"../../../node_modules/three/build/three.module.js","three/addons/":"../../../node_modules/three/examples/jsm/"}}</script>
 <script>
 const COAL='#0a090d',PAPER='#f8f6f8',PINK='#ff4f9b',VIOLET='#a98bff',AQUA='#5cf2e6',BLUE='#3f7bff',ORANGE='#ff8a3c',SUN='#ffd75e',LIME='#d8ff3e';
 const W='../../../public/work/',A='a/',T='../../tiles/out/',S='../raw/',LOGO='../../../src/assets/opsiogen-logo-on-dark.png';
@@ -53,6 +55,33 @@ const pair2=(a,b,c)=>{bg(c);const w=900,g=40,x0=(1920-2*w-g)/2;card(a,x0,90,w,0,
 const pair=(a,b)=>{for(const [k,src] of [[0,a],[1,b]]){const h=el('div','abs',f,{left:k*960+'px',top:0,width:'960px',height:'1080px',overflow:'hidden'});img(src,h,{},'cover')}};
 const grid=(srcs,cols,gap=14,c=COAL,rad=12)=>{bg(c);const rows=Math.ceil(srcs.length/cols);const w=(1920-gap*(cols+1))/cols,h=(1080-gap*(rows+1))/rows;
   srcs.forEach((s,i)=>card(s,gap+(i%cols)*(w+gap),gap+Math.floor(i/cols)*(h+gap),w,h,0,rad))};
+// Cut 5's shot types on the latest work (Lucky, 18 Nov: "design collage animation, snappy individual design works
+// entrance to the screen", "repeatedly see same client works"): pieces from several clients together, on our colours.
+// LAYOUT runs once the images are in, for the still.
+const LAYOUT=[];
+// Square pieces in a row; in the film they fly in from above and below in turn.
+const tiles=(keys,c,o={})=>{bg(c);const n=keys.length,gap=o.gap||40,h=o.h||Math.min(560,(1920-200-gap*(n-1))/n),x0=(1920-(n*h+(n-1)*gap))/2;
+  keys.forEach((k,i)=>{const b=el('div','card tile5',f,{left:x0+i*(h+gap)+'px',top:(1080-h)/2+'px',width:h+'px',height:h+'px',borderRadius:(o.rad??20)+'px'});img(A+k+'.jpg',b)})};
+// Two pieces, one high on the left and one low on the right; in the film one comes from the left, the other from
+// the right and below.
+const duo=(a,b,c,o={})=>{bg(c);const w=o.w||700,h=o.h||w,g=o.g||80,dy=o.dy??100,x0=(1920-2*w-g)/2;
+  [[a,x0,(1080-h)/2-dy],[b,x0+w+g,(1080-h)/2+dy]].forEach(([k,x,y])=>{const d=el('div','card duo',f,{left:x+'px',top:y+'px',width:w+'px',height:h+'px',borderRadius:(o.rad??18)+'px'});img(A+k+'.jpg',d)})};
+// One latest design (lifted out by screens.py) on its own colour; in the film it rises into place.
+const screen1=key=>{const S=(window.SCREENS||{})[key];bg(S?S.bg:COAL);fit(A+key+'.jpg',140,90,1640,900,12)};
+// A wall of work turned a little, in columns that slide past one another.
+const mosaic=(cols,c,o={})=>{bg(c);const n=cols.length,gap=o.gap||26,cw=o.cw||520;
+  const wall=el('div','mwall',f,{position:'absolute',left:'960px',top:'540px',width:'0',height:'0',transform:`rotate(${o.rot??-9}deg)`});
+  const cs=cols.map((keys,ci)=>{const col=el('div','mcol',wall,{position:'absolute',left:(ci-(n-1)/2)*(cw+gap)-cw/2+'px',top:'0',width:cw+'px'});
+    keys.concat(keys).forEach(k=>{const b=el('div','',col,{width:cw+'px',marginBottom:gap+'px',borderRadius:(o.rad||16)+'px',overflow:'hidden'});img(A+k+'.jpg',b,{display:'block',width:'100%',height:'auto'})});return col});
+  if(o.mid!=null)cs.forEach(col=>{col.dataset.mid=o.mid});
+  LAYOUT.push(()=>cs.forEach((col,i)=>{col.style.transform=`translateY(${mbase(col,i)}px)`}))};
+// Where a column of the wall sits: long columns a quarter up; short ones (o.mid) centred, so the slide never shows an end.
+const mbase=(col,i)=>(col.dataset.mid?-col.offsetHeight/2+(+col.dataset.mid):-col.offsetHeight/4-270)-(i%3)*90;
+// A row turned a little, sliding past.
+const row=(keys,c,o={})=>{bg(c);const h=o.h||820,gap=o.gap||40;
+  const wrap=el('div','mrow',f,{position:'absolute',left:'0',top:(1080-h)/2+'px',height:h+'px',display:'flex',gap:gap+'px'});
+  keys.forEach(k=>{const b=el('div','mphone',wrap,{height:h+'px',borderRadius:(o.rad||44)+'px',overflow:'hidden',flex:'none'});img(A+k+'.jpg',b,{display:'block',height:'100%',width:'auto'})});
+  wrap.dataset.rot=o.rot||0;LAYOUT.push(()=>{const tw=wrap.scrollWidth;wrap.style.transform=`translateX(${(60+1920-tw-20)/2}px) rotate(${o.rot||0}deg)`})};
 const caption=(t,c=PAPER)=>{const d=el('div','abs',f,{left:'90px',bottom:'80px',fontSize:'64px',fontWeight:500,color:c,letterSpacing:'-.03em',lineHeight:1.05});d.innerHTML=t};
 
 const SHOTS=[
@@ -60,61 +89,44 @@ const SHOTS=[
 ['Open', 'Stock: she points at our character (Adobe Stock 488563452)', ()=>full(S+'stock/stills/point.jpg')],
 ['Open', 'We take it from here, the character', ()=>{type(COAL,[[['We take it ',700,PAPER],['from here.',700,PAPER]]],130);img(A+'ch-front.png',f,{position:'absolute',width:'330px',left:'795px',top:'90px'})}],
 ['Burst', 'Three apps, three projects', ()=>{bg(LIME);phone(A+'mf-m1.jpg',330,150,400,-4);phone(A+'omg-08.jpg',760,110,400,0);phone(A+'va-app.jpg',1190,150,400,4)}],
-['Burst', 'Grid of the work, reshuffles twice', ()=>wall(['Oh My Glam','Vaelo: site','Service artwork: product','Website 1','Vaelo: billboard','Campaigns','Website 3','Service artwork: social','Service artwork: print'],3,12,
-  [['Torvi','Norsecom: HQ','Rohde & Schwarz: billboard','SandLogic: booth','Oh My Glam: shade','Website: Carlton Noble, Travel','Meetingful','Print: posters','Service artwork: AI automation'],
-   ['Vaelo: front','RxLive','Website: BigTapp, platform','SandLogic: social','Norsecom: T-shirt','Rohde & Schwarz: app','Oh My Glam: try-on','Care Connect','Service artwork: video']])],
+['Burst', 'Grid of the work, reshuffles twice', ()=>wall(['Oh My Glam: row','Vaelo: site','Service artwork: product','Website 1','Vaelo: billboard','Campaigns','Website 3','Service artwork: social','Service artwork: print'],3,12,
+  [['Torvi','Brand: duo, Norsecom','Brand: tiles, out of home','SandLogic: guideline pages','Oh My Glam: shade','Website: Carlton Noble, Travel','Product screen: Meetingful','Print: posters','Service artwork: AI automation'],
+   ['Vaelo: front','Product duo','Website: BigTapp, platform','SandLogic: social','Brand: tiles, mixed','Print: packaging','Oh My Glam: try-on','Product screen: Surgo','Service artwork: video']])],
 ['Burst', 'Vaelo, the car', ()=>full(A+'va-hero.jpg')],
 ['Brand', 'Chapter word', ()=>word('We brand it.',ORANGE)],
 ['Brand', 'Stock: the win (Adobe Stock 480737977)', ()=>full(S+'stock/stills/man-cheer.jpg')],
 ['Brand', 'Service artwork: brand', ()=>full(A+'z-page-brand.jpg')],
 ['Brand', 'Life: the after-work ride (Adobe Stock 405010525)', ()=>full(S+'stock/stills/life-girl-bike.jpg')],
 ['Brand', 'Torvi: site, identity, guidelines, ads', ()=>{bg('#1d1f24');const g=24,w=(1920-3*g)/2,h=(1080-3*g)/2;[['crop-tv-rollout',0],['crop-tv-strategy',1],['crop-tv-guidelines',2],['crop-tv-assets',3]].forEach(([k,i])=>fit(A+k+'.jpg',g+(i%2)*(w+g),g+Math.floor(i/2)*(h+g),w,h))}],
+['Brand', 'Brand: tiles, mixed pieces', ()=>tiles(['sl-14','nc-08','sl-15','nc-07'],ORANGE)],
 ['Brand', 'Vaelo: billboard, badge, brand, poster', ()=>{bg('#0e3d2b');card(A+'va-billboard.jpg',90,90,1140);card(A+'va-badge.jpg',90,690,535);card(A+'va-brand.jpg',695,690,535);card(A+'va-poster.jpg',1290,120,560)}],
+['Brand', 'Brand: duo, Norsecom HQ and Rohde & Schwarz booth', ()=>duo('nc-12','rs-07',VIOLET)],
 ['Brand', 'SandLogic: guideline pages', ()=>{bg('#0f1120');const g=20,w=(1920-3*g)/2,h=w*9/16,t=(1080-2*h-g)/2;[['slg-logo1',0],['slg-colours',1],['slg-gradient',2],['slp-system',3]].forEach(([k,i])=>card(A+k+'.jpg',g+(i%2)*(w+g),t+Math.floor(i/2)*(h+g),w,0,0,12))}],
 ['Brand', 'SandLogic: brochure', ()=>full(A+'z-slp-brochure.jpg')],
+['Brand', 'Brand: wall across projects', ()=>mosaic([['sl-05','rs-16','nc-11'],['nc-13','sl-07','rs-03'],['rs-15','nc-02','sl-09'],['nc-15','rs-08','nc-04']],'#0b0b10',{rot:-9,cw:520,mid:200})],
 ['Brand', 'Service artwork: print', ()=>full(A+'z-print-booth.jpg')],
 ['Brand', 'Print: packaging', ()=>full(A+'z-t-print-packaging.jpg')],
-['Brand', 'Norsecom: HQ and booth', ()=>pair2(A+'nc-12.jpg',A+'nc-13.jpg','#25252a')],
-['Brand', 'Norsecom: bus shelter and badge', ()=>pair2(A+'nc-14.jpg',A+'nc-07.jpg','#091114')],
-['Brand', 'Norsecom: mug and cards', ()=>pair2(A+'nc-09.jpg',A+'nc-02.jpg','#2a2f37')],
-['Brand', 'Rohde & Schwarz: billboard and phone', ()=>pair2(A+'rs-09.jpg',A+'rs-04.jpg','#11354d')],
-['Brand', 'Rohde & Schwarz: booth and metro', ()=>pair2(A+'rs-07.jpg',A+'rs-16.jpg','#303337')],
-['Brand', 'Rohde & Schwarz: posters and brochure', ()=>pair2(A+'rs-19.jpg',A+'rs-23.jpg','#4e5051')],
-['Brand', 'Rohde & Schwarz: magazine and ad', ()=>pair2(A+'rs-15.jpg',A+'rs-03.jpg','#412714')],
+['Brand', 'Brand: tiles, out of home', ()=>tiles(['rs-09','nc-14','sl-08'],PINK)],
 ['Brand', 'SandLogic: mobile web', ()=>full(A+'z-slp-mobile.jpg')],
 ['Brand', 'SandLogic: social grid', ()=>full(A+'z-slp-social.jpg')],
 ['Brand', 'Vaelo: post and story', ()=>{bg('#0e3d2b');card(A+'va-post.jpg',159,40,1000,0,0,14);card(A+'va-story.jpg',1199,40,562,0,0,14)}],
+['Brand', 'Stock: a big laugh (Adobe Stock 249372459)', ()=>full(S+'stock/stills/woman-laugh.jpg')],
+['Brand', 'Brand: duo, SandLogic stage and Rohde & Schwarz keynote', ()=>duo('sl-06','rs-17',SUN)],
 ['Brand', 'Print: posters', ()=>full(A+'h-t-print-posters.jpg')],
 ['Brand', 'Print: stationery', ()=>full(A+'h-t-print-stationery.jpg')],
-['Brand', 'SandLogic: booth and stage', ()=>pair2(A+'sl-05.jpg',A+'sl-06.jpg','#382c3d')],
-['Brand', 'SandLogic: keynote and hallway', ()=>pair2(A+'sl-07.jpg',A+'sl-08.jpg','#020101')],
-['Brand', 'SandLogic: badges and polo', ()=>pair2(A+'sl-14.jpg',A+'sl-15.jpg','#6c6b6b')],
-['Brand', 'SandLogic: T-shirt and mugs', ()=>pair2(A+'sl-16.jpg',A+'sl-17.jpg','#013e68')],
-['Brand', 'SandLogic: bottle and office', ()=>pair2(A+'sl-18.jpg',A+'sl-09.jpg','#0b0e0e')],
-['Brand', 'Norsecom: reception and router', ()=>pair2(A+'nc-11.jpg',A+'nc-15.jpg','#484037')],
-['Brand', 'Norsecom: notebook and folder', ()=>pair2(A+'nc-05.jpg',A+'nc-06.jpg','#121a21')],
-['Brand', 'Norsecom: T-shirt and tote', ()=>pair2(A+'nc-08.jpg',A+'nc-10.jpg','#141920')],
-['Brand', 'Norsecom: cards and letterhead', ()=>pair2(A+'nc-01.jpg',A+'nc-04.jpg','#605042')],
-['Brand', 'Stock: a big laugh (Adobe Stock 249372459)', ()=>full(S+'stock/stills/woman-laugh.jpg')],
-['Brand', 'Rohde & Schwarz: brochure and spread', ()=>pair2(A+'rs-01.jpg',A+'rs-02.jpg','#464f57')],
-['Brand', 'Rohde & Schwarz: app and tablet', ()=>pair2(A+'rs-05.jpg',A+'rs-06.jpg','#061425')],
-['Brand', 'Rohde & Schwarz: banners and airport', ()=>pair2(A+'rs-08.jpg',A+'rs-10.jpg','#4b4e4a')],
-['Brand', 'Rohde & Schwarz: cards and letterhead', ()=>pair2(A+'rs-11.jpg',A+'rs-12.jpg','#131b24')],
-['Brand', 'Rohde & Schwarz: office and web', ()=>pair2(A+'rs-25.jpg',A+'rs-14.jpg','#121a2b')],
-['Brand', 'Rohde & Schwarz: keynote and tablet', ()=>pair2(A+'rs-17.jpg',A+'rs-18.jpg','#00010c')],
-['Brand', 'Rohde & Schwarz: hardware and leaflets', ()=>pair2(A+'rs-20.jpg',A+'rs-21.jpg','#0e1317')],
+['Brand', 'Brand: row of merchandise and print', ()=>row(['sl-16','nc-09','sl-17','nc-10','sl-18','nc-05','nc-01','nc-06'],'#141418',{rot:-4,h:620,rad:24})],
 ['Brand', 'Life: the open road (Adobe Stock 191180958)', ()=>full(S+'stock/stills/life-drive.jpg')],
 ['Brand', 'Vaelo: front-view poster', ()=>{bg('#0e3d2b');fit(A+'va-poster.jpg',80,60,1760,960)}],
 ['Brand', 'Vaelo: autonomous', ()=>{bg('#0e3d2b');fit(A+'va-auto.jpg',80,80,1760,920)}],
 ['Design', 'Chapter word', ()=>word('We design it.',VIOLET)],
 ['Design', 'Stock: a confident smile (Adobe Stock 490354049)', ()=>full(S+'stock/stills/woman-blue.jpg')],
 ['Design', 'Stock: her smile, then the app (Pixabay 208770, 4.5-6.0 s)', ()=>full(S+'stock/stills/design.jpg')],
-['Design', 'Oh My Glam: three screens', ()=>{bg(PINK);phone(A+'omg-01.jpg',380,140,400,-6);phone(A+'omg-08.jpg',760,90,420,0);phone(A+'omg-13.jpg',1160,140,400,6)}],
-['Design', 'Meetingful (case study mockup)', ()=>full(W+'meetingful/meetingful-5-wide.jpg','center top')],
+['Design', 'Oh My Glam: row of screens', ()=>row(['omg-01','omg-19','omg-33','omg-10','omg-11','omg-12','omg-35','omg-13'],'#141418',{rot:-4,h:820})],
+['Design', 'Product screen: Meetingful', ()=>screen1('scr-meetingful-5')],
 ['Design', 'Life: family time (Adobe Stock 294857367)', ()=>full(S+'stock/stills/life-family.jpg')],
-['Design', 'RxLive (case study mockup)', ()=>full(W+'rxlive/rx-1-wide.jpg','center top')],
-['Design', 'Care Connect (case study mockup)', ()=>full(W+'care-connect/care-1-wide.jpg','center top')],
-['Design', 'Surgo (case study mockup)', ()=>full(W+'surgo-health/surgo-6-wide.jpg','center top')],
+['Design', 'Product duo: RxLive and Care Connect', ()=>duo('scr-rxlive-1','scr-care-connect-1','#101016',{w:880,h:560,g:60,dy:120})],
+['Design', 'Product screens: wall across projects', ()=>mosaic([['scr-meetingful-2','scr-rxlive-3','scr-care-connect-4','scr-surgo-health-3'],['scr-rxlive-6','scr-surgo-health-8','scr-meetingful-7','scr-care-connect-8'],['scr-care-connect-2','scr-meetingful-9','scr-surgo-health-5','scr-rxlive-9'],['scr-surgo-health-1','scr-care-connect-6','scr-rxlive-2','scr-meetingful-4']],'#101016',{rot:-8})],
+['Design', 'Product screen: Surgo', ()=>screen1('scr-surgo-health-3')],
 ['Design', 'Service artwork: product design', ()=>full(A+'z-page-pd.jpg')],
 ['Design', 'Service artwork: MVPs and apps', ()=>full(A+'z-page-mvp.jpg')],
 ['Design', 'MVPs: booking, shop, shipments', ()=>full(A+'svc-mvp.jpg')],
@@ -122,10 +134,8 @@ const SHOTS=[
 ['Design', 'AI automation: approvals, assistant, invoices', ()=>full(A+'svc-auto-1.jpg')],
 ['Design', 'AI automation: contract review, reporting', ()=>full(A+'svc-auto-2.jpg')],
 ['Design', 'Oh My Glam: shade finder', ()=>{bg(PINK);phone(A+'omg-02.jpg',380,140,400,-6);phone(A+'omg-09.jpg',760,90,420,0);phone(A+'omg-16.jpg',1160,140,400,6)}],
-['Design', 'Oh My Glam: shop', ()=>{bg(VIOLET);phone(A+'omg-19.jpg',380,140,400,-6);phone(A+'omg-33.jpg',760,90,420,0);phone(A+'omg-35.jpg',1160,140,400,6)}],
 ['Design', 'Product design: prototype', ()=>full(A+'h-t-pd-prototype.jpg')],
 ['Design', 'Oh My Glam: try-on', ()=>{bg(SUN);phone(A+'omg-03.jpg',380,140,400,-6);phone(A+'omg-04.jpg',760,90,420,0);phone(A+'omg-05.jpg',1160,140,400,6)}],
-['Design', 'Oh My Glam: looks', ()=>{bg(AQUA);phone(A+'omg-10.jpg',380,140,400,-6);phone(A+'omg-11.jpg',760,90,420,0);phone(A+'omg-12.jpg',1160,140,400,6)}],
 ['Build', 'Chapter word', ()=>word('We build it.',AQUA)],
 ['Build', 'Stock: laughing at the laptop (Pexels 5137353, 9.2-10.7 s)', ()=>full(S+'stock/stills/build.jpg')],
 ['Build', 'Website 1: BigTapp', ()=>{bg('#0b1640');browser(A+'d-bigtapp.jpg',130,84,1350);phone(A+'m-bigtapp.jpg',1410,204,380,0)}],
@@ -134,11 +144,11 @@ const SHOTS=[
 ['Build', 'Website 5: Sifio', ()=>{bg('#e1eade');browser(A+'d-sifio.jpg',130,84,1350);phone(A+'m-sifio.jpg',1410,204,380,0)}],
 ['Build', 'Vaelo: site and app', ()=>{bg('#0e3d2b');browser(A+'va-web.jpg',130,84,1350);phone(A+'va-app.jpg',1410,204,380,0)}],
 ['Build', 'Life: the getaway (Adobe Stock 150778364)', ()=>full(S+'stock/stills/life-beach.jpg')],
+['Build', 'Websites: wall across projects', ()=>mosaic([['scr-carlton-noble-2','scr-engel-volkers-3','scr-bigtapp-6','scr-sifio-health-5'],['scr-engel-volkers-7','scr-bigtapp-2','scr-carlton-noble-6','scr-sifio-health-9'],['scr-bigtapp-10','scr-carlton-noble-12','scr-engel-volkers-10','scr-sifio-health-2'],['scr-carlton-noble-4','scr-sifio-health-11','scr-bigtapp-13','scr-engel-volkers-13']],'#0d1117',{rot:-9})],
 ['Build', 'Website: Engel & Völkers, Mykonos', ()=>full(A+'s-ev-3.jpg')],
 ['Build', 'Website: Engel & Völkers, Portugal', ()=>full(A+'s-ev-8.jpg')],
 ['Build', 'Website: Carlton Noble, Travel House', ()=>full(A+'s-carlton-2.jpg')],
 ['Build', 'Carlton Noble: collage of pages', ()=>full(A+'col-carlton.jpg')],
-['Build', 'Websites: collage across projects', ()=>full(A+'col-sites.jpg')],
 ['Build', 'Website: BigTapp, platform features', ()=>full(A+'s-bigtapp-10.jpg')],
 ['Build', 'Website: Sifio, SurgiTwin', ()=>full(A+'s-sifioweb-6.jpg')],
 ['Launch', 'Chapter word', ()=>word('We launch it.',SUN)],
@@ -152,7 +162,7 @@ const SHOTS=[
 ['Launch', 'Video: AI video', ()=>full(A+'h-t-video-ai.jpg')],
 ['Launch', 'Video: motion', ()=>full(A+'h-t-video-motion.jpg')],
 ['Launch', 'Stock: the high five (Adobe Stock 577275631)', ()=>full(S+'stock/stills/high-five.jpg')],
-['Launch', 'Wall of the work, zooms out', ()=>wall(['Meetingful','Service artwork: MVP','Website 2','Torvi','Service artwork: video','Care Connect','Website 5','Service artwork: digital','Surgo'],3)],
+['Launch', 'Wall of the work, zooms out', ()=>wall(['Product screen: Meetingful','Service artwork: MVP','Website 2','Torvi','Service artwork: video','Product duo','Website 5','Service artwork: digital','Product screen: Surgo'],3)],
 ['Close', 'Stock: two people laughing (Pexels 4053012, 4.8-6.3 s)', ()=>full(S+'stock/stills/close.jpg')],
 ['Close', 'Fast word: Brand', ()=>word('Brand.',ORANGE)],
 ['Close', 'Fast word: Design', ()=>word('Design.',VIOLET)],
@@ -186,16 +196,24 @@ if(MOTION&&UNDER){under=document.createElement('img');under.src='file://'+UNDER;
 const BALL=524/497,rock=(dt,dir=1,amp=10)=>dt<0?0:dir*amp*Math.exp(-dt*9)*Math.sin(dt*26);
 // The words it lands on give a little under it (they are type, not the character).
 const stamp=dt=>dt<0?0:.22*Math.exp(-dt*28)*Math.cos(dt*45);
-const makeBall=(hd=false)=>{const g=img(A+'ball-shadow.png',f,{position:'absolute',zIndex:8,display:'none'}),b=el('div','',f,{position:'absolute',zIndex:9,display:'none'}),poses={};
-  for(const p of ['front','front2','blink','down','upleft','upright'])poses[p]=img(A+'ball-'+(p==='front'&&hd?'front-hd':p)+'.png',b,{position:'absolute',left:0,top:0,width:'100%',height:'100%',display:'none'});
-  let cur=null;
-  return{at(x,y,D,o={}){const S=D*BALL,p=o.pose||'front';if(p!==cur){if(cur)poses[cur].style.display='none';poses[p].style.display='block';cur=p}
-      Object.assign(b.style,{display:'block',left:x-S/2+'px',top:y-S/2+'px',width:S+'px',height:S+'px',opacity:o.op??1,transformOrigin:'50% 50%',
-        transform:`rotate(${o.rot||0}deg)${o.mirror?' scaleX(-1)':''}`});
+// Since cut 10 it is drawn live from the Home hero's 3D model (character3d.js), so it turns right round, looks about and
+// blinks its light exactly as on the site. at(): o.pose is where it looks, o.turn an extra turn (radians; 2π is one
+// full turn), o.rot a tilt in degrees, o.blink 0..1 through a blink, o.res draws it sharper for a close-up, o.trail
+// shows the site's rainbow trail behind it while it flies.
+const SPH=.85,POSE={front:[0,0,0,0],front2:[0,0,0,0],blink:[0,0,0,0],upleft:[-.85,-.35,-1,-.6],upright:[.85,-.35,1,-.6],down:[.4,.45,.6,.8],fly:[1.2,.05,0,0]};
+const TRAIL='linear-gradient(180deg, rgb(255 110 190 / 0.9) 0%, rgb(190 120 255 / 0.9) 16%, rgb(105 140 255 / 1) 30%, rgb(80 220 255 / 1) 44%, rgb(110 235 150 / 0.9) 57%, rgb(255 232 110 / 0.9) 70%, rgb(255 165 90 / 0.9) 83%, rgb(255 110 180 / 0.9) 100%)';
+const makeBall=()=>{const g=img(A+'ball-shadow.png',f,{position:'absolute',zIndex:8,display:'none'}),c=el('canvas','',f,{position:'absolute',zIndex:9,display:'none'});
+  const tr=el('div','',f,{position:'absolute',zIndex:7,display:'none',background:TRAIL,filter:'blur(26px)',clipPath:'polygon(100% 36%, 0 4%, 0 96%, 100% 64%)',
+    maskImage:'linear-gradient(270deg, #000 0%, rgb(0 0 0 / 0.75) 45%, rgb(0 0 0 / 0.3) 100%)',webkitMaskImage:'linear-gradient(270deg, #000 0%, rgb(0 0 0 / 0.75) 45%, rgb(0 0 0 / 0.3) 100%)',transformOrigin:'100% 50%'});
+  return{at(x,y,D,o={}){const S=D/SPH,px=Math.min(2048,Math.max(64,Math.ceil(S*(o.res||1))));if(c.width!==px){c.width=px;c.height=px}
+      Object.assign(c.style,{display:'block',left:x-S/2+'px',top:y-S/2+'px',width:S+'px',height:S+'px',opacity:o.op??1});
+      const P=POSE[o.pose||'front'],m=o.mirror?-1:1;
+      if(window.CH3D)CH3D.draw(c,{yaw:m*P[0]+(o.turn||0),pitch:P[1],roll:-(o.rot||0)*Math.PI/180,blink:o.blink||(o.pose==='blink'?.4:0),look:[m*P[2],P[3]]});
+      if(o.trail){Object.assign(tr.style,{display:'block',left:x-900*o.trail+'px',top:y-S*.75+'px',width:900*o.trail+'px',height:S*1.5+'px',opacity:.72*o.trail,transform:'rotate(-6deg)'})}else tr.style.display='none';
       if(o.floor==null){g.style.display='none';return}
       const h=Math.max(0,o.floor-y-D/2),k=Math.max(.35,1-h/(2.2*D)),gw=.901*D*k,gh=.28*D*k;
       Object.assign(g.style,{display:'block',left:x-gw/2+'px',top:o.floor+.151*D-gh/2+'px',width:gw+'px',height:gh+'px',opacity:(o.op??1)*Math.max(.2,1-h/(2.5*D))})},
-    hide(){b.style.display='none';g.style.display='none'}}};
+    hide(){c.style.display='none';g.style.display='none';tr.style.display='none'}}};
 // Hops: keys [t,x,y] are where the sphere's centre is when it lands; h is how high it goes between them. Before the
 // first key it falls in from above the frame, starting at t0, turning o.fall degrees on the way down. It leans into a
 // hop that travels; a hop on the spot can spin o.turn[j] degrees. It rocks on each landing until it settles: onward
@@ -208,17 +226,20 @@ const hops=(keys,h,t0,D,o={})=>{const fall=o.fall??-30,dx=j=>j>0?keys[j][1]-keys
     const j=i<0?keys.length-1:i-1,[ta,xa,ya]=keys[j],r=rock(t-ta,dir(j));
     if(i<0)return{x:xa,y:ya,rot:r};
     const [tb,xb,yb]=keys[i],p=(t-ta)/(tb-ta);
-    const lean=spin(i)?0:Math.max(-14,Math.min(14,(xb-xa)*.05));
-    return{x:xa+(xb-xa)*p,y:ya+(yb-ya)*p-h*4*p*(1-p),rot:r+spin(i)*io(p)+lean*Math.sin(Math.PI*p),spinning:Math.abs(spin(i))>=180}}};
-// Lucky: when it lands or rests it can spin a full turn and blink, now and then, not all the time. twirl(t,t0) is a
-// turn that starts at t0; while it spins its eye is turned to one side so the turn shows, then it looks at us again.
-const SPIN='down',twirl=(t,t0,dir=1,dur=.3)=>{const q=(t-t0)/dur;return q<0||q>1?{rot:0,on:false}:{rot:dir*360*io(q),on:true}};
-const blinkAt=(t,...at)=>at.some(b=>t>=b&&t<b+.08);
+    const lean=spin(i)?0:Math.max(-14,Math.min(14,(xb-xa)*.05)),big=Math.abs(spin(i))>=180;
+    return{x:xa+(xb-xa)*p,y:ya+(yb-ya)*p-h*4*p*(1-p),rot:r+(big?0:spin(i)*io(p))+lean*Math.sin(Math.PI*p),turn:big?Math.sign(spin(i))*2*Math.PI*io(p):0}}};
+// Lucky: it turns right round when it arrives at the start of the film and at the end (as one press on the site gives
+// it one full turn), and now and then when it lands or rests, with a blink of its light; not all the time.
+// twirl(t,t0) is that turn, eased as on the site; blinkPh(t,...at) is how far through a blink it is (0: none).
+const twirl=(t,t0,dir=1,dur=.8)=>{const q=(t-t0)/dur;return q<0||q>1?{turn:0,on:false}:{turn:dir*2*Math.PI*q*q*(3-2*q),on:true}};
+const blinkPh=(t,...at)=>{for(const b of at){const q=(t-b)/.3;if(q>0&&q<1)return q}return 0};
+let CH3D_READY=Promise.resolve(false);
+if(MOTION)CH3D_READY=new Promise(res=>{const sc=document.createElement('script');sc.type='module';sc.src='character3d.js';sc.onload=()=>res(window.CH3D?window.CH3D.ready:false);sc.onerror=()=>res(false);document.head.appendChild(sc)});
 window.anim=()=>{};
 if(MOTION)(()=>{
   const AN=[],late=[],add=fn=>AN.push(fn),T=NAME,base=e=>e.style.transform||'';
   if(ALPHA){for(const e of [document.documentElement,document.body,f])e.style.background='transparent';[...f.children].forEach(c=>{c.style.visibility='hidden'})}
-  const ball=ALPHA||/^(We take it|Grid|Chapter word|Fast word|The spine|Logo)/.test(T)?makeBall(T.startsWith('We take it')):null;
+  const ball=ALPHA||/^(We take it|Grid|Chapter word|Fast word|The spine|Logo)/.test(T)?makeBall():null;
   // Words: each becomes its own box so it can arrive on its own.
   const words=[],tn=[],wk=document.createTreeWalker(f,NodeFilter.SHOW_TEXT);
   while(wk.nextNode())if(wk.currentNode.textContent.trim())tn.push(wk.currentNode);
@@ -236,15 +257,16 @@ if(MOTION)(()=>{
   if(T==='Opening line')words.forEach((s,i)=>rise(s,.04+i*BEAT/2,60,.16));
   else if(T.startsWith('We take it')){words.forEach((s,i)=>rise(s,i*.05-.04));
     // It lands above the line, blinks, and the camera dives into its eye.
-    const k=330/720,X=795+359.5*k,Y=90+357*k,D=497*k,LX=X+1.5*k,LY=Y+8*k,path=hops([[BEAT/4,X,Y]],0,0,D);
-    add((t,d)=>{const p=path(t),w=twirl(t,BEAT/4,-1);ball.at(p.x,p.y,D,{rot:p.rot+w.rot,pose:w.on?SPIN:blinkAt(t,.44)?'blink':'front',floor:Y+D/2});
-      const q=clamp((t-.56)/(d-1/30-.56));if(q>0){f.style.transformOrigin=`${LX}px ${LY}px`;f.style.transform=`translate(0,${(540-LY)*io(q)}px) scale(${Math.pow(24,q*q)})`}})}
+    const k=330/720,X=795+359.5*k,Y=90+357*k,D=497*k,LX=X,LY=Y,path=hops([[BEAT/4,X,Y]],0,0,D);
+    add((t,d)=>{const p=path(t),q=clamp((t-.56)/(d-1/30-.56)),z=Math.pow(24,q*q);
+      ball.at(p.x,p.y,D,{rot:p.rot,pose:t>.15&&t<.32?'upleft':'front',blink:blinkPh(t,.33),res:z,floor:Y+D/2});
+      if(q>0){f.style.transformOrigin=`${LX}px ${LY}px`;f.style.transform=`translate(0,${(540-LY)*io(q)}px) scale(${z})`}})}
   else if(T==='Chapter word'){if(showUnder())add(t=>{f.style.clipPath=`circle(${ease(t/.22)*1110}px at 50% 50%)`});
     // It drops in and hops along the words on the eighths, stamping each one in, then springs up and out.
     const L=[BEAT/2,BEAT,BEAT*1.5],D=175;words.forEach(s=>{s.style.opacity=0});
     late.push(()=>{const keys=words.map((s,i)=>{const p=wtop(s);return[L[Math.min(i,2)]+.1*Math.max(0,i-2),p.x,p.y-D/2]}),path=hops(keys,130,.06,D),tl=keys[keys.length-1],t1=tl[0]+.06;
       words.forEach((s,i)=>add(t=>{const dt=t-keys[i][0];s.style.opacity=dt<0?0:1;const q=.55+.45*pop(dt/.16),a=stamp(dt);s.style.transformOrigin='50% 100%';s.style.transform=`scale(${q*(1+a*.4)},${q*(1-a*.6)})`}));
-      add((t,d)=>{if(t<t1){const p=path(t);ball.at(p.x,p.y,D,{...p,pose:blinkAt(t,tl[0]+.01)?'blink':'front'});return}
+      add((t,d)=>{if(t<t1){const p=path(t);ball.at(p.x,p.y,D,{...p,blink:blinkPh(t,tl[0])});return}
         const q=clamp((t-t1)/(d-t1));ball.at(tl[1],tl[2]-(tl[2]+D)*(1-Math.pow(1-q,2)),D,{rot:rock(t-tl[0])+40*q})})})}
   else if(T.startsWith('Fast word')){
     // It bounces on the beat, one word per bounce; after the last it leaves up and to the right.
@@ -257,25 +279,25 @@ if(MOTION)(()=>{
     // It drops in beside the lines and watches each word arrive (a nod each time), then turns to us and winks.
     late.push(()=>{const R=Math.max(...words.map(s=>s.getBoundingClientRect().right)),D=Math.min(260,(1920-R)*.6),X=(R+1920)/2,Y=600,path=hops([[.14,X,Y]],0,0,D);
       add(t=>{const p=path(t);let k=-1;wt.forEach((w,i)=>{if(t>=w)k=i});const nod=k>1?rock(t-wt[k],-1,7):0,line=k<2?0:k<4?1:2;
-        const w=twirl(t,.14,-1),pose=w.on?SPIN:t<.14?'front':t>=1.4?(t>1.48&&t<1.56?'blink':'front'):line<2?'upleft':'down';
-        ball.at(p.x,p.y,D,{rot:p.rot+nod+w.rot,pose,mirror:!w.on&&pose==='down',floor:Y+D/2})})})}
+        const pose=t<.14||t>=1.4?'front':line<2?'upleft':'down';
+        ball.at(p.x,p.y,D,{rot:p.rot+nod,pose,mirror:pose==='down',blink:blinkPh(t,1.42),floor:Y+D/2})})})}
   else if(T==='One partner')words.forEach((s,i)=>rise(s,i<2?i*.05-.06:BEAT+(i-2)*.05,80,.18));
   else if(T.startsWith('Logo')){words.forEach((s,i)=>rise(s,2*BEAT+i*.06,40,.2));
     // It lands on the last hit, reads the call (left, then right), looks back at us and blinks, and hovers.
     const k=260/720,X=830+359.5*k,Y=150+357*k,D=497*k,path=hops([[.1,X,Y],[.3,X,Y]],34,0,D);
-    add(t=>{const p=path(t),bob=t>1.9?6*(1-Math.cos((t-1.9)*7)):0,w=twirl(t,.3),pose=w.on?SPIN:t<.9?'front':t<1.45?'down':blinkAt(t,1.75,2.3)?'blink':'front';
-      ball.at(p.x,p.y-bob,D,{rot:p.rot+w.rot,pose,mirror:t>=.9&&t<1.17,floor:Y+D/2})})}
+    add(t=>{const p=path(t),bob=t>1.9?6*(1-Math.cos((t-1.9)*7)):0,w=twirl(t,.32),pose=t<1.12?'front':t<1.6?'down':'front';
+      ball.at(p.x,p.y-bob,D,{rot:p.rot,turn:w.turn,pose,mirror:t>=1.12&&t<1.36,blink:blinkPh(t,1.85,2.3),floor:Y+D/2})})}
   // Over the stock clips (|alpha): it meets the people. After the opening line the clip opens in our lens circle:
   // the line's last frame is drawn over the clip with a hole that grows from the middle.
   if(ALPHA){
     if(under&&T.includes('488563452')){under.style.display='block';add(t=>{const r=ease(t/.26)*1110;under.style.maskImage=under.style.webkitMaskImage=`radial-gradient(circle at 50% 50%, transparent ${r}px, #000 ${r+.5}px)`})}
     if(T.includes('488563452')){const X=1520,Y=640,D=300;   // she points to her side: it pops up right there, then she turns to look at it and it looks back
       add(t=>{const q=pop((t-.35)/.2);if(q<=0)return ball.hide();const bob=t>.6?5*(1-Math.cos((t-.6)*8)):0;
-        ball.at(X,Y-bob,D*q,{pose:t<.59?SPIN:blinkAt(t,.8)?'blink':t<.98?'front':'upleft',rot:360*(1-ease((t-.35)/.24)),floor:Y+D*q/2})})}
+        const w=twirl(t,.35,1,.7);ball.at(X,Y-bob,D*q,{turn:w.turn,pose:t<1.05?'front':'upleft',floor:Y+D*q/2})})}
     if(T.includes('480737977')){const X=1720,Y=300,D=230,path=hops([.214,.429,.643,.857].map(t=>[t,X,Y]),90,.02,D,{turn:[0,0,360,0]});   // the win: it cheers with him
       add(t=>{const p=path(t);if(p.off)return ball.hide();ball.at(p.x,p.y,D,{...p,pose:'upleft'})})}
     if(T.includes('490354049')){const X=1620,Y=640,D=280,path=hops([[.214,X,Y]],0,.02,D);   // her smile: it lands beside her and looks at her
-      add(t=>{const p=path(t);if(p.off)return ball.hide();const w=twirl(t,.214,-1);ball.at(p.x,p.y,D,{rot:p.rot+w.rot,pose:w.on?SPIN:t<.56?'front':'upleft',floor:Y+D/2})})}
+      add(t=>{const p=path(t);if(p.off)return ball.hide();const w=twirl(t,.214,-1,.6);ball.at(p.x,p.y,D,{rot:p.rot,turn:w.turn,pose:t<.82?'front':'upleft',floor:Y+D/2})})}
   }
   if(!ALPHA){
   // The logo arrives on the last hit: it only fades in (Lucky: its own shape and size, no scaling).
@@ -295,8 +317,13 @@ if(MOTION)(()=>{
   const cards=[...f.querySelectorAll('.card')],pairs=cards.filter(e=>e.classList.contains('pair'));
   if(pairs.length===2){const k=n%3;pairs.forEach((e,i)=>{const b=base(e),from=k===0?[i?560:-560,0]:k===1?[0,i?-460:460]:[0,240],s0=k===2?.82:1,dl=i*.06,dr=i?18:-18;
     add((t,d)=>{const q=pop((t-dl)/IN),kk=t/d;e.style.transform=`translate(${(1-q)*from[0]+dr*kk}px,${(1-q)*from[1]}px) rotate(${(1-q)*(i?9:-9)*(k===2?-1:1)}deg) scale(${s0+(1-s0)*q}) ${b}`;if(k===2)e.style.opacity=clamp((t-dl)/.08)})})}
+  // Cut 5's tiles: they fly in from above and below in turn. Cut 5's duo: one from the left, the other from the right
+  // and below, then they drift apart.
+  cards.filter(e=>e.classList.contains('tile5')).forEach((e,i)=>add((t,d)=>{const q=pop((t-i*.045)/IN),k=t/d;e.style.transform=`translateY(${(1-q)*(i%2?-420:420)}px) rotate(${(1-q)*(i%2?7:-7)}deg) scale(${1+.02*k})`}));
+  cards.filter(e=>e.classList.contains('duo')).forEach((e,i)=>add((t,d)=>{const q=pop((t-i*.07)/IN),k=t/d;
+    e.style.transform=i?`translate(${(1-q)*600+k*24}px,${(1-q)*160+k*10}px) rotate(${(1-q)*8}deg)`:`translate(${(1-q)*-500-k*24}px,${-k*14}px) rotate(${(1-q)*-8}deg)`}));
   // Other cards and fitted pieces: each from its nearest edge, one after another, then they drift outward.
-  const rest=cards.filter(e=>!e.classList.contains('pair')&&!e.classList.contains('tile'));
+  const rest=cards.filter(e=>!['pair','tile','tile5','duo'].some(c=>e.classList.contains(c)));
   if(rest.length>=4)late.push(()=>{const rs=rest.map(e=>e.getBoundingClientRect());   // cut 5's tilted wall: it straightens into place
     rest.forEach((e,i)=>{const r=rs[i],b=base(e),side=r.left+r.width/2<960?1:-1;e.style.transformOrigin=`${960-r.left}px ${540-r.top}px`;
       add((t,d)=>{const q=pop((t-i*.03)/(IN*1.4)),k=t/d;e.style.transform=`rotate(${-9*(1-q)}deg) scale(${1+.22*(1-q)+.02*k}) translateY(${(1-q)*side*260}px) ${b}`})})});
@@ -312,7 +339,7 @@ if(MOTION)(()=>{
     tiles.forEach((e,i)=>{const col=i%3,dl=col*.04+Math.floor(i/3)*.02,dy=col%2?700:-700,ims=[...e.querySelectorAll('img')],cx=parseFloat(e.style.left)+parseFloat(e.style.width)/2;
       e.style.transformOrigin=`${960-parseFloat(e.style.left)}px ${540-parseFloat(e.style.top)}px`;
       add(t=>{const q=pop((t-dl)/IN);e.style.transform=`rotate(${-8*(1-q)}deg) translateY(${(1-q)*dy}px)`;const s=Math.min(ims.length-1,t<.26?0:bx(t)+D*.3<cx?1:2);ims.forEach((im,j)=>{im.style.display=j===s?'block':'none'})})});
-    add(t=>{if(t<.3||t>.76)return ball.hide();ball.at(bx(t),540-Math.sin(clamp((t-.3)/.45)*Math.PI)*40,D,{pose:SPIN,rot:360*clamp((t-.3)/.45)})})}
+    add(t=>{if(t<.3||t>.76)return ball.hide();ball.at(bx(t),540-Math.sin(clamp((t-.3)/.45)*Math.PI)*40,D,{pose:'fly',rot:6,trail:1})})}
   else if(tiles.length){tiles.forEach(e=>{e.style.transformOrigin=`${960-parseFloat(e.style.left)}px ${540-parseFloat(e.style.top)}px`});
     add((t,d)=>{const q=io(t/(d*.85));tiles.forEach((e,i)=>{const col=i%3;e.style.transform=`rotate(${-9*(1-q)}deg) scale(${1+.6*(1-q)}) translateY(${(col%2?-1:1)*160*(1-q)}px)`})})}
   // Pieces of a flat-colour image: a row springs up one after another; a single piece takes one of three entrances.
@@ -320,6 +347,14 @@ if(MOTION)(()=>{
   if(pcs.length>1)pcs.forEach((e,i)=>{const dy=i%2?-460:460,dl=i*.05,dr=(i-(pcs.length-1)/2)*8;add((t,d)=>{const q=pop((t-dl)/IN),k=t/d;e.style.transform=`translate(${dr*k}px,${(1-q)*dy}px) rotate(${(1-q)*(i%2?-7:7)}deg) scale(${.94+.06*q})`})});
   if(pcs.length===1){const e=pcs[0],k=n%3;add((t,d)=>{const q=pop(t/IN),kk=t/d;
     e.style.transform=k===0?`translateY(${(1-q)*380}px) rotate(${(1-q)*4}deg) scale(${(.9+.1*q)*(1+.025*kk)})`:k===1?`scale(${(1.2-.2*ease(t/.26))*(1+.02*kk)})`:`translateX(${(1-q)*640}px) scale(${1+.02*kk})`})}
+  // Cut 5's walls: the columns slide past one another. Cut 5's rows: the row slides across, each piece popping up or
+  // down into place.
+  const mcols=[...f.querySelectorAll('.mcol')];
+  if(mcols.length)late.push(()=>{const bs=mcols.map((c,i)=>mbase(c,i));add((t,d)=>{const p=t/d;mcols.forEach((c,i)=>{c.style.transform=`translateY(${bs[i]+(i%2?1:-1)*(p-.5)*900}px)`})})});
+  const mrow=f.querySelector('.mrow');
+  if(mrow){const rot=+mrow.dataset.rot||0,ph=[...mrow.children];late.push(()=>{const tw=mrow.scrollWidth;add((t,d)=>{const p=t/d;
+    mrow.style.transform=`translateX(${60+(1920-tw-80)*io(p)}px) rotate(${rot}deg)`;
+    ph.forEach((e,i)=>{const q=pop((t-i*.025)/IN);e.style.transform=`translateY(${(1-q)*(i%2?220:-220)}px) rotate(${(1-q)*(i%2?8:-8)}deg)`})})})}
   // Full frames take turns. Wipe, lens and push reveal it over the last frame of the shot before.
   const cover=f.querySelector('img.cover');
   if(cover){const mode=(under?['zoom','wipe','hold','iris','zoom','push']:['zoom','hold'])[n%(under?6:2)];
@@ -331,5 +366,5 @@ if(MOTION)(()=>{
   }
   window.anim=(t,d)=>{late.splice(0).forEach(fn=>fn());AN.forEach(a=>a(t,d))};
 })();
-window.ready=Promise.all([...document.images].map(i=>i.decode().catch(()=>console.log('MISSING '+i.src)))).then(()=>document.fonts.ready).then(()=>{0});
+window.ready=Promise.all([...document.images].map(i=>i.decode().catch(()=>console.log('MISSING '+i.src)))).then(()=>document.fonts.ready).then(()=>CH3D_READY).then(()=>{LAYOUT.forEach(fn=>fn())});
 </script></body></html>

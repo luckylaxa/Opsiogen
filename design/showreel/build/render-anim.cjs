@@ -7,7 +7,8 @@ const { chromium } = require('playwright');
 const path = require('path'), fs = require('fs');
 (async () => {
   const J = JSON.parse(fs.readFileSync(process.argv[2]));
-  const b = await chromium.launch({ args: ['--allow-file-access-from-files'] });
+  // WebGL in software, for our 3D character (character3d.js).
+  const b = await chromium.launch({ args: ['--allow-file-access-from-files', '--use-gl=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
   const p = await b.newPage({ viewport: { width: 1920, height: 1080 } });
   p.on('console', (m) => { if (m.text().startsWith('MISSING')) console.log(m.text()); });
   p.on('pageerror', (e) => console.log('ERR', e.message));

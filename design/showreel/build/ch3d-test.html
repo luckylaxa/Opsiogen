@@ -1,0 +1,11 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>html,body{margin:0;width:1920px;height:400px;background:#0a090d}canvas{width:300px;height:300px;float:left}</style>
+<script type="importmap">{"imports":{"three":"../../../node_modules/three/build/three.module.js","three/addons/":"../../../node_modules/three/examples/jsm/"}}</script>
+<script type="module" src="character3d.js"></script>
+</head><body>
+<script>
+window.go=async()=>{await CH3D.ready;const out=[];const t0=performance.now();
+  const states=[{},{yaw:Math.PI/2},{yaw:Math.PI},{yaw:3*Math.PI/2},{yaw:-0.9,pitch:-0.35,look:[-1,-.6]},{blink:0.4}];
+  for(const st of states){const c=document.createElement('canvas');c.width=600;c.height=600;document.body.appendChild(c);CH3D.draw(c,st)}
+  return (performance.now()-t0)/states.length};
+</script></body></html>

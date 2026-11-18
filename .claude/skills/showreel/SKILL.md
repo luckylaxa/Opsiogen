@@ -177,9 +177,13 @@ The motion language is in `design/showreel/EDIT-PLAN.md` ("Cut 7"). Everything b
    laid over the stock clips it joins (`OVER` in film.py). Stock clips get a punch-in, or the push up after a
    chapter card. Cuts land on the 140 bpm beat and `track.py` puts the track's last hit on the logo.
 3. The character: `character.cjs` cuts its poses from the live Home hero into `a/ch-*.png` (never redrawn);
-   `ball.py` splits each into the ball and its glow, all one size (`a/ball-*.png`), so it can hop, squash and look
-   around. `pieces.py` finds the separate pieces in flat-colour images (`a/pieces.js`) so each can move on its own.
-   `build/a` is not in git; these scripts rebuild it.
+   `ball.py` splits each into the ball and its glow, all one size (`a/ball-*.png`). Since cut 10 the moving shots
+   draw it live from the hero's 3D model instead (`character3d.js` loads `public/home/character.glb` with three.js
+   from `node_modules`, with the hero's studio, lights and materials): it turns right round, tilts, looks about and
+   blinks its light, and never changes shape. `ch3d-test.html` draws six poses side by side as a quick check.
+   `pieces.py` finds the separate pieces in flat-colour images (`a/pieces.js`) so each can move on its own;
+   `screens.py` lifts the screens out of the latest case-study designs (`a/scr-*.jpg`, `a/screens.js`) for the
+   single-screen shots, pairs and walls. `build/a` is not in git; these scripts rebuild it.
 
 ## What to deliver
 
@@ -192,7 +196,7 @@ The motion language is in `design/showreel/EDIT-PLAN.md` ("Cut 7"). Everything b
 The Work page reel is the `showreel` section in `src/content/seed-data.ts`:
 `/work/showreel.mp4`, `/work/showreel.webm` and the poster `/work/showreel.jpg` (1920 x 1080, with
 alt text). Since 18 Nov (Lucky: "for time being you can put this video in website") it is the whole
-showreel with its music (now cut 9): the card plays it muted and shows a sound button (`sound: true`), and is
+showreel with its music (now cut 10): the card plays it muted and shows a sound button (`sound: true`), and is
 16:9 on phones too, so no edge of the film is cut. Web copies: H.264 CRF 26 with AAC (about 19 MB)
 and VP9 CRF 36 with Opus (about 20 MB). The poster is the burst grid with our character facing us.
 To change it, replace the three files under the same names (add mode swaps a re-made video card
