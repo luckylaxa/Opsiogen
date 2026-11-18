@@ -10,7 +10,12 @@ BAR = 60 / 140 * 4
 T0 = 1.726        # the track's first beat (after its one quiet bar)
 HIT = 28.723      # the track's last hit
 DUR, LOGO = cut["dur"], cut["cuts"][-1]
-JOIN = round(22.3 / BAR) * BAR            # where the repeat starts, in film time: a bar line inside the "We brand it" card
+# Where the repeat starts, in film time: a bar line the track can reach from both sides, as near a chapter card as there is.
+lo, hi = LOGO - (HIT - T0), 26.9
+words = [c for c, k in zip(cut["cuts"], cut["kinds"]) if k == "word"]
+bars = [n * BAR for n in range(40) if lo <= n * BAR <= hi]
+assert bars, "the film is too long for one repeat of the track"
+JOIN = min(bars, key=lambda b: min(abs(b - w) for w in words))
 second = HIT - (LOGO - JOIN)              # where in the track the repeat picks up
 assert abs((second - T0) / BAR - round((second - T0) / BAR)) < 0.02, "the repeat must start on a bar line"
 i = lambda t: int(round(t * SR))

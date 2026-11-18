@@ -16,6 +16,7 @@ for client, pre, key, inset in [('bigtapp', 'bigtapp', 'bt', 16), ('cabot-soluti
 for f in sorted(glob.glob('../tiles/out/figma-brand/tile-*.jpg')):
     if 'phone' not in f: put('tv-' + os.path.basename(f)[5:-4], f)
 for f in sorted(glob.glob('../case-studies/afthab-tours/wall/*.jpg')): put('af-' + os.path.basename(f)[:-4], f, 1080)
+for f in sorted(glob.glob('raw/vaelo/*.png')): put('va-' + os.path.basename(f)[:-4], f, 2400)   # the car brand
 import shutil
 for f in sorted(glob.glob('raw/character/keep/*.png')):  # our character, with no background
     shutil.copy(f, out + os.path.basename(f)); man[os.path.basename(f)[:-4]] = [720, 720]

@@ -87,13 +87,21 @@ function cols(dur,columns,bg,o={}){add(dur,root=>{root.style.background=bg;const
 function poster(dur,k,bg,o={}){add(dur,root=>{root.style.background=bg;const [iw,ih]=MAN[k];const h=Math.min(o.h||900,ih),w=h*iw/ih;const b=box(k,root,w,W/2,H/2,18);
   return p=>{b.style.transform=`scale(${lerp(1.07,1,ease(p*3))}) rotate(${o.rot||0}deg)`}})}
 
+// One picture filling the screen (only for pictures at least as large as the screen).
+function full(dur,k){add(dur,root=>{root.style.background=COAL;const [iw,ih]=MAN[k];const sc=Math.max(W/iw,H/ih),w=iw*sc,h=ih*sc;const i=img(k,root,w,h,{position:'absolute',left:(W-w)/2+'px',top:(H-h)/2+'px'});
+  return p=>{i.style.transform=`scale(${lerp(1.06,1,ease(p*1.6))})`}})}
+
+// A website and its phone app side by side.
+function webapp(dur,kw,kp,bg){add(dur,root=>{root.style.background=bg;const a=box(kw,root,cap(kw,1240),760,H/2),b=box(kp,root,cap(kp,390),1640,H/2,44);
+  return (p,tt)=>{const q=pop(tt/IN),r=pop((tt-.07)/IN);a.style.transform=`translateX(${(1-q)*-900}px)`;b.style.transform=`translateY(${(1-r)*900}px)`}})}
+
 // Three landscape ads stepping in.
 function stack(dur,keys,bg){add(dur,root=>{root.style.background=bg;const items=keys.map((k,i)=>box(k,root,cap(k,720),520+i*440,300+i*240,14));
   return (p,tt)=>{items.forEach((b,i)=>{const q=pop((tt-i*.07)/IN);b.style.transform=`translateX(${(1-q)*(i%2?1100:-1100)}px)`})}})}
 
 // The closing: the words over a wall of the work, one line, then our logo exactly as it is.
 function closing(columns){
-  add(2.3,root=>{root.style.background=COAL;const n=columns.length,gap=22,cw=430;const wall=el('div','abs',root,{left:W/2+'px',top:H/2+'px'});
+  add(2.5,root=>{root.style.background=COAL;const n=columns.length,gap=22,cw=430;const wall=el('div','abs',root,{left:W/2+'px',top:H/2+'px'});
     const cs=columns.map((keys,ci)=>{const c=el('div','abs',wall,{left:(ci-(n-1)/2)*(cw+gap)-cw/2+'px',width:cw+'px'});let y=0;keys.concat(keys).forEach(k=>{const [iw,ih]=MAN[k];const h=cw*ih/iw;const b=el('div','',c,{width:cw+'px',height:h+'px',marginBottom:gap+'px',borderRadius:'14px',overflow:'hidden'});img(k,b,cw,h);y+=h+gap});return {c,half:y/2}});
     const shade=el('div','abs',root,{width:W+'px',height:H+'px',background:COAL,opacity:.7});
     const bx=el('div','abs',root,{width:W+'px',height:H+'px',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'});
@@ -103,7 +111,7 @@ function closing(columns){
     return (p,tt)=>{wall.style.transform=`rotate(-9deg) scale(${lerp(1.25,.9,io(p))})`;cs.forEach(({c,half},i)=>{c.style.transform=`translateY(${-half*.5-(i%3)*80+(i%2?1:-1)*(p-.5)*300-H*.25}px)`});
       const q1=ease(tt/.22);l1.style.transform=`translateY(${(1-q1)*70}px)`;l1.style.opacity=q1;
       ws.forEach((s,i)=>{const q=ease((tt-.35-i*.26)/.2);s.style.transform=`translateY(${(1-q)*60}px)`;s.style.opacity=q})}});
-  add(1.07,root=>{root.style.background=COAL;const a=el('div','big',root,{color:PAPER,fontSize:'150px'});a.textContent='One partner.';const b=el('div','big',root,{color:AQUA,fontSize:'150px',marginTop:'14px'});b.textContent='Every digital need.';
+  add(1.3,root=>{root.style.background=COAL;const a=el('div','big',root,{color:PAPER,fontSize:'150px'});a.textContent='One partner.';const b=el('div','big',root,{color:AQUA,fontSize:'150px',marginTop:'14px'});b.textContent='Every digital need.';
     return (p,tt)=>{const q=ease(tt/.2);a.style.transform=`translateX(${(1-q)*-700}px)`;a.style.opacity=q;const r=ease((tt-.07)/.2);b.style.transform=`translateX(${(1-r)*700}px)`;b.style.opacity=r}},true);
   add(2.6,root=>{root.style.background=COAL;const ch=character(root,250,W/2,300,'front2');
     // The logo keeps its own shape: its real size, no scaling or turning, only fading in.
@@ -116,7 +124,7 @@ function build(){
   // Teaser: eight flashes, one from each kind of work.
   const f=.2;
   trio(f,['omg-17','omg-16','omg-19'],PINK,true);screen(f,'bt-01',COAL,{from:0});tiles(f,['sl-05'],BLUE,{w:900});poster(f,'af-az1',SUN);
-  screen(f,'surgo-03',COAL,{from:0});tiles(f,['nc-13'],ORANGE,{w:900});screen(f,'tv-identity','#17171c',{from:0,w:1300});poster(f,'af-ad-ge',VIOLET);
+  full(f,'va-hero');tiles(f,['nc-13'],ORANGE,{w:900});screen(f,'tv-identity','#17171c',{from:0,w:1300});poster(f,'af-ad-ge',VIOLET);
 
   word(.95,'We design it.',VIOLET);
   msg(.7,'AI Product Design','& Design Systems',COAL,VIOLET);
@@ -133,6 +141,7 @@ function build(){
   duo(.55,'care-03','care-10',AQUA);
   screen(.5,'surgo-04','#0f2a1e');
   screen(.5,'rx-07',ORANGE);
+  webapp(.6,'va-web','va-app','#0e3d2b');
   cols(1.15,[['rx-05','mf-05','care-06','surgo-04'],['mf-06','care-03','surgo-06','rx-07'],['care-10','surgo-01','rx-09','mf-08'],['surgo-08','rx-10','mf-10','care-07']],'#101016',{rot:-8});
 
   word(.95,'We build it.',AQUA);
@@ -144,10 +153,15 @@ function build(){
   duo(.55,'ev-08','ev-10',SUN);
   screen(.45,'cb-08','#0b1020');
   duo(.55,'cn-04','bt-10',VIOLET);
+  msg(.7,'AI','Automation',COAL,BLUE);
+  screen(.85,'va-auto','#0e3d2b',{w:1400});
 
   word(.95,'We brand it.',ORANGE);
   msg(.7,'AI Brand','Services',COAL,ORANGE);
   for(const k of ['tv-strategy','tv-identity','tv-guidelines','tv-assets','tv-rollout'])screen(.42,k,'#17171c',{w:1600,from:200});
+  full(.85,'va-hero');
+  screen(.45,'va-brand','#0e3d2b');
+  screen(.45,'va-badge','#141418');
   tiles(.6,['sl-05','sl-02','sl-09'],'#0f1120');
   tiles(.6,['nc-13','nc-02','nc-04'],BLUE);
   tiles(.6,['rs-09','rs-03','rs-12'],'#101418');
@@ -163,10 +177,11 @@ function build(){
   [['af-ad-ge',SUN],['af-az4',PINK],['af-li-a3',AQUA],['af-fdA',VIOLET],['af-ad-mv',ORANGE],['af-sq-az',LIME],['af-li-b2',BLUE],['af-az6',PINK]].forEach(([k,c],i)=>poster(.22,k,c,{rot:i%2?2:-2}));
   msg(.7,'Digital','Marketing',COAL,LIME);
   stack(.75,['af-ls-az','af-ls-ge','af-ls-th'],'#141418');
+  screen(.45,'va-billboard','#0e3d2b');
   tiles(.55,['af-ad-th','af-ad-az','af-ad-al','af-ad-all'],PINK,{w:400,rad:14});
-  [['af-sq-th',AQUA],['af-968_35',SUN],['af-escape',VIOLET],['af-plan',ORANGE]].forEach(([k,c],i)=>poster(.22,k,c,{rot:i%2?-2:2}));
+  [['va-post','#0e3d2b'],['af-sq-th',AQUA],['va-poster','#141418'],['af-968_35',SUN],['va-story','#0e3d2b'],['af-plan',ORANGE]].forEach(([k,c],i)=>poster(.22,k,c,{rot:i%2?-2:2}));
 
-  closing([['omg-16','bt-01','af-az1','sl-05','mf-03'],['cn-01','af-ad-ge','rx-02','nc-13','omg-09'],['tv-identity','care-02','ev-01','af-s1','rs-09'],['surgo-03','cbb-03','omg-17','cb-01','af-ad-th'],['af-li-a2','sl-02','bt-04','omg-01','tv-rollout'],['rs-12','mf-06','af-plan','cn-05','care-06']]);
+  closing([['omg-16','bt-01','af-az1','sl-05','mf-03'],['cn-01','af-ad-ge','rx-02','nc-13','omg-09'],['tv-identity','care-02','ev-01','af-s1','rs-09'],['va-post','cbb-03','omg-17','va-brand','af-ad-th'],['af-li-a2','sl-02','bt-04','omg-01','tv-rollout'],['rs-12','mf-06','af-plan','cn-05','care-06']]);
 }
 window.setT=t=>{for(const s of scenes){const on=t>=s.t0&&t<s.t1;s.root.style.display=on?(s.root.dataset.flex?'flex':'block'):'none';if(on){const tt=t-s.t0;s.draw(tt/(s.t1-s.t0),tt)}}};
 window.ready=(async()=>{build();window.DUR=T;window.CUTS=scenes.map(s=>+s.t0.toFixed(4));window.Q=Q;window.KINDS=scenes.map(s=>s.kind);await document.fonts.load('700 100px Outfit');await document.fonts.ready;

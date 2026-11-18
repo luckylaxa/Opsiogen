@@ -134,6 +134,13 @@ track's first beat, repeats once on a bar line and puts the track's last hit on 
 length, the logo must start 6 half-beats past a bar (track.py stops if it does not). The music tools had no
 credits, so no generated track was used.
 
+## The car brand (18 Nov)
+
+Lucky asked for "the new car work" in the film: Vaelo, our made-up car brand from the Home journey designs
+(Figma `U7fxv5ipzHrCeX7kmJf2bv`, exports in `design/showreel/raw/vaelo`). It runs through all four chapters
+and gives "AI Automation" its picture (the test-drive booking flow). Like Torvi, it is our design work and
+is never labelled as a client.
+
 ## What to deliver
 
 1. The 60-second film with sound.
