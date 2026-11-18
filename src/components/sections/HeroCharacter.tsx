@@ -118,8 +118,8 @@ export function HeroCharacter({ className }: { className?: string }) {
           fl.style.rotate = `${Math.atan2(Math.sin(pose[1]), Math.sin(pose[0]))}rad`;
           Array.from(fl.children).forEach((beam, n) => {
             (beam as HTMLElement).animate(
-              [{ scale: "0 0.6", opacity: 0.95 }, { scale: "1 1", opacity: 0.9, offset: 0.3 }, { scale: "1 1", opacity: 0.8, offset: 0.6 }, { scale: "1.06 1.1", opacity: 0 }],
-              { duration: 1100, delay: n * 60, easing: "cubic-bezier(0.2,0.8,0.2,1)" },
+              [{ scale: "0 0.6", opacity: 0.95 }, { scale: "1 1", opacity: 0.9, offset: 0.3 }, { scale: "1 1", opacity: 0.9, offset: 0.7 }, { scale: "1.06 1.1", opacity: 0 }],
+              { duration: 1700, delay: n * 60, easing: "cubic-bezier(0.2,0.8,0.2,1)" },
             );
           });
         }
@@ -295,17 +295,17 @@ export function HeroCharacter({ className }: { className?: string }) {
       <span data-flash aria-hidden="true" className="pointer-events-none absolute z-10 block size-0">
         {/* A soft cone of light, narrow at the eye and wider as it goes, in our colours; then a bright core down its middle. */}
         <span
-          className="absolute top-0 left-0 block h-[calc(var(--w)*0.95)] w-[calc(var(--w)*1.9)] origin-left opacity-0 blur-[6px]"
+          className="absolute top-0 left-0 block h-[calc(var(--w)*1.5)] w-[calc(var(--w)*2.4)] origin-left opacity-0 blur-[10px]"
           style={{
             translate: "0 -50%",
             background: "linear-gradient(180deg, #35d4ff 8%, #5a7dff 28%, #b667ff 50%, #ff5fb4 72%, #ff9a3c 92%)",
-            clipPath: "polygon(0 44%, 100% 0, 100% 100%, 0 56%)",
-            maskImage: "linear-gradient(90deg, #000 0%, rgb(0 0 0 / 0.75) 45%, transparent 100%)",
-            WebkitMaskImage: "linear-gradient(90deg, #000 0%, rgb(0 0 0 / 0.75) 45%, transparent 100%)",
+            clipPath: "polygon(0 40%, 100% 0, 100% 100%, 0 60%)",
+            maskImage: "linear-gradient(90deg, #000 0%, rgb(0 0 0 / 0.85) 55%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(90deg, #000 0%, rgb(0 0 0 / 0.85) 55%, transparent 100%)",
           }}
         />
         <span
-          className="absolute top-0 left-0 block h-[calc(var(--w)*0.22)] w-[calc(var(--w)*1.3)] origin-left opacity-0 blur-[5px]"
+          className="absolute top-0 left-0 block h-[calc(var(--w)*0.5)] w-[calc(var(--w)*1.7)] origin-left opacity-0 blur-[5px]"
           style={{
             translate: "0 -50%",
             background: "linear-gradient(90deg, rgb(255 255 255 / 0.85) 0%, rgb(255 255 255 / 0.28) 45%, transparent 100%)",
