@@ -167,8 +167,10 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   into the approved grid (3 beats); some Oh My Glam trios slide in as cut 5's row; a browser comes from the left and
   its phone from below. The character moves as in cut 8 and, when it lands or rests, spins a full turn (its eye turned
   to one side while it spins, so the turn shows) and blinks: on "We take it from here.", beside the two women, on the
-  spine and on the logo; one cheer beside the man spins, and it rolls once through the grid. The opening clip starts on
-  the woman's laugh to camera (3.7 s), not her turn.
+  spine and on the logo; one cheer beside the man spins, and it rolls once through the grid. The opening woman turning
+  to camera is out (Lucky: "her turn. It's not good"): he picked a woman on a pink wall who points to her side
+  (Adobe Stock 488563452, from 1.2 s, 3 beats); our character pops up where she points, she turns to look at it and it
+  looks back at her.
 - The logo only fades in (its own shape and size). Nothing is shown larger than its own size: the dive uses a
   close-up capture of the character (`a/ch-front-hd.png`).
 

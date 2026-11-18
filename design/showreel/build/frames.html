@@ -57,7 +57,7 @@ const caption=(t,c=PAPER)=>{const d=el('div','abs',f,{left:'90px',bottom:'80px',
 
 const SHOTS=[
 ['Open', 'Opening line', ()=>type(COAL,[[['You bring the ',700,PAPER],['idea.',700,AQUA]]],150)],
-['Open', 'Stock: her smile, the idea (Adobe Stock 556948644)', ()=>full(S+'stock/stills/woman-turn.jpg')],
+['Open', 'Stock: she points at our character (Adobe Stock 488563452)', ()=>full(S+'stock/stills/point.jpg')],
 ['Open', 'We take it from here, the character', ()=>{type(COAL,[[['We take it ',700,PAPER],['from here.',700,PAPER]]],130);img(A+'ch-front.png',f,{position:'absolute',width:'330px',left:'795px',top:'90px'})}],
 ['Burst', 'Three apps, three projects', ()=>{bg(LIME);phone(A+'mf-m1.jpg',330,150,400,-4);phone(A+'omg-08.jpg',760,110,400,0);phone(A+'va-app.jpg',1190,150,400,4)}],
 ['Burst', 'Grid of the work, reshuffles twice', ()=>wall(['Oh My Glam','Vaelo: site','Service artwork: product','Website 1','Vaelo: billboard','Campaigns','Website 3','Service artwork: social','Service artwork: print'],3,12,
@@ -268,10 +268,10 @@ if(MOTION)(()=>{
   // Over the stock clips (|alpha): it meets the people. After the opening line the clip opens in our lens circle:
   // the line's last frame is drawn over the clip with a hole that grows from the middle.
   if(ALPHA){
-    if(under&&T.includes('556948644')){under.style.display='block';add(t=>{const r=ease(t/.26)*1110;under.style.maskImage=under.style.webkitMaskImage=`radial-gradient(circle at 50% 50%, transparent ${r}px, #000 ${r+.5}px)`})}
-    if(T.includes('556948644')){const X=1640,Y=600,D=300;   // she has the idea: it pops up beside her and turns to look at her
-      add(t=>{const q=pop((t-.3)/.2);if(q<=0)return ball.hide();const bob=t>.55?5*(1-Math.cos((t-.55)*8)):0;
-        ball.at(X,Y-bob,D*q,{pose:t<.54?SPIN:t<.62?'front':'upleft',rot:360*(1-ease((t-.3)/.24)),floor:Y+D*q/2})})}
+    if(under&&T.includes('488563452')){under.style.display='block';add(t=>{const r=ease(t/.26)*1110;under.style.maskImage=under.style.webkitMaskImage=`radial-gradient(circle at 50% 50%, transparent ${r}px, #000 ${r+.5}px)`})}
+    if(T.includes('488563452')){const X=1520,Y=640,D=300;   // she points to her side: it pops up right there, then she turns to look at it and it looks back
+      add(t=>{const q=pop((t-.35)/.2);if(q<=0)return ball.hide();const bob=t>.6?5*(1-Math.cos((t-.6)*8)):0;
+        ball.at(X,Y-bob,D*q,{pose:t<.59?SPIN:blinkAt(t,.8)?'blink':t<.98?'front':'upleft',rot:360*(1-ease((t-.35)/.24)),floor:Y+D*q/2})})}
     if(T.includes('480737977')){const X=1720,Y=300,D=230,path=hops([.214,.429,.643,.857].map(t=>[t,X,Y]),90,.02,D,{turn:[0,0,360,0]});   // the win: it cheers with him
       add(t=>{const p=path(t);if(p.off)return ball.hide();ball.at(p.x,p.y,D,{...p,pose:'upleft'})})}
     if(T.includes('490354049')){const X=1620,Y=640,D=280,path=hops([[.214,X,Y]],0,.02,D);   // her smile: it lands beside her and looks at her
