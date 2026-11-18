@@ -105,7 +105,7 @@ the reference's words ("shareable" and others) are never used.
 
 ## Final shots (18 Nov, for approval)
 
-Figma page "03 · Final shots (for approval)" holds all 95 shots (v11) in film order, made by `build/frames.html`
+Figma page "03 · Final shots (for approval)" holds all 99 shots (v12) in film order, made by `build/frames.html`
 (`node build/frames.cjs OUT` saves them). Stock video in five places only, all Pexels (free licence, no credit):
 see `stock/picks.tsv`. The full list of options Lucky's other chat found is the "Showreel stock picks" sheet
 (claude.ai artifact PWZnZi5xDTJn2p9YcVqxzc). The clips live in `raw/stock` (not in git), stills in `raw/stock/stills`.
@@ -131,6 +131,10 @@ onto the mockup's own colour (`build/a/s-*.jpg`). No Afthab in the campaign shot
 
 **v10 (18 Nov):** Lucky: "all models are looking into mobile and laptop". Stock now shows different moments: a smile
 to camera, a win, sketching, arms open, a high five, laughter; only three clips with a screen.
+
+**v12 (18 Nov):** Lucky: add life moments (family, laughing, travel) as the story needs. Each sits next to the work it
+belongs to: cycling before Torvi, the open road before Vaelo, family before the health apps, the beach before the
+travel and property sites. No posed studio gestures repeated (no second fists-up, no thumbs-up, no arms-open).
 
 ## Stock picks (one or two people only)
 
