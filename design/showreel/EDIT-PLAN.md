@@ -105,6 +105,11 @@ the reference's words ("shareable" and others) are never used.
 
 ## Stock picks (free Adobe Stock, one or two people only)
 
+**Lucky, 18 Nov:** stock only in a few places, where the story needs it. Minimal, modern, high standard, no
+old-looking footage. Smiling or laughing people, to bring emotion. Kept from the first set: S03 and S04 only.
+Six story moments at most: Open (S03), Design (P1), Build (P2), Launch (S04, P3), Close (P4). Pexels and
+Pixabay are blocked in this session's network, so Adobe Stock is the source.
+
 `stock/picks.tsv` lists them: code, Adobe Stock ID, what it shows, where it goes. They are free-tier picks,
 licensed through the Adobe connector (`asset_license_and_download_stock`) only once Lucky approves them.
 Previews: the stock preview images are blocked in this session's network, so Lucky checks them by ID on

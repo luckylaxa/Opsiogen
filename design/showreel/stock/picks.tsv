@@ -1,21 +1,11 @@
-S01	593385572	Designer choosing colours on laptop at desk	open: idea moment
-S03	303759063	Hands scrolling a social feed on a phone	launch: social
-S04	616494463	Finger scrolling a phone in blue and purple neon	launch: social
-S05	530830815	Woman applying lipliner (vertical)	design: Oh My Glam
-S06	187869331	Tracking shot of a cyclist on a country road	brand: Torvi
-S07	501863357	Rider on a road bike at sunrise	brand: Torvi
-S08	487956977	Man driving along the coast at golden hour	brand: Vaelo
-S09	129840224	Aerial of a black car on a coast road	brand: Vaelo
-S10	150984186	Doctors looking at a tablet together	design: RxLive / Care Connect
-S11	840957682	Clinician walking a hallway reading a tablet (vertical)	design: Care Connect
-S12	199349305	Traveller with a suitcase at the airport	launch: Afthab
-S14	241402476	Printing press printing a brochure, close up	brand: print
-S15	243142898	Large digital printer printing sheets	brand: print
-S18	502785244	Circuit board with components, macro	brand: SandLogic / Norsecom
-S19	334606876	Camera flying over a blue motherboard	brand: SandLogic
-S20	669757610	Hand setting up a video camera in a studio	video
-S21	690411100	Filmmaker holding a camera	video
-S22	624030919	Infinity pool in Bali	build: Carlton Noble / Engel & Volkers
-S23	509973436	Sunset over an infinity pool at a resort	build: Carlton Noble
-S24	408622896	Video call meeting at home	design: Meetingful
-S25	407354801	Two people in a remote meeting	design: Meetingful
+code	adobe_stock_id	shows	where	status
+S03	303759063	hands scrolling a phone by a window	Open, under "You bring the idea."	liked by Lucky
+S04	616494463	pink and purple neon phone scroll	Launch, before the social work	liked by Lucky
+P1	361294477	woman smiling at her phone, close	Design, match cut into the app screen	for review
+P2	375873286	man smiling at his laptop	Build, before the website artboards	for review
+P3	553262891	girl lit by her phone at night, smiling	Launch, next to S04	for review
+P4	542318615	two people laughing at a laptop	Close, before "Let's make yours."	for review
+A1	410028326	woman smiling at phone in an office	alternate for P1	for review
+A2	397847459	woman laughing on pink	alternate, chapter word	for review
+A3	601498110	woman smiling on violet	alternate, chapter word	for review
+A4	398144840	man smiling at laptop, home office	alternate for P2	for review
