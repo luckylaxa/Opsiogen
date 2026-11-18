@@ -1604,7 +1604,7 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
       width: 2400,
       height: 2400,
       // Low enough that the phone has room above it in the wide crop.
-      hotspot: { x: 0.5, y: 0.24 },
+      hotspot: { x: 0.5, y: 0.15 },
     },
     [
       "A lipstick product page with shades seen on you",

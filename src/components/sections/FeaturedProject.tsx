@@ -21,7 +21,7 @@ export function FeaturedProject({ project, priority = true }: { project?: Projec
   const tags = project.services.map((s) => s.shortName).join(" · ");
   return (
     <article data-dock="/work" className="on-dark group relative mx-edge overflow-hidden rounded-card bg-night text-white">
-      <div className="pt-[clamp(12px,11.9%,223px)]">
+      <div className="pt-[clamp(12px,3%,48px)]">
         <div className="relative aspect-[4/3] overflow-hidden bg-night sm:aspect-video">
           <CoverMedia
             image={{ ...project.cover, hotspot: project.cover.hotspot ?? COVER_FOCUS[project.slug] }}
