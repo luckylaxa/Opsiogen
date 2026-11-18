@@ -76,6 +76,15 @@ Fix the exact client shot list in the storyboard from each case study's category
 
 ## Where the shots come from
 
+**Use the clean set first.** On 18 Nov Lucky asked for a separate Figma file for the video with every
+case study design and no case study text: https://www.figma.com/design/IvBwN7mWNV3Tiod6BcZ1WT
+("Opsiogen · Showreel designs", one section per chapter, one frame per client, 202 designs, no text
+layers). `design/showreel/clean.py` makes the same set from `public/work/` (it cuts away the label
+panels and the client name above each screen); Afthab's frames without their headings come from
+`design/case-studies/afthab-tours/mock-notext.html` (`render-notext.cjs`). The storyboard is
+`design/showreel/storyboard.html` (shots in `shots.json`).
+
+
 - Case studies: `public/work/<client>/` (gallery mockups, and `<client>-flow.mp4` /
   `-flow-phone.mp4` screen walkthroughs, about 17 seconds each).
 - Service tiles and covers: `public/services/<slug>/` (`tile-*.jpg`, `page.jpg`, `card.jpg`).
