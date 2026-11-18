@@ -204,6 +204,10 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   (`svc-*`) showed their tiles' own colour round the phones' and cards' rounded corners, and down one side of the
   Ask People phone: `clean_panels.py` paints those pixels in the frame's colour. Every screen, phone and card now
   stands cleanly on its colour.
+- **Cut 12.** Lucky on cut 11: "i see white doted lines in logo in end card. rest everything looks awesome. no
+  words. after this fix you can post in website and give full view icon to experience in full view." The O's colour
+  now comes only from well inside its edge in the large PNG, so its soft, uneven edge pixels no longer show as a dotted
+  line once the logo is large; the vector outline makes the edge. The Work page card has a full-view button.
 - The logo keeps its own shape; only at the very end (cut 11, as Lucky asked) is it shown larger, then settles at
   its own size. Otherwise it only fades in. Nothing else is shown larger than its own size.
 

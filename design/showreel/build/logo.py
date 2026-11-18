@@ -25,7 +25,10 @@ R = max(xs.max() - xs.min(), ys.max() - ys.min()) / 2
 x0, y0, x1, y1 = int(cx - R - 12), max(0, int(cy - R - 12)), int(cx + R + 13), min(H, int(cy + R + 13))
 crop = png[y0:y1, x0:x1].astype(np.float32); ca = crop[:, :, 3] / 255
 yy, xx = np.mgrid[y0:y1, x0:x1]; inside = np.hypot(xx - cx, yy - cy) <= R + 3      # the O only, not the letters beside it
-w = np.where(inside & (ca > .97), 1.0, 0.0).astype(np.float32); col = crop[:, :, :3] * w[..., None]
+# Only colour well inside the O is kept: its own edge pixels (soft, uneven, with a thin light rim) showed as a white
+# dotted line at the O's edge once the logo was shown large (Lucky, 18 Nov). The vector outline makes the edge.
+w = cv2.erode(np.where(inside & (ca > .97), 1, 0).astype(np.uint8), np.ones((9, 9), np.uint8)).astype(np.float32)
+col = crop[:, :, :3] * w[..., None]
 for _ in range(24):                                       # spread the O's colour outwards, a pixel at a time
     s, n = cv2.blur(col, (3, 3)), cv2.blur(w, (3, 3))
     grow = (w == 0) & (n > 0); col[grow] = s[grow] / n[grow, None]; w[grow] = 1
