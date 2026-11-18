@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { cn } from "@/lib/utils";
 
 /** The colour sets the glow moves through, one per press on the character. All from our own mark. */
 const PALETTES = [
@@ -18,6 +19,10 @@ const BLOBS = [
   { left: "66%", bottom: "-44%", size: "max(62vw, 520px)", n: 4, drift: 24 },
 ];
 
+const MASK = "linear-gradient(to bottom, #000 0%, #000 46%, rgb(0 0 0 / 0.55) 66%, rgb(0 0 0 / 0.18) 84%, transparent 100%)";
+/** The short version also fades in at the top, so it never starts on a hard line under a bar. */
+const SHORT_MASK = "linear-gradient(to bottom, transparent 0%, #000 22%, #000 55%, rgb(0 0 0 / 0.5) 75%, transparent 100%)";
+
 const vars = (p: string[]) => Object.fromEntries(p.map((c, i) => [`--c${i + 1}`, c])) as React.CSSProperties;
 
 /**
@@ -26,7 +31,13 @@ const vars = (p: string[]) => Object.fromEntries(p.map((c, i) => [`--c${i + 1}`,
  * (a `hero:pulse` event) sends a ring of new colour out from it and turns the pools to the next colour set.
  * Only transforms and opacity move, so nothing is repainted while it plays.
  */
-export function HeroGlow() {
+export function HeroGlow({ short = false }: {
+  /**
+   * For a page top shorter than the screen, with no character (Services, About, Work, Contact): the light
+   * sits along the bottom of its own box, and a click on that box sends the colour ring out from the pointer.
+   */
+  short?: boolean;
+} = {}) {
   const root = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -65,30 +76,40 @@ export function HeroGlow() {
       tx = e.clientX / window.innerWidth - 0.5; ty = e.clientY / window.innerHeight - 0.5;
       if (!raf) raf = requestAnimationFrame(loop);
     };
+    // Without the character, a click on the page top is the press.
+    const onClick = (e: MouseEvent) => {
+      const box = el.parentElement?.getBoundingClientRect();
+      if (!box || e.clientY > box.bottom || (e.target as Element).closest("a,button,input,textarea,select,label")) return;
+      onPulse(new CustomEvent("hero:pulse", { detail: { x: e.clientX, y: e.clientY } }));
+    };
+    if (short) window.addEventListener("click", onClick);
     window.addEventListener("hero:pulse", onPulse);
     window.addEventListener("pointermove", onMove, { passive: true });
     return () => {
-      window.removeEventListener("hero:pulse", onPulse); window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("hero:pulse", onPulse); window.removeEventListener("pointermove", onMove); window.removeEventListener("click", onClick);
       cancelAnimationFrame(raf); drifts.forEach((d) => d.cancel());
     };
-  }, []);
+  }, [short]);
 
   return (
     <div
       ref={root}
       aria-hidden="true"
-      className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[150svh] min-h-[840px] overflow-hidden"
+      className={cn(
+        "pointer-events-none absolute inset-x-0 top-0 -z-10 overflow-hidden",
+        short ? "h-[calc(100%+min(36vh,320px))]" : "h-[150svh] min-h-[840px]",
+      )}
       // The light runs on behind the next section and thins out slowly, so there is no edge where it stops.
-      style={{ maskImage: "linear-gradient(to bottom, #000 0%, #000 46%, rgb(0 0 0 / 0.55) 66%, rgb(0 0 0 / 0.18) 84%, transparent 100%)", WebkitMaskImage: "linear-gradient(to bottom, #000 0%, #000 46%, rgb(0 0 0 / 0.55) 66%, rgb(0 0 0 / 0.18) 84%, transparent 100%)" }}
+      style={{ maskImage: short ? SHORT_MASK : MASK, WebkitMaskImage: short ? SHORT_MASK : MASK }}
     >
       {[0, 1].map((k) => (
-        <div key={k} data-layer style={{ ...vars(PALETTES[0]), opacity: k === 0 ? 1 : 0 }} className="absolute inset-x-0 top-0 h-[100svh] min-h-[560px] transition-opacity duration-[1200ms] ease-out">
+        <div key={k} data-layer style={{ ...vars(PALETTES[0]), opacity: k === 0 ? 1 : 0 }} className={cn("absolute inset-x-0 top-0 transition-opacity duration-[1200ms] ease-out", short ? "h-[calc(100%-min(36vh,320px))]" : "h-[100svh] min-h-[560px]")}>
           {BLOBS.map((b) => (
             <span
               key={b.n}
               data-blob
               data-drift={b.drift}
-              className="absolute aspect-square rounded-full opacity-90 will-change-transform max-md:mb-[30svh] dark:opacity-70 max-md:dark:opacity-85"
+              className={cn("absolute aspect-square rounded-full opacity-90 will-change-transform dark:opacity-70 max-md:dark:opacity-85", !short && "max-md:mb-[30svh]")}
               style={{
                 left: b.left, bottom: b.bottom, width: b.size,
                 background: `radial-gradient(closest-side, var(--c${b.n}) 0%, color-mix(in srgb, var(--c${b.n}) 62%, transparent) 42%, transparent 100%)`,

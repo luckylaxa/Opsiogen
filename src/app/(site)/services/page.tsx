@@ -7,5 +7,5 @@ export function generateMetadata() {
 }
 
 export default function ServicesPage() {
-  return <CmsPage slug="services" layout={{ services: "groups" }} />;
+  return <CmsPage slug="services" layout={{ services: "groups", heroLight: true }} />;
 }

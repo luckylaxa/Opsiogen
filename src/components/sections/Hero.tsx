@@ -146,6 +146,7 @@ export function Hero({
   section,
   full,
   glow,
+  light,
   image,
   children,
 }: {
@@ -153,6 +154,8 @@ export function Hero({
   full?: boolean;
   /** Soft pools of colour behind the heading, on the page's own white or black, with our character (Home). */
   glow?: boolean;
+  /** The same colour light behind the heading, without the character (Services, About, Contact). */
+  light?: boolean;
   /** Shows the hero as one picture card filling the first screen, with the text on it. */
   image?: HeroImage;
   children?: React.ReactNode;
@@ -281,11 +284,12 @@ export function Hero({
     <div
       className={cn(
         "-mt-[var(--header-h)] pt-[calc(var(--header-h)+clamp(64px,calc(3.14vw+52px),112px))]",
-        glow ? "relative isolate bg-page" : "bg-band",
+        glow || light ? "relative isolate bg-page" : "bg-band",
         children ? "pb-[clamp(40px,calc(2.3vw+31.4px),76px)]" : "pb-[clamp(104px,calc(7.07vw+77.6px),196px)]",
       )}
     >
       {glow && <HeroGlow />}
+      {light && !glow && <HeroGlow short />}
       <GiantHeading
         as="h1"
         label={section.label}
