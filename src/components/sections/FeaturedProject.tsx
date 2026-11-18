@@ -5,9 +5,15 @@ import { buttonClass } from "@/components/ui/Button";
 import { ArrowUpRight } from "@/components/ui/Icons";
 import { cn } from "@/lib/utils";
 
+/** Where a 4:3 cover is cropped in the card's wider box, so its main subject keeps room around it. */
+const COVER_FOCUS: Record<string, { x: number; y: number }> = {
+  // The phone keeps space above it.
+  "oh-my-glam": { x: 0.5, y: 0.2 },
+};
+
 /**
  * The large dark card from the reference hero: the cover (or looping video)
- * sits inset in a near-black frame, with the project details underneath.
+ * runs the card's full width under a dark band, with the project details underneath.
  * The whole card links to the project.
  */
 export function FeaturedProject({ project, priority = true }: { project?: ProjectCard | null; priority?: boolean }) {
@@ -15,13 +21,13 @@ export function FeaturedProject({ project, priority = true }: { project?: Projec
   const tags = project.services.map((s) => s.shortName).join(" · ");
   return (
     <article data-dock="/work" className="on-dark group relative mx-edge overflow-hidden rounded-card bg-night text-white">
-      <div className="px-[clamp(12px,7.5%,142px)] pt-[clamp(12px,11.9%,223px)]">
-        <div className="relative aspect-[4/3] overflow-hidden rounded-[4px] bg-night sm:aspect-video">
+      <div className="pt-[clamp(12px,11.9%,223px)]">
+        <div className="relative aspect-[4/3] overflow-hidden bg-night sm:aspect-video">
           <CoverMedia
-            image={project.cover}
+            image={{ ...project.cover, hotspot: project.cover.hotspot ?? COVER_FOCUS[project.slug] }}
             video={project.coverVideo}
             priority={priority}
-            sizes="(min-width: 640px) 85vw, 100vw"
+            sizes="100vw"
             className="transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-[1.015]"
           />
         </div>

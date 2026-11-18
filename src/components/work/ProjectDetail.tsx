@@ -162,8 +162,8 @@ export function ProjectDetail({
           />
         </div>
         {hero && (
-          <figure className="mt-[clamp(40px,calc(2.88vw+29.2px),92px)] overflow-hidden bg-night">
-            {/* Edge to edge, no side margins. Square on phones and 16:9 wider up; uncropped, the image's own shape (or its phone version on phones). */}
+          <figure className="mx-gutter mt-[clamp(40px,calc(2.88vw+29.2px),92px)] overflow-hidden rounded-card bg-night">
+            {/* Square on phones and 16:9 wider up; uncropped, the image's own shape (or its phone version on phones). */}
             <div
               className={cn(
                 "relative",
