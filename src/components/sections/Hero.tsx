@@ -285,7 +285,11 @@ export function Hero({
       className={cn(
         "-mt-[var(--header-h)] pt-[calc(var(--header-h)+clamp(64px,calc(3.14vw+52px),112px))]",
         glow || light ? "relative isolate bg-page" : "bg-band",
-        children ? "pb-[clamp(40px,calc(2.3vw+31.4px),76px)]" : "pb-[clamp(104px,calc(7.07vw+77.6px),196px)]",
+        children
+          ? "pb-[clamp(40px,calc(2.3vw+31.4px),76px)]"
+          : light
+            ? "pb-[clamp(40px,calc(2.3vw+31.4px),76px)]"
+            : "pb-[clamp(104px,calc(7.07vw+77.6px),196px)]",
       )}
     >
       {glow && <HeroGlow />}
