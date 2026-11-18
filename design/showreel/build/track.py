@@ -13,7 +13,7 @@ tr = TRACKS[sys.argv[2]]; cut = json.load(open(sys.argv[1])); SR = 44100
 subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", tr["file"], "-ar", str(SR), "-ac", "2", "/tmp/_track.wav"], check=True)
 _, x = wavfile.read("/tmp/_track.wav"); x = x.astype(float) / 32768
 BAR = 60 / tr["bpm"] * 4; T0, HIT = tr["t0"], tr["hit"]
-DUR, LOGO = cut["dur"], cut["cuts"][-1]
+DUR, LOGO = cut["dur"], cut.get("hit", cut["cuts"][-1])   # where the last hit lands (film.py: as it settles on the logo)
 last = LOGO - (HIT - T0)                  # film time where the last pass starts
 assert abs(last / BAR - round(last / BAR)) < 0.03, f"the last pass must start on a bar line: move the logo by {round((last / BAR - round(last / BAR)) * 8, 2)} half-beats"
 i = lambda t: int(round(t * SR)); f = int(.015 * SR); ramp = np.linspace(0, 1, f)[:, None]

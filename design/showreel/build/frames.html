@@ -21,6 +21,7 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#0a090d;font-fam
 </style></head><body><div id="f"></div>
 <script src="a/pieces.js"></script>
 <script src="a/screens.js"></script>
+<script src="a/logo.js"></script>
 <script type="importmap">{"imports":{"three":"../../../node_modules/three/build/three.module.js","three/addons/":"../../../node_modules/three/examples/jsm/"}}</script>
 <script>
 const COAL='#0a090d',PAPER='#f8f6f8',PINK='#ff4f9b',VIOLET='#a98bff',AQUA='#5cf2e6',BLUE='#3f7bff',ORANGE='#ff8a3c',SUN='#ffd75e',LIME='#d8ff3e';
@@ -28,6 +29,12 @@ const W='../../../public/work/',A='a/',T='../../tiles/out/',S='../raw/',LOGO='..
 const f=document.getElementById('f');
 const el=(tag,cls,parent,st={})=>{const e=document.createElement(tag);if(cls)e.className=cls;Object.assign(e.style,st);(parent||f).appendChild(e);return e};
 const img=(src,parent,st={},cls='')=>{const i=el('img',cls,parent,st);i.src=src;return i};
+// Our logo, sharp at any size (logo.py): vector letters and O outline, the O's own colours inside. w wide, at x,y.
+const logoSvg=(parent,x,y,w)=>{const L=window.LOGO,s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('class','logo');
+  s.setAttribute('viewBox',`0 0 ${L.vb[0]} ${L.vb[1]}`);Object.assign(s.style,{position:'absolute',left:x+'px',top:y+'px',width:w+'px',height:w*L.vb[1]/L.vb[0]+'px',overflow:'visible'});
+  s.innerHTML=`<defs><clipPath id="oclip"><path d="${L.ring.d}"/></clipPath></defs><g fill="#fff">${L.letters.map(d=>`<path d="${d}"/>`).join('')}</g>`+
+    `<image href="${A}logo-ring.png" x="${L.ring.x}" y="${L.ring.y}" width="${L.ring.w}" height="${L.ring.h}" preserveAspectRatio="none" clip-path="url(#oclip)"/>`;
+  (parent||f).appendChild(s);return s};
 const bg=c=>{f.style.background=c};
 // A full frame. Images on one flat colour (pieces.py) are laid out as their separate pieces over that colour, so each
 // piece can move on its own in the film; the still looks exactly the same.
@@ -170,7 +177,7 @@ const SHOTS=[
 ['Close', 'Fast word: Launch', ()=>word('Launch.',SUN)],
 ['Close', 'The spine, typed', ()=>type(COAL,[[['Your idea. ',700,PAPER]],[['Branded. ',700,ORANGE],['Designed. ',700,VIOLET]],[['Built. ',700,AQUA],['Launched.',700,SUN]]],128,'left')],
 ['Close', 'One partner', ()=>type(COAL,[[['One partner.',700,PAPER]],[['Every digital need.',700,AQUA]]],140)],
-['Close', 'Logo, character, call', ()=>{bg(COAL);img(A+'ch-front.png',f,{position:'absolute',width:'260px',left:'830px',top:'150px'});img(LOGO,f,{position:'absolute',width:'800px',left:'560px',top:'470px'});const t=el('div','abs',f,{left:0,right:0,top:'700px',textAlign:'center',fontSize:'64px',fontWeight:700,color:PAPER,letterSpacing:'-.03em'});t.innerHTML='Let’s make <b style="font-weight:700">yours.</b>'}],
+['Close', 'Logo, character, call', ()=>{bg(COAL);img(A+'ch-front.png',f,{position:'absolute',width:'260px',left:'830px',top:'150px'});logoSvg(f,560,470,800);const t=el('div','abs',f,{left:0,right:0,top:'700px',textAlign:'center',fontSize:'64px',fontWeight:700,color:PAPER,letterSpacing:'-.03em'});t.innerHTML='Let’s make <b style="font-weight:700">yours.</b>'}],
 ];
 window.SHOTS=SHOTS.map(([sec,name])=>({sec,name}));
 const n=parseInt(location.hash.slice(1).split('|')[0]||'0');SHOTS[n][2]();
@@ -183,6 +190,7 @@ const n=parseInt(location.hash.slice(1).split('|')[0]||'0');SHOTS[n][2]();
 // the logo. It runs only for the film (the address ends in |anim; |alpha draws only the character, to lay over a stock
 // clip). window.anim(t,d) draws t seconds into a shot d seconds long. The approved stills never run it.
 const BEAT=60/140,clamp=p=>Math.min(1,Math.max(0,p)),ease=p=>1-Math.pow(1-clamp(p),3);
+const LOGO_IN=4*BEAT;   // the logo shot's fly-through before the last hit (film.py gives the shot 4 more beats)
 const io=p=>{p=clamp(p);return p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2};
 const pop=p=>{p=clamp(p);const c=2.5;return 1+(c+1)*Math.pow(p-1,3)+c*Math.pow(p-1,2)};
 const IN=.2,NAME=SHOTS[n][1],HASH=location.hash.split('|'),MOTION=HASH[3]==='anim',ALPHA=MOTION&&HASH[4]==='alpha';
@@ -282,11 +290,30 @@ if(MOTION)(()=>{
         const pose=t<.14||t>=1.4?'front':line<2?'upleft':'down';
         ball.at(p.x,p.y,D,{rot:p.rot+nod,pose,mirror:pose==='down',blink:blinkPh(t,1.42),floor:Y+D/2})})})}
   else if(T==='One partner')words.forEach((s,i)=>rise(s,i<2?i*.05-.06:BEAT+(i-2)*.05,80,.18));
-  else if(T.startsWith('Logo')){words.forEach((s,i)=>rise(s,2*BEAT+i*.06,40,.2));
-    // It lands on the last hit, reads the call (left, then right), looks back at us and blinks, and hovers.
-    const k=260/720,X=830+359.5*k,Y=150+357*k,D=497*k,path=hops([[.1,X,Y],[.3,X,Y]],34,0,D);
-    add(t=>{const p=path(t),bob=t>1.9?6*(1-Math.cos((t-1.9)*7)):0,w=twirl(t,.32),pose=t<1.12?'front':t<1.6?'down':'front';
-      ball.at(p.x,p.y-bob,D,{rot:p.rot,turn:w.turn,pose,mirror:t>=1.12&&t<1.36,blink:blinkPh(t,1.85,2.3),floor:Y+D/2})})}
+  else if(T.startsWith('Logo')){
+    // Lucky (18 Nov): it comes fast through the middle of the O while the logo is large and centred, the logo goes back
+    // to its own size, and it settles on top as before. LOGO_IN seconds of that, then the last hit lands as it settles:
+    // it hops once, turns right round, reads the call (left, then right), looks back at us, blinks and hovers.
+    const H=LOGO_IN,L=window.LOGO,lg=f.querySelector('.logo'),u=800/L.vb[0],OX=560+L.o.x*u,OY=470+L.o.y*u;
+    const k=260/720,X=830+359.5*k,Y=150+357*k,D=497*k,tC=H-1.5*BEAT,S0=3.6,S1=4;   // tC: it passes through the O
+    const vb=t=>(t-tC)/(H-tC);   // 0..1 from passing through to landing on the last hit
+    const sc=t=>t<tC?S0+(S1-S0)*io(t/tC):1+(S1-1)*(1-io((vb(t)-.15)/.75));   // a slow push in; the pull back once it is through
+    const at=(s,px,py)=>[OX+(560+px*u-OX)*s,OY+(470+py*u-OY)*s];                    // a logo point on screen at size s
+    const Dc=.86*2*L.hole.r*u*S1;                                                     // its size as it passes through
+    words.forEach((s,i)=>rise(s,H+2*BEAT+i*.06,40,.2));
+    add(t=>{const s=sc(t),[x,y]=at(s,0,0);Object.assign(lg.style,{left:x+'px',top:y+'px',width:800*s+'px',height:800*s*L.vb[1]/L.vb[0]+'px',
+      opacity:clamp(.2+t/.1),zIndex:t<tC?10:1})});
+    const land=hops([[H,X,Y],[H+.2,X,Y]],34,0,D);
+    add(t=>{
+      if(t<tC){   // far behind the O, rushing at us through its opening: the logo hides it where they overlap
+        const q=t/tC,z=1+5*(1-q*q),[hx,hy]=at(sc(t),L.hole.x,L.hole.y),off=L.hole.r*u*sc(t)*Math.pow(1-q,2);
+        return ball.at(hx-.35*off,hy-.25*off,Dc/z,{rot:6*Math.sin(t*9)*(1-q)})}
+      if(t<H){    // through: it keeps coming at us over the big O, then the logo shrinks back and it arcs up and lands on top
+        const v=vb(t),Dv=v<.3?Dc+Dc*ease(v/.3):2*Dc+(D-2*Dc)*io((v-.3)/.7),[hx,hy]=at(sc(t),L.hole.x,L.hole.y),w=clamp((v-.2)/.8);
+        const yp=Y-90,y=w<.65?hy+(yp-hy)*ease(w/.65):yp+(Y-yp)*Math.pow((w-.65)/.35,2);
+        return ball.at(hx+(X-hx)*ease(w),y,Dv,{rot:-22*Math.sin(Math.PI*w),floor:w>.6?Y+D/2:null})}
+      const p=land(t),bob=t>H+1.8?6*(1-Math.cos((t-H-1.8)*7)):0,w=twirl(t,H+.22),r=t-H,pose=r<1.02?'front':r<1.5?'down':'front';
+      ball.at(p.x,p.y-bob,D,{rot:p.rot,turn:w.turn,pose,mirror:r>=1.02&&r<1.26,blink:blinkPh(t,H+1.75,H+2.2),floor:Y+D/2})})}
   // Over the stock clips (|alpha): it meets the people. After the opening line the clip opens in our lens circle:
   // the line's last frame is drawn over the clip with a hole that grows from the middle.
   if(ALPHA){
@@ -300,8 +327,6 @@ if(MOTION)(()=>{
       add(t=>{const p=path(t);if(p.off)return ball.hide();const w=twirl(t,.214,-1,.6);ball.at(p.x,p.y,D,{rot:p.rot,turn:w.turn,pose:t<.82?'front':'upleft',floor:Y+D/2})})}
   }
   if(!ALPHA){
-  // The logo arrives on the last hit: it only fades in (Lucky: its own shape and size, no scaling).
-  f.querySelectorAll(':scope > img[src*="logo"]').forEach(e=>{add(t=>{e.style.opacity=clamp(.35+t/.08)})});
   // Phones: rise or split in, then drift. The burst opens out of the character's eye and its screens light up one by one.
   const phones=[...f.querySelectorAll('.phone')],browsers=[...f.querySelectorAll('.browser')];
   if(T.startsWith('Three apps')&&showUnder())add(t=>{f.style.clipPath=`circle(${ease(t/.26)*1110}px at 50% 50%)`});

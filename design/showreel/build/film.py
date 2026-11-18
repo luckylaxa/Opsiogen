@@ -25,7 +25,7 @@ def beats(n):
     if n.startswith("Fast word"): return 1
     if n.startswith("The spine"): return 4
     if n == "One partner": return 2
-    if n.startswith("Logo"): return 6
+    if n.startswith("Logo"): return 10   # 4 beats flying through the O (frames.html LOGO_IN), then 6 as before
     if n.startswith("Wall of"): return 3   # the closing wall pulls back into the grid (cut 5's tilted wall)
     if "488563452" in n: return 3   # she points, our character pops up there, she turns to look at it
     if n.startswith(("Stock", "Life")): return 2
@@ -34,7 +34,7 @@ def beats(n):
 shots = json.load(open(os.path.join(FR, "shots.json")))
 B = [beats(s["name"]) for s in shots]
 logo = len(shots) - 1
-while sum(B[:logo]) % 4 != 3: B[logo - 2] += 1   # the logo starts 3 beats past a bar line (see track.py)
+while sum(B[:logo]) % 4 != 3: B[logo - 2] += 1   # the last hit (4 beats into the logo) falls 3 beats past a bar line (see track.py)
 start = [sum(B[:i]) for i in range(len(B) + 1)]
 fr = lambda b: round(b * BEAT * FPS)
 N = [fr(start[i + 1]) - fr(start[i]) for i in range(len(shots))]
@@ -100,9 +100,10 @@ for i in stock:
 # 4. Join on the beat with the music.
 total = fr(start[-1]) / FPS
 open(os.path.join(WD, "list.txt"), "w").write("".join(f"file '{clip(i)}'\n" for i in range(len(shots))))
-json.dump({"dur": total, "cuts": [fr(b) / FPS for b in start[:-1]]}, open(os.path.join(WD, "cuts.json"), "w"))
+HIT = fr(start[logo] + 4) / FPS   # the track's last hit: as our character settles on the logo, 4 beats into its shot
+json.dump({"dur": total, "cuts": [fr(b) / FPS for b in start[:-1]], "hit": HIT}, open(os.path.join(WD, "cuts.json"), "w"))
 run(["python3", os.path.join(HERE, "track.py"), os.path.join(WD, "cuts.json"), "percussion", os.path.join(WD, "music.wav")])
 run(["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", os.path.join(WD, "list.txt"), "-i", os.path.join(WD, "music.wav"),
      "-t", str(total), "-c:v", "libx264", "-crf", "17", "-preset", "medium", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k",
      "-af", f"afade=t=out:st={total - 1.2}:d=1.2", "-movflags", "+faststart", OUT])
-print("shots", len(shots), "beats", start[-1], "seconds", round(total, 2), "logo at", round(fr(start[logo]) / FPS, 2))
+print("shots", len(shots), "beats", start[-1], "seconds", round(total, 2), "logo at", round(fr(start[logo]) / FPS, 2), "last hit at", round(HIT, 2))

@@ -188,8 +188,17 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
     Norsecom ones. Now Rohde & Schwarz shows seven pieces in four places (two pairs, the out-of-home tiles and the
     brand wall), always beside Norsecom or SandLogic, and no piece shows twice. The brand chapter is 25 shots, not 42.
   - Same stock, same music, same beat.
-- The logo only fades in (its own shape and size). Nothing is shown larger than its own size: the dive uses a
-  close-up capture of the character (`a/ch-front-hd.png`).
+- **Cut 11: through the O.** Lucky on cut 10: "end of the video I would like see the character moving fast through
+  Opsiogen Center logo round shape and settle top of the logo how currently it stop. While entering the Center of the
+  opsiogen logo (logo can be larger and place to Center in current size after logo go through the Center of the o
+  shape)." The logo shot is 4 beats longer: the logo comes in four times its size, centred on the O, with our
+  character far behind it in the O's opening; it rushes at us through the opening (the O hides it until it is
+  through), keeps coming at us over the big O, then the logo shrinks back to its own size and place while the
+  character arcs up and lands on top on the track's last hit. From there it is as before: a hop, a full turn, it
+  reads the call, blinks and hovers. The large logo is drawn sharp at any size (`build/logo.py`: the master SVG's
+  vector letters and O outline, the O's own colours inside).
+- The logo keeps its own shape; only at the very end (cut 11, as Lucky asked) is it shown larger, then settles at
+  its own size. Otherwise it only fades in. Nothing else is shown larger than its own size.
 
 ## Stock picks (one or two people only)
 
