@@ -110,6 +110,16 @@ licensed through the Adobe connector (`asset_license_and_download_stock`) only o
 Previews: the stock preview images are blocked in this session's network, so Lucky checks them by ID on
 stock.adobe.com, or the final session shows them with the Adobe preview tool.
 
+## Figma artboards
+
+File: https://www.figma.com/design/N0FMCGKpSEZ0PVBoQDCVdc ("Opsiogen · Showreel artboards"). Page "01 · Open and
+Design" holds A01-A18: the opening, the burst and the "We design it" chapter. Each artboard is 1920 x 1080, the
+work placed in named image slots (`img:<key>`, files in `build/a`), and a small grey note at the bottom left
+that is not part of the film. Stock artboards are placeholders with the clip's ID until the stills can be shown.
+Type: Outfit, with Instrument Serif Italic for the one emphasis word in the opening line (video only; the
+website keeps Outfit alone). Next pages, after Lucky approves the direction: 02 Build, 03 Brand and print,
+04 Launch, 05 Close.
+
 ## Order of work
 
 1. Figma: build the artboards (this plan, one per shot) in a new file, "Opsiogen · Showreel artboards".
