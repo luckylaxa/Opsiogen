@@ -9,7 +9,7 @@ import { useEffect, useRef } from "react";
  */
 const TRAIL: React.CSSProperties = {
   background:
-    "linear-gradient(180deg, rgb(255 110 190 / 0.9) 0%, rgb(190 120 255 / 0.9) 16%, rgb(105 140 255 / 0.9) 30%, rgb(80 220 255 / 0.9) 44%, rgb(110 235 150 / 0.9) 57%, rgb(255 232 110 / 0.9) 70%, rgb(255 165 90 / 0.9) 83%, rgb(255 110 180 / 0.9) 100%)",
+    "linear-gradient(180deg, rgb(255 110 190 / 0.9) 0%, rgb(190 120 255 / 0.9) 16%, rgb(105 140 255 / 1) 30%, rgb(80 220 255 / 1) 44%, rgb(110 235 150 / 0.9) 57%, rgb(255 232 110 / 0.9) 70%, rgb(255 165 90 / 0.9) 83%, rgb(255 110 180 / 0.9) 100%)",
   maskImage: "linear-gradient(270deg, #000 0%, rgb(0 0 0 / 0.75) 45%, rgb(0 0 0 / 0.3) 100%)",
   WebkitMaskImage: "linear-gradient(270deg, #000 0%, rgb(0 0 0 / 0.75) 45%, rgb(0 0 0 / 0.3) 100%)",
   clipPath: "polygon(100% 36%, 0 4%, 0 96%, 100% 64%)",
@@ -25,7 +25,7 @@ const GLOW: React.CSSProperties = {
 
 /**
  * Our character, drawn live as a real 3D model, in the Home picture. It faces the visitor and its eye
- * follows the pointer straight away; a click makes its eye blink and turns it to look a new way for a moment. A pool of coloured light sits on the
+ * follows the pointer straight away; a click anywhere on the first screen turns it that way and it sprays a fog of colour toward the click; a click on the character itself gives one full turn first. A pool of coloured light sits on the
  * ground below it. As the visitor scrolls through the hero it turns and flies off into the scene, and only
  * while it moves fast does a fan of rainbow light pour from its back. The 3D code and the model load after the page has loaded, so the first screen never
  * waits for them; until then, and where 3D cannot be drawn, a still picture shows instead.
@@ -63,9 +63,9 @@ export function HeroCharacter({ className }: { className?: string }) {
       for (const r of rush) { const u = (narrow && r.dataset.narrow) || r.dataset.wide; if (u) r.style.backgroundImage = `url("${u}")`; }
     };
 
-    let want = [0, 0], blink = 0, blinkAt = 2, over = 0, turnTo = -1, poseUntil = 0, fire = 0;
+    let want = [0, 0], blink = 0, blinkAt = 2, over = 0, turnTo = -1, poseUntil = 0, fire = 0, spinAt = -1e9, pose = [0, 0];
     // Where it looks after each press (turn, tilt), in order.
-    const POSES = [[1.05, -0.1], [-1.05, -0.1], [0.75, -0.4], [-0.75, 0.3]];
+    const POSES = [[-1, -0.25], [-0.8, 0.5], [-1, 0.1], [0.9, -0.35]];
     // The points in the picture: when the pointer goes to one, the character looks at it and its little screen opens.
     // Left alone for a while it shows them one by one itself; a press on the character shows the next one beside it.
     const spots = stage ? Array.from(stage.querySelectorAll<HTMLElement>("[data-hero-spot]")) : [];
@@ -100,30 +100,42 @@ export function HeroCharacter({ className }: { className?: string }) {
       over = Math.hypot(dx, dy) < r.width * 0.5 ? 1 : 0;
     };
     const onLeave = () => { want = [0, 0]; over = 0; };
-    const greet = () => {
-      // A press: its eye blinks and it turns to look a new way for a moment, a different way each time. One calm turn, never a spin.
-      blink = 1; lastMove = performance.now(); show(true);
-      turnTo = (turnTo + 1) % POSES.length; poseUntil = performance.now() + 1900;
-      // It turns first; then the colour leaves from its eye, wherever the eye now points.
-      const pose = POSES[turnTo];
+    // A press anywhere on the first screen: it turns to look that way, then sprays a fog of colour toward the press.
+    // A press on the character itself: one full turn on the spot first, then the spray goes the next way round.
+    const spray = (ux: number, uy: number, spin: boolean) => {
+      blink = 1; lastMove = performance.now();
+      pose = [ux * 1.15, uy * 0.6]; poseUntil = performance.now() + (spin ? 2500 : 1900);
+      if (spin && !reduce) spinAt = performance.now();
       window.clearTimeout(fire);
       fire = window.setTimeout(() => {
         const r = el.getBoundingClientRect();
         const dx = Math.sin(pose[0]) * r.width * 0.3, dy = Math.sin(pose[1]) * r.height * 0.3;
         window.dispatchEvent(new CustomEvent("hero:pulse", { detail: { x: r.left + r.width / 2 + dx, y: r.top + r.height / 2 + dy } }));
-        // A beam of coloured light shines a short way out of the eye, the way it is looking, then fades.
         const fl = el.querySelector<HTMLElement>("[data-flash]");
         if (fl && !reduce) {
-          fl.style.left = `${r.width / 2 + dx}px`; fl.style.top = `${r.height / 2 + dy}px`;
-          fl.style.rotate = `${Math.atan2(Math.sin(pose[1]), Math.sin(pose[0]))}rad`;
-          Array.from(fl.children).forEach((beam, n) => {
-            (beam as HTMLElement).animate(
-              [{ scale: "0 0.6", opacity: 0.95 }, { scale: "1 1", opacity: 0.9, offset: 0.3 }, { scale: "1 1", opacity: 0.9, offset: 0.7 }, { scale: "1.06 1.1", opacity: 0 }],
-              { duration: 1700, delay: n * 60, easing: "cubic-bezier(0.2,0.8,0.2,1)" },
+          // The fog starts just in front of the eye, at the edge of the body, so it never covers the eye itself.
+          fl.style.left = `${r.width / 2 + ux * r.width * 0.4}px`; fl.style.top = `${r.height / 2 + uy * r.height * 0.4}px`;
+          fl.style.rotate = `${Math.atan2(uy, ux)}rad`;
+          Array.from(fl.children).forEach((fog, n) => {
+            (fog as HTMLElement).animate(
+              [{ scale: "0.1 0.5", opacity: 0 }, { scale: "0.8 0.9", opacity: 1, offset: 0.25 }, { scale: "1 1", opacity: 0.9, offset: 0.65 }, { scale: "1.15 1.2", opacity: 0 }],
+              { duration: 1900, delay: n * 90, easing: "cubic-bezier(0.2,0.7,0.2,1)" },
             );
           });
         }
-      }, 380);
+      }, spin ? 900 : 380);
+    };
+    const greet = (e: MouseEvent) => {
+      e.stopPropagation(); show(true);
+      turnTo = (turnTo + 1) % POSES.length;
+      const [ax, ay] = POSES[turnTo], len = Math.hypot(ax, ay);
+      spray(ax / len, ay / len, true);
+    };
+    const onPress = (e: MouseEvent) => {
+      const t = e.target as Element;
+      if (t.closest("a, button, input, textarea, select, [role='button'], dialog, .site-header") || window.scrollY > window.innerHeight * 0.5) return;
+      const r = el.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), len = Math.hypot(dx, dy);
+      if (len > 8) spray(dx / len, dy / len, false);
     };
     const noFocusRing = (e: PointerEvent) => e.preventDefault();
     window.addEventListener("pointermove", onMove, { passive: true });
@@ -132,6 +144,7 @@ export function HeroCharacter({ className }: { className?: string }) {
     window.addEventListener("resize", measure);
     el.addEventListener("pointerdown", noFocusRing);
     el.addEventListener("click", greet);
+    if (!stage) window.addEventListener("click", onPress);
 
     async function start() {
       if (stop) return;
@@ -219,9 +232,11 @@ export function HeroCharacter({ className }: { className?: string }) {
         if (hover) lookAt(hover); else if (shown) lookAt(shown); else if (now - lastMove > 6000) want = [0, 0];
         const follow = 1 - Math.pow(1e-7, dt);
         lean = [lean[0] + (want[0] - lean[0]) * follow, lean[1] + (want[1] - lean[1]) * follow];
-        const pose = now < poseUntil ? POSES[turnTo] : null;
-        const aimY = (1 - away) * (pose ? pose[0] : lean[0] * 0.95) + away * AWAY, aimX = (1 - away) * (pose ? pose[1] : lean[1] * 0.55) + away * 0.05;
-        const k = pose ? 70 : 420, c = 2 * Math.sqrt(k) * 0.95;
+        const posed = now < poseUntil;
+        // One full turn on the spot, eased, when the character itself is pressed.
+        const sp = clamp((now - spinAt) / 900, 0, 1), twirl = sp < 1 ? sp * sp * (3 - 2 * sp) * Math.PI * 2 : 0;
+        const aimY = (1 - away) * (posed ? pose[0] : lean[0] * 0.95) + away * AWAY, aimX = (1 - away) * (posed ? pose[1] : lean[1] * 0.55) + away * 0.05;
+        const k = posed ? 70 : 420, c = 2 * Math.sqrt(k) * 0.95;
         yawV += ((aimY - yaw) * k - yawV * c) * dt; yaw += yawV * dt; pitchV += ((aimX - pitch) * k - pitchV * c) * dt; pitch += pitchV * dt;
         if (Math.cos(yaw) > 0.9 && t > blinkAt && away < 0.1) { blink = 1; blinkAt = t + 3 + Math.random() * 3.5; }
         blink = Math.max(0, blink - dt / 0.3);                                  // a blink of light, not lids
@@ -243,7 +258,7 @@ export function HeroCharacter({ className }: { className?: string }) {
         gw.style.transform = `translateY(${(-bob).toFixed(1)}px) scale(${(1 + lift * 0.6).toFixed(3)})`;
         for (const r of rush) r.style.opacity = (clamp((v - 0.05) / 0.5, 0, 1) * 0.16).toFixed(3);
         fit();
-        pivot.rotation.y = yaw; pivot.rotation.x = pitch; pivot.rotation.z = -lean[0] * 0.08 * (1 - away) - away * 0.1;
+        pivot.rotation.y = yaw + twirl; pivot.rotation.x = pitch; pivot.rotation.z = -lean[0] * 0.08 * (1 - away) - away * 0.1;
         if (hud && hudMat) {
           (hud as Mesh).position.x = lean[0] * 0.06 * (1 - away); (hud as Mesh).position.y = -lean[1] * 0.05 * (1 - away);
           (hudMat as InstanceType<typeof THREE.MeshBasicMaterial>).color.setScalar(1.5 * (1 - dim * 0.94) + fl * 1.2);
@@ -268,7 +283,7 @@ export function HeroCharacter({ className }: { className?: string }) {
       stop = true; cancelAnimationFrame(raf); cleanup?.();
       window.removeEventListener("pointermove", onMove); document.documentElement.removeEventListener("pointerleave", onLeave);
       window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", measure);
-      el.removeEventListener("pointerdown", noFocusRing); el.removeEventListener("click", greet);
+      el.removeEventListener("pointerdown", noFocusRing); el.removeEventListener("click", greet); window.removeEventListener("click", onPress);
       stage?.removeEventListener("pointerover", onOver); stage?.removeEventListener("pointerout", onOut); window.clearTimeout(hide); window.clearTimeout(fire);
     };
   }, []);
@@ -293,25 +308,20 @@ export function HeroCharacter({ className }: { className?: string }) {
       </span>
       {/* The beam of light that shines from its eye on a press: in front of it, a short way out. */}
       <span data-flash aria-hidden="true" className="pointer-events-none absolute z-10 block size-0">
-        {/* A soft cone of light, narrow at the eye and wider as it goes, in our colours; then a bright core down its middle. */}
-        <span
-          className="absolute top-0 left-0 block h-[calc(var(--w)*1.5)] w-[calc(var(--w)*2.4)] origin-left opacity-0 blur-[10px]"
-          style={{
-            translate: "0 -50%",
-            background: "linear-gradient(180deg, #35d4ff 8%, #5a7dff 28%, #b667ff 50%, #ff5fb4 72%, #ff9a3c 92%)",
-            clipPath: "polygon(0 40%, 100% 0, 100% 100%, 0 60%)",
-            maskImage: "linear-gradient(90deg, #000 0%, rgb(0 0 0 / 0.85) 55%, transparent 100%)",
-            WebkitMaskImage: "linear-gradient(90deg, #000 0%, rgb(0 0 0 / 0.85) 55%, transparent 100%)",
-          }}
-        />
-        <span
-          className="absolute top-0 left-0 block h-[calc(var(--w)*0.5)] w-[calc(var(--w)*1.7)] origin-left opacity-0 blur-[5px]"
-          style={{
-            translate: "0 -50%",
-            background: "linear-gradient(90deg, rgb(255 255 255 / 0.85) 0%, rgb(255 255 255 / 0.28) 45%, transparent 100%)",
-            clipPath: "polygon(0 38%, 100% 0, 100% 100%, 0 62%)",
-          }}
-        />
+        {/* A fog of rainbow light: no edges anywhere. Each layer is cut to a widening wedge inside and blurred outside, and thins out with distance. */}
+        {[["3", "1.9", "18px"], ["2.2", "1.2", "9px"]].map(([w, h, blur]) => (
+          <span key={w} className="absolute top-0 left-0 block origin-left opacity-0" style={{ width: `calc(var(--w) * ${w})`, height: `calc(var(--w) * ${h})`, translate: "0 -50%", filter: `blur(${blur})` }}>
+            <span
+              className="absolute inset-0 block"
+              style={{
+                background: "linear-gradient(180deg, transparent 0%, rgb(255 105 180 / 1) 14%, rgb(120 130 255 / 1) 30%, rgb(70 215 255 / 1) 44%, rgb(120 235 140 / 1) 58%, rgb(255 232 100 / 1) 72%, rgb(255 150 90 / 1) 86%, transparent 100%)",
+                clipPath: "polygon(0 42%, 100% 0, 100% 100%, 0 58%)",
+                maskImage: "linear-gradient(90deg, transparent 0%, #000 14%, rgb(0 0 0 / 0.8) 52%, transparent 98%)",
+                WebkitMaskImage: "linear-gradient(90deg, transparent 0%, #000 14%, rgb(0 0 0 / 0.8) 52%, transparent 98%)",
+              }}
+            />
+          </span>
+        ))}
       </span>
       {/* eslint-disable-next-line @next/next/no-img-element -- a small still that only shows until the 3D model is drawn */}
       <img ref={still} src="/home/character-front.webp" alt="" width={420} height={420} className="absolute inset-0 size-full object-contain transition-opacity duration-300" />
