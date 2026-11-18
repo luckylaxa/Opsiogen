@@ -192,7 +192,7 @@ The motion language is in `design/showreel/EDIT-PLAN.md` ("Cut 7"). Everything b
 The Work page reel is the `showreel` section in `src/content/seed-data.ts`:
 `/work/showreel.mp4`, `/work/showreel.webm` and the poster `/work/showreel.jpg` (1920 x 1080, with
 alt text). Since 18 Nov (Lucky: "for time being you can put this video in website") it is the whole
-of cut 7 with its music: the card plays it muted and shows a sound button (`sound: true`), and is
+showreel with its music (now cut 8, cut 7 with the character kept solid): the card plays it muted and shows a sound button (`sound: true`), and is
 16:9 on phones too, so no edge of the film is cut. Web copies: H.264 CRF 26 with AAC (about 19 MB)
 and VP9 CRF 36 with Opus (about 20 MB). The poster is the burst grid with our character facing us.
 To change it, replace the three files under the same names (add mode swaps a re-made video card
