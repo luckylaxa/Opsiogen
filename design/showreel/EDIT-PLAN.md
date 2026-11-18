@@ -99,7 +99,7 @@ the reference's words ("shareable" and others) are never used.
 - The work large and sharp: never scaled above its own size; product screens exported at 2x.
 - Phones and screens placed for the motion they will have (where they enter, where they stop).
 - Stock clips get their own artboard with a still from the clip and a note of the in and out points.
-- Type: Outfit, our sizes; one italic emphasis word allowed in the opening line.
+- Type: Outfit only, our sizes; emphasis by weight and colour.
 - Client names never on screen. Torvi, Vaelo, Maison Avelle and Oriel are our design work and are never
   labelled as clients.
 
@@ -112,7 +112,10 @@ stock.adobe.com, or the final session shows them with the Adobe preview tool.
 
 ## Figma artboards
 
-**Style, after Lucky's review (18 Nov): like the reference, full-bleed photography.** Our designs live on
+**Style, after Lucky's review (18 Nov):** real-photo mockups are welcome but not needed for every shot;
+colour mockups are fine. What matters is presentation: full frames with full content, in the style of our
+service page thumbnails (`design/tiles/out/figma-*`, Figma `2IAvyNuE4vcPRiuFT9vwD6`), rebuilt at 16:9 with the
+colour fill to the edges, several screens or pieces per frame, never one lonely screen. Earlier note: Our designs live on
 real devices and objects in real places (a phone in a hand, a tablet held up, a laptop on a desk, print on a
 table), the way the Vaelo car frame does. No flat cards floating on a colour. Flat colour only for the single
 chapter word and the small opening type. `build/screen_fit.py` puts a screen onto a photo's blank screen in
@@ -124,8 +127,8 @@ File: https://www.figma.com/design/N0FMCGKpSEZ0PVBoQDCVdc ("Opsiogen · Showreel
 Design" holds A01-A18: the opening, the burst and the "We design it" chapter. Each artboard is 1920 x 1080, the
 work placed in named image slots (`img:<key>`, files in `build/a`), and a small grey note at the bottom left
 that is not part of the film. Stock artboards are placeholders with the clip's ID until the stills can be shown.
-Type: Outfit, with Instrument Serif Italic for the one emphasis word in the opening line (video only; the
-website keeps Outfit alone). Next pages, after Lucky approves the direction: 02 Build, 03 Brand and print,
+Type: **Outfit only** (Lucky, 18 Nov: "use only our fonts"). Emphasis comes from weight (Light against Bold)
+and colour, never from another typeface. Next pages, after Lucky approves the direction: 02 Build, 03 Brand and print,
 04 Launch, 05 Close.
 
 ## Order of work
