@@ -1245,6 +1245,7 @@ const FLOW_HEADINGS: Record<string, string> = {
   "cabot-solutions": "Healthcare software, page by page.",
   "carlton-noble": "Travel, events and access, page by page.",
   "engel-volkers": "One look, country by country.",
+  "afthab-tours": "Every post, story and ad in one look.",
   "rohde-schwarz": "One brand, from print to the show floor.",
   norsecom: "One mark, everywhere the team shows up.",
   sandlogic: "Where silicon meets intelligence, out in the world.",
@@ -1265,6 +1266,7 @@ const FLOWS = [
   "rohde-schwarz",
   "norsecom",
   "sandlogic",
+  "afthab-tours",
 ];
 
 /**
@@ -1601,7 +1603,8 @@ const GALLERIES: Record<string, ReturnType<typeof workGallery>> = {
       alt: "Trying on lip gloss live in the Oh My Glam app, with product cards",
       width: 2400,
       height: 2400,
-      hotspot: { x: 0.5, y: 0.42 },
+      // Low enough that the phone has room above it in the wide crop.
+      hotspot: { x: 0.5, y: 0.24 },
     },
     [
       "A lipstick product page with shades seen on you",

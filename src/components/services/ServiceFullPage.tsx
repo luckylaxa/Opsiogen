@@ -25,6 +25,7 @@ const focus = (h: { x: number; y: number }, x?: number) => (x === undefined ? h 
 
 /** Services with a hero image use the full page. */
 /** Service pages whose What we do tiles were made in the plain style (see the service-tiles skill). */
+const HIDE_WORK = new Set(["ai-video-production"]);
 const PLAIN_TILES = new Set(["ai-product-design", "ai-mvps-business-apps", "ai-video-production", "ai-automation", "ai-social-media-marketing", "digital-marketing", "ai-creative-subscription", "ai-print-collateral", "ai-brand-services"]);
 
 export const hasFullPage = (service: Service) => Boolean(service.hero?.image?.url);
@@ -39,7 +40,8 @@ export function ServiceFullPage({ service, settings, work }: Props) {
   const cards = service.offerings;
   const plain = PLAIN_TILES.has(service.slug);
   const contact = `/contact?service=${encodeURIComponent(service.slug)}`;
-  const showWork = work.slice(0, 4);
+  // Hidden for now on the video page, until we have our own films to show.
+  const showWork = HIDE_WORK.has(service.slug) ? [] : work.slice(0, 4);
 
   return (
     <>

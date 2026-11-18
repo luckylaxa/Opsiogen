@@ -7,6 +7,8 @@ const path = require('path');
   const p = await b.newPage({ viewport: { width: 1440, height: 917 }, deviceScaleFactor: 2 });
   await p.goto('file://' + path.join(__dirname, 'mock.html'));
   await p.evaluate(() => document.fonts.ready);
+  // The headings stay on the square frames' own layout, never inside a cut-out part.
+  await p.addStyleTag({ content: '.tl{visibility:hidden!important}' });
   await p.waitForTimeout(800);
   // One region per part: the union of the chosen children of a frame, in page coordinates.
   const regions = await p.evaluate(() => {
