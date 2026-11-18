@@ -212,6 +212,8 @@ export type ShowreelSection = {
   /** The same video as WebM, used where MP4 can't play. */
   videoWebm?: Video | null;
   poster?: Img | null;
+  /** The video has sound (the showreel's music): the card shows a sound button. */
+  sound?: boolean | null;
 };
 
 export type CallToActionSection = { _type: "callToAction"; _key: string };

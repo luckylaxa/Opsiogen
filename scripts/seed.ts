@@ -635,6 +635,31 @@ async function run() {
     );
   }
 
+  // The Work page's video card, re-made since an earlier seed (same file names, new content): swap in the new
+  // video, poster and sound setting while Studio still holds the seeded video.
+  if (!OVERWRITE) {
+    const reel = PAGES.find((p) => p._id === "page-work")?.sections.find((s) => s._type === "showreel");
+    const held = await client.fetch<{ key: string; file: string | null; refs: (string | null)[]; sound: boolean | null } | null>(
+      `*[_id == "page-work"][0].sections[_type == "showreel"][0]{ "key": _key, "file": video.asset->originalFilename, "refs": [video.asset._ref, videoWebm.asset._ref, poster.asset._ref], sound }`,
+    );
+    if (reel?._type === "showreel" && reel.video?.url && held?.file === path.basename(reel.video.url)) {
+      const doc = (await sectionDoc(reel)) as Record<string, { asset: { _ref: string } } | undefined>;
+      const refs = [doc.video, doc.videoWebm, doc.poster].map((f) => f?.asset._ref ?? null);
+      if (JSON.stringify(refs) !== JSON.stringify(held.refs) || Boolean(reel.sound) !== Boolean(held.sound)) {
+        console.log("  updating the Work page's video card");
+        const at = `sections[_key == "${held.key}"]`;
+        tx.patch("page-work", (p) =>
+          p.set({
+            ...(doc.video ? { [`${at}.video`]: doc.video } : {}),
+            ...(doc.videoWebm ? { [`${at}.videoWebm`]: doc.videoWebm } : {}),
+            ...(doc.poster ? { [`${at}.poster`]: doc.poster } : {}),
+            [`${at}.sound`]: Boolean(reel.sound),
+          }),
+        );
+      }
+    }
+  }
+
   if (!OVERWRITE && PAGE_REWRITES.length) {
     const held = await client.fetch<{ _id: string; heading: string | null }[]>(
       `*[_type == "page" && _id in $ids]{ _id, "heading": sections[_type == "hero"][0].heading }`,

@@ -313,8 +313,14 @@ export const showreelSection = defineType({
       type: "file",
       options: { accept: "video/mp4,video/webm" },
       description:
-        "MP4 loop, no sound, under 10 MB, 16:9. Phones show it 4:3, so keep words and faces in the middle.",
+        "MP4, 16:9, shown 16:9 on every screen. Plays muted on a loop: a short silent loop under 10 MB, or a film with its music (turn on Sound below).",
       validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "sound",
+      type: "boolean",
+      initialValue: false,
+      description: "The video has sound (the showreel's music): show a sound button. It always starts muted.",
     }),
     defineField({
       name: "videoWebm",

@@ -17,16 +17,18 @@ function chooseSrc(el: HTMLVideoElement, video: Video, webm?: Video | null) {
 /**
  * The big video card: a muted loop that plays while it is on screen, over
  * its poster image, with the label and line in the bottom corner and a
- * square play/pause button. Visitors who prefer less motion see the poster
- * until they press play. 16:9, and 4:3 on phones.
+ * square play/pause button; a video with sound (the showreel) adds a sound
+ * button, and always starts muted. Visitors who prefer less motion see the
+ * poster until they press play. 16:9 on every screen, so a film is never cut.
  */
 export function Showreel({ section, className }: { section: ShowreelSection; className?: string }) {
-  const { label, heading, video, videoWebm, poster } = section;
+  const { label, heading, video, videoWebm, poster, sound } = section;
   const ref = useRef<HTMLVideoElement>(null);
   // The file to play, picked once the card is near: MP4, or the WebM copy where MP4 can't play.
   const [src, setSrc] = useState<string>();
   const [playing, setPlaying] = useState(false);
   const [started, setStarted] = useState(false);
+  const [muted, setMuted] = useState(true);
   // Set when the visitor pauses (or, with reduced motion, until they press play).
   const held = useRef(false);
   const inView = useRef(false);
@@ -76,16 +78,30 @@ export function Showreel({ section, className }: { section: ShowreelSection; cla
     }
   };
 
+  // Sound on also plays the film, from wherever it is; it stays on until turned off.
+  const toggleSound = () => {
+    const el = ref.current;
+    if (!el || !video) return;
+    el.muted = !muted;
+    setMuted(!muted);
+    if (muted && !playing) {
+      held.current = false;
+      if (el.getAttribute("src")) el.play().catch(() => {});
+      else setSrc(chooseSrc(el, video, videoWebm));
+    }
+  };
+
+  const button =
+    "grid size-[clamp(52px,3.6vw,68px)] place-items-center rounded-[8px] border border-white/20 bg-black/70 transition-colors duration-300 hover:border-white/50 hover:bg-black/60";
+
   if (!video && !poster) return null;
   return (
     <div className={cn("px-gutter", className)}>
       <figure
         data-reveal
-        className="on-dark relative aspect-[4/3] overflow-hidden rounded-card bg-night text-white sm:aspect-video"
+        className="on-dark relative aspect-video overflow-hidden rounded-card bg-night text-white"
       >
-        {/* On phones the 16:9 poster fills a 4:3 card, so it is shown a third wider than the screen:
-            ask for that width, or the sharper video frame replaces it as the page's main image. */}
-        {poster && <Media image={poster} sizes="(min-width: 1440px) 1440px, (min-width: 640px) 100vw, 134vw" priority />}
+        {poster && <Media image={poster} sizes="(min-width: 1440px) 1440px, 100vw" priority />}
         {video && (
           <video
             ref={ref}
@@ -94,7 +110,7 @@ export function Showreel({ section, className }: { section: ShowreelSection; cla
               started ? "opacity-100" : "opacity-0",
             )}
             src={src}
-            muted
+            muted={muted}
             loop
             playsInline
             preload="none"
@@ -111,7 +127,14 @@ export function Showreel({ section, className }: { section: ShowreelSection; cla
           className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent"
         />
         {(label || heading) && (
-          <figcaption className="absolute bottom-[clamp(16px,2.4vw,46px)] left-[clamp(16px,2.4vw,46px)] right-[calc(clamp(16px,2.4vw,46px)+clamp(52px,3.6vw,68px)+16px)]">
+          <figcaption
+            className={cn(
+              "absolute bottom-[clamp(16px,2.4vw,46px)] left-[clamp(16px,2.4vw,46px)]",
+              video && sound
+                ? "right-[calc(clamp(16px,2.4vw,46px)+2*clamp(52px,3.6vw,68px)+28px)]"
+                : "right-[calc(clamp(16px,2.4vw,46px)+clamp(52px,3.6vw,68px)+16px)]",
+            )}
+          >
             {label && <span className="block text-base text-white/75">{label}</span>}
             {heading && (
               <span className="mt-1 block text-[length:clamp(22px,calc(1.3vw+17px),44px)] leading-[1.05] font-semibold tracking-[-0.02em] text-balance">
@@ -121,16 +144,27 @@ export function Showreel({ section, className }: { section: ShowreelSection; cla
           </figcaption>
         )}
         {video && (
-          <button
-            type="button"
-            onClick={toggle}
-            aria-label={playing ? "Pause video" : "Play video"}
-            className="absolute right-[clamp(16px,2.4vw,46px)] bottom-[clamp(16px,2.4vw,46px)] grid size-[clamp(52px,3.6vw,68px)] place-items-center rounded-[8px] border border-white/20 bg-black/70 transition-colors duration-300 hover:border-white/50 hover:bg-black/60"
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true" className="size-[40%] fill-current">
-              {playing ? <path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" /> : <path d="M8 5.5v13l11-6.5z" />}
-            </svg>
-          </button>
+          <div className="absolute right-[clamp(16px,2.4vw,46px)] bottom-[clamp(16px,2.4vw,46px)] flex gap-3">
+            {sound && (
+              <button type="button" onClick={toggleSound} aria-label={muted ? "Turn sound on" : "Turn sound off"} className={button}>
+                <svg viewBox="0 0 24 24" aria-hidden="true" className="size-[40%] fill-current">
+                  <path d="M3 9.5h4L12 5v14l-5-4.5H3z" />
+                  <path
+                    d={muted ? "M16 9.5l5 5M21 9.5l-5 5" : "M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </button>
+            )}
+            <button type="button" onClick={toggle} aria-label={playing ? "Pause video" : "Play video"} className={button}>
+              <svg viewBox="0 0 24 24" aria-hidden="true" className="size-[40%] fill-current">
+                {playing ? <path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" /> : <path d="M8 5.5v13l11-6.5z" />}
+              </svg>
+            </button>
+          </div>
         )}
       </figure>
     </div>
