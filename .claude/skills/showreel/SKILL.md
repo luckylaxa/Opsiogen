@@ -115,6 +115,16 @@ Afthab's creatives. `python3 clean.py raw/clean` then `python3 build/assets.py` 
   give two options.
 - Cut on the beat; chapter cards land on the strong beats.
 
+## Lucky's notes on the first cut (18 Nov)
+
+- It must be **very snappy and fast**, like the reference: most shots under a second, hard cuts, quick pop-in.
+- Mix the work with **short service lines** (our own service names, such as "AI Product Design & Design
+  Systems"), so the same kind of screen never runs on and on.
+- **Nothing blurred**: never show an image larger than its own size; product screens are exported at 2x.
+- **The logo keeps its own shape**: real size (800 x 132), only fading in. No turning, scaling or redrawing.
+- **Our character presents**: in the opening, on each chapter card and beside the logo at the end
+  (`build/character.cjs` cuts its poses out of the live Home hero; the artwork is never redrawn).
+
 ## What to deliver
 
 1. The 60-second film with sound.
