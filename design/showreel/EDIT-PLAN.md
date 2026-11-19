@@ -223,12 +223,13 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   Jumping is not interesting"), and the character pulling an aqua sheet at jet speed ("It's boring animation. Let's
   keep simple. Do superside animation. No need character in logo animation"). Now Superside's opening in our words
   and colours, no character: aqua grows out of the full stop of "idea."; "brands already did." builds word by word in
-  place (a soft fade and a small rise); on the second beat the words slide apart and a bold "200+" drops into the gap;
+  place (a soft fade and a small rise); on the second beat the words slide apart and "200+" drops into the gap;
   on the third beat two rows of client logos (all of them) come in along the top and bottom edges and glide to the end,
   the top one right and the bottom one left (Superside's go the other way). Then, as Superside goes on with more lines
   ("They are showing multiple introduction text. We can also do same"), the line goes word by word, "Your idea /
-  could be next." follows (the second line bold), and on the tenth beat the rows go and "could be next." moves to the
-  middle and grows, as Superside's intro ends (`frames.html?share`, shot "Brands already did", 12 beats). The stock
+  could be next." follows, and on the tenth beat the rows go and "could be next." moves to the
+  middle and grows, as Superside's intro ends. All the lines are in the film's bold ("No need two font weight. Keep
+  same bold weight like other titles") (`frames.html?share`, shot "Brands already did", 12 beats). The stock
   clip then opens out of it in the lens circle. Preview of the opening only, for approval:
   `out/opening-logos-preview.mp4` (`build/open_preview.py FRAMES_DIR OUT`). After his yes, `build/share.py` is updated
   for it (it still adds the old end beat) and the full share cut is made.

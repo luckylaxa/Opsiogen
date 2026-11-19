@@ -92,7 +92,7 @@ const row=(keys,c,o={})=>{bg(c);const h=o.h||820,gap=o.gap||40;
 // The share cut's opening logo beat (Lucky, 19 Nov: client logos at the start, for the cut shared outside the site; the
 // website keeps the film without it, as the logo strip sits right under it there). Superside's opening in our words and
 // colours, without the character ("Do superside animation. No need character"): on aqua, "brands already did." builds
-// word by word, a gap opens and a bold "200+" drops into it, and two rows of client logos (public/logos, one colour,
+// word by word, a gap opens and "200+" drops into it, and two rows of client logos (public/logos, one colour,
 // all of them, as in the site's strip) come in along the top and bottom edges and glide in opposite directions. Then,
 // as Superside goes on to more lines ("multiple introduction text"), "Your idea / could be next." follows, and the
 // rows go as "could be next." grows to fill the middle. Every logo gets about the same area, as in the strip.
@@ -104,11 +104,11 @@ const brandRows=()=>{bg(AQUA);
   [[100,-1400],[980,-500]].forEach(([cy,x0],r)=>{const tr=el('div','abs brow',f,{left:'0',top:cy-28+'px',height:'56px',display:'flex',alignItems:'center',gap:'84px',
       whiteSpace:'nowrap',transform:`translateX(${x0}px)`});const mine=BRANDS.filter((_,i)=>i%2===r);
     [...mine,...mine].forEach(([k,ra,sz])=>{let h=38*Math.min(1.4,2*sz/Math.sqrt(ra)),w=h*ra;if(w>180){w=180;h=w/ra}img('../../../public/logos/'+k+'.svg',tr,{height:h+'px',width:w+'px',flex:'none'})})});
-  const t=el('div','abs bline',f,{left:0,right:0,top:'496px',textAlign:'center',fontSize:'76px',lineHeight:'88px',color:COAL,letterSpacing:'-.03em'});
-  for(const [w,x] of [['200+',700],[' brands already did.',400]]){const sp=el('span','',t,{fontWeight:x});sp.textContent=w}
+  const t=el('div','abs bline',f,{left:0,right:0,top:'496px',textAlign:'center',fontSize:'76px',lineHeight:'88px',fontWeight:700,color:COAL,letterSpacing:'-.035em'});
+  for(const w of ['200+',' brands already did.'])el('span','',t).textContent=w;   // one weight, bold, as in the film's other lines (Lucky)
   // The next line of the introduction, only in the film (the still keeps the first).
-  const t2=el('div','abs bline2',f,{left:0,right:0,top:'452px',textAlign:'center',fontSize:'76px',lineHeight:'88px',color:COAL,letterSpacing:'-.03em',visibility:'hidden'});
-  el('div','',t2,{fontWeight:400}).textContent='Your idea';el('div','bacc',t2,{fontWeight:700}).textContent='could be next.'};
+  const t2=el('div','abs bline2',f,{left:0,right:0,top:'452px',textAlign:'center',fontSize:'76px',lineHeight:'88px',fontWeight:700,color:COAL,letterSpacing:'-.035em',visibility:'hidden'});
+  el('div','',t2).textContent='Your idea';el('div','bacc',t2).textContent='could be next.'};
 const caption=(t,c=PAPER)=>{const d=el('div','abs',f,{left:'90px',bottom:'80px',fontSize:'64px',fontWeight:500,color:c,letterSpacing:'-.03em',lineHeight:1.05});d.innerHTML=t};
 
 const SHOTS=[
