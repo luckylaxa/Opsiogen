@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { cn, giantSize } from "@/lib/utils";
 
 /** Small label above a heading, e.g. “Latest”. */
@@ -49,16 +50,45 @@ export function accentRange(words: string[], accent?: string | null): [number, n
  * Display text with one accent word (or short phrase) marked up on its own.
  * It used to carry the brand gradient; it is now plain ink like the rest.
  */
-export function AccentText({ text, accent }: { text: string; accent?: string | null }) {
+export function AccentText({ text, accent, phrases = false }: { text: string; accent?: string | null; phrases?: boolean }) {
   const words = text.trim().split(/\s+/);
   const [start, end] = accentRange(words, accent);
-  const before = words.slice(0, start).join(" ");
-  const after = words.slice(end + 1).join(" ");
+  // Words from `from` to `to`, with the accent words among them marked up.
+  const run = (from: number, to: number) => {
+    const a = Math.max(start, from), b = Math.min(end, to);
+    if (a > b) return words.slice(from, to + 1).join(" ");
+    const before = words.slice(from, a).join(" ");
+    const after = words.slice(b + 1, to + 1).join(" ");
+    return (
+      <>
+        {before && `${before} `}
+        <span className="text-gradient">{words.slice(a, b + 1).join(" ")}</span>
+        {after && ` ${after}`}
+      </>
+    );
+  };
+  // Phrases: each part up to a comma, full stop or dash is kept together, so a line breaks between phrases
+  // first ("EVERYTHING DIGITAL, / DONE FOR YOU.", never "DIGITAL, DONE FOR / YOU."). A phrase too long for
+  // one line still wraps inside itself.
+  const groups: [number, number][] = [];
+  if (phrases) {
+    let from = 0;
+    words.forEach((w, i) => {
+      if (i === words.length - 1 || /[,.;:!?\u2013\u2014]$/.test(w)) {
+        groups.push([from, i]);
+        from = i + 1;
+      }
+    });
+  }
+  if (groups.length < 2) return run(0, words.length - 1);
   return (
     <>
-      {before && `${before} `}
-      <span className="text-gradient">{words.slice(start, end + 1).join(" ")}</span>
-      {after && ` ${after}`}
+      {groups.map(([from, to], i) => (
+        <Fragment key={from}>
+          {i > 0 && " "}
+          <span className="inline-block">{run(from, to)}</span>
+        </Fragment>
+      ))}
     </>
   );
 }
@@ -98,7 +128,7 @@ export function GiantHeading({
 }) {
   const title = (
     <MaskReveal>
-      <AccentText text={heading} accent={accent} />
+      <AccentText text={heading} accent={accent} phrases />
     </MaskReveal>
   );
   const size = giantSize(heading);
@@ -112,10 +142,11 @@ export function GiantHeading({
         ) : (
           <Label className="mb-[clamp(20px,calc(2.29vw+11.4px),55px)]">{label}</Label>
         ))}
-      {/* Whole words only: words wrap between each other, never inside (see giantSize).
-          Lines are balanced from tablets up; on phones they wrap plainly, because
-          iPhone Safari's balancing can break a short title into one word per line. */}
-      <Tag className={cn(size.className, "w-full font-bold uppercase sm:text-balance")} style={size.style}>
+      {/* Whole words only: words wrap between each other, never inside (see giantSize), and between
+          phrases first (AccentText). Lines are balanced from tablets up; on phones they wrap plainly,
+          because iPhone Safari's balancing can break a short title into one word per line, and they get
+          a little more room, so a comma at the end of a line never touches the capitals below it. */}
+      <Tag className={cn(size.className, "w-full font-bold uppercase max-sm:leading-none sm:text-balance")} style={size.style}>
         {title}
       </Tag>
       {text && (
