@@ -155,8 +155,8 @@ def sifio_health():             # sifio's own logo file (from the owner, 19 Nov)
     return load("design/logos/src/sifio-health.png")[:, :, 3] / 255, {}
 
 
-def bigtapp():                  # website header, white on navy: the bars over the name
-    return ink_auto(crop(load("public/work/bigtapp/bigtapp-1-wide.jpg"), (85, 35, 265, 155))), {}
+def bigtapp():                  # BigTapp's own logo file (from the owner, 19 Nov): blue bars over the grey name, on white
+    return ink_auto(crop(load("design/logos/src/bigtapp.jpg"), (330, 90, 2240, 1280)), (255, 255, 255), t=40), {}
 
 
 def carlton_noble():            # Carlton Noble's own logo file (from the owner, 19 Nov), white on clear
@@ -172,9 +172,8 @@ def meetingful():               # Meetingful's own logo (from the owner, 19 Nov)
     return a, {"soft": np.clip(soft - a, 0, 1)}
 
 
-def oh_my_glam():               # app cover: white "OMG" over a soft photo (the small "OH MY GLAM!" under it is too
-    c = crop(load("public/work/oh-my-glam/omg-0.jpg"), (90, 85, 465, 250))   # small to read on a card, so it goes)
-    return keep_seeded(ink_lum(c, 200, 245), 0.97), {"blur": 0.5}
+def oh_my_glam():               # Oh My Glam's own logo file (from the owner, 19 Nov): the round mark and OH MY GLAM,
+    return load("design/logos/src/oh-my-glam.png")[:, :, 3] / 255, {}   # white on clear
 
 
 def norsecom():                 # office sign (turned a little): mark and name; the TM and the line below go
