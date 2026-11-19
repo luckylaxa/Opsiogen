@@ -103,11 +103,19 @@ def bbox(path, S):
     return p.min(0), p.max(0)
 
 
-def write(slug, a, **kw):
+def write(slug, a, soft=None, **kw):
+    """`soft`: a second ink map, for a part of the logo drawn in a light colour behind the rest; it is written at
+    40% opacity, so the one-colour logo keeps the difference (on the site, a 40% white)."""
     d, path = trace(a, **kw)
     (x0, y0), (x1, y1) = bbox(path, kw.get("S", 1))
+    extra = ""
+    if soft is not None:
+        d2, path2 = trace(soft, **kw)
+        (a0, b0), (a1, b1) = bbox(path2, kw.get("S", 1))
+        x0, y0, x1, y1 = min(x0, a0), min(y0, b0), max(x1, a1), max(y1, b1)
+        extra = f'<path fill-rule="evenodd" fill-opacity=".4" d="{d2}"/>'
     svg = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{x0:.2f} {y0:.2f} {x1 - x0:.2f} {y1 - y0:.2f}">'
-           f'<path fill-rule="evenodd" d="{d}"/></svg>\n')
+           f'{extra}<path fill-rule="evenodd" d="{d}"/></svg>\n')
     open(os.path.join(OUT, slug + ".svg"), "w").write(svg)
     return round((x1 - x0) / (y1 - y0), 3), len(svg)
 
@@ -143,17 +151,16 @@ def engel_volkers():            # website header: white letters and a red "&" on
     return ink_auto(crop(load("public/work/engel-volkers/ev-1-wide.jpg"), (90, 60, 590, 130))), {}
 
 
-def sifio_health():             # hero card: cream letters over a photo; only shapes with solid cream in them
-    c = crop(load("public/work/sifio-health/sifio-1-wide.jpg"), (175, 140, 385, 210))
-    return keep_seeded(ink_lum(c, 196, 238), 0.97), {"blur": 0.5}   # HEALTH beside it is too small to keep
+def sifio_health():             # sifio's own logo file (from the owner, 19 Nov): the horizontal one, cream on clear
+    return load("design/logos/src/sifio-health.png")[:, :, 3] / 255, {}
 
 
 def bigtapp():                  # website header, white on navy: the bars over the name
     return ink_auto(crop(load("public/work/bigtapp/bigtapp-1-wide.jpg"), (85, 35, 265, 155))), {}
 
 
-def carlton_noble():            # website header, light letters on dark brown
-    return ink_auto(crop(load("public/work/carlton-noble/carlton-1-wide.jpg"), (90, 65, 450, 120)), t=30), {}
+def carlton_noble():            # Carlton Noble's own logo file (from the owner, 19 Nov), white on clear
+    return load("design/logos/src/carlton-noble.png")[:, :, 3] / 255, {}
 
 
 def care_connect():             # website hero, on blue: app icon (blue square, white heart line) and "CareConnect"
@@ -174,8 +181,13 @@ def care_connect():             # website hero, on blue: app icon (blue square, 
     return a, {"S": 2, "blur": 0.35}
 
 
-def meetingful():               # app header on near-black: the M mark and the name
-    return ink_auto(crop(load("design/showreel/raw/_src/mf03.png"), (40, 130, 395, 210)), t=35), {}
+def meetingful():               # Meetingful's own logo (from the owner, 19 Nov), on white: the orange M with ring
+    c = load("design/logos/src/meetingful.png")  # ends and the name, and a lavender X behind the M (drawn lighter)
+    a = ink_auto(c, (255, 255, 255), t=60)       # the orange parts (the lavender is too pale to count as full ink)
+    rgb = c[:, :, :3]; d = np.linalg.norm(rgb - 255, axis=2)
+    lav = (rgb[:, :, 0] > rgb[:, :, 2] + 8) & (d > 25)                 # bluish, not white (channels are BGR)
+    soft = np.clip(d / np.percentile(d[lav], 90), 0, 1) * cv2.dilate(lav.astype(np.uint8), np.ones((3, 3), np.uint8))
+    return a, {"soft": np.clip(soft - a, 0, 1)}
 
 
 def oh_my_glam():               # app cover: white "OMG" over a soft photo (the small "OH MY GLAM!" under it is too
@@ -209,9 +221,8 @@ def afthab_tours():             # logo file: colour mark (white plane cut out) a
     return clear(a, (104, 47, 480, 79)), {}
 
 
-def cabot_solutions():          # logo file from Cabot's site: blue mark and black name on transparent
-    a = load("design/logos/src/cabot.webp")[:, :, 3] / 255
-    return a, {}
+def cabot_solutions():          # Cabot's own white logo file (from the owner, 19 Nov), on clear
+    return load("design/logos/src/cabot-white.png")[:, :, 3] / 255, {}
 
 
 def rxlive():                   # logo file from Cabot's site, on white: "Rx Live" and the four-part plus
@@ -220,14 +231,14 @@ def rxlive():                   # logo file from Cabot's site, on white: "Rx Liv
     return drop(drop(a, (190, 150, 400, 200)), (380, 45, 415, 78)), {}       # the tagline and the SM
 
 
-def surgo_health():             # logo file from Cabot's site, on white: the dots, "surgo" and HEALTH
-    return ink_auto(load("design/logos/src/surgo.jpg"), (255, 255, 255), t=25), {}
+def surgo_health():             # Surgo Health's brand guide (from the owner, 19 Nov): the primary logo on white, page 3,
+    # drawn from the guide's vector artwork at 600 dpi. The dots, "surgo" and HEALTH.
+    return ink_auto(load("design/logos/src/surgo-health.png"), (255, 255, 255), t=25), {}
 
 
-def rohde_schwarz():            # our brand board: the name and the diamond mark, white on navy; the strapline goes
-    box = (545, 1090, 905, 1195); c = crop(load("public/work/rohde-schwarz/rs-25-wide.jpg"), box)
-    a = ink_auto(c, t=60)
-    return clear(a, (545, 1155, 800, 1195), at=box[:2]), {"S": 2, "blur": 0.35}
+def rohde_schwarz():            # Rohde & Schwarz's own logo (from the owner, 19 Nov): the name and the diamond, on
+    a = load("design/logos/src/rohde-schwarz.png")[:, :, 3] / 255   # clear; the claim "Make ideas real" under the
+    return drop(a, (0, 128, 320, 207)), {}                            # name goes (too small to read in the row)
 
 
 LOGOS = {"engel-volkers": engel_volkers, "sifio-health": sifio_health, "bigtapp": bigtapp, "carlton-noble": carlton_noble,

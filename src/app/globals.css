@@ -356,9 +356,11 @@
   }
 }
 .marquee-track {
-  animation: marquee 48s linear infinite;
+  animation: marquee var(--marquee-time, 48s) linear infinite;
 }
-.marquee:hover .marquee-track {
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track,
+.marquee[data-paused] .marquee-track {
   animation-play-state: paused;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -370,9 +372,10 @@
     width: auto;
     flex-wrap: wrap;
     justify-content: center;
-    row-gap: 8px;
+    row-gap: 28px;
   }
-  .marquee-track [aria-hidden="true"] {
+  .marquee-track [aria-hidden="true"],
+  .marquee-pause {
     display: none;
   }
 }

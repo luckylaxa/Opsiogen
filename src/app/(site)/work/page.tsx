@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { cmsMetadata } from "@/components/CmsPage";
 import { SectionRenderer } from "@/components/sections/SectionRenderer";
+import { ClientLogos } from "@/components/sections/ClientLogos";
 import { Showreel } from "@/components/sections/Showreel";
 import { FeaturedProject } from "@/components/sections/FeaturedProject";
 import { GiantHeading } from "@/components/ui/Headings";
@@ -71,9 +72,12 @@ export default async function WorkPage() {
               className="mb-[clamp(40px,calc(2.6vw+30px),88px)]"
             />
           ) : spotlight ? (
-            <div className="mb-[clamp(40px,calc(2.6vw+30px),88px)]">
-              <FeaturedProject project={spotlight} />
-            </div>
+            <>
+              <div className="mb-[clamp(40px,calc(2.6vw+30px),88px)]">
+                <FeaturedProject project={spotlight} />
+              </div>
+              <ClientLogos className="mb-[clamp(56px,calc(3.4vw+40px),120px)]" />
+            </>
           ) : null
         }
       >
