@@ -148,10 +148,13 @@ export function Hero({
   glow,
   light,
   image,
+  roomy,
   children,
 }: {
   section: HeroSection;
   full?: boolean;
+  /** Phones: a little more room between the heading's lines (see GiantHeading). */
+  roomy?: boolean;
   /** Soft pools of colour behind the heading, on the page's own white or black, with our character (Home). */
   glow?: boolean;
   /** The same colour light behind the heading, without the character (Services, About, Contact). */
@@ -303,6 +306,7 @@ export function Hero({
         as="h1"
         label={section.label}
         labelStyle="pill"
+        roomy={roomy}
         heading={section.heading}
         accent={section.accent}
         text={section.text}

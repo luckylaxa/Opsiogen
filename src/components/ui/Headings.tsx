@@ -113,6 +113,7 @@ export function GiantHeading({
   text,
   as: Tag = "h2",
   labelStyle = "plain",
+  roomy = false,
   className,
   children,
 }: {
@@ -123,6 +124,11 @@ export function GiantHeading({
   text?: string | null;
   as?: "h1" | "h2" | "p";
   labelStyle?: "plain" | "pill";
+  /**
+   * Phones: line-height 1 instead of 0.92, for a title where a comma ends a line above a wider one
+   * and would almost touch its capitals (Services). Others keep the tight lines (Lucky liked Home's).
+   */
+  roomy?: boolean;
   className?: string;
   children?: React.ReactNode;
 }) {
@@ -144,9 +150,8 @@ export function GiantHeading({
         ))}
       {/* Whole words only: words wrap between each other, never inside (see giantSize), and between
           phrases first (AccentText). Lines are balanced from tablets up; on phones they wrap plainly,
-          because iPhone Safari's balancing can break a short title into one word per line, and they get
-          a little more room, so a comma at the end of a line never touches the capitals below it. */}
-      <Tag className={cn(size.className, "w-full font-bold uppercase max-sm:leading-none sm:text-balance")} style={size.style}>
+          because iPhone Safari's balancing can break a short title into one word per line. */}
+      <Tag className={cn(size.className, "w-full font-bold uppercase sm:text-balance", roomy && "max-sm:leading-none")} style={size.style}>
         {title}
       </Tag>
       {text && (

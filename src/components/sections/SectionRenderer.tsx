@@ -27,6 +27,8 @@ export type PageLayout = {
   heroGlow?: boolean;
   /** The first hero has the colour glow behind its heading, without the character. */
   heroLight?: boolean;
+  /** The first hero's heading gets a little more room between its lines on phones (Services). */
+  heroRoomy?: boolean;
   /** A picture for the first hero (Home). */
   heroImage?: HeroImage;
 };
@@ -62,7 +64,7 @@ export async function SectionRenderer({
         if (next?._type === "featuredProject" || next?._type === "showreel") {
           out.push(
             <section key={section._key} data-band>
-              <Hero section={section} full={layout.heroFull && i === 0} glow={layout.heroGlow && i === 0} light={layout.heroLight && i === 0} image={i === 0 ? layout.heroImage : undefined}>
+              <Hero section={section} full={layout.heroFull && i === 0} glow={layout.heroGlow && i === 0} light={layout.heroLight && i === 0} roomy={layout.heroRoomy && i === 0} image={i === 0 ? layout.heroImage : undefined}>
                 {next._type === "featuredProject" ? (
                   <FeaturedProject project={next.project} priority={!layout.heroFull && !layout.heroImage} />
                 ) : (
@@ -75,7 +77,7 @@ export async function SectionRenderer({
         } else {
           out.push(
             <section key={section._key} data-band>
-              <Hero section={section} full={layout.heroFull && i === 0} glow={layout.heroGlow && i === 0} light={layout.heroLight && i === 0} image={i === 0 ? layout.heroImage : undefined} />
+              <Hero section={section} full={layout.heroFull && i === 0} glow={layout.heroGlow && i === 0} light={layout.heroLight && i === 0} roomy={layout.heroRoomy && i === 0} image={i === 0 ? layout.heroImage : undefined} />
             </section>,
           );
         }
