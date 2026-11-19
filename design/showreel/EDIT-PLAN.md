@@ -215,12 +215,17 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   still lands on the bar, and the track's last hit moves with it. Out: `out/opsiogen-showreel-v12-share.mp4` (60.4 s) and
   a lighter copy for messages, `out/opsiogen-showreel-share-web.mp4` (23 MB).
 - **Share cut, opening logos (19 Nov).** Lucky did not like the end logo beat: "I was expecting this type of animation
-  in the beginning", with Superside's opening as the reference ("Don't have to copy same"). Our own idea: right after
-  "You bring the idea.", **"200+ brands already did."** holds the middle (200+ brands in aqua, as "idea." is) while two
-  thin rows of client logos glide in from the top and bottom edges and keep sliding in opposite directions, soft at the
-  ends (`frames.html?share`, shot "Brands already did", 8 beats); the stock clip then opens out of it in the lens circle.
-  The end beat is gone. Preview of the opening only, for approval: `out/opening-logos-preview.mp4`. After his yes,
-  `build/share.py` is updated for it (it still adds the old end beat) and the full share cut is made.
+  in the beginning", with Superside's opening as the reference ("Don't have to copy same"). Turned down on the way: two
+  rows gliding along the edges on dark ("Don't copy same", "Make it in color"), logos circling the character ("Make it
+  simple like character run and logo fall into one by one"), and a block of logos in the middle ("Logo position is not
+  good. Maybe we can follow something similar style of superside", "Also use some yellow color as background"). Now:
+  right after "You bring the idea.", our yellow (SUN) sweeps in and **"200+ brands already did."** rises in the middle;
+  our character runs in along the bottom, hopping on the eighths, and fifteen client logos drop in one by one, seven in
+  a row along the top and eight along the bottom (Superside's layout, our own motion), each bottom one just before the
+  character lands on it (`frames.html?share`, shot "Brands fall in", 8 beats). The stock clip then opens out of it in
+  the lens circle. The end beat is gone. Preview of the opening only, for approval: `out/opening-logos-preview.mp4`
+  (`build/open_preview.py FRAMES_DIR OUT`). After his yes, `build/share.py` is updated for it (it still adds the old
+  end beat) and the full share cut is made.
 - The logo keeps its own shape; only at the very end (cut 11, as Lucky asked) is it shown larger, then settles at
   its own size. Otherwise it only fades in. Nothing else is shown larger than its own size.
 
