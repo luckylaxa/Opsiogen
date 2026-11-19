@@ -209,7 +209,7 @@ const n=parseInt(location.hash.slice(1).split('|')[0]||'0');SHOTS[n][2]();
 // the logo. It runs only for the film (the address ends in |anim; |alpha draws only the character, to lay over a stock
 // clip). window.anim(t,d) draws t seconds into a shot d seconds long. The approved stills never run it.
 const BEAT=60/140,clamp=p=>Math.min(1,Math.max(0,p)),ease=p=>1-Math.pow(1-clamp(p),3);
-const LOGO_IN=4*BEAT;   // the logo shot's fly-through before the last hit (film.py gives the shot 4 more beats)
+const LOGO_IN=4*BEAT;   // the logo shot's fly-through before the last hit (film.py gives the shot 5 more beats)
 const io=p=>{p=clamp(p);return p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2};
 const pop=p=>{p=clamp(p);const c=2.5;return 1+(c+1)*Math.pow(p-1,3)+c*Math.pow(p-1,2)};
 const IN=.2,NAME=SHOTS[n][1],HASH=location.hash.split('|'),MOTION=HASH[3]==='anim',ALPHA=MOTION&&HASH[4]==='alpha';

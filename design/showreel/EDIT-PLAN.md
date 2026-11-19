@@ -271,6 +271,11 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   SHARE). Out: `out/opsiogen-showreel-v13.mp4` (57 s, without the logo beat) and
   `out/opsiogen-showreel-v13-share.mp4` (62 s). Lucky, asked about the two: "use 62 sec version only", so the 62 s
   film is the one everywhere, its web copies on Home too (the logo strip under it there is fine by him).
+- **Cut 14 (19 Nov), the one version.** Lucky: "lets keep current one [the chapter words]. merge new opening and
+  publish". The film with the one-sentence opening ("You bring the idea." / "Like 200+ brands before you." / "We take it
+  from here."), the 13 hand-overs and the jet-and-snap logo ending; the logo shot is 9 beats (one less hold at the end)
+  so the film is 60.0 s, "within a minute". Built with `SHARE=1` (frames.cjs and film.py); out:
+  `out/opsiogen-showreel-v14.mp4`; its web copies are on Home.
 - The logo keeps its own shape; only at the very end (cut 11, as Lucky asked) is it shown larger, then settles at
   its own size. Otherwise it only fades in. Nothing else is shown larger than its own size.
 

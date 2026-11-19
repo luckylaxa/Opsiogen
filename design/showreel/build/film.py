@@ -27,7 +27,7 @@ def beats(n):
     if n.startswith("Fast word"): return 1
     if n.startswith("The spine"): return 4
     if n == "One partner": return 2
-    if n.startswith("Logo"): return 10   # 4 beats flying through the O (frames.html LOGO_IN), then 6 as before
+    if n.startswith("Logo"): return 9    # 4 beats flying through the O (frames.html LOGO_IN), then 5 (the film within a minute)
     if n.startswith("Wall of"): return 3   # the closing wall pulls back into the grid (cut 5's tilted wall)
     if n == "Website: Engel & Völkers, Mykonos": return 2   # the beach lands on its coast photo: give it time
     if n == "Websites: wall across projects": return 1      # ...and the wall after it takes one beat less
