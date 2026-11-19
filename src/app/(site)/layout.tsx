@@ -16,6 +16,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { Cursor } from "@/components/motion/Cursor";
 import { BrandGradientDefs } from "@/components/site/SocialLinks";
 import { Preloader } from "@/components/motion/Preloader";
+import { IntroLoader } from "@/components/motion/IntroLoader";
 import { JsonLd } from "@/components/site/JsonLd";
 import { siteSchema } from "@/lib/schema";
 
@@ -73,6 +74,7 @@ export default async function SiteLayout({ children, modal }: LayoutProps<"/">) 
         <JsonLd items={siteSchema(settings)} />
         <BrandGradientDefs />
         <Preloader />
+        <IntroLoader />
         <MenuProvider>
           <a
             href="#main"

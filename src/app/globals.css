@@ -609,6 +609,200 @@ html[data-mega-open] .site-header {
 }
 
 /*
+ * The character intro being tried in place of the preloader (components/motion/IntroLoader.tsx; it shows only with
+ * `?intro` for now, see INTRO_START in lib/theme.ts). Our character drops in, bounces, spins once in the air, lands
+ * facing the visitor, then rushes at the screen and the page opens through its lens. Only transforms and opacity
+ * move, so it stays smooth while the page is still busy loading. 1.62 s in all; `intro-bg` ends at 1.04 s, when the
+ * page's own entrance starts, so it is already rising when the lens opens. The keyframes come from design/showreel/build/intro_css.py.
+ */
+.intro {
+  --size: clamp(112px, 11.5vw, 172px);
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: none;
+  overflow: hidden;
+  /* Never left covering the page if scripts fail part-way. */
+  animation: preloader-failsafe 0s linear 4.5s forwards;
+}
+[data-intro] .intro {
+  display: block;
+}
+[data-intro] .preloader {
+  display: none;
+}
+.intro-done .intro {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.25s,
+    visibility 0s 0.25s;
+}
+.intro__bg {
+  position: absolute;
+  inset: 0;
+  background: #0a090d;
+}
+/* The character's box, in the middle of the screen; it waits out of sight until its pictures are in. */
+.intro__zoom {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--size);
+  height: var(--size);
+  margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
+  visibility: hidden;
+}
+.intro-go .intro__zoom {
+  visibility: visible;
+}
+/* Takes over from the backdrop for the rush and grows with the character; its hole is always under the shell. */
+.intro__veil {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 124vmax;
+  height: 124vmax;
+  margin: -62vmax 0 0 -62vmax;
+  background: radial-gradient(circle, transparent calc(var(--size) * 0.4), #0a090d calc(var(--size) * 0.4 + 1px));
+  opacity: 0;
+}
+/* The pool of our colours on the floor below it. */
+.intro__glow {
+  position: absolute;
+  left: -25%;
+  top: 85%;
+  width: 150%;
+  height: 26%;
+  background: linear-gradient(90deg, #35d4ff 4%, #5a7dff 26%, #b667ff 48%, #ff5fb4 70%, #ff9a3c 96%);
+  -webkit-mask-image: radial-gradient(closest-side, #000 10%, transparent);
+  mask-image: radial-gradient(closest-side, #000 10%, transparent);
+  opacity: 0;
+}
+.intro__hop,
+.intro__squash,
+.intro__shell,
+.intro__turn {
+  position: absolute;
+  inset: 0;
+}
+.intro__squash {
+  transform-origin: 50% 98%;
+}
+.intro__shell {
+  background: center / 100% 100% no-repeat;
+  opacity: 0;
+}
+.intro__turn {
+  overflow: hidden;
+}
+.intro__strip {
+  display: block;
+  width: 1200%;
+  height: 100%;
+  background: 0 0 / 100% 100% no-repeat;
+}
+.intro-go .intro__bg {
+  animation: intro-bg 1.04s both;
+}
+.intro-go .intro__zoom {
+  animation: intro-zoom 1.62s both;
+}
+.intro-go .intro__veil,
+.intro-go .intro__shell {
+  animation: intro-on 1.62s both;
+}
+.intro-go .intro__glow {
+  animation: intro-glow 1.62s both;
+}
+.intro-go .intro__hop {
+  animation: intro-hop 1.62s both;
+}
+.intro-go .intro__squash {
+  animation: intro-squash 1.62s both;
+}
+.intro-go .intro__turn {
+  animation: intro-glass 1.62s both;
+}
+.intro-go .intro__strip {
+  animation: intro-turn 1.62s both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .intro {
+    display: none !important;
+  }
+}
+@keyframes intro-hop {
+  0% { transform: translateY(-62vh) rotate(0deg); animation-timing-function: cubic-bezier(0.333, 0, 0.667, 0.333); }
+  18.519% { transform: translateY(0) rotate(0deg); animation-timing-function: linear; }
+  21.605% { transform: translateY(0) rotate(0deg); animation-timing-function: cubic-bezier(0.333, 0.667, 0.667, 1); }
+  38.889% { transform: translateY(-15vh) rotate(-5deg); animation-timing-function: cubic-bezier(0.333, 0, 0.667, 0.333); }
+  56.173%, 100% { transform: translateY(0) rotate(0deg); }
+}
+@keyframes intro-squash {
+  0% { transform: scale(0.9, 1.12); animation-timing-function: linear; }
+  18.519% { transform: scale(0.9, 1.12); animation-timing-function: cubic-bezier(0.333, 0.667, 0.667, 1); }
+  20.679% { transform: scale(1.26, 0.76); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+  24.074% { transform: scale(0.92, 1.1); animation-timing-function: cubic-bezier(0.333, 0.667, 0.667, 1); }
+  30.864% { transform: scale(1, 1); animation-timing-function: linear; }
+  49.383% { transform: scale(1, 1); animation-timing-function: cubic-bezier(0.333, 0, 0.667, 0.333); }
+  56.173% { transform: scale(0.95, 1.06); animation-timing-function: cubic-bezier(0.333, 0.667, 0.667, 1); }
+  58.642% { transform: scale(1.16, 0.85); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+  61.728% { transform: scale(0.97, 1.03); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+  64.815%, 100% { transform: scale(1, 1); }
+}
+@keyframes intro-turn {
+  0% { transform: translateX(0); animation-timing-function: step-end; }
+  28.794% { transform: translateX(-8.3333%); animation-timing-function: step-end; }
+  31.497% { transform: translateX(-16.6667%); animation-timing-function: step-end; }
+  33.741% { transform: translateX(-25%); animation-timing-function: step-end; }
+  35.759% { transform: translateX(-33.3333%); animation-timing-function: step-end; }
+  37.659% { transform: translateX(-41.6667%); animation-timing-function: step-end; }
+  39.506% { transform: translateX(-50%); animation-timing-function: step-end; }
+  41.354% { transform: translateX(-58.3333%); animation-timing-function: step-end; }
+  43.253% { transform: translateX(-66.6667%); animation-timing-function: step-end; }
+  45.271% { transform: translateX(-75%); animation-timing-function: step-end; }
+  47.515% { transform: translateX(-83.3333%); animation-timing-function: step-end; }
+  50.218% { transform: translateX(-91.6667%); animation-timing-function: step-end; }
+  54.321%, 100% { transform: translateX(0); }
+}
+@keyframes intro-glow {
+  0% { transform: scale(0.35); opacity: 0; animation-timing-function: cubic-bezier(0.333, 0, 0.667, 0.333); }
+  18.519% { transform: scale(1.1); opacity: 1; animation-timing-function: linear; }
+  21.605% { transform: scale(1.15); opacity: 1; animation-timing-function: cubic-bezier(0.333, 0.667, 0.667, 1); }
+  38.889% { transform: scale(0.7); opacity: 0.5; animation-timing-function: cubic-bezier(0.333, 0, 0.667, 0.333); }
+  56.173% { transform: scale(1.1); opacity: 1; animation-timing-function: cubic-bezier(0.333, 0.667, 0.667, 1); }
+  60.494% { transform: scale(1); opacity: 0.9; animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+  66.667%, 100% { transform: scale(0.9); opacity: 0; }
+}
+@keyframes intro-zoom {
+  0% { transform: scale(1); animation-timing-function: linear; }
+  61.728% { transform: scale(1); animation-timing-function: cubic-bezier(0.22, 0.8, 0.35, 1); }
+  67.901% { transform: scale(0.86); animation-timing-function: linear; }
+  75.926% { transform: scale(1.432); animation-timing-function: linear; }
+  82.346% { transform: scale(2.747); animation-timing-function: linear; }
+  87.16% { transform: scale(4.887); animation-timing-function: linear; }
+  91.012% { transform: scale(8.099); animation-timing-function: linear; }
+  94.222% { transform: scale(12.674); animation-timing-function: linear; }
+  96.79% { transform: scale(18.432); animation-timing-function: linear; }
+  98.716% { transform: scale(24.628); animation-timing-function: linear; }
+  100% { transform: scale(30); }
+}
+@keyframes intro-bg {
+  0% { opacity: 1; animation-timing-function: step-end; }
+  100% { opacity: 0; }
+}
+@keyframes intro-on {
+  0% { opacity: 0; animation-timing-function: step-end; }
+  62.963%, 100% { opacity: 1; }
+}
+@keyframes intro-glass {
+  0% { opacity: 1; animation-timing-function: linear; }
+  69.136% { opacity: 1; animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+  79.012%, 100% { opacity: 0; }
+}
+
+/*
  * Custom cursor (design system; see components/motion/Cursor.tsx). The dot
  * and ring invert what is under them; the View disc is solid.
  */

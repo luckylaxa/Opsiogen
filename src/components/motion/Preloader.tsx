@@ -23,8 +23,8 @@ export function Preloader() {
 
   useEffect(() => {
     const root = document.documentElement;
-    // Skipped this visit: the head script has already hidden it with CSS.
-    if (root.classList.contains("no-preloader")) return;
+    // Skipped this visit, or the character intro plays instead (IntroLoader): the head script has already hidden it with CSS.
+    if (root.classList.contains("no-preloader") || root.dataset.intro) return;
     try {
       sessionStorage.setItem(PRELOADER_KEY, "1");
     } catch {}

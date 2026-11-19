@@ -1,0 +1,16 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- The site's first-visit intro (src/components/site/IntroLoader.tsx) shows our character as pre-rendered frames, so the
+     page never waits for the 3D engine. This page draws them from the Home hero's model (character3d.js): one full turn
+     in TURN frames, and the front alone, larger, for the rush into its lens. intro-frames.cjs saves them. -->
+<style>html,body{margin:0;background:transparent}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"../../../node_modules/three/build/three.module.js","three/addons/":"../../../node_modules/three/examples/jsm/"}}</script>
+</head><body>
+<canvas id="c" width="640" height="640"></canvas>
+<script type="module">
+import './character3d.js';
+const c = document.getElementById('c');
+window.frame = async (yaw, roll = 0) => { await window.CH3D.ready; window.CH3D.draw(c, { yaw, pitch: 0, roll, blink: 0, look: [0, 0] }); return c.toDataURL('image/png'); };
+window.ready = window.CH3D.ready;
+</script>
+</body></html>
