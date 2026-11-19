@@ -15,7 +15,7 @@ export function IntroLoader() {
         <span className="intro__veil" />
         <span className="intro__glow" />
         <div className="intro__hop">
-          <div className="intro__squash">
+          <div className="intro__rock">
             <span className="intro__shell" style={{ backgroundImage: `url(${shell})` }} />
             <span className="intro__turn">
               <span className="intro__strip" style={{ backgroundImage: `url(${turn})` }} />

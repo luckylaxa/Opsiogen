@@ -519,8 +519,8 @@ html[data-mega-open] .site-header {
 
 /*
  * First-visit intro (design system; components/motion/IntroLoader.tsx, started by INTRO_SCRIPT in lib/theme.ts).
- * Our character drops in, bounces, spins once in the air, lands facing the visitor, then rushes at the screen and
- * the page opens through its lens. Only transforms and opacity move, so it stays smooth while the page is still
+ * Our character (a solid one: it tips and rocks but never changes shape) drops in, bounces, spins once in the air,
+ * lands facing the visitor, then rushes at the screen and the page opens through its lens. Only transforms and opacity move, so it stays smooth while the page is still
  * busy loading. 1.62 s in all; `intro-bg` ends at 1.04 s, when the page's own entrance starts, so it is already
  * rising when the lens opens. The keyframes come from design/showreel/build/intro_css.py.
  */
@@ -591,14 +591,11 @@ html[data-mega-open] .site-header {
   opacity: 0;
 }
 .intro__hop,
-.intro__squash,
+.intro__rock,
 .intro__shell,
 .intro__turn {
   position: absolute;
   inset: 0;
-}
-.intro__squash {
-  transform-origin: 50% 98%;
 }
 .intro__shell {
   background: center / 100% 100% no-repeat;
@@ -629,8 +626,8 @@ html[data-mega-open] .site-header {
 .intro-go .intro__hop {
   animation: intro-hop 1.62s both;
 }
-.intro-go .intro__squash {
-  animation: intro-squash 1.62s both;
+.intro-go .intro__rock {
+  animation: intro-rock 1.62s both;
 }
 .intro-go .intro__turn {
   animation: intro-glass 1.62s both;
@@ -650,17 +647,17 @@ html[data-mega-open] .site-header {
   38.889% { transform: translateY(-15vh) rotate(-5deg); animation-timing-function: cubic-bezier(0.333, 0, 0.667, 0.333); }
   56.173%, 100% { transform: translateY(0) rotate(0deg); }
 }
-@keyframes intro-squash {
-  0% { transform: scale(0.9, 1.12); animation-timing-function: linear; }
-  18.519% { transform: scale(0.9, 1.12); animation-timing-function: cubic-bezier(0.333, 0.667, 0.667, 1); }
-  20.679% { transform: scale(1.26, 0.76); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
-  24.074% { transform: scale(0.92, 1.1); animation-timing-function: cubic-bezier(0.333, 0.667, 0.667, 1); }
-  30.864% { transform: scale(1, 1); animation-timing-function: linear; }
-  49.383% { transform: scale(1, 1); animation-timing-function: cubic-bezier(0.333, 0, 0.667, 0.333); }
-  56.173% { transform: scale(0.95, 1.06); animation-timing-function: cubic-bezier(0.333, 0.667, 0.667, 1); }
-  58.642% { transform: scale(1.16, 0.85); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
-  61.728% { transform: scale(0.97, 1.03); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
-  64.815%, 100% { transform: scale(1, 1); }
+@keyframes intro-rock {
+  0% { transform: rotate(0deg); animation-timing-function: linear; }
+  18.519% { transform: rotate(0deg); animation-timing-function: cubic-bezier(0.333, 0.667, 0.667, 1); }
+  22.222% { transform: rotate(-10deg); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+  27.778% { transform: rotate(6deg); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+  33.333% { transform: rotate(-2deg); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+  38.272% { transform: rotate(0deg); animation-timing-function: linear; }
+  56.173% { transform: rotate(0deg); animation-timing-function: cubic-bezier(0.333, 0.667, 0.667, 1); }
+  59.259% { transform: rotate(8deg); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+  62.963% { transform: rotate(-3deg); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+  66.049%, 100% { transform: rotate(0deg); }
 }
 @keyframes intro-turn {
   0% { transform: translateX(0); animation-timing-function: step-end; }

@@ -24,18 +24,18 @@ css.append(kf("intro-hop", [
     (.35, "transform: translateY(0) rotate(0deg)", EOUT),
     (.63, "transform: translateY(-15vh) rotate(-5deg)", EIN),
     ((.91, D), "transform: translateY(0) rotate(0deg)", None)]))
-# Squash and stretch, from the floor.
-css.append(kf("intro-squash", [
-    (0, "transform: scale(0.9, 1.12)", "linear"),
-    (.30, "transform: scale(0.9, 1.12)", EOUT),
-    (.335, "transform: scale(1.26, 0.76)", EIO),
-    (.39, "transform: scale(0.92, 1.1)", EOUT),
-    (.50, "transform: scale(1, 1)", "linear"),
-    (.80, "transform: scale(1, 1)", EIN),
-    (.91, "transform: scale(0.95, 1.06)", EOUT),
-    (.95, "transform: scale(1.16, 0.85)", EIO),
-    (1.0, "transform: scale(0.97, 1.03)", EIO),
-    ((1.05, D), "transform: scale(1, 1)", None)]))
+# A solid character (Lucky): no squash or stretch. It tips as it hits the floor and rocks as it lands, about its middle.
+css.append(kf("intro-rock", [
+    (0, "transform: rotate(0deg)", "linear"),
+    (.30, "transform: rotate(0deg)", EOUT),
+    (.36, "transform: rotate(-10deg)", EIO),
+    (.45, "transform: rotate(6deg)", EIO),
+    (.54, "transform: rotate(-2deg)", EIO),
+    (.62, "transform: rotate(0deg)", "linear"),
+    (.91, "transform: rotate(0deg)", EOUT),
+    (.96, "transform: rotate(8deg)", EIO),
+    (1.02, "transform: rotate(-3deg)", EIO),
+    ((1.07, D), "transform: rotate(0deg)", None)]))
 # One full turn in the air: the 12 pictures of the strip, a little slower at the start and end.
 t0, t1, N = .40, .88, 12
 p = lambda u: .4 * u + .6 * (1 - math.cos(math.pi * u)) / 2
