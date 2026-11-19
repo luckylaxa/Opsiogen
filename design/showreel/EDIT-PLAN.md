@@ -208,6 +208,12 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   words. after this fix you can post in website and give full view icon to experience in full view." The O's colour
   now comes only from well inside its edge in the large PNG, so its soft, uneven edge pixels no longer show as a dotted
   line once the logo is large; the vector outline makes the edge. The Work page card has a full-view button.
+- **Share cut (19 Nov).** Lucky: client logos in the video "like superside video", for sharing. The website keeps cut 12
+  (the logo strip sits right under it there). `build/share.py FRAMES_DIR OUT` takes the website cut's clips and adds the
+  client logo beat (`frames.html?share`, "Client logos": "Creative support for 200+ top global brands" over twelve client
+  logos from `public/logos`, popping in two at a time on the half-beat) before the logo ending: 8 beats, so the logo
+  still lands on the bar, and the track's last hit moves with it. Out: `out/opsiogen-showreel-v12-share.mp4` (60.4 s) and
+  a lighter copy for messages, `out/opsiogen-showreel-share-web.mp4` (23 MB).
 - The logo keeps its own shape; only at the very end (cut 11, as Lucky asked) is it shown larger, then settles at
   its own size. Otherwise it only fades in. Nothing else is shown larger than its own size.
 

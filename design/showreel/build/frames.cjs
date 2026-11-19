@@ -6,7 +6,7 @@ const path = require('path');
   const b = await chromium.launch({ args: ['--allow-file-access-from-files'] });
   const p = await b.newPage({ viewport: { width: 1920, height: 1080 } });
   p.on('console', (m) => console.log(m.text()));
-  const url = 'file://' + path.join(__dirname, 'frames.html');
+  const url = 'file://' + path.join(__dirname, 'frames.html') + (process.env.SHARE ? '?share' : '');   // ?share: the share cut
   await p.goto(url + '#0'); await p.evaluate(() => window.ready);
   const shots = await p.evaluate(() => window.SHOTS);
   // Two passes: the walls of frames (shots 05 and 41) show the frames saved in the first pass.

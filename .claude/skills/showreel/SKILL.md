@@ -193,6 +193,8 @@ The motion language is in `design/showreel/EDIT-PLAN.md` ("Cut 7"). Everything b
 1. The 60-second film with sound.
 2. A short silent loop for the Work page, so the page stays fast.
 3. Optional vertical cut for social, only if asked.
+4. The share cut (19 Nov): the film with the client logo beat before the logo ending, for sharing outside the site
+   (`build/share.py`, see EDIT-PLAN.md). The website keeps the cut without it.
 
 ## Publishing
 

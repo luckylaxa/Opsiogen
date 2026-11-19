@@ -12,7 +12,7 @@ const path = require('path'), fs = require('fs');
   const p = await b.newPage({ viewport: { width: 1920, height: 1080 } });
   p.on('console', (m) => { if (m.text().startsWith('MISSING')) console.log(m.text()); });
   p.on('pageerror', (e) => console.log('ERR', e.message));
-  const url = 'file://' + path.join(__dirname, 'frames.html');
+  const url = 'file://' + path.join(__dirname, 'frames.html') + (process.env.SHARE ? '?share' : '');   // ?share: the share cut
   for (const [i, n, under, layer] of J.jobs) {
     const alpha = layer === 'alpha', dir = path.join(J.out, String(i).padStart(3, '0') + (alpha ? 'a' : ''));
     fs.mkdirSync(dir, { recursive: true });
