@@ -7,6 +7,7 @@ and out; in three of them (OVER) the character joins the people, drawn on its ow
 Cuts land on the beat (140 bpm) and the track's last hit lands on the logo.
 Usage: python3 film.py FRAMES_DIR OUT.mp4   (FRAMES_DIR holds the approved stills NN.jpg and shots.json)"""
 import sys, json, os, subprocess, shutil
+from handoff import tail   # how a stock clip of people hands over to the work after it (no text)
 FR, OUT = os.path.abspath(sys.argv[1]), os.path.abspath(sys.argv[2])
 HERE = os.path.dirname(os.path.abspath(__file__)); ST = os.path.join(HERE, "../raw/stock/")
 BPM, FPS = 140, 30; BEAT = 60 / BPM
@@ -27,6 +28,8 @@ def beats(n):
     if n == "One partner": return 2
     if n.startswith("Logo"): return 10   # 4 beats flying through the O (frames.html LOGO_IN), then 6 as before
     if n.startswith("Wall of"): return 3   # the closing wall pulls back into the grid (cut 5's tilted wall)
+    if n == "Website: Engel & Völkers, Mykonos": return 2   # the beach lands on its coast photo: give it time
+    if n == "Websites: wall across projects": return 1      # ...and the wall after it takes one beat less
     if "488563452" in n: return 3   # she points, our character pops up there, she turns to look at it
     if n.startswith(("Stock", "Life")): return 2
     if any(m in n for m in MULTI): return 2
@@ -58,14 +61,16 @@ def make(i, inputs, fc):  # encodes stock clip i from a filter chain ending in [
         inputs = inputs + ["-framerate", str(FPS), "-i", os.path.join(over(i), "%03d.png")]
         fc = fc.replace("[o]", "[o0]") + f";[o0][{inputs.count('-i') - 1}:v]overlay=0:0[o]"
     run(["ffmpeg", "-y", "-v", "error"] + inputs + ["-filter_complex", fc, "-map", "[o]"] + ENC(N[i], clip(i)))
-def plain(i):  # a hard cut with a quick punch-in
+def plain(i):  # a hard cut with a quick punch-in; ends with its hand-over to the work after it, if it has one
     f, t0 = stock[i]
-    make(i, ["-ss", str(t0), "-i", ST + f], source(i, 0) + f";[v]{PUNCH}[o]")
+    tl = tail(shots[i]["name"], N[i] / FPS)
+    make(i, ["-ss", str(t0), "-i", ST + f], source(i, 0) + f";[v]{PUNCH}" + ("," + tl if tl else "") + "[o]")
 def push(i, word):  # the chapter word card goes up and out, the clip comes up from below
     f, t0 = stock[i]
     make(i, ["-loop", "1", "-framerate", str(FPS), "-i", word, "-ss", str(t0), "-i", ST + f],
          source(i, 1) + f";[0:v]scale=1920:1080,setsar=1,fps={FPS},settb=1/{FPS}[w];color=c=black:s=1920x1080:r={FPS}[c];"
-         f"[c][w]overlay=x=0:y='-1080*{EASE}':eval=frame[a];[a][v]overlay=x=0:y='1080*(1-{EASE})':eval=frame:shortest=1[o]")
+         f"[c][w]overlay=x=0:y='-1080*{EASE}':eval=frame[a];[a][v]overlay=x=0:y='1080*(1-{EASE})':eval=frame:shortest=1"
+         + ("," + tail(shots[i]["name"], N[i] / FPS) if tail(shots[i]["name"], N[i] / FPS) else "") + "[o]")
 def iris(i):  # the clip opens out of the opening line in our lens circle (drawn in its character layer)
     f, t0 = stock[i]
     make(i, ["-ss", str(t0), "-i", ST + f], source(i, 0) + ";[v]null[o]")

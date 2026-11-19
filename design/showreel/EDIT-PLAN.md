@@ -247,6 +247,16 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   landing is gone; on the hit it hops, then reads the call, blinks and hovers as before). Preview of the close only, for approval:
   `out/logo-ending-preview.mp4` (`build/logo_preview.py FRAMES_DIR OUT`). After his yes it goes into the website film
   and the share cut.
+- **People into the work, no text (19 Nov).** Lucky: "in between we are showing different stock character videos and
+  how that we can connect with mockup story telling", then, after rounds of short lines on the clips, "Instead of text
+  any other idea" and "Show only these cuts transition and after approval you can mix all works". Each stock clip of
+  people now hands over to the work after it in the cut itself (`build/handoff.py` for the clip's end, `ENTER` in
+  `frames.html` for the shot after): the camera rushes into what they look at (her phone, onto the lipstick app; the
+  sea, onto the coast photo of the property site, which now comes straight after the beach, before the wall of
+  websites), whips the way they move (the cyclist, into the bike brand), whites out on the high five (the wall opens
+  from the hands), or the work opens out of our character's lens (the man cheering, onto the bike artwork). Preview
+  of these five only, for approval: `out/handoff-preview.mp4` (`build/handoff_preview.py FRAMES_DIR OUT`). After his
+  yes, the other clips get theirs and it all goes into the website film and the share cut.
 - The logo keeps its own shape; only at the very end (cut 11, as Lucky asked) is it shown larger, then settles at
   its own size. Otherwise it only fades in. Nothing else is shown larger than its own size.
 

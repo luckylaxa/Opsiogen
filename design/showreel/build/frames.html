@@ -172,8 +172,8 @@ const SHOTS=[
 ['Build', 'Website 5: Sifio', ()=>{bg('#e1eade');browser(A+'d-sifio.jpg',130,84,1350);phone(A+'m-sifio.jpg',1410,204,380,0)}],
 ['Build', 'Vaelo: site and app', ()=>{bg('#0e3d2b');browser(A+'va-web.jpg',130,84,1350);phone(A+'va-app.jpg',1410,204,380,0)}],
 ['Build', 'Life: the getaway (Adobe Stock 150778364)', ()=>full(S+'stock/stills/life-beach.jpg')],
-['Build', 'Websites: wall across projects', ()=>mosaic([['scr-carlton-noble-2','scr-engel-volkers-3','scr-bigtapp-6','scr-sifio-health-5'],['scr-engel-volkers-7','scr-bigtapp-2','scr-carlton-noble-6','scr-sifio-health-9'],['scr-bigtapp-10','scr-carlton-noble-12','scr-engel-volkers-10','scr-sifio-health-2'],['scr-carlton-noble-4','scr-sifio-health-11','scr-bigtapp-13','scr-engel-volkers-13']],'#0d1117',{rot:-9})],
 ['Build', 'Website: Engel & Völkers, Mykonos', ()=>full(A+'s-ev-3.jpg')],
+['Build', 'Websites: wall across projects', ()=>mosaic([['scr-carlton-noble-2','scr-engel-volkers-3','scr-bigtapp-6','scr-sifio-health-5'],['scr-engel-volkers-7','scr-bigtapp-2','scr-carlton-noble-6','scr-sifio-health-9'],['scr-bigtapp-10','scr-carlton-noble-12','scr-engel-volkers-10','scr-sifio-health-2'],['scr-carlton-noble-4','scr-sifio-health-11','scr-bigtapp-13','scr-engel-volkers-13']],'#0d1117',{rot:-9})],
 ['Build', 'Website: Engel & Völkers, Portugal', ()=>full(A+'s-ev-8.jpg')],
 ['Build', 'Website: Carlton Noble, Travel House', ()=>full(A+'s-carlton-2.jpg')],
 ['Build', 'Carlton Noble: collage of pages', ()=>full(A+'col-carlton.jpg')],
@@ -434,9 +434,21 @@ if(MOTION)(()=>{
   if(mrow){const rot=+mrow.dataset.rot||0,ph=[...mrow.children];late.push(()=>{const tw=mrow.scrollWidth;add((t,d)=>{const p=t/d;
     mrow.style.transform=`translateX(${60+(1920-tw-80)*io(p)}px) rotate(${rot}deg)`;
     ph.forEach((e,i)=>{const q=pop((t-i*.025)/IN);e.style.transform=`translateY(${(1-q)*(i%2?220:-220)}px) rotate(${(1-q)*(i%2?8:-8)}deg)`})})})}
+  // After a stock clip of people, the shot picks up the clip's hand-over (build/handoff.py; Lucky, 19 Nov: connect the
+  // people to the work without text): it lands out of the camera's rush, big and soft to sharp (push, about a point
+  // of the work: the app, the coast photo), comes in from the side the camera whipped to (whip), opens out of the
+  // white of the high five from the hands (flash), or out of our character's lens over the clip's last frame (lens).
+  const ENTER={'480737977':['lens',1720,300],'405010525':['whip',1],'Pixabay 208770':['push',960,540],'150778364':['push',980,750],'577275631':['flash',840,270]};
+  const prevName=n?SHOTS[n-1][1]:'',ENT=(Object.entries(ENTER).find(([k])=>prevName.includes(k))||[])[1];
+  if(ENT){const [kind,X,Y]=ENT;
+    if(kind==='push'){f.style.transformOrigin=`${X}px ${Y}px`;add(t=>{const q=ease(t/.34);f.style.transform=`scale(${1+1.6*(1-q)})`;f.style.filter=q<1?`blur(${14*(1-q)}px)`:''})}
+    if(kind==='whip')add(t=>{const q=ease(t/.3);f.style.transform=`translateX(${X*(1-q)*760}px)`;f.style.filter=q<1?`blur(${16*(1-q)}px)`:''});
+    if(kind==='flash'){const w=document.createElement('div');Object.assign(w.style,{position:'absolute',left:0,top:0,width:'1920px',height:'1080px',background:'#fff'});document.body.insertBefore(w,f);
+      add(t=>{f.style.clipPath=`circle(${ease(t/.32)*2300}px at ${X}px ${Y}px)`})}
+    if(kind==='lens'&&showUnder())add(t=>{f.style.clipPath=`circle(${ease(t/.3)*2300}px at ${X}px ${Y}px)`})}
   // Full frames take turns. Wipe, lens and push reveal it over the last frame of the shot before.
   const cover=f.querySelector('img.cover');
-  if(cover){const mode=(under?['zoom','wipe','hold','iris','zoom','push']:['zoom','hold'])[n%(under?6:2)];
+  if(cover){const mode=ENT?'hold':(under?['zoom','wipe','hold','iris','zoom','push']:['zoom','hold'])[n%(under?6:2)];
     if(mode==='zoom')add((t,d)=>{cover.style.transform=`scale(${(1+.32*(1-ease(t/.28)))*(1+.02*t/d)})`});
     if(mode==='hold')add((t,d)=>{cover.style.transform=`scale(${1.06-.06*io(t/d)})`});
     if(mode==='wipe'){showUnder();add((t,d)=>{f.style.clipPath=`inset(0 ${(1-ease(t/.24))*100}% 0 0)`;cover.style.transform=`scale(${1.05-.05*io(t/d)})`})}
