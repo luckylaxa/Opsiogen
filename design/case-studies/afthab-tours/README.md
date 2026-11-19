@@ -34,3 +34,10 @@ of the wide frames by `parts.cjs`, rendered by `square.cjs`), shown on phones in
 Files: `public/work/afthab-tours/afthab-0.jpg` (2400 x 1529) and `afthab-0-phone.jpg` (2400 square) for the cover
 frame, then `afthab-N-wide.jpg` (2400 x 1529) and `afthab-N.jpg` (1600 square) for frames 2 to 12. The work card
 is `card.html` (`card.cjs`), saved as `public/cards/afthab-tours.jpg` and `afthab-tours-phone.jpg`.
+
+## 19 Nov fix
+
+The phone squares 06, 08 and 11 placed cut-outs of the wide frames in boxes of another shape, so they were squeezed
+sideways (a phone looked far too tall). 06 and 11 are now built in `square.html` from the creatives themselves, 08
+keeps its cut-out at its own shape. Stories in phones are shown whole (they were cropped at the sides, cutting
+"Book on WhatsApp" and the destination names), in story phones whose screen is 1:2, in both the wide and square frames.

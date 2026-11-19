@@ -19,6 +19,8 @@ body{background:#888;font-family:Inter,sans-serif;color:var(--ink)}
 .bl{position:absolute;left:72px;bottom:64px}
 .card{position:absolute;border-radius:18px;overflow:hidden;background:#ddd}
 .card img,.screen img{display:block;width:100%;height:100%;object-fit:cover}
+/* A story is 9:16: shown whole (cover cut its sides, and the button with them), in story phones whose screen is 1:2 */
+.screen img[src^="cut/st-"]{object-fit:contain;object-position:50% 40%}
 .phone{position:absolute;border-radius:54px;background:#0b0d10;padding:11px}
 .screen{position:relative;width:100%;height:100%;border-radius:44px;overflow:hidden;background:#000}
 .island{position:absolute;top:13px;left:50%;width:27%;height:22px;margin-left:-13.5%;border-radius:12px;background:#000;z-index:3}
@@ -62,17 +64,17 @@ body{background:#888;font-family:Inter,sans-serif;color:var(--ink)}
 <!-- s05 -->
 <section class="sq" id="s05"><div class="tl"><h2 class="h">Your National Day<br>escape.</h2></div><div class="card" style="left:72px;top:280px;width:336px;height:420px;border-radius:16px;"><img src="cut/ad-az.jpg"></div><div class="card" style="left:432px;top:280px;width:336px;height:420px;border-radius:16px;"><img src="cut/ad-th.jpg"></div><div class="card" style="left:792px;top:280px;width:336px;height:420px;border-radius:16px;"><img src="cut/ad-al.jpg"></div><div class="card" style="left:72px;top:724px;width:336px;height:420px;border-radius:16px;"><img src="cut/ad-ge.jpg"></div><div class="card" style="left:432px;top:724px;width:336px;height:420px;border-radius:16px;"><img src="cut/ad-all.jpg"></div><div class="card" style="left:792px;top:724px;width:336px;height:420px;border-radius:16px;"><img src="cut/ad-mv.jpg"></div></section>
 <!-- s06 -->
-<section class="sq" id="s06"><div class="tl"><h2 class="h">One campaign,<br>every placement.</h2></div><img src="parts/p06.png" style="position:absolute;left:120px;top:270px;width:960px;height:870px"></section>
+<section class="sq" id="s06"><div class="tl"><h2 class="h">One campaign,<br>every placement.</h2></div><div class="card" style="left:72px;top:500px;width:312px;height:390px;border-radius:16px"><img src="cut/ad-ge.jpg"></div><div class="phone" style="left:408px;top:322px;width:384px;height:746px"><div class="screen"><div class="island"></div><img src="cut/st-ge.jpg"></div></div><div class="card" style="left:816px;top:446px;width:312px;height:312px;border-radius:16px"><img src="cut/sq-ge.jpg"></div><div class="card" style="left:816px;top:782px;width:312px;height:163px;border-radius:12px"><img src="cut/ls-ge.jpg"></div></section>
 <!-- s07 -->
 <section class="sq" id="s07"><div class="tl"><h2 class="h">Greetings, brand posts<br>and tour packages.</h2></div><div class="card" style="left:72px;top:280px;width:332px;height:415px;border-radius:16px;"><img src="cut/968_35.jpg"></div><div class="card" style="left:428px;top:280px;width:332px;height:415px;border-radius:16px;"><img src="cut/escape.jpg"></div><div class="card" style="left:72px;top:719px;width:332px;height:415px;border-radius:16px;"><img src="cut/plan.jpg"></div><div class="card" style="left:428px;top:719px;width:332px;height:174px;border-radius:16px;"><img src="cut/ls-az.jpg"></div><div class="card" style="left:428px;top:917px;width:332px;height:174px;border-radius:16px;"><img src="cut/ls-th.jpg"></div><div class="card" style="left:784px;top:280px;width:344px;height:612px;border-radius:22px;"><img src="cut/st-mv.jpg"></div></section>
 <!-- s08 -->
-<section class="sq" id="s08"><div class="tl"><h2 class="h">Useful first,<br>never an ad.</h2></div><img src="parts/p08.png" style="position:absolute;left:79px;top:270px;width:1042px;height:870px"></section>
+<section class="sq" id="s08"><div class="tl"><h2 class="h">Useful first,<br>never an ad.</h2></div><img src="parts/p08.png" style="position:absolute;left:72px;top:382px;width:1056px;height:635px"></section>
 <!-- s09 -->
 <section class="sq" id="s09"><div class="tl"><h2 class="h">One idea, one concept.</h2></div><img src="parts/p09a.png" style="position:absolute;left:72px;top:230px;width:516px;height:773px"><img src="parts/p09b.png" style="position:absolute;left:612px;top:230px;width:516px;height:773px"></section>
 <!-- s10 -->
 <section class="sq" id="s10"><div class="tl"><h2 class="h">Travel beyond boundaries.</h2></div><img src="parts/p10.png" style="position:absolute;left:72px;top:250px;width:1056px;height:738px"></section>
 <!-- s11 -->
-<section class="sq" id="s11"><div class="tl"><h2 class="h">Full screen,<br>one tap to book.</h2></div><img src="parts/p11.png" style="position:absolute;left:72px;top:270px;width:1056px;height:766px"></section>
+<section class="sq" id="s11"><div class="tl"><h2 class="h">Full screen,<br>one tap to book.</h2></div><div class="phone" style="left:72px;top:380px;width:320px;height:618px;transform:rotate(-3deg)"><div class="screen"><div class="island"></div><img src="cut/st-az.jpg"></div></div><div class="phone" style="left:420px;top:340px;width:360px;height:698px;z-index:2"><div class="screen"><div class="island"></div><img src="cut/st-th.jpg"></div></div><div class="phone" style="left:808px;top:380px;width:320px;height:618px;transform:rotate(3deg)"><div class="screen"><div class="island"></div><img src="cut/st-al.jpg"></div></div></section>
 <!-- s12 -->
 <section class="sq" id="s12"><img src="parts/p12.png" style="position:absolute;inset:0;width:100%;height:100%"></section>
 </body></html>

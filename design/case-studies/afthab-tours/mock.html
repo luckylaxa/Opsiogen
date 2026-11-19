@@ -21,6 +21,8 @@ body{background:#888;font-family:Inter,sans-serif;color:var(--ink)}
 .bl{position:absolute;left:72px;bottom:64px}
 .card{position:absolute;border-radius:18px;overflow:hidden;background:#ddd}
 .card img,.screen img{display:block;width:100%;height:100%;object-fit:cover}
+/* A story is 9:16: shown whole (cover cut its sides, and the button with them), in story phones whose screen is 1:2 */
+.screen img[src^="cut/st-"]{object-fit:contain;object-position:50% 40%}
 .phone{position:absolute;border-radius:54px;background:#0b0d10;padding:11px}
 .screen{position:relative;width:100%;height:100%;border-radius:44px;overflow:hidden;background:#000}
 .island{position:absolute;top:13px;left:50%;width:27%;height:22px;margin-left:-13.5%;border-radius:12px;background:#000;z-index:3}
@@ -124,7 +126,7 @@ body{background:#888;font-family:Inter,sans-serif;color:var(--ink)}
 <section class="m light" id="m06" style="background:var(--frame)">
   <div class="tl"><h2 class="h">One campaign,<br>every placement.</h2></div>
   <div class="card" style="left:72px;top:250px;width:400px;height:500px;border-radius:18px;"><img src="cut/ad-ge.jpg"></div>
-  <div class="phone" style="left:520px;top:100px;width:330px;height:714px;"><div class="screen"><div class="island"></div><img src="cut/st-ge.jpg"></div></div>
+  <div class="phone" style="left:520px;top:138px;width:330px;height:638px;"><div class="screen"><div class="island"></div><img src="cut/st-ge.jpg"></div></div>
   <div class="card" style="left:900px;top:100px;width:300px;height:300px;border-radius:18px;"><img src="cut/sq-ge.jpg"></div>
   <div class="card" style="left:900px;top:430px;width:468px;height:245px;border-radius:18px;"><img src="cut/ls-ge.jpg"></div>
 </section>
@@ -215,7 +217,7 @@ body{background:#888;font-family:Inter,sans-serif;color:var(--ink)}
 <!-- 11 Story ads on phones -->
 <section class="m light" id="m11" style="background:var(--frame)">
   <div class="tl"><h2 class="h">Full screen, one tap to book.</h2></div>
-  <div class="phone" style="left:72px;top:282px;width:236px;height:512px;transform:rotate(-3deg);"><div class="screen"><div class="island"></div><img src="cut/st-ge.jpg"></div></div><div class="phone" style="left:336px;top:262px;width:244px;height:528px;"><div class="screen"><div class="island"></div><img src="cut/st-az.jpg"></div></div><div class="phone" style="left:604px;top:236px;width:262px;height:568px;z-index:2;"><div class="screen"><div class="island"></div><img src="cut/st-th.jpg"></div></div><div class="phone" style="left:890px;top:262px;width:244px;height:528px;"><div class="screen"><div class="island"></div><img src="cut/st-al.jpg"></div></div><div class="phone" style="left:1160px;top:282px;width:236px;height:512px;transform:rotate(3deg);"><div class="screen"><div class="island"></div><img src="cut/st-mv.jpg"></div></div>
+  <div class="phone" style="left:72px;top:313px;width:236px;height:450px;transform:rotate(-3deg);"><div class="screen"><div class="island"></div><img src="cut/st-ge.jpg"></div></div><div class="phone" style="left:336px;top:293px;width:244px;height:466px;"><div class="screen"><div class="island"></div><img src="cut/st-az.jpg"></div></div><div class="phone" style="left:604px;top:269px;width:262px;height:502px;z-index:2;"><div class="screen"><div class="island"></div><img src="cut/st-th.jpg"></div></div><div class="phone" style="left:890px;top:293px;width:244px;height:466px;"><div class="screen"><div class="island"></div><img src="cut/st-al.jpg"></div></div><div class="phone" style="left:1160px;top:313px;width:236px;height:450px;transform:rotate(3deg);"><div class="screen"><div class="island"></div><img src="cut/st-mv.jpg"></div></div>
 </section>
 
 <!-- 12 Wall -->

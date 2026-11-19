@@ -24,13 +24,11 @@ const path = require('path');
     const notHead = (id) => [...document.querySelector('#' + id).children].filter((e) => !e.classList.contains('tl'));
     return {
       'p03': box(kids('m03', '.phone')),
-      'p06': box(notHead('m06')),
       'p08': box(notHead('m08')),
       'p09a': box([document.querySelectorAll('#m09 .post')[0]]),
       'p09b': box([document.querySelectorAll('#m09 .post')[1]]),
       'p10': box(notHead('m10').filter((e) => !e.classList.contains('phone')).slice(0, 2)),
       'p10r': box(kids('m10', '.phone')),
-      'p11': box(kids('m11', '.phone')),
       'p12': (() => { const r = document.querySelector('#m12').getBoundingClientRect(); return { x: r.left + scrollX + (r.width - r.height) / 2, y: r.top + scrollY, width: r.height, height: r.height }; })(),
     };
   });
