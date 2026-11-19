@@ -60,7 +60,7 @@ export async function ClientLogos({ heading = "Design and AI for 200+ brands wor
     });
   return (
     <section aria-labelledby="client-logos" className={`text-ink ${className}`}>
-      <h2 id="client-logos" className="px-gutter text-center text-[length:clamp(22px,calc(1vw+16px),40px)] leading-tight tracking-[-0.02em] text-balance">
+      <h2 id="client-logos" className="px-gutter text-center text-[length:clamp(26px,calc(1.6vw+14px),56px)] leading-tight tracking-[-0.025em] text-balance">
         {heading}
       </h2>
       <div className="marquee relative mt-[clamp(28px,2.6vw,52px)] overflow-hidden [--logo-h:clamp(32px,2.8vw,52px)] [mask-image:linear-gradient(90deg,transparent,#000_12%,#000_88%,transparent)]">
