@@ -7,7 +7,7 @@ B = os.path.dirname(os.path.abspath(__file__)); R = os.path.dirname(B); SRC = os
 BEAT, FPS = 60 / 140, 30; fr = lambda b: round(b * BEAT * FPS)
 run = lambda c, **k: subprocess.run(c, check=True, **k)
 os.makedirs(WD, exist_ok=True)
-beats = [0, 3, 11, 14, 16, 18]          # opening line 3, logo beat 8, stock 3, "We take it" 2, three apps 2
+beats = [0, 3, 15, 18, 20, 22]          # opening line 3, logo beat 12, stock 3, "We take it" 2, three apps 2
 N = [fr(beats[i + 1]) - fr(beats[i]) for i in range(5)]
 op_last = os.path.join(SRC, 'frames', '000', sorted(os.listdir(os.path.join(SRC, 'frames', '000')))[-1])
 beat_last = os.path.join(WD, 'frames', '001', f'{N[1] - 1:03d}.jpg')
@@ -27,4 +27,4 @@ dur = fr(beats[-1]) / FPS
 run(['ffmpeg', '-y', '-v', 'error', '-ss', '1.726', '-i', os.path.join(R, 'music', 'fast-percussion.mp3'), '-t', str(dur), os.path.join(WD, 'music.wav')])
 run(['ffmpeg', '-y', '-v', 'error', '-f', 'concat', '-safe', '0', '-i', os.path.join(WD, 'list.txt'), '-i', os.path.join(WD, 'music.wav'), '-t', str(dur),
      '-c:v', 'libx264', '-crf', '20', '-preset', 'medium', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '160k', '-af', f'afade=t=out:st={dur - .6:.2f}:d=0.6', '-movflags', '+faststart', OUT])
-print('preview', round(dur, 2), 's; logo beat', round(fr(3) / FPS, 2), '-', round(fr(11) / FPS, 2))
+print('preview', round(dur, 2), 's; logo beat', round(fr(beats[1]) / FPS, 2), '-', round(fr(beats[2]) / FPS, 2))
