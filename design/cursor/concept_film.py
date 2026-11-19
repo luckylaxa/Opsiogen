@@ -4,10 +4,6 @@ Usage: python3 concept_film.py BACKDROP.png FRAMES_DIR OUT_DIR"""
 import json, sys, os
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
-BG, FR, OUT = sys.argv[1:4]
-os.makedirs(OUT, exist_ok=True)
-ov = json.load(open(os.path.join(FR, 'overlay.json')))
-bg = Image.open(BG).convert('RGBA')
 S = 4                                                   # drawn 4x and scaled down, for smooth edges
 ARROW = [(0, 0), (0, 17.5), (4.2, 13.6), (7.1, 20.2), (10.0, 19.0), (7.2, 12.6), (12.6, 12.6)]   # tip at (0,0)
 def arrow(img, x, y, a):
@@ -94,13 +90,21 @@ def ripples(img, o):
             if 0 <= q <= 1: e = 1 - (1 - q) ** 3; gradient_ring(img, h['c'], r0 + 26 * e, 2.6 - 1.2 * q, 0.95 * (1 - q) ** 1.4, turn)
     k = o.get('click')
     if k: q = k['k']; e = 1 - (1 - q) ** 3; gradient_ring(img, k['c'], r0 + 54 * e, 3.6 - 2.0 * q, (1 - q) ** 1.6, turn + 0.25)
-for o in ov['overlays']:
-    img = bg.copy()
-    spray(img, o)                                       # on the page, so under the characters
-    three = os.path.join(FR, o['name'])
-    if os.path.exists(three): img.alpha_composite(Image.open(three).convert('RGBA'))
-    light(img, o)
-    ripples(img, o)
-    if o.get('arrow'): arrow(img, o['arrow'][0], o['arrow'][1], o.get('arrowFade', 1))
-    img.convert('RGB').save(os.path.join(OUT, o['name'].replace('.png', '.jpg')), quality=93)
-print('composited', len(ov['overlays']))
+def main():
+  BG, FR, OUT = sys.argv[1:4]
+  os.makedirs(OUT, exist_ok=True)
+  ov = json.load(open(os.path.join(FR, 'overlay.json')))
+  bg = Image.open(BG).convert('RGBA')
+  for o in ov['overlays']:
+      img = bg.copy()
+      spray(img, o)                                       # on the page, so under the characters
+      three = os.path.join(FR, o['name'])
+      if os.path.exists(three): img.alpha_composite(Image.open(three).convert('RGBA'))
+      light(img, o)
+      ripples(img, o)
+      if o.get('arrow'): arrow(img, o['arrow'][0], o['arrow'][1], o.get('arrowFade', 1))
+      img.convert('RGB').save(os.path.join(OUT, o['name'].replace('.png', '.jpg')), quality=93)
+  print('composited', len(ov['overlays']))
+
+if __name__ == '__main__':
+    main()

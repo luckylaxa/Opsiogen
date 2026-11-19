@@ -155,6 +155,7 @@ function draw(canvas, st = {}) {
     s.cam.fov = c.fov; s.cam.position.set(...c.pos); s.cam.lookAt(...c.at); s.cam.updateProjectionMatrix();
   }
   s.pivot.rotation.set(st.pitch || 0, st.yaw || 0, st.roll || 0); s.pivot.position.y = st.lift || 0;
+  s.pivot.visible = !st.hideMain;                                   // hideMain: only the character in its own view
   blinkTo(s.main, st.blink, st.look);
   if (s.addOns) {
     // the added parts are there only while the door is open: shut, it is the model alone, pixel for pixel
@@ -187,7 +188,7 @@ function draw(canvas, st = {}) {
     // Away from the main character, the mini gets a view of its own: the same camera spot, but looking straight at it,
     // so it stays round wherever it is on the screen (a wide view would stretch it toward the edges).
     const { cx, cy, ppu } = st.site, d = 6.75, [mx, my, mz] = m.pos, L = Math.hypot(mx, my, d - mz);
-    const px = cx + mx * ppu * d / (d - mz), py = cy - my * ppu * d / (d - mz), W = 160;
+    const px = cx + mx * ppu * d / (d - mz), py = cy - my * ppu * d / (d - mz), W = Math.max(160, Math.ceil(3.2 * (m.scale || 0.24) * ppu * d / (d - mz)));
     if (!s.solo) s.solo = new THREE.PerspectiveCamera(20, 1, 0.5, 40);
     s.solo.position.set(0, 0, d); s.solo.lookAt(mx, my, mz);
     s.solo.fov = 2 * Math.atan((W * (d - mz)) / (2 * L * ppu * d)) * 180 / Math.PI; s.solo.aspect = 1; s.solo.updateProjectionMatrix();
