@@ -7,7 +7,6 @@ export const CLIENT_LOGOS: Record<string, { ratio: number; size?: number }> = {
   "afthab-tours": { ratio: 6.123 },
   "bigtapp": { ratio: 1.475 },
   "cabot-solutions": { ratio: 2.568 },
-  "care-connect": { ratio: 4.54 },
   "carlton-noble": { ratio: 11.281 },
   "engel-volkers": { ratio: 9.103 },
   "meetingful": { ratio: 4.584 },

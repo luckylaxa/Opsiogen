@@ -163,24 +163,6 @@ def carlton_noble():            # Carlton Noble's own logo file (from the owner,
     return load("design/logos/src/carlton-noble.png")[:, :, 3] / 255, {}
 
 
-def care_connect():             # website hero, on blue: app icon (blue square, white heart line) and "CareConnect"
-    box = (205, 195, 420, 255); c = crop(load("design/showreel/raw/_src/care.png"), box)
-    bg, icon, white = (0x0c, 0x59, 0xac), (0x00, 0x76, 0xdc), (0xf8, 0xfb, 0xfd)
-    a = ink_auto(c, bg, t=60)                            # the name ("Care" white, "Connect" light blue)
-    ix = 270 - box[0]                                    # the icon is x 224 to 264, the name starts at 275
-    # The square, redrawn exactly (an app icon: square with round corners), from where its edges are in the picture.
-    sq = cv2.morphologyEx((unmix(c, bg, icon)[:, :ix] > 0.5).astype(np.uint8), cv2.MORPH_CLOSE, np.ones((5, 5), np.uint8))
-    x, y, w, h = cv2.boundingRect(max(cv2.findContours(sq, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[0], key=cv2.contourArea))
-    side = (w + h) / 2; r = side * 0.26; cx, cy = x + w / 2 - 0.5, y + h / 2 - 0.5
-    yy, xx = np.mgrid[0:c.shape[0], 0:ix].astype(np.float32)
-    qx, qy = np.abs(xx - cx) - (side / 2 - r), np.abs(yy - cy) - (side / 2 - r)
-    sdf = np.hypot(np.maximum(qx, 0), np.maximum(qy, 0)) + np.minimum(np.maximum(qx, qy), 0) - r
-    square = np.clip(0.5 - sdf, 0, 1)
-    heart = unmix(c, icon, white)[:, :ix] * (sdf < -1.5)  # the heart line, cut out of the square
-    a[:, :ix] = np.clip(square - heart, 0, 1)
-    return a, {"S": 2, "blur": 0.35}
-
-
 def meetingful():               # Meetingful's own logo (from the owner, 19 Nov), on white: the orange M with ring
     c = load("design/logos/src/meetingful.png")  # ends and the name, and a lavender X behind the M (drawn lighter)
     a = ink_auto(c, (255, 255, 255), t=60)       # the orange parts (the lavender is too pale to count as full ink)
@@ -241,8 +223,9 @@ def rohde_schwarz():            # Rohde & Schwarz's own logo (from the owner, 19
     return drop(a, (0, 128, 320, 207)), {}                            # name goes (too small to read in the row)
 
 
+# Care Connect has no logo here (Lucky, 19 Nov: "Don't put care connect logo").
 LOGOS = {"engel-volkers": engel_volkers, "sifio-health": sifio_health, "bigtapp": bigtapp, "carlton-noble": carlton_noble,
-         "care-connect": care_connect, "meetingful": meetingful, "oh-my-glam": oh_my_glam, "norsecom": norsecom,
+         "meetingful": meetingful, "oh-my-glam": oh_my_glam, "norsecom": norsecom,
          "sandlogic": sandlogic, "afthab-tours": afthab_tours, "cabot-solutions": cabot_solutions, "rxlive": rxlive,
          "surgo-health": surgo_health, "rohde-schwarz": rohde_schwarz}
 
