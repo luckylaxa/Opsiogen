@@ -331,13 +331,14 @@ export function Hero({
           </ButtonLink>
         )}
       </GiantHeading>
-      {/* Our character, bottom right of the first screen; on phones it sits just under the button, on the right. */}
+      {/* Our character, bottom right of the first screen. On phones it sits on the top right corner of what
+          follows (Home's showreel), so the reel comes up close under the button (Lucky, 19 Nov). */}
       {glow && (
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-[100svh] min-h-[560px] max-sm:static max-sm:h-auto max-sm:min-h-0 max-sm:pt-2">
-          <HeroCharacter className="pointer-events-auto right-[clamp(14px,8vw,130px)] bottom-[clamp(100px,8svh,120px)] [--w:clamp(92px,min(10.5vw,18svh),160px)] max-sm:relative max-sm:right-auto max-sm:bottom-auto max-sm:mr-[clamp(14px,8vw,130px)] max-sm:ml-auto" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-[100svh] min-h-[560px] max-sm:relative max-sm:z-10 max-sm:h-0 max-sm:min-h-0">
+          <HeroCharacter className="pointer-events-auto right-[clamp(14px,8vw,130px)] bottom-[clamp(100px,8svh,120px)] [--w:clamp(92px,min(10.5vw,18svh),160px)] max-sm:right-[calc(var(--spacing-gutter)+14px)] max-sm:bottom-[-74px] max-sm:[--w:80px]" />
         </div>
       )}
-      {children && <div className={cn("mt-[clamp(48px,calc(2.88vw+37.2px),92px)]", glow && "max-sm:mt-6")}>{children}</div>}
+      {children && <div className={cn("mt-[clamp(48px,calc(2.88vw+37.2px),92px)]", glow && "max-sm:mt-14")}>{children}</div>}
     </div>
   );
 }
