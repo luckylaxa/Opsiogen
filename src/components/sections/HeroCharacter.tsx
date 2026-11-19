@@ -292,6 +292,7 @@ export function HeroCharacter({ className }: { className?: string }) {
     <button
       ref={box}
       type="button"
+      data-intro-land
       aria-label="Our character. Press to hear what we do here."
       className={`absolute block aspect-square w-[var(--w)] cursor-pointer rounded-full outline-offset-4 will-change-transform [-webkit-tap-highlight-color:transparent] ${className ?? "top-[calc(60%-var(--w)/2)] left-[calc(50%-var(--w)/2)] [--w:clamp(150px,46vw,230px)] md:top-[calc(42%-var(--w)/2)] md:left-[calc(39%-var(--w)/2)] md:[--w:clamp(200px,min(20vw,34svh),340px)]"}`}
     >

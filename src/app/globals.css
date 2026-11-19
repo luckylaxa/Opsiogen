@@ -635,6 +635,19 @@ html[data-mega-open] .site-header {
 .intro-go .intro__strip {
   animation: intro-turn 1.62s both;
 }
+/* The landing ending (with ?intro=land, see INTRO_LAND in lib/theme.ts): the head script moves the character; the
+   zoom's own parts stay still, and the hero's character waits under the panel until the hand-over (its pool of light
+   shows as the backdrop fades, where the character is about to land). */
+.intro-land .intro__zoom,
+.intro-land .intro__turn,
+.intro-land .intro__veil,
+.intro-land .intro__shell {
+  animation: none;
+}
+.intro-land:not(.intro-done) [data-intro-land] > img,
+.intro-land:not(.intro-done) [data-intro-land] > canvas {
+  visibility: hidden;
+}
 @media (prefers-reduced-motion: reduce) {
   .intro {
     display: none !important;
