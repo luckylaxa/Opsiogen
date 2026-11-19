@@ -24,7 +24,9 @@ const BTN =
  *
  * Close, Escape or Back return to the page underneath, where it was left.
  * Previous and next (also the arrow keys) replace the current entry, so Back
- * still closes the pop-up rather than stepping through projects.
+ * still closes the pop-up rather than stepping through projects. The bar with
+ * them sits at the top; on phones it sits at the bottom, under the thumb
+ * (Lucky, 19 Nov), clear of the iPhone's home bar.
  */
 export function ProjectModal({
   slug,
@@ -148,8 +150,8 @@ export function ProjectModal({
         else window.dispatchEvent(new Event("cursor:refresh"));
       }}
     >
-      <div ref={scroller} className="h-full overflow-y-auto overscroll-contain">
-        <div className="sticky top-0 z-10 border-b border-line bg-page">
+      <div ref={scroller} className="h-full overflow-y-auto overscroll-contain max-md:flex max-md:flex-col">
+        <div className="sticky top-0 z-10 border-b border-line bg-page max-md:order-last max-md:top-auto max-md:bottom-0 max-md:border-t max-md:border-b-0 max-md:pb-[env(safe-area-inset-bottom)]">
           <div className="flex h-[var(--header-h)] items-center justify-between gap-4 px-gutter">
             <p className="flex min-w-0 items-baseline gap-3 text-base">
               <span className="shrink-0 tabular-nums">
