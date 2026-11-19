@@ -1,0 +1,17 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- Concept renders for the cursor idea (door3d.js): the main character opens a door in its underside and its mini rolls out. -->
+<style>html,body{margin:0;background:transparent}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"../../node_modules/three/build/three.module.js","three/addons/":"../../node_modules/three/examples/jsm/"}}</script>
+</head><body>
+<canvas id="a" width="640" height="640"></canvas>
+<canvas id="b" width="640" height="640"></canvas>
+<script type="module">
+import './door3d.js';
+// canvas a draws the character with the door's added parts, canvas b the model alone (for the before/after check)
+const pick = (st) => document.getElementById(st && st.addOns === false ? 'b' : 'a');
+window.size = (w, h) => { for (const id of ['a', 'b']) { const c = document.getElementById(id); c.width = w; c.height = h; } };
+window.frame = async (st) => { await window.DOOR.ready; const c = pick(st); window.DOOR.draw(c, st); return c.toDataURL('image/png'); };
+window.ready = window.DOOR.ready;
+</script>
+</body></html>
