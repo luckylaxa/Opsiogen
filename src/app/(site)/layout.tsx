@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import "../globals.css";
 import { getProjects, getServices, getSettings } from "@/lib/data";
 import { buildMenuGroups, buildSearchItems } from "@/lib/search";
-import { DEFAULT_THEME, PRELOADER_SCRIPT, THEME_BAR, THEME_SCRIPT } from "@/lib/theme";
+import { DEFAULT_THEME, INTRO_SCRIPT, THEME_BAR, THEME_SCRIPT } from "@/lib/theme";
 import { siteUrl } from "@/lib/utils";
 import { Header } from "@/components/site/Header";
 import { Logo } from "@/components/site/Logo";
@@ -15,7 +15,6 @@ import { MenuOverlay } from "@/components/site/MenuOverlay";
 import { Reveal } from "@/components/motion/Reveal";
 import { Cursor } from "@/components/motion/Cursor";
 import { BrandGradientDefs } from "@/components/site/SocialLinks";
-import { Preloader } from "@/components/motion/Preloader";
 import { IntroLoader } from "@/components/motion/IntroLoader";
 import { JsonLd } from "@/components/site/JsonLd";
 import { siteSchema } from "@/lib/schema";
@@ -64,16 +63,12 @@ export default async function SiteLayout({ children, modal }: LayoutProps<"/">) 
         <link rel="preconnect" href="https://cdn.sanity.io" />
         {/* Applies the theme (dark unless the visitor chose light) before the first paint. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
-        {/* Decides whether the first-visit preloader shows. */}
-        <script dangerouslySetInnerHTML={{ __html: PRELOADER_SCRIPT }} />
-        <noscript>
-          <style>{".preloader{display:none}"}</style>
-        </noscript>
+        {/* Decides whether the first-visit intro plays, and starts it. */}
+        <script dangerouslySetInnerHTML={{ __html: INTRO_SCRIPT }} />
       </head>
       <body>
         <JsonLd items={siteSchema(settings)} />
         <BrandGradientDefs />
-        <Preloader />
         <IntroLoader />
         <MenuProvider>
           <a

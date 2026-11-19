@@ -16,7 +16,7 @@ Outfit (SIL Open Font License, licence in `src/fonts/OFL.txt`), self-hosted as o
 
 ## Motion
 
-From the design system: a first-visit preloader (the symbol in an orbiting arc, a gradient counter, then a wipe; once per visit), a custom cursor (a dot that becomes a ring over links and a “View” disc over work), headings that rise from a mask, cards that fade up as they scroll in, buttons that press in slightly, and links and button labels that turn into the brand gradient on hover. The cursor and preloader switch off for touch screens or for visitors who ask for reduced motion, and so does the movement.
+From the design system: a first-visit intro (our character drops in, spins once in the air and rushes at the screen, and the page opens through its lens; once per visit, when it starts on Home), a custom cursor (a dot that becomes a ring over links and a “View” disc over work), headings that rise from a mask, cards that fade up as they scroll in, buttons that press in slightly, and links and button labels that turn into the brand gradient on hover. The cursor switches off for touch screens; the intro and all the movement switch off for visitors who ask for reduced motion.
 
 ## Navigation
 

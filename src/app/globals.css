@@ -511,109 +511,18 @@ html[data-mega-open] .site-header {
   z-index: 60;
 }
 
-/* While the first-visit preloader shows, the page's own entrance waits. */
+/* While the first-visit intro plays, the page's own entrance waits (INTRO_SCRIPT in lib/theme.ts). */
 .preloading h1 .reveal-mask > span,
 .preloading .dock-in {
   animation-play-state: paused;
 }
 
 /*
- * First-load preloader (design system; components/motion/Preloader.tsx):
- * pulsing symbol in an orbiting hairline arc, a big gradient counter and a
- * progress line on ink, then the panel wipes up.
- */
-.preloader {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: grid;
-  place-items: center;
-  background: #0a090d;
-  color: #f8f6f8;
-  clip-path: inset(0 0 0 0);
-  transition: clip-path 0.5s cubic-bezier(0.76, 0, 0.24, 1);
-  /* Never left covering the page if scripts fail part-way. */
-  animation: preloader-failsafe 0s linear 6s forwards;
-}
-.preloader[data-done] {
-  clip-path: inset(0 0 100% 0);
-}
-.no-preloader .preloader {
-  display: none;
-}
-@keyframes preloader-failsafe {
-  to {
-    visibility: hidden;
-  }
-}
-.preloader__mark {
-  position: relative;
-  width: clamp(84px, 7vw, 120px);
-  aspect-ratio: 1;
-}
-.preloader__arc {
-  position: absolute;
-  inset: -14px;
-  border-radius: 50%;
-  border: 1.5px solid rgb(248 246 248 / 0.12);
-  border-top-color: #f8f6f8;
-  animation: preloader-spin 1.1s linear infinite;
-}
-.preloader__symbol {
-  animation: preloader-pulse 1.6s cubic-bezier(0.76, 0, 0.24, 1) infinite;
-}
-.preloader__name {
-  position: absolute;
-  left: var(--spacing-gutter);
-  bottom: 32px;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: #a2a0a6;
-}
-.preloader__count {
-  position: absolute;
-  right: var(--spacing-gutter);
-  bottom: 20px;
-  font-size: clamp(48px, 8vw, 120px);
-  line-height: 0.85;
-  font-weight: 700;
-  letter-spacing: -0.05em;
-  font-variant-numeric: tabular-nums;
-}
-.preloader__pct {
-  font-size: 0.35em;
-}
-.preloader__bar {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 2px;
-  background: #f8f6f8;
-  transition: width 120ms linear;
-}
-@keyframes preloader-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-@keyframes preloader-pulse {
-  0%,
-  100% {
-    transform: scale(0.94);
-  }
-  50% {
-    transform: scale(1);
-  }
-}
-
-/*
- * The character intro being tried in place of the preloader (components/motion/IntroLoader.tsx; it shows only with
- * `?intro` for now, see INTRO_START in lib/theme.ts). Our character drops in, bounces, spins once in the air, lands
- * facing the visitor, then rushes at the screen and the page opens through its lens. Only transforms and opacity
- * move, so it stays smooth while the page is still busy loading. 1.62 s in all; `intro-bg` ends at 1.04 s, when the
- * page's own entrance starts, so it is already rising when the lens opens. The keyframes come from design/showreel/build/intro_css.py.
+ * First-visit intro (design system; components/motion/IntroLoader.tsx, started by INTRO_SCRIPT in lib/theme.ts).
+ * Our character drops in, bounces, spins once in the air, lands facing the visitor, then rushes at the screen and
+ * the page opens through its lens. Only transforms and opacity move, so it stays smooth while the page is still
+ * busy loading. 1.62 s in all; `intro-bg` ends at 1.04 s, when the page's own entrance starts, so it is already
+ * rising when the lens opens. The keyframes come from design/showreel/build/intro_css.py.
  */
 .intro {
   --size: clamp(112px, 11.5vw, 172px);
@@ -623,13 +532,15 @@ html[data-mega-open] .site-header {
   display: none;
   overflow: hidden;
   /* Never left covering the page if scripts fail part-way. */
-  animation: preloader-failsafe 0s linear 4.5s forwards;
+  animation: intro-failsafe 0s linear 4.5s forwards;
 }
 [data-intro] .intro {
   display: block;
 }
-[data-intro] .preloader {
-  display: none;
+@keyframes intro-failsafe {
+  to {
+    visibility: hidden;
+  }
 }
 .intro-done .intro {
   opacity: 0;

@@ -17,12 +17,12 @@ pad = 8; box = (box[0] - pad, box[1] - pad, box[2] + pad, box[3] + pad)
 strip = Image.new('RGBA', (F * len(frames), F), (0, 0, 0, 0))
 for i, f in enumerate(frames):
     strip.paste(Image.open(f).crop(box).resize((F, F), Image.LANCZOS), (i * F, 0))
-strip.save(os.path.join(OUT, 'turn.webp'), 'WEBP', quality=78, method=6, alpha_quality=80)
+strip.save(os.path.join(OUT, 'turn.webp'), 'WEBP', quality=70, method=6, alpha_quality=70)
 shell = np.asarray(Image.open(os.path.join(FR, 'front.png')).crop(box).resize((BIG, BIG), Image.LANCZOS)).copy()
 y, x = np.mgrid[0:BIG, 0:BIG] + 0.5
 r = np.hypot(x - BIG / 2, y - BIG / 2) / BIG
 shell[..., 3] = (shell[..., 3] * np.clip((r - GLASS) * BIG / 1.5, 0, 1)).astype(np.uint8)   # a 1.5 px soft edge
-Image.fromarray(shell).save(os.path.join(OUT, 'shell.webp'), 'WEBP', quality=80, method=6, alpha_quality=85)
+Image.fromarray(shell).save(os.path.join(OUT, 'shell.webp'), 'WEBP', quality=72, method=6, alpha_quality=75)
 for n in ('turn.webp', 'shell.webp'):
     print(n, os.path.getsize(os.path.join(OUT, n)) // 1024, 'KB')
 print('frames', len(frames), 'box', box)
