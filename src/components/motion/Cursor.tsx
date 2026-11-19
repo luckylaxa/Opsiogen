@@ -1,6 +1,10 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
+
+/** The character pointer being tried (CURSOR_KEY in lib/theme.ts): loaded only when it is on. */
+const CharacterCursor = dynamic(() => import("./CharacterCursor").then((m) => m.CharacterCursor), { ssr: false });
 
 type State = "default" | "link" | "view" | "text";
 
@@ -28,11 +32,15 @@ function stateFor(target: EventTarget | null): State {
 export function Cursor() {
   const el = useRef<HTMLDivElement>(null);
   const [enabled, setEnabled] = useState(false);
+  const [character, setCharacter] = useState(false);
 
   useEffect(() => {
     const fine = window.matchMedia("(pointer: fine)");
     const calm = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setEnabled(fine.matches && !calm.matches);
+    const update = () => {
+      setEnabled(fine.matches && !calm.matches);
+      setCharacter(document.documentElement.dataset.pointer === "character");
+    };
     update();
     fine.addEventListener("change", update);
     calm.addEventListener("change", update);
@@ -44,7 +52,7 @@ export function Cursor() {
 
   useEffect(() => {
     const node = el.current;
-    if (!enabled || !node) return;
+    if (!enabled || character || !node) return;
     const root = document.documentElement;
     root.classList.add("has-cursor");
 
@@ -112,9 +120,10 @@ export function Cursor() {
       window.removeEventListener("pointerdown", down);
       window.removeEventListener("pointerup", up);
     };
-  }, [enabled]);
+  }, [enabled, character]);
 
   if (!enabled) return null;
+  if (character) return <CharacterCursor />;
   return (
     <div ref={el} aria-hidden="true" className="cursor" data-state="default" data-hidden="">
       <span className="cursor__dot">

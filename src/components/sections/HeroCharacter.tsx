@@ -132,6 +132,7 @@ export function HeroCharacter({ className }: { className?: string }) {
       spray(ax / len, ay / len, true);
     };
     const onPress = (e: MouseEvent) => {
+      if (document.documentElement.dataset.pointer === "character") return;   // the character is the pointer: it sprays itself
       const t = e.target as Element;
       if (t.closest("a, button, input, textarea, select, [role='button'], dialog, .site-header") || window.scrollY > window.innerHeight * 0.5) return;
       const r = el.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), len = Math.hypot(dx, dy);
