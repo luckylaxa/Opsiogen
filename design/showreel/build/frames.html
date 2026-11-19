@@ -330,27 +330,30 @@ if(MOTION)(()=>{
       add(t=>{if(t>out)return ball.hide();const p=path(t);ball.at(p.x,p.y,D,{rot:p.rot,pose:'fly'})})})}
   else if(T==='One partner')words.forEach((s,i)=>rise(s,i<2?i*.05-.06:BEAT+(i-2)*.05,80,.18));
   else if(T.startsWith('Logo')){
-    // Lucky (18 Nov): it comes fast through the middle of the O while the logo is large and centred, the logo goes back
-    // to its own size, and it settles on top as before. LOGO_IN seconds of that, then the last hit lands as it settles:
-    // it hops once, turns right round, reads the call (left, then right), looks back at us, blinks and hovers.
+    // Lucky (19 Nov): no hold on the big logo. It pulls back the whole time, from large to its own size on the last
+    // hit, moving from the first frame. The character comes at the O from the front (from us), shrinks into its
+    // opening and goes through, rises behind the ring, comes out over the top and lands in its place on the hit. Then
+    // as before: it hops once, turns right round, reads the call (left, then right), looks back at us, blinks and hovers.
     const H=LOGO_IN,L=window.LOGO,lg=f.querySelector('.logo'),u=800/L.vb[0],OX=560+L.o.x*u,OY=470+L.o.y*u;
-    const k=260/720,X=830+359.5*k,Y=150+357*k,D=497*k,tC=H-1.5*BEAT,S0=3.6,S1=4;   // tC: it passes through the O
-    const vb=t=>(t-tC)/(H-tC);   // 0..1 from passing through to landing on the last hit
-    const sc=t=>t<tC?S0+(S1-S0)*io(t/tC):1+(S1-1)*(1-io((vb(t)-.15)/.75));   // a slow push in; the pull back once it is through
+    const k=260/720,X=830+359.5*k,Y=150+357*k,D=497*k,S0=3.6,tC=.5,tA=1.28;   // tC: it goes through the O; tA: the top of its arc
+    const sc=t=>{const p=clamp(t/H);return Math.exp(Math.log(S0)*(1-(.5*p+2*p*p-1.5*p*p*p)))};   // eases to a stop on the hit
     const at=(s,px,py)=>[OX+(560+px*u-OX)*s,OY+(470+py*u-OY)*s];                    // a logo point on screen at size s
-    const Dc=.86*2*L.hole.r*u*S1;                                                     // its size as it passes through
+    const top=t=>at(sc(t),0,0)[1];                                                   // the top of the logo on screen
+    const herm=(a,va,b,vb,T,q)=>{const q2=q*q,q3=q2*q;return(2*q3-3*q2+1)*a+(q3-2*q2+q)*T*va+(-2*q3+3*q2)*b+(q3-q2)*T*vb};
+    // From us to the O: large and low at first, a little smaller than the O's opening as it goes through. It moves
+    // away at a steady pace (1/size grows evenly) and closes on the O at a steady pace.
+    const D0=1150,P0=[880,720],Dt=.8*2*L.hole.r*u*sc(tC),[HX,HY]=at(sc(tC),L.hole.x,L.hole.y),vx=(HX-P0[0])/tC,vy=(HY-P0[1])/tC;
+    const sA=t=>1/((1-t/tC)/D0+(t/tC)/Dt),slope=-(1-Dt/D0)/tC,yA=Y-100;
+    // After the O, one arc that keeps its speed through the O: up over the logo, then down onto its place on the hit.
+    const flight=t=>{if(t<tC)return{x:P0[0]+vx*t,y:P0[1]+vy*t,d:sA(t),q:0};
+      const q=(t-tC)/(H-tC),x=herm(HX,vx,X,0,H-tC,q),d=Math.exp(herm(Math.log(Dt),slope,Math.log(D),0,H-tC,q));
+      const y=t<tA?herm(HY,vy,yA,0,tA-tC,(t-tC)/(tA-tC)):yA+(Y-yA)*Math.pow((t-tA)/(H-tA),2);return{x,y,d,q}};
     words.forEach((s,i)=>rise(s,H+2*BEAT+i*.06,40,.2));
-    add(t=>{const s=sc(t),[x,y]=at(s,0,0);Object.assign(lg.style,{left:x+'px',top:y+'px',width:800*s+'px',height:800*s*L.vb[1]/L.vb[0]+'px',
-      opacity:clamp(.2+t/.1),zIndex:t<tC?10:1})});
+    add(t=>{const s=sc(t),[x,y]=at(s,0,0),p=flight(Math.min(t,H));Object.assign(lg.style,{left:x+'px',top:y+'px',width:800*s+'px',height:800*s*L.vb[1]/L.vb[0]+'px',
+      opacity:clamp(.2+t/.1),zIndex:t>=tC&&t<H&&p.y+p.d/2>top(t)-1?10:1})});   // over the character only while it is behind the logo
     const land=hops([[H,X,Y],[H+.2,X,Y]],34,0,D);
     add(t=>{
-      if(t<tC){   // far behind the O, rushing at us through its opening: the logo hides it where they overlap
-        const q=t/tC,z=1+5*(1-q*q),[hx,hy]=at(sc(t),L.hole.x,L.hole.y),off=L.hole.r*u*sc(t)*Math.pow(1-q,2);
-        return ball.at(hx-.35*off,hy-.25*off,Dc/z,{rot:6*Math.sin(t*9)*(1-q)})}
-      if(t<H){    // through: it keeps coming at us over the big O, then the logo shrinks back and it arcs up and lands on top
-        const v=vb(t),Dv=v<.3?Dc+Dc*ease(v/.3):2*Dc+(D-2*Dc)*io((v-.3)/.7),[hx,hy]=at(sc(t),L.hole.x,L.hole.y),w=clamp((v-.2)/.8);
-        const yp=Y-90,y=w<.65?hy+(yp-hy)*ease(w/.65):yp+(Y-yp)*Math.pow((w-.65)/.35,2);
-        return ball.at(hx+(X-hx)*ease(w),y,Dv,{rot:-22*Math.sin(Math.PI*w),floor:w>.6?Y+D/2:null})}
+      if(t<H){const p=flight(t);return ball.at(p.x,p.y,p.d,{rot:-14*Math.sin(Math.PI*p.q),res:t<tC?1:1.2,floor:t>tA?Y+D/2:null})}
       const p=land(t),bob=t>H+1.8?6*(1-Math.cos((t-H-1.8)*7)):0,w=twirl(t,H+.22),r=t-H,pose=r<1.02?'front':r<1.5?'down':'front';
       ball.at(p.x,p.y-bob,D,{rot:p.rot,turn:w.turn,pose,mirror:r>=1.02&&r<1.26,blink:blinkPh(t,H+1.75,H+2.2),floor:Y+D/2})})}
   // Over the stock clips (|alpha): it meets the people. After the opening line the clip opens in our lens circle:

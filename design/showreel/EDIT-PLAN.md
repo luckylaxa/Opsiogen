@@ -229,6 +229,14 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   beat is gone. Preview of the opening only, for approval: `out/opening-logos-preview.mp4`
   (`build/open_preview.py FRAMES_DIR OUT`). After his yes, `build/share.py` is updated for it (it still adds the old
   end beat) and the full share cut is made.
+- **Logo ending, no hold (19 Nov).** Lucky, on the big logo with the character a dot in its O: "this logo stuck here
+  for sometime and not smooth. Or you can try this character coming from front view and passing through the Center logo
+  and flying to top and position ... No stuck or pause." Now the logo pulls back the whole time, from 3.6 times its size
+  to its own size on the last hit, moving from the first frame. The character comes from the front (large and low, as
+  if from the camera), shrinks into the O's opening and goes through, rises behind the ring, comes out over the top and
+  lands in its place on the hit; then as before. Preview of the close only, for approval:
+  `out/logo-ending-preview.mp4` (`build/logo_preview.py FRAMES_DIR OUT`). After his yes it goes into the website film
+  and the share cut.
 - The logo keeps its own shape; only at the very end (cut 11, as Lucky asked) is it shown larger, then settles at
   its own size. Otherwise it only fades in. Nothing else is shown larger than its own size.
 
