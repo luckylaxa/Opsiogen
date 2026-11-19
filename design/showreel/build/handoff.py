@@ -7,11 +7,19 @@ pans fast the way they move
 drawn by the shot after alone. The shot after picks each of these up in frames.html (ENTER), so keep the two in step.
 Keyed by the stock clip's number in its shot name."""
 OUT = {
+    "488563452": ("push", 1515, 615, 4),     # she points at our character: rush into it, onto "We take it from here"
     "480737977": ("lens",),                  # the win: the work opens out of our character's lens beside him
     "405010525": ("whip", 1),                # the after-work ride: she rides right, into the bike brand
     "Pixabay 208770": ("push", 720, 840, 9), # her smile: into her phone, onto the lipstick app
     "150778364": ("push", 420, 440, 4),      # the getaway: out to sea, onto the coast on the property site
     "577275631": ("flash", 840, 270),        # the high five: the hands meet, white, onto the wall of the work
+    "249372459": ("push", 1050, 390, 3),     # a big laugh: in on her, onto the stage she is watching
+    "191180958": ("push", 990, 240, 4),      # the open road: down the road ahead, onto the car
+    "490354049": ("whip", 1),                # a confident smile: across to the next smile
+    "294857367": ("push", 1320, 540, 3),     # family time: into the hug, onto the health apps
+    "5137353": ("push", 1410, 840, 6),       # laughing at the laptop: into the laptop, onto the website
+    "329117728": ("whip", -1),               # free on the road: the other way, onto the campaigns
+    "4053012": ("push", 960, 720, 5),        # two friends laughing: into their laptop, onto the closing words
 }
 T = 0.3   # seconds the hand-over takes at the end of the clip
 FPS = 30

@@ -209,7 +209,7 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   now comes only from well inside its edge in the large PNG, so its soft, uneven edge pixels no longer show as a dotted
   line once the logo is large; the vector outline makes the edge. The Work page card has a full-view button.
 - **Share cut (19 Nov).** Lucky: client logos in the video "like superside video", for sharing. The website keeps cut 12
-  (the logo strip sits right under it there). `build/share.py FRAMES_DIR OUT` takes the website cut's clips and adds the
+  (the logo strip sits right under it there). (Replaced by the opening logo beat below; `build/share.py` is gone.) It took the website cut's clips and added the
   client logo beat (`frames.html?share`, "Client logos": "Creative support for 200+ top global brands" over twelve client
   logos from `public/logos`, popping in two at a time on the half-beat) before the logo ending: 8 beats, so the logo
   still lands on the bar, and the track's last hit moves with it. Out: `out/opsiogen-showreel-v12-share.mp4` (60.4 s) and
@@ -231,8 +231,7 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   middle and grows, as Superside's intro ends. All the lines are in the film's bold ("No need two font weight. Keep
   same bold weight like other titles") (`frames.html?share`, shot "Brands already did", 12 beats). The stock
   clip then opens out of it in the lens circle. Preview of the opening only, for approval:
-  `out/opening-logos-preview.mp4` (`build/open_preview.py FRAMES_DIR OUT`). After his yes, `build/share.py` is updated
-  for it (it still adds the old end beat) and the full share cut is made.
+  `out/opening-logos-preview.mp4` (`build/open_preview.py FRAMES_DIR OUT`). Approved ("Good"); in cut 13.
 - **Logo ending, no hold (19 Nov).** Lucky, on the big logo with the character a dot in its O: "this logo stuck here
   for sometime and not smooth ... No stuck or pause." Then, on the first try (the character coming at the O from the
   front): "From this view character should rotate and turn and pass through like superb-jet and after passing Center
@@ -245,8 +244,7 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   it settles; it hops on the hit. The camera pushes in a little on the O as it goes through and eases back to the full
   frame as it settles ("when it pass through zoom it little bit and when it start settle back to normal full screen") (the turn after
   landing is gone; on the hit it hops, then reads the call, blinks and hovers as before). Preview of the close only, for approval:
-  `out/logo-ending-preview.mp4` (`build/logo_preview.py FRAMES_DIR OUT`). After his yes it goes into the website film
-  and the share cut.
+  `out/logo-ending-preview.mp4` (`build/logo_preview.py FRAMES_DIR OUT`). In cut 13.
 - **People into the work, no text (19 Nov).** Lucky: "in between we are showing different stock character videos and
   how that we can connect with mockup story telling", then, after rounds of short lines on the clips, "Instead of text
   any other idea" and "Show only these cuts transition and after approval you can mix all works". Each stock clip of
@@ -255,8 +253,18 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   sea, onto the coast photo of the property site, which now comes straight after the beach, before the wall of
   websites), whips the way they move (the cyclist, into the bike brand), whites out on the high five (the wall opens
   from the hands), or the work opens out of our character's lens (the man cheering, onto the bike artwork). Preview
-  of these five only, for approval: `out/handoff-preview.mp4` (`build/handoff_preview.py FRAMES_DIR OUT`). After his
-  yes, the other clips get theirs and it all goes into the website film and the share cut.
+  of these five only, for approval: `out/handoff-preview.mp4` (`build/handoff_preview.py FRAMES_DIR OUT`). Lucky:
+  "Merge all and publish", "And what about other video clips like car video": all 13 clips have one in cut 13 (she
+  points: into our character; the big laugh: in on her, onto the stage; the open road: down the road, onto the car;
+  the confident smile: a whip to the next smile; family time: into the hug, onto the health apps; the laptop: into
+  it, onto the first website; the jeep: a whip the other way, onto the campaigns; the two friends: into their laptop,
+  onto the closing words).
+- **Cut 13 (19 Nov).** The website film: cut 12 with the new logo ending and the 13 hand-overs; the Mykonos page now
+  comes right after the beach (2 beats) and the wall of websites after it (1 beat). The share cut is the same film with
+  the opening logo beat (12 beats) after "You bring the idea.", built whole by film.py:
+  `SHARE=1 node build/frames.cjs DIR` then `SHARE=1 python3 build/film.py DIR OUT` (the website cut: the same without
+  SHARE). Out: `out/opsiogen-showreel-v13.mp4` (website; its web copies are on Home) and
+  `out/opsiogen-showreel-v13-share.mp4` (for sharing).
 - The logo keeps its own shape; only at the very end (cut 11, as Lucky asked) is it shown larger, then settles at
   its own size. Otherwise it only fades in. Nothing else is shown larger than its own size.
 

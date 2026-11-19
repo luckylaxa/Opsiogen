@@ -21,6 +21,7 @@ OVER = ("488563452", "480737977", "490354049")  # stock clips the character join
 MULTI = ("Grid of", "collage", "tiles", "wall across", "row of", "Torvi: site", "billboard, badge", "guideline pages", "Three apps")
 def beats(n):
     if n == "Opening line": return 3
+    if n == "Brands already did": return 12   # the share cut's opening logo beat (frames.html ?share)
     if n.startswith("We take it"): return 2
     if n == "Chapter word": return 2
     if n.startswith("Fast word"): return 1
@@ -60,17 +61,17 @@ def make(i, inputs, fc):  # encodes stock clip i from a filter chain ending in [
     if over(i):
         inputs = inputs + ["-framerate", str(FPS), "-i", os.path.join(over(i), "%03d.png")]
         fc = fc.replace("[o]", "[o0]") + f";[o0][{inputs.count('-i') - 1}:v]overlay=0:0[o]"
+    tl = tail(shots[i]["name"], N[i] / FPS)   # its hand-over to the work after it, last, so the character moves with it
+    if tl: fc = fc.replace("[o]", "[o1]") + f";[o1]{tl}[o]"
     run(["ffmpeg", "-y", "-v", "error"] + inputs + ["-filter_complex", fc, "-map", "[o]"] + ENC(N[i], clip(i)))
-def plain(i):  # a hard cut with a quick punch-in; ends with its hand-over to the work after it, if it has one
+def plain(i):  # a hard cut with a quick punch-in
     f, t0 = stock[i]
-    tl = tail(shots[i]["name"], N[i] / FPS)
-    make(i, ["-ss", str(t0), "-i", ST + f], source(i, 0) + f";[v]{PUNCH}" + ("," + tl if tl else "") + "[o]")
+    make(i, ["-ss", str(t0), "-i", ST + f], source(i, 0) + f";[v]{PUNCH}[o]")
 def push(i, word):  # the chapter word card goes up and out, the clip comes up from below
     f, t0 = stock[i]
     make(i, ["-loop", "1", "-framerate", str(FPS), "-i", word, "-ss", str(t0), "-i", ST + f],
          source(i, 1) + f";[0:v]scale=1920:1080,setsar=1,fps={FPS},settb=1/{FPS}[w];color=c=black:s=1920x1080:r={FPS}[c];"
-         f"[c][w]overlay=x=0:y='-1080*{EASE}':eval=frame[a];[a][v]overlay=x=0:y='1080*(1-{EASE})':eval=frame:shortest=1"
-         + ("," + tail(shots[i]["name"], N[i] / FPS) if tail(shots[i]["name"], N[i] / FPS) else "") + "[o]")
+         f"[c][w]overlay=x=0:y='-1080*{EASE}':eval=frame[a];[a][v]overlay=x=0:y='1080*(1-{EASE})':eval=frame:shortest=1[o]")
 def iris(i):  # the clip opens out of the opening line in our lens circle (drawn in its character layer)
     f, t0 = stock[i]
     make(i, ["-ss", str(t0), "-i", ST + f], source(i, 0) + ";[v]null[o]")
@@ -78,8 +79,9 @@ render = lambda name, jobs: (json.dump({"frames": FR, "out": os.path.join(WD, "f
                              run(["node", os.path.join(HERE, "render-anim.cjs"), os.path.join(WD, name)]))
 # 0. The character on its own, for the stock clips it joins (after the opening line, with that line's last frame
 #    and a growing hole in it: the lens circle the clip opens in).
-opens = lambda i: i and shots[i - 1]["name"] == "Opening line"
-render("over.json", [[0, N[0], ""]] + [[i, N[i], last(i - 1) if opens(i) else "", "alpha"] for i in stock if stock[i] and over(i)])
+opens = lambda i: i and shots[i - 1]["name"] in ("Opening line", "Brands already did")   # the share cut opens it out of its logo beat
+pre = [[0, N[0], ""]] + ([[1, N[1], last(0)]] if shots[1]["name"] == "Brands already did" else [])   # what the first clip opens out of
+render("over.json", pre + [[i, N[i], last(i - 1) if opens(i) else "", "alpha"] for i in stock if stock[i] and over(i)])
 # A frame with nothing see-through is saved without its alpha channel, and ffmpeg drops a frame where the format
 # changes: keep every frame of a layer RGBA.
 from PIL import Image
