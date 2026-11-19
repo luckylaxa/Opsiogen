@@ -194,9 +194,10 @@ def sandlogic():                # SandLogic's own logo file (from the owner, 19 
     soft = np.zeros_like(a); soft[:, :m] = field
     return a, {"soft": np.clip(soft - a, 0, 1)}
 
-def afthab_tours():             # Afthab Tours' own logo file (from the owner, 19 Nov), on white: the colour mark (its
-    a = ink_auto(load("design/logos/src/afthab-tours.png"), (255, 255, 255), t=40)   # white plane and trail cut out)
-    return drop(a, (265, 205, 1045, 280)), {}            # and the name; the tagline under the name goes
+def afthab_tours():             # Afthab Tours' own logo file (from the owner, 19 Nov), on white, whole: the colour
+    # mark (its white plane and trail cut out), the name and "Travel Beyond Boundaries" under it (Lucky: "Missing
+    # second line text from logo").
+    return ink_auto(load("design/logos/src/afthab-tours.png"), (255, 255, 255), t=40), {}
 
 
 def cabot_solutions():          # Cabot's own white logo file (from the owner, 19 Nov), on clear
