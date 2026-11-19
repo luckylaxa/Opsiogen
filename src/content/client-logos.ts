@@ -23,7 +23,7 @@ export const CLIENT_LOGOS: Record<string, { ratio: number; size?: number; name?:
   "microchip": { ratio: 4.305, name: "Microchip" },
   "my-healing-mate": { ratio: 2.698, name: "My Healing Mate" },
   "nephtech": { ratio: 4.468, name: "NephTech" },
-  "norsecom": { ratio: 7.25 },
+  "norsecom": { ratio: 7.905 },
   "nova-scotia-power": { ratio: 4.2, name: "Nova Scotia Power" },
   "oh-my-glam": { ratio: 2.016 },
   "rohde-schwarz": { ratio: 3.865, size: 1.2 },

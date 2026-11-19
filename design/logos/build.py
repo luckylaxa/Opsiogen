@@ -176,15 +176,9 @@ def oh_my_glam():               # Oh My Glam's own logo file (from the owner, 19
     return load("design/logos/src/oh-my-glam.png")[:, :, 3] / 255, {}   # black on clear
 
 
-def norsecom():                 # office sign (turned a little): mark and name; the TM and the line below go
-    box = (470, 640, 1130, 800); c = crop(load("design/showreel/build/a/nc-02.jpg"), box)
-    a = ink_auto(c, t=60)
-    a = clear(a, (1104, 640, 1130, 712), (470, 790, 1130, 800), at=box[:2])
-    m = (a > 0.5).astype(np.uint8); ys, xs = np.nonzero(m)
-    (_, _), (_, _), ang = cv2.minAreaRect(np.column_stack([xs, ys]).astype(np.float32))
-    ang = ang - 90 if ang > 45 else ang
-    return keep_seeded(rotate(a, ang), 0.95), {"blur": 0.5}
-
+def norsecom():                 # Norsecom's own logo (from the owner, 19 Nov): its vector PDF drawn at 600 dpi, blue on
+    a = ink_auto(load("design/logos/src/norsecom.png"), (255, 255, 255), t=40)   # white: the N mark and the name;
+    return drop(a, (1690, 20, 1800, 80)), {}                                  # the TM goes
 
 def sandlogic():                # brand guide: the one-colour white version on dark (mark beside the name)
     # The mark's fine dot fields can't be drawn in one colour at card size (they turn into rough patches), so the mark
