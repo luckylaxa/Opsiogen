@@ -12,7 +12,7 @@ else:
     W, H = 1440, 900; CX, CY = bx + bw / 2, by + bw / 2; PPU = (bw / 2) / (6.75 * math.tan(math.radians(10)))      # the hero camera's scale
 FLOOR = -1.30                                    # where the hero's pool of light lies, in body radii below its middle
 MINI = 0.28                                      # the mini's size (about 36 px across on Home: cursor size)
-D = 3.75 if CLOSE else 5.8                       # the whole film, seconds
+D = 3.75 if CLOSE else 6.3                       # the whole film, seconds
 clamp = lambda v, a=0.0, b=1.0: max(a, min(b, v))
 def ease(q): q = clamp(q); return q * q * (3 - 2 * q)
 def io(q): q = clamp(q); return 0.5 - 0.5 * math.cos(math.pi * q)
@@ -71,7 +71,10 @@ def state(t):
             mv = [pointer(t)[0] - pointer(t - 0.05)[0], pointer(t)[1] - pointer(t - 0.05)[1]]
             m['look'] = [clamp(mv[0] / 25, -1, 1), clamp(mv[1] / 25, -1, 1)]
             m['pos'][1] += 0.04 * math.sin((t - 3.4) * 2 * math.pi / 1.6)      # a gentle hover
-            if 4.9 <= t <= 5.3: m['blink'] = seg(t, 4.9, 5.3)                  # the click
+            # the click: as it is pressed, it turns its eye down to what it is clicking (away from the viewer), sprays
+            # our colours onto it, then turns back to face the viewer
+            press = io(seg(t, 4.72, 4.9)) * (1 - io(seg(t, 5.35, 5.7)))
+            m['pitch'] = 1.1 * press; m['yaw'] = 0.25 * press; m['look'] = [0.2 * press, 0.6 * press]
         st['miniPool'] = 0.7 * (1 - ease(seg(t, 2.6, 2.9))) if 1.5 <= t else 0
         if t < 1.5: st['miniPool'] = 0
     if m.get('show') and t >= 1.95:                                         # out of the bay: its own view, so it stays round,
@@ -81,8 +84,8 @@ def state(t):
     ov = {'arrow': pointer(t) if t < 3.4 else None, 'arrowFade': 1 - seg(t, 3.25, 3.4)}
     if m.get('show') and t >= 3.4:
         c = to_px(m['pos']); ov['r0'] = MINI * PPU + 3                    # the ripples start just outside the mini
-        if HOVER is not None and t >= HOVER: ov['hover'] = {'c': c, 't0': HOVER}   # over the link: ripples of our colours
-        if t >= 4.9: ov['click'] = {'c': c, 'k': seg(t, 4.9, 5.5)}          # the click: one stronger ripple
+        if HOVER is not None and t >= HOVER and not 4.72 <= t <= 5.9: ov['hover'] = {'c': c, 't0': HOVER if t < 4.72 else 5.9}   # over the link: ripples of our colours
+        if 4.9 <= t <= 5.75: ov['spray'] = {'c': [c[0], c[1] + 4], 'k': seg(t, 4.9, 5.75)}   # the click: a spray of colour on the page
     return st, ov
 times = ONLY if ONLY is not None else [i / FPS for i in range(int(D * FPS) + 1)]
 frames, overlays = [], []
