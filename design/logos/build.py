@@ -224,10 +224,45 @@ def rohde_schwarz():            # Rohde & Schwarz's own logo (from the owner, 19
 
 
 # Care Connect has no logo here (Lucky, 19 Nov: "Don't put care connect logo").
+# ---- clients without a case study here (Lucky, 19 Nov: the logo wall he shared). Their logo files are the ones on
+# Cabot's site (488 x 256, on white) in src/clients, except SAP and Microchip, drawn from their own vector logos
+# (Wikimedia Commons, rendered large on white). Taglines, TM and (R) marks go: too small to read in the row.
+def client(name, *drops, t=40, flat=False):
+    c = load(f"design/logos/src/clients/{name}.png")
+    if flat:   # every coloured part as full ink, even a pale one (My Healing Mate's light yellow and teal wing)
+        a = np.clip((np.linalg.norm(c[:, :, :3] - 255, axis=2) - 12) / 28, 0, 1)
+    else:
+        a = ink_auto(c, (255, 255, 255), t=t)
+    for box in drops: a = drop(a, box)
+    return a, {}
+
+
+FLAT = {"my-healing-mate"}
+CLIENTS = {   # file name: (display name, boxes of parts left out: taglines, TM, (R))
+    "my-healing-mate": ("My Healing Mate", [(0, 176, 488, 256)]),                       # FEEL BETTER, HEAL FASTER
+    "graymatter-analytics": ("GrayMatter Analytics", [(118, 162, 488, 256), (54, 171, 112, 178), (360, 128, 380, 146)]),
+    "altruity": ("Altruity", [(420, 140, 445, 160)]),                                    # TM
+    "actigraph": ("ActiGraph", [(372, 156, 390, 170)]),                                  # TM
+    "nephtech": ("NephTech", []),
+    "corechair": ("CoreChair", []),
+    "sap": ("SAP", []),
+    "kinduct": ("Kinduct", []),
+    "aaoms": ("AAOMS", [(330, 208, 352, 230)]),                                          # (R)
+    "the-sieve": ("The Sieve", []),
+    "dubai-police": ("Dubai Police", []),
+    "nova-scotia-power": ("Nova Scotia Power", [(160, 160, 400, 195)]),                  # An Emera Company
+    "microchip": ("Microchip", [(380, 15, 430, 65)]),                                    # (R)
+    "rush": ("RUSH", []),
+    "green-circle-life": ("Green Circle Life", []),
+    "instachart": ("instachart", []),
+}
+
+
 LOGOS = {"engel-volkers": engel_volkers, "sifio-health": sifio_health, "bigtapp": bigtapp, "carlton-noble": carlton_noble,
          "meetingful": meetingful, "oh-my-glam": oh_my_glam, "norsecom": norsecom,
          "sandlogic": sandlogic, "afthab-tours": afthab_tours, "cabot-solutions": cabot_solutions, "rxlive": rxlive,
-         "surgo-health": surgo_health, "rohde-schwarz": rohde_schwarz}
+         "surgo-health": surgo_health, "rohde-schwarz": rohde_schwarz,
+         **{k: (lambda k=k, drops=v[1]: client(k, *drops, flat=k in FLAT)) for k, v in CLIENTS.items()}}
 
 MAP = os.path.join(ROOT, "src/content/client-logos.ts")
 # Optical size on the cards, where 1 is the shared rule (same area for every logo): a heavy, solid wordmark looks
@@ -246,9 +281,10 @@ if __name__ == "__main__":
         if f.endswith(".svg"):
             w, h = [float(v) for v in open(os.path.join(OUT, f)).read().split('viewBox="')[1].split('"')[0].split()[2:]]
             ratios[f[:-4]] = round(w / h, 3)
-    body = "".join(f'  "{k}": {{ ratio: {v}' + (f", size: {OPTICAL[k]}" if k in OPTICAL else "") + " },\n" for k, v in ratios.items())
+    body = "".join(f'  "{k}": {{ ratio: {v}' + (f", size: {OPTICAL[k]}" if k in OPTICAL else "")
+                   + (f', name: "{CLIENTS[k][0]}"' if k in CLIENTS else "") + " },\n" for k, v in ratios.items())
     open(MAP, "w").write(
         "// Written by design/logos/build.py: do not edit by hand.\n"
         "/**\n * Client logos in /public/logos/<project slug>.svg (one colour). `ratio`: the logo's width to height.\n"
-        " * `size`: its optical size on the cards against the shared rule (1 when left out).\n */\n"
-        f"export const CLIENT_LOGOS: Record<string, {{ ratio: number; size?: number }}> = {{\n{body}}};\n")
+        " * `size`: its optical size in the logo row against the shared rule (1 when left out). `name`: a client without a\n * case study here (the others take their name from their project).\n */\n"
+        f"export const CLIENT_LOGOS: Record<string, {{ ratio: number; size?: number; name?: string }}> = {{\n{body}}};\n")

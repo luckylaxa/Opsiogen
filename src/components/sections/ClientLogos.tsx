@@ -3,39 +3,57 @@ import { getProjects } from "@/lib/data";
 import { CLIENT_LOGOS } from "@/content/client-logos";
 import { MarqueePause } from "./MarqueePause";
 
+type Logo = { key: string; name: string; href: string | null; ratio: number; size: number };
+
 /**
  * The brands we work with, as one row of client logos scrolling slowly sideways (Lucky, 19 Nov: "like Superside";
  * logos only here, never on the designs). Each logo is the client's one-colour logo in the page's ink colour, so it
- * reads in both themes, and opens that client's case study. The row pauses on hover, on focus and with its pause
- * button, and sits still in rows for visitors who prefer less motion (`.marquee` in globals.css).
+ * reads in both themes. A client with a case study here opens it; the others (named in the logo map) are logos only.
+ * The two kinds take turns along the row. It pauses on hover, on focus and with its pause button, and sits still in
+ * rows for visitors who prefer less motion (`.marquee` in globals.css).
  * Every logo gets about the same area: a long wordmark is drawn lower, a compact mark taller.
  */
 export async function ClientLogos({ heading = "Brands we work with", className = "" }: { heading?: string; className?: string }) {
-  const projects = (await getProjects()).filter((p) => CLIENT_LOGOS[p.slug]);
-  if (projects.length < 4) return null;
+  const projects = await getProjects();
+  const withCase: Logo[] = projects
+    .filter((p) => CLIENT_LOGOS[p.slug])
+    .map((p) => ({ key: p.slug, name: p.client || p.name, href: `/work/${p.slug}`, ratio: CLIENT_LOGOS[p.slug].ratio, size: CLIENT_LOGOS[p.slug].size ?? 1 }));
+  const others: Logo[] = Object.entries(CLIENT_LOGOS)
+    .filter(([, l]) => l.name)
+    .map(([key, l]) => ({ key, name: l.name!, href: null, ratio: l.ratio, size: l.size ?? 1 }));
+  const logos: Logo[] = [];
+  for (let i = 0; i < Math.max(withCase.length, others.length); i++) {
+    if (withCase[i]) logos.push(withCase[i]);
+    if (others[i]) logos.push(others[i]);
+  }
+  if (logos.length < 4) return null;
+
   const items = (copy: boolean) =>
-    projects.map((p) => {
-      const { ratio, size = 1 } = CLIENT_LOGOS[p.slug];
-      const src = `/logos/${p.slug}.svg`;
+    logos.map((l) => {
+      const src = `/logos/${l.key}.svg`;
+      const mark = (
+        <span
+          className="block bg-current"
+          style={{
+            height: `calc(var(--logo-h) * ${Math.min(1.4, (2 * l.size) / Math.sqrt(l.ratio)).toFixed(3)})`,
+            aspectRatio: l.ratio,
+            WebkitMask: `url(${src}) center / contain no-repeat`,
+            mask: `url(${src}) center / contain no-repeat`,
+          }}
+        />
+      );
+      const look = "block opacity-80 transition-opacity duration-300 hover:opacity-100 focus-visible:opacity-100";
       return (
-        <li key={`${copy ? "b" : "a"}-${p.slug}`} aria-hidden={copy || undefined} className="flex shrink-0 items-center px-[clamp(22px,2.6vw,52px)]">
-          <Link
-            href={`/work/${p.slug}`}
-            scroll={false}
-            tabIndex={copy ? -1 : undefined}
-            aria-label={p.client || p.name}
-            className="block opacity-80 transition-opacity duration-300 hover:opacity-100 focus-visible:opacity-100"
-          >
-            <span
-              className="block bg-current"
-              style={{
-                height: `calc(var(--logo-h) * ${Math.min(1.4, (2 * size) / Math.sqrt(ratio)).toFixed(3)})`,
-                aspectRatio: ratio,
-                WebkitMask: `url(${src}) center / contain no-repeat`,
-                mask: `url(${src}) center / contain no-repeat`,
-              }}
-            />
-          </Link>
+        <li key={`${copy ? "b" : "a"}-${l.key}`} aria-hidden={copy || undefined} className="flex shrink-0 items-center px-[clamp(22px,2.6vw,52px)]">
+          {l.href ? (
+            <Link href={l.href} scroll={false} tabIndex={copy ? -1 : undefined} aria-label={l.name} className={look}>
+              {mark}
+            </Link>
+          ) : (
+            <span role="img" aria-label={l.name} className="block opacity-80">
+              {mark}
+            </span>
+          )}
         </li>
       );
     });
@@ -46,7 +64,7 @@ export async function ClientLogos({ heading = "Brands we work with", className =
       </h2>
       <div className="marquee relative mt-[clamp(28px,2.6vw,52px)] overflow-hidden [--logo-h:clamp(32px,2.8vw,52px)] [mask-image:linear-gradient(90deg,transparent,#000_12%,#000_88%,transparent)]">
         {/* About 50 px a second, whatever the number of logos. */}
-        <ul className="marquee-track flex w-max items-center" style={{ "--marquee-time": `${projects.length * 5}s` } as React.CSSProperties}>
+        <ul className="marquee-track flex w-max items-center" style={{ "--marquee-time": `${logos.length * 5}s` } as React.CSSProperties}>
           {items(false)}
           {items(true)}
         </ul>
