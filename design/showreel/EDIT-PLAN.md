@@ -239,7 +239,9 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   own size on the last hit, moving from the first frame. The character starts close to us, facing us, turns half round
   (away from us) and jets into the O with its trail, slow at first, then very fast ("make it snappy movement when it
   pass through. Like slow to super fast. Now it's flat movement"); it goes through, shoots up at that speed and slows
-  to the top of its arc, turns the rest of the way round to face us, and settles in its place on the hit (the turn after
+  to the top of its arc, turns the rest of the way round to face us, and settles in its place on the hit. The
+  camera pushes in a little on the O as it goes through and eases back to the full frame as it comes down to settle
+  ("when it pass through zoom it little bit and when it start settle back to normal full screen") (the turn after
   landing is gone; it hops, reads the call, blinks and hovers as before). Preview of the close only, for approval:
   `out/logo-ending-preview.mp4` (`build/logo_preview.py FRAMES_DIR OUT`). After his yes it goes into the website film
   and the share cut.

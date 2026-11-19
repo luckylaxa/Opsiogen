@@ -355,6 +355,10 @@ if(MOTION)(()=>{
       const q=(t-tC)/(H-tC),x=herm(HX,vx,X,0,H-tC,q),d=Math.exp(herm(Math.log(Dt),slope,Math.log(D),0,H-tC,q)),w=clamp((t-tC-.15)/.55);
       const y=t<tA?HY+(yA-HY)*up((t-tC)/(tA-tC)):yA+(Y-yA)*Math.pow((t-tA)/(H-tA),2);
       return{x,y,d,turn:Math.PI*(1+w*w*(3-2*w)),rot:-14*Math.sin(Math.PI*q),jet:0,q}};
+    // Lucky: "when it pass through zoom it little bit and when it start settle back to normal full screen": the camera
+    // pushes in a little on the O as it goes through, holds, and eases back out as it comes down to settle.
+    const Z=t=>1+.2*(io((t-.48)/.22)-io((t-1.05)/.55));
+    add(t=>{f.style.transformOrigin=`${HX}px ${HY}px`;f.style.transform=`scale(${Z(t)})`});
     words.forEach((s,i)=>rise(s,H+2*BEAT+i*.06,40,.2));
     add(t=>{const s=sc(t),[x,y]=at(s,0,0),p=flight(Math.min(t,H));Object.assign(lg.style,{left:x+'px',top:y+'px',width:800*s+'px',height:800*s*L.vb[1]/L.vb[0]+'px',
       opacity:clamp(.2+t/.1),zIndex:t>=tC&&t<H&&p.y+p.d/2>top(t)-1?10:1})});   // over the character only while it is behind the logo
