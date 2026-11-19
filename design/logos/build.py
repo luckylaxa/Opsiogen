@@ -180,16 +180,19 @@ def norsecom():                 # Norsecom's own logo (from the owner, 19 Nov): 
     a = ink_auto(load("design/logos/src/norsecom.png"), (255, 255, 255), t=40)   # white: the N mark and the name;
     return drop(a, (1690, 20, 1800, 80)), {}                                  # the TM goes
 
-def sandlogic():                # brand guide: the one-colour white version on dark (mark beside the name)
-    # The mark's fine dot fields can't be drawn in one colour at card size (they turn into rough patches), so the mark
-    # keeps its two crescents and the stroke between them: the hourglass S.
-    box = (1340, 765, 1740, 895); c = crop(load("design/showreel/raw/sl/g-logo1.png"), box)
-    a = ink_auto(c, t=40); m = 122                       # the mark is the first 122 px, the name after it
-    core = cv2.morphologyEx((a[:, :m] > 0.5).astype(np.uint8), cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3)))
-    a[:, :m] *= cv2.dilate(core, np.ones((3, 3), np.uint8))   # the dots go; the crescents and the stroke stay
-    a[:, :m] = drop(a[:, :m], smaller=120)
-    return a, {}
-
+def sandlogic():                # SandLogic's own logo file (from the owner, 19 Nov), on white: the hourglass S beside
+    # the name. The mark's two crescents and the stroke between them are the solid ink. Its fine dot fields would be
+    # specks at the logo row's size, so each field is drawn as one soft shape, written lighter (40%), like the haze
+    # the dots make when small.
+    c = load("design/logos/src/sandlogic.jpg"); m = 760   # the mark is left of x = 760, the name after it
+    a = ink_auto(c, (255, 255, 255), t=40)
+    a[:, :m] = drop(a[:, :m], smaller=1500)               # the dots leave the solid ink
+    d = np.linalg.norm(c[:, :m, :3] - 255, axis=2)
+    dots = ((d > 25) & ~cv2.dilate((a[:, :m] > 0.5).astype(np.uint8), np.ones((5, 5), np.uint8)).astype(bool)).astype(np.uint8)
+    field = cv2.morphologyEx(dots, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (31, 31)))
+    field = drop(cv2.GaussianBlur(field.astype(np.float32), (0, 0), 2), smaller=4000)
+    soft = np.zeros_like(a); soft[:, :m] = field
+    return a, {"soft": np.clip(soft - a, 0, 1)}
 
 def afthab_tours():             # logo file: colour mark (white plane cut out) and the name; the tagline goes
     a = ink_alpha(load("design/case-studies/afthab-tours/src/logo.png"))

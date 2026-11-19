@@ -29,7 +29,7 @@ export const CLIENT_LOGOS: Record<string, { ratio: number; size?: number; name?:
   "rohde-schwarz": { ratio: 3.865, size: 1.2 },
   "rush": { ratio: 3.375, name: "RUSH" },
   "rxlive": { ratio: 2.238 },
-  "sandlogic": { ratio: 3.592, size: 1.1 },
+  "sandlogic": { ratio: 4.198, size: 1.1 },
   "sap": { ratio: 2.02, name: "SAP" },
   "sifio-health": { ratio: 3.606, size: 0.8 },
   "surgo-health": { ratio: 2.129 },
