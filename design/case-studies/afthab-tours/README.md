@@ -42,4 +42,7 @@ sideways (a phone looked far too tall). 06 and 11 are now built in `square.html`
 keeps its cut-out at its own shape. Stories in phones are shown whole (they were cropped at the sides, cutting
 "Book on WhatsApp" and the destination names). Then (Lucky: "Not perfect mockup. Glitches") the black bands above and
 below each story and the camera cut-out over its edge looked broken, so story phones now have a 9:16 screen, the
-story's own shape: it fills the screen edge to edge, nothing cut, in both the wide and square frames.
+story's own shape: it fills the screen edge to edge, nothing cut, in both the wide and square frames. Then (Lucky:
+"Screen size should be like this", pointing at the feed phones) the story phones went back to the feed phones' tall
+shape and show a story the way the app does: the whole 9:16 story under the status bar, its progress bars and the
+afthabtours account on top, and the Send message bar under it.
