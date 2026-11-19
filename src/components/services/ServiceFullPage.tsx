@@ -61,7 +61,7 @@ export function ServiceFullPage({ service, settings, work }: Props) {
         </div>
         {service.card?.url ? (
           // The service's own thumbnail, as on the Services page: 4:3 on phones, wider from tablets up.
-          <div className="relative mx-edge mt-[clamp(48px,calc(2.88vw+37.2px),92px)] aspect-[4/3] overflow-hidden rounded-card bg-night md:aspect-[2/1]">
+          <div className="relative mx-gutter mt-[clamp(48px,calc(2.88vw+37.2px),92px)] aspect-[4/3] overflow-hidden rounded-card bg-night md:aspect-[2/1]">
             <Media
               image={
                 service.pageImage?.url
@@ -76,7 +76,7 @@ export function ServiceFullPage({ service, settings, work }: Props) {
           </div>
         ) : (
           service.hero?.image?.url && (
-            <div className="mx-edge mt-[clamp(48px,calc(2.88vw+37.2px),92px)] overflow-hidden rounded-card bg-night px-[clamp(12px,7.5%,142px)] pt-[clamp(24px,5%,96px)] pb-[clamp(12px,2%,40px)]">
+            <div className="mx-gutter mt-[clamp(48px,calc(2.88vw+37.2px),92px)] overflow-hidden rounded-card bg-night px-[clamp(12px,7.5%,142px)] pt-[clamp(24px,5%,96px)] pb-[clamp(12px,2%,40px)]">
               <Media image={service.hero.image} fill={false} priority sizes="(min-width: 640px) 85vw, 100vw" className="mx-auto max-w-[1300px]" />
             </div>
           )

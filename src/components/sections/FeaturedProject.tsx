@@ -20,7 +20,7 @@ export function FeaturedProject({ project, priority = true }: { project?: Projec
   if (!project) return null;
   const tags = project.services.map((s) => s.shortName).join(" · ");
   return (
-    <article data-dock="/work" className="on-dark group relative mx-edge overflow-hidden rounded-card bg-night text-white">
+    <article data-dock="/work" className="on-dark group relative mx-gutter overflow-hidden rounded-card bg-night text-white">
       <div className="px-[clamp(12px,7.5%,142px)] pt-[clamp(12px,7.5%,142px)]">
         <div className="relative aspect-[4/3] overflow-hidden rounded-[4px] bg-night sm:aspect-video">
           <CoverMedia
