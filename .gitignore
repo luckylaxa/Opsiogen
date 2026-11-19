@@ -44,3 +44,6 @@ next-env.d.ts
 !.env.example
 design/showreel/raw/stock/*.mp4
 design/showreel/raw/stock/*.mov
+
+# Python bytecode (design/ build scripts)
+__pycache__/
