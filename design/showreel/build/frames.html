@@ -24,7 +24,7 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#0a090d;font-fam
 <script src="a/logo.js"></script>
 <script type="importmap">{"imports":{"three":"../../../node_modules/three/build/three.module.js","three/addons/":"../../../node_modules/three/examples/jsm/"}}</script>
 <script>
-const COAL='#0a090d',PAPER='#f8f6f8',PINK='#ff4f9b',VIOLET='#a98bff',AQUA='#5cf2e6',BLUE='#3f7bff',ORANGE='#ff8a3c',SUN='#ffd75e',LIME='#d8ff3e';
+const COAL='#0a090d',PAPER='#f8f6f8',PINK='#ff4f9b',VIOLET='#a98bff',AQUA='#5cf2e6',BLUE='#3f7bff',ORANGE='#ff8a3c',SUN='#ffd75e',LIME='#d8ff3e',LEMON='#fff3a6';
 const W='../../../public/work/',A='a/',T='../../tiles/out/',S='../raw/',LOGO='../../../src/assets/opsiogen-logo-on-dark.png';
 const f=document.getElementById('f');
 const el=(tag,cls,parent,st={})=>{const e=document.createElement(tag);if(cls)e.className=cls;Object.assign(e.style,st);(parent||f).appendChild(e);return e};
@@ -90,7 +90,7 @@ const row=(keys,c,o={})=>{bg(c);const h=o.h||820,gap=o.gap||40;
   keys.forEach(k=>{const b=el('div','mphone',wrap,{height:h+'px',borderRadius:(o.rad||44)+'px',overflow:'hidden',flex:'none'});img(A+k+'.jpg',b,{display:'block',height:'100%',width:'auto'})});
   wrap.dataset.rot=o.rot||0;LAYOUT.push(()=>{const tw=wrap.scrollWidth;wrap.style.transform=`translateX(${(60+1920-tw-20)/2}px) rotate(${o.rot||0}deg)`})};
 // The share cut's opening logo beat (Lucky, 19 Nov: client logos at the start, for the cut shared outside the site; the
-// website keeps the film without it, as the logo strip sits right under it there). On our yellow, "200+ brands already
+// website keeps the film without it, as the logo strip sits right under it there). On light yellow, "200+ brands already
 // did." holds the middle while client logos (public/logos, one colour) drop into a row along the top and a row along the
 // bottom, one by one, as our character runs along the bottom row and lands on each one. Every logo gets about the same
 // area, as in the site's strip.
@@ -99,7 +99,7 @@ const BRANDS=[["aaoms", 1.109, 1], ["actigraph", 2.62, 1], ["afthab-tours", 5.97
 // Eight logos along the bottom (the character runs along them) and seven along the top, each row spread with even gaps.
 const FALL_B=['oh-my-glam','rohde-schwarz','bigtapp','cabot-solutions','surgo-health','norsecom','sifio-health','meetingful'],
   FALL_T=['sap','engel-volkers','microchip','dubai-police','carlton-noble','nova-scotia-power','rush'],ROW_T=140,ROW_B=940,FD=120;
-const brandFall=()=>{bg(SUN);let end=null;
+const brandFall=()=>{bg(LEMON);let end=null;
   const put=(keys,cy,x0,x1,row)=>{const ls=keys.map(k=>{const [,ra,sz]=BRANDS.find(b=>b[0]===k);let h=46*Math.min(1.4,2*sz/Math.sqrt(ra)),w=h*ra;if(w>200){w=200;h=w/ra}return{k,w,h}});
     const gap=(x1-x0-ls.reduce((a,l)=>a+l.w,0))/(ls.length-1);let x=x0;
     ls.forEach(l=>{const b=el('div','abs fall',f,{left:x+'px',top:cy-l.h/2+'px',width:l.w+'px',height:l.h+'px'});

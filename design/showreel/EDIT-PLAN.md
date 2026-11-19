@@ -219,7 +219,7 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   rows gliding along the edges on dark ("Don't copy same", "Make it in color"), logos circling the character ("Make it
   simple like character run and logo fall into one by one"), and a block of logos in the middle ("Logo position is not
   good. Maybe we can follow something similar style of superside", "Also use some yellow color as background"). Now:
-  right after "You bring the idea.", our yellow (SUN) sweeps in and **"200+ brands already did."** rises in the middle;
+  right after "You bring the idea.", light yellow (LEMON, #fff3a6: "Try light yellow") sweeps in and **"200+ brands already did."** rises in the middle;
   our character runs in along the bottom, hopping on the eighths, and fifteen client logos drop in one by one, seven in
   a row along the top and eight along the bottom (Superside's layout, our own motion), each bottom one just before the
   character lands on it (`frames.html?share`, shot "Brands fall in", 8 beats). The stock clip then opens out of it in
