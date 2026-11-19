@@ -1,9 +1,9 @@
 """Composites the cursor concept: the Home hero backdrop, the 3D layer (door-frames.cjs), and the 2D layer from
-concept_timeline.py (the visitor's arrow until the mini takes over, the ring over a link, the click ripple).
+concept_timeline.py (the visitor's arrow until the mini takes over, ripples of our colours over a link and on the click).
 Usage: python3 concept_film.py BACKDROP.png FRAMES_DIR OUT_DIR"""
 import json, sys, os
 import numpy as np
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFilter
 BG, FR, OUT = sys.argv[1:4]
 os.makedirs(OUT, exist_ok=True)
 ov = json.load(open(os.path.join(FR, 'overlay.json')))
@@ -18,29 +18,41 @@ def arrow(img, x, y, a):
     lay = lay.resize((40, 40), Image.LANCZOS)
     if a < 1: lay.putalpha(lay.getchannel('A').point(lambda v: int(v * a)))
     img.alpha_composite(lay, (int(round(x - 4)), int(round(y - 4))))
-def ring_mask(size, c, r, w):
-    m = Image.new('L', (size[0] * S // 4, size[1] * S // 4))  # placeholder (unused)
-def difference_ring(img, c, r, w, a):
-    """A ring that inverts what is under it, as the site's cursor does."""
-    if a <= 0 or r <= 0: return img
-    pad = int(r + w + 4); x0, y0 = int(c[0]) - pad, int(c[1]) - pad; size = 2 * pad
-    m = Image.new('L', (size * S, size * S)); d = ImageDraw.Draw(m)
-    cx, cy = (c[0] - x0) * S, (c[1] - y0) * S
-    d.ellipse((cx - r * S, cy - r * S, cx + r * S, cy + r * S), outline=255, width=max(1, int(w * S)))
+STOPS = [(0.0, (0x35, 0xd4, 0xff)), (0.2, (0x5a, 0x7d, 0xff)), (0.4, (0xb6, 0x67, 0xff)), (0.6, (0xff, 0x5f, 0xb4)), (0.8, (0xff, 0x9a, 0x3c)), (1.0, (0x35, 0xd4, 0xff))]
+def conic(size, turn):
+    """Our colours round a circle (as the main character's light), turned by `turn` (0..1)."""
+    yy, xx = np.mgrid[0:size, 0:size] - (size - 1) / 2
+    a = (np.arctan2(yy, xx) / (2 * np.pi) + 0.5 + turn) % 1.0
+    return np.stack([np.interp(a, [p for p, _ in STOPS], [c[i] for _, c in STOPS]) for i in range(3)], axis=-1)
+def gradient_ring(img, c, r, w, a, turn):
+    """One ripple: a thin ring of our colours with a soft glow round it."""
+    if a <= 0.01 or r <= 0: return
+    pad = int(r + w + 14); size = 2 * pad; x0, y0 = int(round(c[0])) - pad, int(round(c[1])) - pad
+    m = Image.new('L', (size * S, size * S)); d = ImageDraw.Draw(m); cx = cy = (c[0] - x0) * S
+    cy = (c[1] - y0) * S; d.ellipse((cx - r * S, cy - r * S, cx + r * S, cy + r * S), outline=255, width=max(1, int(w * S)))
     m = m.resize((size, size), Image.LANCZOS)
-    arr = np.asarray(img).astype(np.float32); box = arr[max(0, y0):y0 + size, max(0, x0):x0 + size]
-    mm = (np.asarray(m).astype(np.float32) / 255.0 * a)[:box.shape[0], :box.shape[1], None]
-    box[..., :3] = box[..., :3] * (1 - mm) + (255 - box[..., :3]) * mm
-    arr[max(0, y0):y0 + size, max(0, x0):x0 + size] = box
-    return Image.fromarray(arr.astype(np.uint8), 'RGBA')
+    rgb = conic(size, turn).astype(np.uint8)
+    for blur, k in ((5, 0.55), (0, 1.0)):                      # the glow, then the line itself
+        mm = m.filter(ImageFilter.GaussianBlur(blur)) if blur else m
+        alpha = (np.asarray(mm).astype(np.float32) * a * k * (1.6 if blur else 1)).clip(0, 255).astype(np.uint8)
+        lay = Image.fromarray(np.dstack([rgb, alpha]), 'RGBA')
+        img.alpha_composite(lay, (x0, y0)) if x0 >= 0 and y0 >= 0 else img.paste(lay, (x0, y0), lay)
+def ripples(img, o):
+    """Over a link, a ripple every 0.9 s, each growing and fading over 1.3 s; a click sends out one stronger ripple."""
+    r0 = o.get('r0', 20); t = o['t']; turn = (t * 0.18) % 1
+    h = o.get('hover')
+    if h:
+        n = int((t - h['t0']) / 0.9) + 1
+        for i in range(max(0, n - 2), n):
+            q = (t - (h['t0'] + i * 0.9)) / 1.3
+            if 0 <= q <= 1: e = 1 - (1 - q) ** 3; gradient_ring(img, h['c'], r0 + 26 * e, 2.6 - 1.2 * q, 0.95 * (1 - q) ** 1.4, turn)
+    k = o.get('click')
+    if k: q = k['k']; e = 1 - (1 - q) ** 3; gradient_ring(img, k['c'], r0 + 54 * e, 3.6 - 2.0 * q, (1 - q) ** 1.6, turn + 0.25)
 for o in ov['overlays']:
     img = bg.copy()
     three = os.path.join(FR, o['name'])
     if os.path.exists(three): img.alpha_composite(Image.open(three).convert('RGBA'))
-    r = o.get('ring')
-    if r and r['k'] > 0: img = difference_ring(img, r['c'], 6 + 22 * r['k'], 1.6, 0.95)      # grows into the link ring (56 px)
-    rp = o.get('ripple')
-    if rp: k = rp['k']; img = difference_ring(img, rp['c'], 30 + 26 * k, 1.4, 0.8 * (1 - k))
+    ripples(img, o)
     if o.get('arrow'): arrow(img, o['arrow'][0], o['arrow'][1], o.get('arrowFade', 1))
     img.convert('RGB').save(os.path.join(OUT, o['name'].replace('.png', '.jpg')), quality=93)
 print('composited', len(ov['overlays']))

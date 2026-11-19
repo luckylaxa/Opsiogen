@@ -11,7 +11,7 @@ else:
     bg = json.load(open(sys.argv[1])); bx, by, bw, _ = bg['box']; lx, ly, lw, lh = bg['link']
     W, H = 1440, 900; CX, CY = bx + bw / 2, by + bw / 2; PPU = (bw / 2) / (6.75 * math.tan(math.radians(10)))      # the hero camera's scale
 FLOOR = -1.30                                    # where the hero's pool of light lies, in body radii below its middle
-MINI = 0.22                                      # the mini's size (about 28 px across here: cursor size)
+MINI = 0.28                                      # the mini's size (about 36 px across on Home: cursor size)
 D = 3.75 if CLOSE else 5.8                       # the whole film, seconds
 clamp = lambda v, a=0.0, b=1.0: max(a, min(b, v))
 def ease(q): q = clamp(q); return q * q * (3 - 2 * q)
@@ -34,6 +34,9 @@ def pointer(t):
     if t < 0.7: k = out(t / 0.7); return lerp(P_ENTER, P_REST, k)
     if t < 3.9: return list(P_REST)
     k = io(seg(t, 3.9, 4.5)); return lerp(P_REST, BTN, k)
+def over_link(t):
+    p = pointer(max(0, t - 0.06)); return abs(p[0] - BTN[0]) < lw / 2 and abs(p[1] - BTN[1]) < lh / 2
+HOVER = next((3.4 + i / 240 for i in range(int(2.4 * 240)) if over_link(3.4 + i / 240)), None)   # when the mini reaches the link
 def state(t):
     # the main character: notices the pointer, turns its eye that way, then opens its underside
     look = io(seg(t, 0.45, 0.85)) - 0.35 * io(seg(t, 2.6, 3.3))
@@ -77,9 +80,9 @@ def state(t):
     # the 2D layer: the visitor's own pointer until the mini takes over, the ring over the link, the click ripple
     ov = {'arrow': pointer(t) if t < 3.4 else None, 'arrowFade': 1 - seg(t, 3.25, 3.4)}
     if m.get('show') and t >= 3.4:
-        c = to_px(m['pos']); over = abs(c[0] - BTN[0]) < lw / 2 and abs(c[1] - BTN[1]) < lh / 2
-        ov['ring'] = {'c': c, 'k': ease(seg(t, 4.3, 4.5)) if over or t > 4.5 else 0}
-        if t >= 4.9: ov['ripple'] = {'c': c, 'k': seg(t, 4.9, 5.35)}
+        c = to_px(m['pos']); ov['r0'] = MINI * PPU + 3                    # the ripples start just outside the mini
+        if HOVER is not None and t >= HOVER: ov['hover'] = {'c': c, 't0': HOVER}   # over the link: ripples of our colours
+        if t >= 4.9: ov['click'] = {'c': c, 'k': seg(t, 4.9, 5.5)}          # the click: one stronger ripple
     return st, ov
 times = ONLY if ONLY is not None else [i / FPS for i in range(int(D * FPS) + 1)]
 frames, overlays = [], []
