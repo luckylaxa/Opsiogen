@@ -172,8 +172,8 @@ def meetingful():               # Meetingful's own logo (from the owner, 19 Nov)
     return a, {"soft": np.clip(soft - a, 0, 1)}
 
 
-def oh_my_glam():               # Oh My Glam's own logo file (from the owner, 19 Nov): the round mark and OH MY GLAM,
-    return load("design/logos/src/oh-my-glam.png")[:, :, 3] / 255, {}   # white on clear
+def oh_my_glam():               # Oh My Glam's own logo file (from the owner, 19 Nov: "Use it"): OMG over OH MY GLAM!,
+    return load("design/logos/src/oh-my-glam.png")[:, :, 3] / 255, {}   # black on clear
 
 
 def norsecom():                 # office sign (turned a little): mark and name; the TM and the line below go

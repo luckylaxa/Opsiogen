@@ -25,7 +25,7 @@ export const CLIENT_LOGOS: Record<string, { ratio: number; size?: number; name?:
   "nephtech": { ratio: 4.468, name: "NephTech" },
   "norsecom": { ratio: 7.25 },
   "nova-scotia-power": { ratio: 4.2, name: "Nova Scotia Power" },
-  "oh-my-glam": { ratio: 3.93 },
+  "oh-my-glam": { ratio: 2.016 },
   "rohde-schwarz": { ratio: 3.865, size: 1.2 },
   "rush": { ratio: 3.375, name: "RUSH" },
   "rxlive": { ratio: 2.238 },
