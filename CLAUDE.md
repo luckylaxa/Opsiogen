@@ -9,7 +9,7 @@ Launch to-dos live in `LAUNCH-CHECKLIST.md`.
 ## Copy
 - The company is **Opsiogen**. Write as "we". Never "team", never "Fineart".
 - No other company names except clients in their own case studies and the client logos
-  in the "Brands we work with" strip (`src/content/client-logos.ts`, the owner's list). No tool or
+  in the client logo strip ("Design and AI for 200+ brands worldwide") (`src/content/client-logos.ts`, the owner's list). No tool or
   platform names, no free offers. No founder details, except
   on the About page's two photo cards: name, designation and LinkedIn link (`CARD_IMAGES`).
 - The 7-day timeline is only for basic websites.

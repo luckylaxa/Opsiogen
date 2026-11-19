@@ -12,8 +12,9 @@ type Logo = { key: string; name: string; href: string | null; ratio: number; siz
  * The two kinds take turns along the row. It pauses on hover, on focus and with its pause button, and sits still in
  * rows for visitors who prefer less motion (`.marquee` in globals.css).
  * Every logo gets about the same area: a long wordmark is drawn lower, a compact mark taller.
+ * The heading follows Superside's pattern in our own words; 200+ is the owner's figure (19 Nov).
  */
-export async function ClientLogos({ heading = "Brands we work with", className = "" }: { heading?: string; className?: string }) {
+export async function ClientLogos({ heading = "Design and AI for 200+ brands worldwide", className = "" }: { heading?: string; className?: string }) {
   const projects = await getProjects();
   const withCase: Logo[] = projects
     .filter((p) => CLIENT_LOGOS[p.slug])
