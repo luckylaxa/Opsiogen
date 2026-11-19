@@ -219,15 +219,16 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   rows gliding along the edges on dark ("Don't copy same", "Make it in color"), logos circling the character ("Make it
   simple like character run and logo fall into one by one"), a block of logos in the middle ("Logo position is not
   good"), the character running along the bottom row on yellow ("User attention goes only to bottom", "jumping from
-  black background to yellow not good"), and the character hopping over the line on aqua ("not smooth as superside.
-  Jumping is not interesting. Maybe he can pass like jet speed ... Or he can pull the green color sheet"). Now: right
-  after "You bring the idea.", the character jets across the middle at the grid's speed with its trail, pulling an aqua
-  sheet over the line (its edge bows forward to it); **"200+ brands already did."** rises word by word as the edge
-  passes, and two rows of client logos (all of them) glide along the top and bottom the whole time, the top one right
-  and the bottom one left (Superside's go the other way), sent off a little faster by its pass, then steady
-  (`frames.html?share`, shot "Brands already did", 8 beats). The stock clip then opens out of it in the lens circle.
-  Preview of the opening only, for approval: `out/opening-logos-preview.mp4` (`build/open_preview.py FRAMES_DIR OUT`).
-  After his yes, `build/share.py` is updated for it (it still adds the old end beat) and the full share cut is made.
+  black background to yellow not good"), the character hopping over the line on aqua ("not smooth as superside.
+  Jumping is not interesting"), and the character pulling an aqua sheet at jet speed ("It's boring animation. Let's
+  keep simple. Do superside animation. No need character in logo animation"). Now Superside's opening in our words
+  and colours, no character: aqua grows out of the full stop of "idea."; "brands already did." builds word by word in
+  place (a soft fade and a small rise); on the second beat the words slide apart and a bold "200+" drops into the gap;
+  on the third beat two rows of client logos (all of them) come in along the top and bottom edges and glide to the end,
+  the top one right and the bottom one left (Superside's go the other way) (`frames.html?share`, shot "Brands already
+  did", 8 beats). The stock clip then opens out of it in the lens circle. Preview of the opening only, for approval:
+  `out/opening-logos-preview.mp4` (`build/open_preview.py FRAMES_DIR OUT`). After his yes, `build/share.py` is updated
+  for it (it still adds the old end beat) and the full share cut is made.
 - **Logo ending, no hold (19 Nov).** Lucky, on the big logo with the character a dot in its O: "this logo stuck here
   for sometime and not smooth. Or you can try this character coming from front view and passing through the Center logo
   and flying to top and position ... No stuck or pause." Now the logo pulls back the whole time, from 3.6 times its size

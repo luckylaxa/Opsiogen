@@ -90,24 +90,26 @@ const row=(keys,c,o={})=>{bg(c);const h=o.h||820,gap=o.gap||40;
   keys.forEach(k=>{const b=el('div','mphone',wrap,{height:h+'px',borderRadius:(o.rad||44)+'px',overflow:'hidden',flex:'none'});img(A+k+'.jpg',b,{display:'block',height:'100%',width:'auto'})});
   wrap.dataset.rot=o.rot||0;LAYOUT.push(()=>{const tw=wrap.scrollWidth;wrap.style.transform=`translateX(${(60+1920-tw-20)/2}px) rotate(${o.rot||0}deg)`})};
 // The share cut's opening logo beat (Lucky, 19 Nov: client logos at the start, for the cut shared outside the site; the
-// website keeps the film without it, as the logo strip sits right under it there). Our character jets across and pulls
-// an aqua sheet over the opening line; on it "200+ brands already did." holds the middle while two rows of client logos
-// (public/logos, one colour, all of them, as in the site's strip) glide along the top and bottom in opposite directions.
-// Every logo gets about the same area, as in the strip.
+// website keeps the film without it, as the logo strip sits right under it there). Superside's opening in our words and
+// colours, without the character ("Do superside animation. No need character"): on aqua, "brands already did." builds
+// word by word, a gap opens and a bold "200+" drops into it, and two rows of client logos (public/logos, one colour,
+// all of them, as in the site's strip) come in along the top and bottom edges and glide in opposite directions. Every
+// logo gets about the same area, as in the strip.
 const SHARE=location.search.includes('share');
 const BRANDS=[["aaoms", 1.109, 1], ["actigraph", 2.62, 1], ["afthab-tours", 5.979, 1], ["altruity", 4.321, 1], ["bigtapp", 1.609, 1], ["cabot-solutions", 2.568, 1], ["carlton-noble", 11.281, 1], ["corechair", 5.318, 1], ["dubai-police", 2.876, 1], ["engel-volkers", 9.132, 1], ["graymatter-analytics", 5.126, 1], ["green-circle-life", 1.374, 1], ["instachart", 4.539, 1], ["kinduct", 5.166, 1], ["meetingful", 4.584, 1], ["microchip", 4.305, 1], ["my-healing-mate", 2.698, 1], ["nephtech", 4.468, 1], ["norsecom", 7.905, 1], ["nova-scotia-power", 4.2, 1], ["oh-my-glam", 2.016, 1], ["rohde-schwarz", 3.865, 1.2], ["rush", 3.375, 1], ["rxlive", 2.238, 1], ["sandlogic", 4.198, 1.1], ["sap", 2.02, 1], ["sifio-health", 3.606, 0.8], ["surgo-health", 2.129, 1], ["the-sieve", 2.411, 1]];
 // Each row is a long strip (its logos twice over), so it can glide the whole shot without showing an end.
-const brandSheet=()=>{bg(AQUA);
-  [[140,-1400],[940,-600]].forEach(([cy,x0],r)=>{const tr=el('div','abs brow',f,{left:'0',top:cy-32+'px',height:'64px',display:'flex',alignItems:'center',gap:'96px',
+const IDEA_DOT=[1523,577];   // the full stop of "idea." in the opening line, where the aqua grows from
+const brandRows=()=>{bg(AQUA);
+  [[100,-1400],[980,-500]].forEach(([cy,x0],r)=>{const tr=el('div','abs brow',f,{left:'0',top:cy-28+'px',height:'56px',display:'flex',alignItems:'center',gap:'84px',
       whiteSpace:'nowrap',transform:`translateX(${x0}px)`});const mine=BRANDS.filter((_,i)=>i%2===r);
-    [...mine,...mine].forEach(([k,ra,sz])=>{let h=44*Math.min(1.4,2*sz/Math.sqrt(ra)),w=h*ra;if(w>200){w=200;h=w/ra}img('../../../public/logos/'+k+'.svg',tr,{height:h+'px',width:w+'px',flex:'none'})})});
-  const t=el('div','abs bline',f,{left:0,right:0,top:'492px',textAlign:'center',fontSize:'84px',lineHeight:'96px',fontWeight:700,color:COAL,letterSpacing:'-.035em'});
-  t.textContent='200+ brands already did.'};
+    [...mine,...mine].forEach(([k,ra,sz])=>{let h=38*Math.min(1.4,2*sz/Math.sqrt(ra)),w=h*ra;if(w>180){w=180;h=w/ra}img('../../../public/logos/'+k+'.svg',tr,{height:h+'px',width:w+'px',flex:'none'})})});
+  const t=el('div','abs bline',f,{left:0,right:0,top:'496px',textAlign:'center',fontSize:'76px',lineHeight:'88px',color:COAL,letterSpacing:'-.03em'});
+  for(const [w,x] of [['200+',700],[' brands already did.',400]]){const sp=el('span','',t,{fontWeight:x});sp.textContent=w}};
 const caption=(t,c=PAPER)=>{const d=el('div','abs',f,{left:'90px',bottom:'80px',fontSize:'64px',fontWeight:500,color:c,letterSpacing:'-.03em',lineHeight:1.05});d.innerHTML=t};
 
 const SHOTS=[
 ['Open', 'Opening line', ()=>type(COAL,[[['You bring the ',700,PAPER],['idea.',700,AQUA]]],150)],
-...(SHARE?[['Open', 'Brands already did', ()=>brandSheet()]]:[]),
+...(SHARE?[['Open', 'Brands already did', ()=>brandRows()]]:[]),
 ['Open', 'Stock: she points at our character (Adobe Stock 488563452)', ()=>full(S+'stock/stills/point.jpg')],
 ['Open', 'We take it from here, the character', ()=>{type(COAL,[[['We take it ',700,PAPER],['from here.',700,PAPER]]],130);img(A+'ch-front.png',f,{position:'absolute',width:'330px',left:'795px',top:'90px'})}],
 ['Burst', 'Three apps, three projects', ()=>{bg(LIME);phone(A+'mf-m1.jpg',330,150,400,-4);phone(A+'omg-08.jpg',760,110,400,0);phone(A+'va-app.jpg',1190,150,400,4)}],
@@ -262,7 +264,7 @@ window.anim=()=>{};
 if(MOTION)(()=>{
   const AN=[],late=[],add=fn=>AN.push(fn),T=NAME,base=e=>e.style.transform||'';
   if(ALPHA){for(const e of [document.documentElement,document.body,f])e.style.background='transparent';[...f.children].forEach(c=>{c.style.visibility='hidden'})}
-  const ball=ALPHA||/^(We take it|Grid|Chapter word|Fast word|The spine|Logo|Brands already did)/.test(T)?makeBall():null;
+  const ball=ALPHA||/^(We take it|Grid|Chapter word|Fast word|The spine|Logo)/.test(T)?makeBall():null;
   // Words: each becomes its own box so it can arrive on its own.
   const words=[],tn=[],wk=document.createTreeWalker(f,NodeFilter.SHOW_TEXT);
   while(wk.nextNode())if(wk.currentNode.textContent.trim())tn.push(wk.currentNode);
@@ -305,18 +307,17 @@ if(MOTION)(()=>{
         const pose=t<.14||t>=1.4?'front':line<2?'upleft':'down';
         ball.at(p.x,p.y,D,{rot:p.rot+nod,pose,mirror:pose==='down',blink:blinkPh(t,1.42),floor:Y+D/2})})})}
   else if(T==='Brands already did'){
-    // It jets across the middle at the grid's speed with its trail, pulling the aqua over the opening line like a
-    // sheet held at the middle (the sheet's edge bows forward to it). The words rise as the edge passes them, and the
-    // two rows glide the whole time, the top one right and the bottom one left: its pass sends them off a little
-    // faster, and they settle to a steady glide.
-    const D=190,sp=(1920+2*D)/.6,bx=t=>-D+sp*t,lag=320,rows=[...f.querySelectorAll('.brow')];
-    if(showUnder()){f.style.background='transparent';const sheet=el('div','',f,{position:'absolute',inset:'0',background:AQUA,zIndex:0});
-      [...rows,f.querySelector('.bline')].forEach(e=>sheet.appendChild(e));
-      add(t=>{const a=bx(t)-.25*D;sheet.style.clipPath=a-lag>1930?'none':`path('M -10 -10 L ${a-lag} -10 Q ${a+lag} 540 ${a-lag} 1090 L -10 1090 Z')`})}
-    add(t=>{const b=1-Math.exp(-t/.35);rows[0].style.transform=`translateX(${-2000+120*t+260*b}px)`;rows[1].style.transform=`translateX(${-100*t-200*b}px)`});
-    late.push(()=>words.forEach(s=>{const r=s.getBoundingClientRect(),tw=((r.left+r.right)/2+.25*D+D)/sp;
-      add(t=>{const q=ease((t-tw)/.22);s.style.opacity=q;s.style.transform=`translateY(${(1-q)*50}px)`})}));
-    add(t=>{const x=bx(t);if(x>1920+D)return ball.hide();ball.at(x,545-Math.sin(clamp(t/.6)*Math.PI)*30,D,{pose:'fly',rot:6,trail:1})})}
+    // Aqua grows out of the full stop of "idea.". "brands already did." builds word by word in place, centred on its
+    // own; on the second beat the words slide apart to make room and "200+" drops in from below; on the third the rows
+    // come in at the top and bottom edges and glide to the end, the top one right and the bottom one left.
+    if(showUnder())add(t=>{f.style.clipPath=`circle(${ease(t/.36)*1700}px at ${IDEA_DOT[0]}px ${IDEA_DOT[1]}px)`});
+    const rows=[...f.querySelectorAll('.brow')],R0=1.5*BEAT*2;   // the rows arrive on the third beat
+    add(t=>{const q=ease((t-R0)/.16),g=Math.max(0,t-R0);rows[0].style.opacity=rows[1].style.opacity=q;
+      rows[0].style.transform=`translate(${-1400+130*g}px,${(1-q)*-24}px)`;rows[1].style.transform=`translate(${-500-95*g}px,${(1-q)*24}px)`});
+    late.push(()=>{const w0=words[1].getBoundingClientRect().left-words[0].getBoundingClientRect().left,G=2*BEAT;   // the gap opens on the second beat
+      words.slice(1).forEach((s,i)=>{const t0=.2+i*.12;add(t=>{const q=ease((t-t0)/.22),m=io((t-G)/.26);s.style.opacity=q;
+        s.style.transform=`translate(${-w0/2*(1-m)}px,${(1-q)*16}px)`})});
+      add(t=>{const q=ease((t-G-.14)/.24);words[0].style.opacity=q;words[0].style.transform=`translateY(${(1-q)*30}px)`})})}
   else if(T==='One partner')words.forEach((s,i)=>rise(s,i<2?i*.05-.06:BEAT+(i-2)*.05,80,.18));
   else if(T.startsWith('Logo')){
     // Lucky (19 Nov): no hold on the big logo. It pulls back the whole time, from large to its own size on the last
