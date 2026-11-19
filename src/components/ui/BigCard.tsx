@@ -12,6 +12,11 @@ type Props = {
   scroll?: boolean;
   /** Initials in the round badge, top left. */
   badge: string;
+  /**
+   * A one-colour logo shown instead of the initials, in a pill (work cards: the client's logo).
+   * `src` is the SVG, `ratio` its width to height, `size` an optical size adjustment (1 by default).
+   */
+  logo?: { src: string; ratio: number; size?: number } | null;
   /** Fills the whole card, under the badge and the text. */
   image?: Img | null;
   /** A version of the image shaped for phones, shown below 640px. */
@@ -55,6 +60,7 @@ export function BigCard({
   replace = false,
   scroll = true,
   badge,
+  logo,
   image,
   imagePhone,
   label,
@@ -132,12 +138,31 @@ export function BigCard({
           />
         </>
       )}
-      <span
-        aria-hidden="true"
-        className="relative grid size-[clamp(40px,3.42vw,65px)] shrink-0 place-items-center rounded-full bg-black/60 text-[length:clamp(13px,1.05vw,20px)] font-semibold"
-      >
-        {badge}
-      </span>
+      {logo ? (
+        // The client's logo in white, in a pill as tall as the round badge. Logos of every shape look the same
+        // size: a long wordmark is drawn lower, a compact one taller (same area), up to just over half the pill.
+        <span
+          aria-hidden="true"
+          className="relative flex h-[clamp(40px,3.42vw,65px)] shrink-0 items-center self-start rounded-full bg-black/60 px-[clamp(16px,1.37vw,26px)]"
+        >
+          <span
+            className="block bg-current"
+            style={{
+              height: `${Math.min(56, (84 * (logo.size ?? 1)) / Math.sqrt(logo.ratio)).toFixed(1)}%`,
+              aspectRatio: logo.ratio,
+              WebkitMask: `url(${logo.src}) center / contain no-repeat`,
+              mask: `url(${logo.src}) center / contain no-repeat`,
+            }}
+          />
+        </span>
+      ) : (
+        <span
+          aria-hidden="true"
+          className="relative grid size-[clamp(40px,3.42vw,65px)] shrink-0 place-items-center rounded-full bg-black/60 text-[length:clamp(13px,1.05vw,20px)] font-semibold"
+        >
+          {badge}
+        </span>
+      )}
 
       <div className="relative mt-auto pt-4">
         {label && <p className="mb-[clamp(6px,0.5vw,10px)] text-small text-white/75">{label}</p>}
