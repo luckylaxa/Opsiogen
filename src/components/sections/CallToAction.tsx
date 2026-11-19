@@ -9,7 +9,9 @@ import { cn } from "@/lib/utils";
  * Shared call to action, edited once in Site settings: one wide photo banner.
  * From 768px the photo fills a 21:10 card, trimmed a little at top and bottom,
  * and the heading sits over its plain left side under a dark shade; on phones
- * the photo sits on top, uncropped, with the heading below it.
+ * the photo sits on top, uncropped, and the heading starts over its lower part,
+ * where a dark shade fades up from the bottom, so the black under the photo
+ * stays short (Lucky, 18 Nov).
  * - single: the call to action's button.
  * - dual: the same banner with a second button to Services.
  */
@@ -50,13 +52,15 @@ export async function CallToAction({
         {image && (
           <div aria-hidden="true" className="relative aspect-(--cta-ratio) md:absolute md:inset-0 md:aspect-auto">
             <Media image={{ ...image, alt: "" }} sizes="100vw" lowPriority />
-            <div className="absolute inset-0 bg-[linear-gradient(0deg,var(--color-coal)_0%,transparent_32%)] md:bg-[linear-gradient(90deg,color-mix(in_srgb,var(--color-coal)_88%,transparent)_0%,color-mix(in_srgb,var(--color-coal)_62%,transparent)_38%,transparent_64%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(0deg,var(--color-coal)_0%,color-mix(in_srgb,var(--color-coal)_70%,transparent)_38%,transparent_70%)] md:bg-[linear-gradient(90deg,color-mix(in_srgb,var(--color-coal)_88%,transparent)_0%,color-mix(in_srgb,var(--color-coal)_62%,transparent)_38%,transparent_64%)]" />
           </div>
         )}
         <div
           className={cn(
             "relative px-[clamp(28px,calc(3.2vw+16px),77px)] pb-[clamp(28px,calc(3.2vw+16px),77px)] md:pt-[clamp(28px,calc(3.2vw+16px),77px)]",
-            image ? "pt-4" : "pt-[clamp(28px,calc(3.2vw+16px),77px)]",
+            // Phones: the heading moves up over the photo's shaded lower part (20% of the card's width is about a
+            // third of the photo's height), below the people in it.
+            image ? "-mt-[20%] md:mt-0" : "pt-[clamp(28px,calc(3.2vw+16px),77px)]",
           )}
         >
           <h2 className="max-w-[15ch] text-cta font-semibold text-balance">{cta.heading}</h2>
