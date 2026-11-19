@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 /**
- * Pauses and restarts the scrolling row of logos just above it (moving content that runs on needs a way to stop it,
+ * Pauses and restarts the scrolling rows of logos just above it (moving content that runs on needs a way to stop it,
  * WCAG 2.2.2). Hidden for visitors who prefer less motion: their row doesn't move.
  */
 export function MarqueePause() {
@@ -14,8 +14,7 @@ export function MarqueePause() {
       aria-pressed={paused}
       aria-label={paused ? "Play the scrolling logos" : "Pause the scrolling logos"}
       onClick={(e) => {
-        const row = e.currentTarget.closest("section")?.querySelector(".marquee");
-        row?.toggleAttribute("data-paused", !paused);
+        e.currentTarget.closest("section")?.querySelectorAll(".marquee").forEach((row) => row.toggleAttribute("data-paused", !paused));
         setPaused(!paused);
       }}
       className="marquee-pause grid size-8 place-items-center rounded-full text-mute transition-colors hover:text-ink focus-visible:text-ink"
