@@ -75,7 +75,7 @@ export async function ClientLogos({ heading = "Creative support for 200+ top glo
   };
   const half = Math.ceil(logos.length / 2);
   return (
-    <section aria-labelledby="client-logos" className={`text-ink ${className}`}>
+    <section aria-labelledby="client-logos" className={`relative text-ink ${className}`}>
       {/* Like Superside's (19 Nov): a small heading, room under it, then the logos; two rows on desktop. */}
       <h2 id="client-logos" className="px-gutter text-center text-[length:clamp(18px,calc(0.7vw+12px),28px)] leading-snug tracking-[-0.01em] text-balance">
         {heading}
@@ -87,7 +87,8 @@ export async function ClientLogos({ heading = "Creative support for 200+ top glo
           {row(logos.slice(half), "bottom", true)}
         </div>
       </div>
-      <div className="mt-3 flex justify-end px-gutter">
+      {/* Under the rows' right end, in the space below the strip (it adds no height). */}
+      <div className="absolute top-full right-0 mt-2 px-gutter">
         <MarqueePause />
       </div>
     </section>

@@ -16,8 +16,10 @@ export default function HomePage() {
     <CmsPage
       slug="home"
       layout={{ services: "directory", cta: "single", heroFull: true, heroGlow: true }}
-      // The brands we work with, right after the hero and the showreel (like Superside's logo row).
-      after={<ClientLogos className="mt-after-band" />}
+      // The brands we work with, right after the hero and the showreel (like Superside's logo row). A slim row, so it
+      // sits close to the showreel and to the work below it: the band's own gap above, and below it the gap that
+      // follows a band instead of a full section gap (19 Nov: less white space).
+      after={<ClientLogos className="mt-[clamp(40px,calc(2vw+30px),72px)] -mb-[calc(var(--spacing-section)-var(--spacing-after-band))]" />}
     />
   );
 }
