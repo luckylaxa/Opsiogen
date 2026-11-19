@@ -24,7 +24,7 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#0a090d;font-fam
 <script src="a/logo.js"></script>
 <script type="importmap">{"imports":{"three":"../../../node_modules/three/build/three.module.js","three/addons/":"../../../node_modules/three/examples/jsm/"}}</script>
 <script>
-const COAL='#0a090d',PAPER='#f8f6f8',PINK='#ff4f9b',VIOLET='#a98bff',AQUA='#5cf2e6',BLUE='#3f7bff',ORANGE='#ff8a3c',SUN='#ffd75e',LIME='#d8ff3e',LEMON='#fff3a6';
+const COAL='#0a090d',PAPER='#f8f6f8',PINK='#ff4f9b',VIOLET='#a98bff',AQUA='#5cf2e6',BLUE='#3f7bff',ORANGE='#ff8a3c',SUN='#ffd75e',LIME='#d8ff3e';
 const W='../../../public/work/',A='a/',T='../../tiles/out/',S='../raw/',LOGO='../../../src/assets/opsiogen-logo-on-dark.png';
 const f=document.getElementById('f');
 const el=(tag,cls,parent,st={})=>{const e=document.createElement(tag);if(cls)e.className=cls;Object.assign(e.style,st);(parent||f).appendChild(e);return e};
@@ -90,23 +90,22 @@ const row=(keys,c,o={})=>{bg(c);const h=o.h||820,gap=o.gap||40;
   keys.forEach(k=>{const b=el('div','mphone',wrap,{height:h+'px',borderRadius:(o.rad||44)+'px',overflow:'hidden',flex:'none'});img(A+k+'.jpg',b,{display:'block',height:'100%',width:'auto'})});
   wrap.dataset.rot=o.rot||0;LAYOUT.push(()=>{const tw=wrap.scrollWidth;wrap.style.transform=`translateX(${(60+1920-tw-20)/2}px) rotate(${o.rot||0}deg)`})};
 // The share cut's opening logo beat (Lucky, 19 Nov: client logos at the start, for the cut shared outside the site; the
-// website keeps the film without it, as the logo strip sits right under it there). On light yellow, "200+ brands already
-// did." holds the middle while client logos (public/logos, one colour) drop into a row along the top and a row along the
-// bottom, one by one, as our character runs along the bottom row and lands on each one. Every logo gets about the same
-// area, as in the site's strip.
+// website keeps the film without it, as the logo strip sits right under it there). Aqua grows out of the full stop of
+// "idea." and "200+ brands already did." holds the middle; our character runs across the frame over the line, and client
+// logos (public/logos, one colour) drop into a row above and a row below it as it passes, one by one. Every logo gets
+// about the same area, as in the site's strip.
 const SHARE=location.search.includes('share');
 const BRANDS=[["aaoms", 1.109, 1], ["actigraph", 2.62, 1], ["afthab-tours", 5.979, 1], ["altruity", 4.321, 1], ["bigtapp", 1.609, 1], ["cabot-solutions", 2.568, 1], ["carlton-noble", 11.281, 1], ["corechair", 5.318, 1], ["dubai-police", 2.876, 1], ["engel-volkers", 9.132, 1], ["graymatter-analytics", 5.126, 1], ["green-circle-life", 1.374, 1], ["instachart", 4.539, 1], ["kinduct", 5.166, 1], ["meetingful", 4.584, 1], ["microchip", 4.305, 1], ["my-healing-mate", 2.698, 1], ["nephtech", 4.468, 1], ["norsecom", 7.905, 1], ["nova-scotia-power", 4.2, 1], ["oh-my-glam", 2.016, 1], ["rohde-schwarz", 3.865, 1.2], ["rush", 3.375, 1], ["rxlive", 2.238, 1], ["sandlogic", 4.198, 1.1], ["sap", 2.02, 1], ["sifio-health", 3.606, 0.8], ["surgo-health", 2.129, 1], ["the-sieve", 2.411, 1]];
-// Eight logos along the bottom (the character runs along them) and seven along the top, each row spread with even gaps.
+// Seven logos in the row above the line and eight in the row below, each row spread with even gaps.
 const FALL_B=['oh-my-glam','rohde-schwarz','bigtapp','cabot-solutions','surgo-health','norsecom','sifio-health','meetingful'],
-  FALL_T=['sap','engel-volkers','microchip','dubai-police','carlton-noble','nova-scotia-power','rush'],ROW_T=140,ROW_B=940,FD=120;
-const brandFall=()=>{bg(LEMON);let end=null;
+  FALL_T=['sap','engel-volkers','microchip','dubai-police','carlton-noble','nova-scotia-power','rush'],ROW_T=200,ROW_B=880,FD=110;
+const IDEA_DOT=[1523,577];   // the full stop of "idea." in the opening line, where the aqua grows from
+const brandFall=()=>{bg(AQUA);
   const put=(keys,cy,x0,x1,row)=>{const ls=keys.map(k=>{const [,ra,sz]=BRANDS.find(b=>b[0]===k);let h=46*Math.min(1.4,2*sz/Math.sqrt(ra)),w=h*ra;if(w>200){w=200;h=w/ra}return{k,w,h}});
     const gap=(x1-x0-ls.reduce((a,l)=>a+l.w,0))/(ls.length-1);let x=x0;
     ls.forEach(l=>{const b=el('div','abs fall',f,{left:x+'px',top:cy-l.h/2+'px',width:l.w+'px',height:l.h+'px'});
-      Object.assign(b.dataset,{row,cx:x+l.w/2,top:cy-l.h/2});img('../../../public/logos/'+l.k+'.svg',b,{width:'100%',height:'100%',objectFit:'contain'});
-      end={x:x+l.w/2,y:cy-l.h/2-FD/2-6};x+=l.w+gap})};
+      Object.assign(b.dataset,{row,cx:x+l.w/2,top:cy-l.h/2});img('../../../public/logos/'+l.k+'.svg',b,{width:'100%',height:'100%',objectFit:'contain'});x+=l.w+gap})};
   put(FALL_T,ROW_T,150,1770,'t');put(FALL_B,ROW_B,100,1820,'b');
-  const k=FD/.69/720;img(A+'ch-front.png',f,{position:'absolute',width:720*k+'px',left:end.x-359.5*k+'px',top:end.y-357*k+'px'});   // where it ends up
   const t=el('div','abs',f,{left:0,right:0,top:'492px',textAlign:'center',fontSize:'80px',lineHeight:'96px',fontWeight:700,color:COAL,letterSpacing:'-.035em'});
   t.textContent='200+ brands already did.'};
 const caption=(t,c=PAPER)=>{const d=el('div','abs',f,{left:'90px',bottom:'80px',fontSize:'64px',fontWeight:500,color:c,letterSpacing:'-.03em',lineHeight:1.05});d.innerHTML=t};
@@ -311,23 +310,24 @@ if(MOTION)(()=>{
         const pose=t<.14||t>=1.4?'front':line<2?'upleft':'down';
         ball.at(p.x,p.y,D,{rot:p.rot+nod,pose,mirror:pose==='down',blink:blinkPh(t,1.42),floor:Y+D/2})})})}
   else if(T==='Brands fall in'){
-    // The yellow sweeps in from the left and the line rises in the middle as the character runs in. It hops along the
-    // bottom row on the eighths; each bottom logo drops in just before it lands there and gives a little under it, and
-    // each top logo drops in from above the frame as it passes beneath, so they arrive one by one, top and bottom in
-    // turn. Once it stands on the last one it turns right round to us and blinks.
-    if(showUnder())add(t=>{f.style.clipPath=`inset(0 ${(1-ease(t/.36))*100}% 0 0)`});
-    words.forEach((s,i)=>rise(s,.14+i*.05,60,.18));
-    const D=FD,all=[...f.querySelectorAll('.fall')],bot=all.filter(b=>b.dataset.row==='b'),T0=.34;
-    const keys=[[0,-160,+bot[0].dataset.top-D/2-6]].concat(bot.map((b,k)=>[T0+k*BEAT/2,+b.dataset.cx,+b.dataset.top-D/2-6]));
-    const path=hops(keys,70,0,D),last=keys[keys.length-1][0];
-    const when=x=>{for(let j=1;j<keys.length;j++){const [ta,xa]=keys[j-1],[tb,xb]=keys[j];if(x<=xb)return ta+(tb-ta)*Math.max(0,(x-xa)/(xb-xa))}return last};   // the character is x across
-    all.forEach(b=>{const low=b.dataset.row==='b',j=bot.indexOf(b),tl=low?keys[j+1][0]-.06:when(+b.dataset.cx),drop=low?170:+b.dataset.top+b.offsetHeight+30,dur=.26;
-      add(t=>{const q=(t-(tl-dur))/dur;if(q<0){b.style.opacity=0;return}b.style.opacity=low?Math.min(1,q/.35):1;
-        const y=q<1?-drop*(1-q*q):-10*Math.exp(-(t-tl)*9)*Math.abs(Math.sin((t-tl)*14));
-        const sq=q<1?1:1+.1*Math.exp(-(t-tl)*14)*Math.cos((t-tl)*30),a=low?stamp(t-keys[j+1][0]):0;
-        b.style.transformOrigin='50% 100%';b.style.transform=`translateY(${y}px) scale(${(2-sq)*(1+a*.4)},${sq*(1-a*.6)})`})});
-    add(t=>{const p=path(t),moving=t<last,tw=twirl(t,last+.14);
-      ball.at(p.x,p.y,D,{rot:p.rot,turn:tw.turn,pose:moving?'fly':'front',blink:blinkPh(t,last+1.1)})})}
+    // Aqua grows out of the full stop of "idea." and the line rises in the middle. The character runs in from the left
+    // and hops across the frame over the line on the eighths, landing on each word (it gives a little under it); as it
+    // passes, the logos above and below drop into their rows, so they arrive one by one where the eye already is. It
+    // runs out at the right and the frame holds.
+    if(showUnder())add(t=>{f.style.clipPath=`circle(${ease(t/.36)*1700}px at ${IDEA_DOT[0]}px ${IDEA_DOT[1]}px)`});
+    const D=FD,T0=.32,R0=words.map((_,i)=>.14+i*.05);
+    late.push(()=>{const tops=words.map(wtop),floor=tops[0].y;   // the tops of "200+" are the floor between words
+      const xs=[200,410,...tops.map(p=>p.x),1560,1770],ys=[floor,floor,...tops.map(p=>p.y),floor,floor];
+      const keys=[[0,-160,floor-D/2]].concat(xs.map((x,k)=>[T0+k*BEAT/2,x,ys[k]-D/2]),[[T0+xs.length*BEAT/2,2100,floor-D/2]]);
+      const path=hops(keys,60,0,D),out=keys[keys.length-1][0];
+      const when=x=>{for(let j=1;j<keys.length;j++){const [ta,xa]=keys[j-1],[tb,xb]=keys[j];if(x<=xb)return ta+(tb-ta)*Math.max(0,(x-xa)/(xb-xa))}return out};   // the character is x across
+      words.forEach((s,i)=>{const tl=keys[i+3][0];add(t=>{const q=ease((t-R0[i])/.18),a=stamp(t-tl);s.style.opacity=q;s.style.transformOrigin='50% 100%';
+        s.style.transform=`translateY(${(1-q)*60}px) scale(${1+a*.4},${1-a*.6})`})});
+      [...f.querySelectorAll('.fall')].forEach(b=>{const low=b.dataset.row==='b',tl=when(+b.dataset.cx),drop=low?170:+b.dataset.top+b.offsetHeight+30,dur=.26;
+        add(t=>{const q=(t-(tl-dur))/dur;if(q<0){b.style.opacity=0;return}b.style.opacity=low?Math.min(1,q/.35):1;
+          const y=q<1?-drop*(1-q*q):-10*Math.exp(-(t-tl)*9)*Math.abs(Math.sin((t-tl)*14)),sq=q<1?1:1+.1*Math.exp(-(t-tl)*14)*Math.cos((t-tl)*30);
+          b.style.transformOrigin='50% 100%';b.style.transform=`translateY(${y}px) scale(${2-sq},${sq})`})});
+      add(t=>{if(t>out)return ball.hide();const p=path(t);ball.at(p.x,p.y,D,{rot:p.rot,pose:'fly'})})})}
   else if(T==='One partner')words.forEach((s,i)=>rise(s,i<2?i*.05-.06:BEAT+(i-2)*.05,80,.18));
   else if(T.startsWith('Logo')){
     // Lucky (18 Nov): it comes fast through the middle of the O while the logo is large and centred, the logo goes back
