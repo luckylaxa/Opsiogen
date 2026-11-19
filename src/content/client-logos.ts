@@ -7,7 +7,7 @@
 export const CLIENT_LOGOS: Record<string, { ratio: number; size?: number; name?: string }> = {
   "aaoms": { ratio: 1.109, name: "AAOMS" },
   "actigraph": { ratio: 2.62, name: "ActiGraph" },
-  "afthab-tours": { ratio: 6.123 },
+  "afthab-tours": { ratio: 6.08 },
   "altruity": { ratio: 4.321, name: "Altruity" },
   "bigtapp": { ratio: 1.609 },
   "cabot-solutions": { ratio: 2.568 },
