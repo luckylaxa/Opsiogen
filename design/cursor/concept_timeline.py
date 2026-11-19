@@ -30,10 +30,32 @@ def turn(v, yaw, pitch):
     return [x, y, z]
 P_ENTER, P_REST = ((120, 640), (330, 300)) if CLOSE else ((300, 780), (560, 470))   # the visitor's pointer: comes in, then rests
 BTN = (lx + lw / 2, ly + lh / 2)                    # "See our work"
+OFF = (46 * PPU / 63.51, 40 * PPU / 63.51)          # the mini floats below right of the pointer, like an arrow's tail
+def aim_at(mpos, target, turn=math.radians(44)):
+    """Yaw and pitch that point the mini's eye at a spot on the screen: mostly sideways (so it is seen side on) and a
+    little toward the viewer (so the lens still shows). Returns (yaw, pitch, front vector)."""
+    mx, my, mz = mpos; d = 6.75; v = [-mx, -my, d - mz]; vl = math.hypot(*v); v = [c / vl for c in v]
+    p = to_px(mpos); dx, dy = target[0] - p[0], target[1] - p[1]; dl = math.hypot(dx, dy) or 1
+    s = [dx / dl, -dy / dl, 0.0]
+    F = [math.cos(turn) * v[i] + math.sin(turn) * s[i] for i in range(3)]; fl = math.hypot(*F); F = [c / fl for c in F]
+    return math.atan2(F[0], F[2]), math.asin(-F[1]), F
 def pointer(t):
     if t < 0.7: k = out(t / 0.7); return lerp(P_ENTER, P_REST, k)
     if t < 3.9: return list(P_REST)
     k = io(seg(t, 3.9, 4.5)); return lerp(P_REST, BTN, k)
+def trail(t):
+    """Where the mini sits relative to the pointer: below right at rest; while the pointer moves it swings round
+    behind it (opposite the way it moves), orbiting over the top, so it never crosses the pointer and the light never
+    shrinks to nothing. Speed and direction are smoothed over the last 0.12 s."""
+    a, b = pointer(max(0, t - 0.12)), pointer(t)
+    vx, vy = (b[0] - a[0]) / 0.12, (b[1] - a[1]) / 0.12; sp = math.hypot(vx, vy)
+    ol, th0 = math.hypot(*OFF), math.atan2(OFF[1], OFF[0])
+    if sp < 1e-3: return list(OFF)
+    w = ease(clamp(sp / 450.0)) * 0.9
+    dth = (math.atan2(-vy, -vx) - th0 + math.pi) % (2 * math.pi) - math.pi
+    if abs(abs(dth) - math.pi) < 0.4: dth = -abs(dth)            # nearly opposite: always round over the top
+    th = th0 + w * dth
+    return [math.cos(th) * ol, math.sin(th) * ol]
 def over_link(t):
     p = pointer(max(0, t - 0.06)); return abs(p[0] - BTN[0]) < lw / 2 and abs(p[1] - BTN[1]) < lh / 2
 HOVER = next((3.4 + i / 240 for i in range(int(2.4 * 240)) if over_link(3.4 + i / 240)), None)   # when the mini reaches the link
@@ -50,7 +72,7 @@ def state(t):
     inside = turn([a * 0.42 for a in AX], yaw, pitch)                      # in the bay
     land = [inside[0], FLOOR + MINI, 0.15]                                  # on the floor below the opening
     rolled = [land[0] - 0.62, land[1], land[2]]                             # after rolling out toward the page
-    rest = to_world(*P_REST)
+    rest = to_world(P_REST[0] + OFF[0], P_REST[1] + OFF[1])
     if t >= 1.2:
         m = {'show': True, 'scale': MINI, 'yaw': 0.0, 'pitch': 0.0, 'roll': 0.0, 'blink': 0}
         if t < 1.95:                                                        # lowered in the beam, turning once
@@ -66,26 +88,39 @@ def state(t):
             m['roll'] = 0.62 / MINI * (1 - io(seg(t, 2.65, 3.0)))       # stops rolling as it lifts off
             m['yaw'] = -2 * math.pi * k                                     # one turn on the way, ending face on
             m['look'] = [-0.8 * math.sin(math.pi * k), -0.5 * math.sin(math.pi * k)]
-        else:                                                               # the cursor: follows the pointer with a little lag
-            lag = 0.06; p = pointer(max(0, t - lag)); m['pos'] = to_world(*p)
-            mv = [pointer(t)[0] - pointer(t - 0.05)[0], pointer(t)[1] - pointer(t - 0.05)[1]]
-            m['look'] = [clamp(mv[0] / 25, -1, 1), clamp(mv[1] / 25, -1, 1)]
-            m['pos'][1] += 0.04 * math.sin((t - 3.4) * 2 * math.pi / 1.6)      # a gentle hover
-            # the click: as it is pressed, it turns its eye down to what it is clicking (away from the viewer), sprays
-            # our colours onto it, then turns back to face the viewer
-            press = io(seg(t, 4.72, 4.9)) * (1 - io(seg(t, 5.35, 5.7)))
-            m['pitch'] = 1.1 * press; m['yaw'] = 0.25 * press; m['look'] = [0.2 * press, 0.6 * press]
+        else:                                                               # the guide: floats beside the pointer, lagging a little
+            tip = pointer(t); u = t - 3.4
+            bob = 3.2 * math.sin(u * 2 * math.pi * 0.75) * PPU / 63.51       # a slow, small float
+            nudge = 5 * math.sin(math.pi * seg(t, 4.86, 5.08)) * PPU / 63.51 # on the click it nudges toward the spot
+            # it trails the pointer like a comet's tail while the pointer moves, and settles back below right when it stops
+            rel = trail(t); pos_px = [tip[0] + rel[0], tip[1] + rel[1] + bob]
+            dx, dy = tip[0] - pos_px[0], tip[1] - pos_px[1]; dl = math.hypot(dx, dy) or 1
+            pos_px = [pos_px[0] + dx / dl * nudge, pos_px[1] + dy / dl * nudge]
+            m['pos'] = to_world(*pos_px)
+            yaw, pitch, F = aim_at(m['pos'], tip)
+            m['yaw'], m['pitch'], m['face'] = yaw, pitch, 0.0
+            m['roll'] = math.radians(6) * math.sin(u * 2 * math.pi * 0.55 + 0.8)   # and a gentle rock
+            m['F'] = F
         st['miniPool'] = 0.7 * (1 - ease(seg(t, 2.6, 2.9))) if 1.5 <= t else 0
         if t < 1.5: st['miniPool'] = 0
     if m.get('show') and t >= 1.95:                                         # out of the bay: its own view, so it stays round,
-        m['solo'] = True; m['face'] = io(seg(t, 2.3, 2.9))                  # and it turns to face the viewer as it lifts off
+        m['solo'] = True
+        if t < 3.4: m['face'] = io(seg(t, 2.3, 2.9))                        # and it turns to face the viewer as it lifts off
+        if 3.0 <= t < 3.4:                                                  # then, arriving, it turns its eye to the pointer
+            k = io(seg(t, 3.0, 3.4)); yaw, pitch, F = aim_at(m['pos'], pointer(t))
+            m['yaw'], m['pitch'], m['face'] = k * yaw + (1 - k) * m.get('yaw', 0), k * pitch, 1 - k
     st['mini'] = m
     # the 2D layer: the visitor's own pointer until the mini takes over, the ring over the link, the click ripple
     ov = {'arrow': pointer(t) if t < 3.4 else None, 'arrowFade': 1 - seg(t, 3.25, 3.4)}
-    if m.get('show') and t >= 3.4:
-        c = to_px(m['pos']); ov['r0'] = MINI * PPU + 3                    # the ripples start just outside the mini
-        if HOVER is not None and t >= HOVER and not 4.72 <= t <= 5.9: ov['hover'] = {'c': c, 't0': HOVER if t < 4.72 else 5.9}   # over the link: ripples of our colours
-        if 4.9 <= t <= 5.75: ov['spray'] = {'c': [c[0], c[1] + 4], 'k': seg(t, 4.9, 5.75)}   # the click: a spray of colour on the page
+    if m.get('show') and t >= 3.25:
+        tip = pointer(t); c = to_px(m['pos']); F = m.get('F') or aim_at(m['pos'], tip)[2]
+        r_px = MINI * PPU * 6.75 / (6.75 - m['pos'][2])
+        lens = [c[0] + F[0] * r_px * 0.92, c[1] - F[1] * r_px * 0.92]
+        flash = 1 + 0.9 * math.sin(math.pi * seg(t, 4.86, 5.2))
+        ov['beam'] = {'from': lens, 'to': tip, 'k': out(seg(t, 3.3, 3.48)), 'glow': flash}
+        ov['r0'] = 7 * PPU / 63.51                                          # the ripples start at the light's dot
+        if HOVER is not None and t >= HOVER and not 4.86 <= t <= 5.9: ov['hover'] = {'c': tip, 't0': HOVER if t < 4.86 else 5.9}
+        if 4.9 <= t <= 5.75: ov['spray'] = {'c': list(tip), 'k': seg(t, 4.9, 5.75)}   # the click: colour sprayed from the dot
     return st, ov
 times = ONLY if ONLY is not None else [i / FPS for i in range(int(D * FPS) + 1)]
 frames, overlays = [], []

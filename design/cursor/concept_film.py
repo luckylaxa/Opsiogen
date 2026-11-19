@@ -57,6 +57,32 @@ def spray(img, o):
     alpha = np.clip(body * streak * env * 235, 0, 255).astype(np.uint8)
     lay = Image.fromarray(np.dstack([rgb.astype(np.uint8), alpha]), 'RGBA').filter(ImageFilter.GaussianBlur(5))
     img.alpha_composite(lay, (x0, y0))
+BEAM = [(0.0, (70, 215, 255)), (0.5, (150, 120, 255)), (1.0, (255, 105, 180))]
+def light(img, o):
+    """The pointer: a beam of light from the mini's eye to the exact spot, ending in a small bright dot with a halo of
+    our colours. Cyan at the eye (the colour of its lens light) to pink at the spot."""
+    b = o.get('beam')
+    if not b or b['k'] <= 0: return
+    (x1, y1), (tx, ty) = b['from'], b['to']; k = b['k']; g = b.get('glow', 1.0)
+    x2, y2 = x1 + (tx - x1) * k, y1 + (ty - y1) * k
+    pad = 18; x0, y0 = int(min(x1, x2)) - pad, int(min(y1, y2)) - pad; w, h = int(abs(x2 - x1)) + 2 * pad, int(abs(y2 - y1)) + 2 * pad
+    yy, xx = np.mgrid[0:h, 0:w].astype(np.float32); px, py = xx + x0, yy + y0
+    vx, vy = x2 - x1, y2 - y1; L2 = max(1e-6, vx * vx + vy * vy)
+    t = np.clip(((px - x1) * vx + (py - y1) * vy) / L2, 0, 1); dist = np.hypot(px - (x1 + t * vx), py - (y1 + t * vy))
+    col = np.stack([np.interp(t, [p for p, _ in BEAM], [c[i] for _, c in BEAM]) for i in range(3)], axis=-1)
+    glow = np.exp(-(dist / (2.4 + 2.2 * (1 - t))) ** 2) * (0.5 + 0.25 * t) * min(1.0, 0.75 * g)
+    core = np.exp(-(dist / 0.85) ** 2) * (0.55 + 0.4 * t) * min(1.0, 0.8 * g)
+    rgb = col * (1 - core[..., None]) + np.array([235, 250, 255]) * core[..., None]
+    a = np.clip(np.maximum(glow, core) * 255, 0, 255).astype(np.uint8)
+    img.alpha_composite(Image.fromarray(np.dstack([rgb.astype(np.uint8), a]), 'RGBA'), (x0, y0))
+    if k >= 0.98:                                                       # the dot at the spot: the true pointer
+        R = 11; yy, xx = np.mgrid[0:2 * R + 1, 0:2 * R + 1].astype(np.float32); dx, dy = xx - R - (tx % 1), yy - R - (ty % 1)
+        d = np.hypot(dx, dy); ang = (np.arctan2(dy, dx) / (2 * np.pi) + 0.5 + o['t'] * 0.3) % 1
+        halo = np.stack([np.interp(ang, [p for p, _ in STOPS], [c[i] for _, c in STOPS]) for i in range(3)], axis=-1)
+        cd = np.exp(-(d / 2.3) ** 2); hd = np.exp(-((d - 4.2) / 2.6) ** 2) * 0.9 * min(1.0, g)
+        rgb = halo * (1 - cd[..., None]) + 255 * cd[..., None]
+        a = np.clip(np.maximum(cd, hd) * 255, 0, 255).astype(np.uint8)
+        img.alpha_composite(Image.fromarray(np.dstack([rgb.astype(np.uint8), a]), 'RGBA'), (int(tx) - R, int(ty) - R))
 def ripples(img, o):
     """Over a link, a ripple every 0.9 s, each growing and fading over 1.3 s; a click sends out one stronger ripple."""
     r0 = o.get('r0', 20); t = o['t']; turn = (t * 0.18) % 1
@@ -73,6 +99,7 @@ for o in ov['overlays']:
     spray(img, o)                                       # on the page, so under the characters
     three = os.path.join(FR, o['name'])
     if os.path.exists(three): img.alpha_composite(Image.open(three).convert('RGBA'))
+    light(img, o)
     ripples(img, o)
     if o.get('arrow'): arrow(img, o['arrow'][0], o['arrow'][1], o.get('arrowFade', 1))
     img.convert('RGB').save(os.path.join(OUT, o['name'].replace('.png', '.jpg')), quality=93)
