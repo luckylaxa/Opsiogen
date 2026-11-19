@@ -14,7 +14,7 @@ export const CLIENT_LOGOS: Record<string, { ratio: number; size?: number; name?:
   "carlton-noble": { ratio: 11.281 },
   "corechair": { ratio: 5.318, name: "CoreChair" },
   "dubai-police": { ratio: 2.876, name: "Dubai Police" },
-  "engel-volkers": { ratio: 9.103 },
+  "engel-volkers": { ratio: 9.132 },
   "graymatter-analytics": { ratio: 5.126, name: "GrayMatter Analytics" },
   "green-circle-life": { ratio: 1.374, name: "Green Circle Life" },
   "instachart": { ratio: 4.539, name: "instachart" },

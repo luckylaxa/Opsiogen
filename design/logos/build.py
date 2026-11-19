@@ -147,8 +147,8 @@ def rotate(a, deg):
 
 
 # ---- one function per client: returns the ink map (source pixels, 0..1) and trace options ----------------------
-def engel_volkers():            # website header: white letters and a red "&" on near-black
-    return ink_auto(crop(load("public/work/engel-volkers/ev-1-wide.jpg"), (90, 60, 590, 130))), {}
+def engel_volkers():            # Engel & Völkers' own logo file (from the owner, 19 Nov): grey letters, red "&", on clear
+    return load("design/logos/src/engel-volkers.png")[:, :, 3] / 255, {}
 
 
 def sifio_health():             # sifio's own logo file (from the owner, 19 Nov): the horizontal one, cream on clear
