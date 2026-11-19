@@ -21,7 +21,7 @@ OVER = ("488563452", "480737977", "490354049")  # stock clips the character join
 MULTI = ("Grid of", "collage", "tiles", "wall across", "row of", "Torvi: site", "billboard, badge", "guideline pages", "Three apps")
 def beats(n):
     if n == "Opening line": return 3
-    if n == "Brands already did": return 12   # the share cut's opening logo beat (frames.html ?share)
+    if n == "Brands already did": return 8   # the opening logo beat (frames.html ?share)
     if n.startswith("We take it"): return 2
     if n == "Chapter word": return 2
     if n.startswith("Fast word"): return 1

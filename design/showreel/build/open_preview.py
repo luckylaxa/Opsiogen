@@ -7,7 +7,7 @@ B = os.path.dirname(os.path.abspath(__file__)); R = os.path.dirname(B); SRC = os
 BEAT, FPS = 60 / 140, 30; fr = lambda b: round(b * BEAT * FPS)
 run = lambda c, **k: subprocess.run(c, check=True, **k)
 os.makedirs(WD, exist_ok=True)
-beats = [0, 3, 15, 18, 20, 22]          # opening line 3, logo beat 12, stock 3, "We take it" 2, three apps 2
+beats = [0, 3, 11, 14, 16, 18]          # opening line 3, logo beat 8, stock 3, "We take it" 2, three apps 2
 N = [fr(beats[i + 1]) - fr(beats[i]) for i in range(5)]
 op_last = os.path.join(SRC, 'frames', '000', sorted(os.listdir(os.path.join(SRC, 'frames', '000')))[-1])
 beat_last = os.path.join(WD, 'frames', '001', f'{N[1] - 1:03d}.jpg')

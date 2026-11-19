@@ -232,6 +232,11 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   same bold weight like other titles") (`frames.html?share`, shot "Brands already did", 12 beats). The stock
   clip then opens out of it in the lens circle. Preview of the opening only, for approval:
   `out/opening-logos-preview.mp4` (`build/open_preview.py FRAMES_DIR OUT`). Approved ("Good"); in cut 13.
+- **Opening as one sentence (19 Nov).** Lucky: "opening text and a second slide logo text and third slide text. It's
+  not that connected" (Superside's is one thought across its lines). Now: "You bring the idea." / "Like 200+ brands
+  before you." (the logo rows; "Like brands before you." builds, then "200+" drops into the gap) / she points at our
+  character / "We take it from here." The "could be next" lines are gone and the logo beat is 8 beats again. Preview:
+  `out/opening-logos-preview.mp4`.
 - **Logo ending, no hold (19 Nov).** Lucky, on the big logo with the character a dot in its O: "this logo stuck here
   for sometime and not smooth ... No stuck or pause." Then, on the first try (the character coming at the O from the
   front): "From this view character should rotate and turn and pass through like superb-jet and after passing Center
