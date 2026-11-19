@@ -214,6 +214,13 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   logos from `public/logos`, popping in two at a time on the half-beat) before the logo ending: 8 beats, so the logo
   still lands on the bar, and the track's last hit moves with it. Out: `out/opsiogen-showreel-v12-share.mp4` (60.4 s) and
   a lighter copy for messages, `out/opsiogen-showreel-share-web.mp4` (23 MB).
+- **Share cut, opening logos (19 Nov).** Lucky did not like the end logo beat: "I was expecting this type of animation
+  in the beginning", with Superside's opening as the reference ("Don't have to copy same"). Our own idea: right after
+  "You bring the idea.", **"200+ brands already did."** holds the middle (200+ brands in aqua, as "idea." is) while two
+  thin rows of client logos glide in from the top and bottom edges and keep sliding in opposite directions, soft at the
+  ends (`frames.html?share`, shot "Brands already did", 8 beats); the stock clip then opens out of it in the lens circle.
+  The end beat is gone. Preview of the opening only, for approval: `out/opening-logos-preview.mp4`. After his yes,
+  `build/share.py` is updated for it (it still adds the old end beat) and the full share cut is made.
 - The logo keeps its own shape; only at the very end (cut 11, as Lucky asked) is it shown larger, then settles at
   its own size. Otherwise it only fades in. Nothing else is shown larger than its own size.
 

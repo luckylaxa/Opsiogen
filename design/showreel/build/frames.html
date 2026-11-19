@@ -89,22 +89,23 @@ const row=(keys,c,o={})=>{bg(c);const h=o.h||820,gap=o.gap||40;
   const wrap=el('div','mrow',f,{position:'absolute',left:'0',top:(1080-h)/2+'px',height:h+'px',display:'flex',gap:gap+'px'});
   keys.forEach(k=>{const b=el('div','mphone',wrap,{height:h+'px',borderRadius:(o.rad||44)+'px',overflow:'hidden',flex:'none'});img(A+k+'.jpg',b,{display:'block',height:'100%',width:'auto'})});
   wrap.dataset.rot=o.rot||0;LAYOUT.push(()=>{const tw=wrap.scrollWidth;wrap.style.transform=`translateX(${(60+1920-tw-20)/2}px) rotate(${o.rot||0}deg)`})};
-// The share cut's client logo beat (Lucky, 19 Nov: logos in the video like Superside's, for sharing; the website keeps
-// the cut without it, as the logo strip sits right under the film there): the heading of the site's logo strip over
-// twelve client logos (public/logos, one colour), each given about the same area, as in the strip.
+// The share cut's opening logo beat (Lucky, 19 Nov: client logos at the start, for the cut shared outside the site; the
+// website keeps the film without it, as the logo strip sits right under it there). "200+ brands already did." holds the
+// middle while two rows of client logos (public/logos, one colour) glide along the top and bottom edges, in opposite
+// directions, with soft ends. Every logo gets about the same area, as in the site's strip.
 const SHARE=location.search.includes('share');
-const CLIENTS=[['sap',2.02],['microchip',4.305],['rohde-schwarz',3.865,1.2],['engel-volkers',9.132],['dubai-police',2.876],['rush',3.375],
-  ['nova-scotia-power',4.2],['bigtapp',1.609],['cabot-solutions',2.568],['surgo-health',2.129],['norsecom',7.905],['oh-my-glam',2.016]];
-const clientLogos=()=>{bg(COAL);const h=el('div','abs logohead',f,{left:0,right:0,top:'250px',textAlign:'center',fontSize:'58px',fontWeight:500,color:PAPER,letterSpacing:'-.02em'});
-  h.textContent='Creative support for 200+ top global brands';
-  CLIENTS.forEach(([k,r,sz=1],i)=>{const col=i%6,row=Math.floor(i/6),cx=960+(col-2.5)*290,cy=560+row*190;
-    let hh=64*Math.min(1.4,2*sz/Math.sqrt(r)),w=hh*r;if(w>250){w=250;hh=w/r}
-    const b=el('div','abs clogo',f,{left:cx-w/2+'px',top:cy-hh/2+'px',width:w+'px',height:hh+'px'});
-    img('../../../public/logos/'+k+'.svg',b,{width:'100%',height:'100%',objectFit:'contain',filter:'invert(1)'})})};
+const BRANDS=[["aaoms", 1.109, 1], ["actigraph", 2.62, 1], ["afthab-tours", 5.979, 1], ["altruity", 4.321, 1], ["bigtapp", 1.609, 1], ["cabot-solutions", 2.568, 1], ["carlton-noble", 11.281, 1], ["corechair", 5.318, 1], ["dubai-police", 2.876, 1], ["engel-volkers", 9.132, 1], ["graymatter-analytics", 5.126, 1], ["green-circle-life", 1.374, 1], ["instachart", 4.539, 1], ["kinduct", 5.166, 1], ["meetingful", 4.584, 1], ["microchip", 4.305, 1], ["my-healing-mate", 2.698, 1], ["nephtech", 4.468, 1], ["norsecom", 7.905, 1], ["nova-scotia-power", 4.2, 1], ["oh-my-glam", 2.016, 1], ["rohde-schwarz", 3.865, 1.2], ["rush", 3.375, 1], ["rxlive", 2.238, 1], ["sandlogic", 4.198, 1.1], ["sap", 2.02, 1], ["sifio-health", 3.606, 0.8], ["surgo-health", 2.129, 1], ["the-sieve", 2.411, 1]];
+const brandRows=()=>{type(COAL,[[['200+ brands ',700,AQUA],['already did.',700,PAPER]]],120);
+  [0,1].forEach(r=>{const row=el('div','abs brow',f,{left:'0',top:(r?930:150)-34+'px',height:'68px',width:'1920px',overflow:'hidden',
+      maskImage:'linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)',webkitMaskImage:'linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)'});
+    const track=el('div','btrack',row,{position:'absolute',left:'0',top:'0',height:'68px',display:'flex',alignItems:'center',gap:'86px',whiteSpace:'nowrap'});
+    const mine=BRANDS.filter((_,i)=>i%2===r);[...mine,...mine,...mine].forEach(([k,ra,sz])=>{const h=44*Math.min(1.4,2*sz/Math.sqrt(ra));
+      img('../../../public/logos/'+k+'.svg',track,{height:h+'px',width:h*ra+'px',flex:'none',filter:'invert(1)',opacity:.85})})})};
 const caption=(t,c=PAPER)=>{const d=el('div','abs',f,{left:'90px',bottom:'80px',fontSize:'64px',fontWeight:500,color:c,letterSpacing:'-.03em',lineHeight:1.05});d.innerHTML=t};
 
 const SHOTS=[
 ['Open', 'Opening line', ()=>type(COAL,[[['You bring the ',700,PAPER],['idea.',700,AQUA]]],150)],
+...(SHARE?[['Open', 'Brands already did', ()=>brandRows()]]:[]),
 ['Open', 'Stock: she points at our character (Adobe Stock 488563452)', ()=>full(S+'stock/stills/point.jpg')],
 ['Open', 'We take it from here, the character', ()=>{type(COAL,[[['We take it ',700,PAPER],['from here.',700,PAPER]]],130);img(A+'ch-front.png',f,{position:'absolute',width:'330px',left:'795px',top:'90px'})}],
 ['Burst', 'Three apps, three projects', ()=>{bg(LIME);phone(A+'mf-m1.jpg',330,150,400,-4);phone(A+'omg-08.jpg',760,110,400,0);phone(A+'va-app.jpg',1190,150,400,4)}],
@@ -189,7 +190,6 @@ const SHOTS=[
 ['Close', 'Fast word: Launch', ()=>word('Launch.',SUN)],
 ['Close', 'The spine, typed', ()=>type(COAL,[[['Your idea. ',700,PAPER]],[['Branded. ',700,ORANGE],['Designed. ',700,VIOLET]],[['Built. ',700,AQUA],['Launched.',700,SUN]]],128,'left')],
 ['Close', 'One partner', ()=>type(COAL,[[['One partner.',700,PAPER]],[['Every digital need.',700,AQUA]]],140)],
-...(SHARE?[['Close', 'Client logos', ()=>clientLogos()]]:[]),
 ['Close', 'Logo, character, call', ()=>{bg(COAL);img(A+'ch-front.png',f,{position:'absolute',width:'260px',left:'830px',top:'150px'});logoSvg(f,560,470,800);const t=el('div','abs',f,{left:0,right:0,top:'700px',textAlign:'center',fontSize:'64px',fontWeight:700,color:PAPER,letterSpacing:'-.03em'});t.innerHTML='Let’s make <b style="font-weight:700">yours.</b>'}],
 ];
 window.SHOTS=SHOTS.map(([sec,name])=>({sec,name}));
@@ -302,10 +302,10 @@ if(MOTION)(()=>{
       add(t=>{const p=path(t);let k=-1;wt.forEach((w,i)=>{if(t>=w)k=i});const nod=k>1?rock(t-wt[k],-1,7):0,line=k<2?0:k<4?1:2;
         const pose=t<.14||t>=1.4?'front':line<2?'upleft':'down';
         ball.at(p.x,p.y,D,{rot:p.rot+nod,pose,mirror:pose==='down',blink:blinkPh(t,1.42),floor:Y+D/2})})})}
-  else if(T==='Client logos'){words.forEach((s,i)=>rise(s,i*.04,70,.18));
-    [...f.querySelectorAll('.clogo')].forEach((b,i)=>add(t=>{const t0=.4+Math.floor(i/2)*BEAT/2+(i%2)*.05,q=t-t0;b.style.opacity=q<0?0:Math.min(1,q/.12);
-      b.style.transform=`scale(${q<0?.6:.6+.4*pop(q/.22)})`}));
-    add((t,d)=>{f.style.transformOrigin='50% 55%';f.style.transform=`scale(${1+.035*t/d})`})}
+  else if(T==='Brands already did'){words.forEach((s,i)=>rise(s,i<2?.05+i*.05:BEAT*1.5+(i-2)*BEAT/2,70,.18));
+    [...f.querySelectorAll('.btrack')].forEach((tr,r)=>{const row=tr.parentNode,W=tr.scrollWidth/3,dir=r?1:-1;
+      add(t=>{const q=ease(t/.4);row.style.transform=`translateY(${(1-q)*(r?160:-160)}px)`;
+        tr.style.transform=`translateX(${dir<0?-(140*t)%W-W*.2:(140*t)%W-W*1.2}px)`})})}
   else if(T==='One partner')words.forEach((s,i)=>rise(s,i<2?i*.05-.06:BEAT+(i-2)*.05,80,.18));
   else if(T.startsWith('Logo')){
     // Lucky (18 Nov): it comes fast through the middle of the O while the logo is large and centred, the logo goes back
