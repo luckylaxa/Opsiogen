@@ -11,10 +11,14 @@ const TEXT = "input:not([type='checkbox']):not([type='radio']):not([type='submit
 const NOT_EMPTY = "a, button, input, textarea, select, [role='button'], dialog, .site-header";
 /** Where the spray goes, one after another: the hero character's own directions (x, y on the screen). */
 const SPRAYS: [number, number][] = [[-1, -0.25], [-0.8, 0.5], [-1, 0.1], [0.9, -0.35]];
+/** Anything the visitor might want to use: the dock steps aside when it would cover one. */
+const UI = `${LINKS}, ${TEXT}, [data-cursor]`;
 /** The character as the pointer: its picture box in px (about 36 px of character). */
 const SMALL = 37;
 /** One full turn in the picture strip (public/intro/turn.webp); frame 0 faces the visitor. */
 const FRAMES = 12;
+/** The idle dance's look round: a little to the right, back, a little to the left, back (frames of the strip). */
+const LOOK = [1, 2, 2, 1, 0, 11, 10, 10, 11, 0];
 
 function hoverFor(t: EventTarget | null): Hover {
   if (!(t instanceof Element)) return "default";
@@ -38,12 +42,14 @@ function steps(from: number, to: number, n: number) {
 
 /**
  * The character pointer being tried (Lucky, 19 Nov; on with `?preview=character`, see CURSOR_KEY in lib/theme.ts).
- * On a computer with a mouse, the main character itself is the pointer, scaled down: a step behind the mouse, filled
+ * On a computer with a mouse, the main character itself is the pointer, scaled down: a step behind the mouse, side on
+ * toward where it is going and face on when it rests (left alone a while, it dances a little), filled
  * ripples of our colours over links and work ("View" over work), the normal typing cursor in text fields. A click
  * turns it once; in the hero's empty space it then faces the spray's way, sprays the hero's fog of light from its
  * eye, and the hero's colours change (the real `hero:pulse`), then it turns back. Its home is the dock at the lower
- * right, where the intro lands it: a moment's hover there brings it home at full size while a small dot points, and
- * moving away sends it back to the pointer. On Home it takes over from the page's own character at the first move.
+ * right, where the intro lands it, with its pool of light only while it is there: a moment's hover on empty space there
+ * brings it home at full size while a small dot points, and moving away (or going for a control) sends it back. Where
+ * the dock would cover the page's controls (the showreel's buttons, say), it steps aside. On Home it takes over from the page's own character at the first move.
  * Pictures are the intro's (already loaded); only transforms and opacity move.
  */
 export function CharacterCursor() {
@@ -64,6 +70,9 @@ export function CharacterCursor() {
     let fly: { fx: number; fy: number; fs: number; to: "home" | "pointer"; t0: number; dur: number } | null = null;
     let spin: { t0: number; face: number | null; dir: [number, number]; cx: number; cy: number; fired: boolean } | null = null;
     let frame = 0, hover: Hover = "default", homeAt = 0, nextRipple = 0, sprayN = 0, raf = 0, last = 0;
+    let prevMx = mx, vx = 0, movedAt = 0, stepAt = 0, blocked = false, checkAt = 0;
+    // The dock steps aside where it would cover the page's controls (a link, a button, a field, work), checked at
+    // points across it; the page's own character on Home does not count.
 
     // On Home, after the intro, the page's own character sits on the dock's spot: it stays until the visitor moves
     // the mouse away from it, then hands over (it hides; this one takes its place and flies to the pointer).
@@ -75,6 +84,13 @@ export function CharacterCursor() {
       if (there) { mode = "home"; el.dataset.hero = ""; } else { taken = true; root.classList.add("ccur-taken"); }
     }
     const introDone = () => !root.dataset.intro || root.classList.contains("intro-done");
+    const coversUi = (b: DOMRect) => {
+      for (const fx of [0.2, 0.5, 0.8]) for (const fy of [0.2, 0.5, 0.8]) {
+        const e = document.elementFromPoint(b.left + b.width * fx, b.top + b.height * fy);
+        if (e && !e.closest("[data-intro-land]") && e.closest(UI)) return true;
+      }
+      return false;
+    };
 
     const startFly = (to: "home" | "pointer", now: number) => { fly = { fx: x, fy: y, fs: s, to, t0: now, dur: to === "home" ? 560 : 620 }; homeAt = 0; spin = null; };
     const ripple = (cx: number, cy: number, r: number) => {
@@ -106,9 +122,10 @@ export function CharacterCursor() {
         taken = true; root.classList.add("ccur-taken"); delete el.dataset.hero;
         x = dcx; y = dcy; s = 1; startFly("pointer", now);
       } else if (seen && taken && !fly) {
-        if (mode === "pointer" && near(10)) { homeAt ||= now; if (now - homeAt > 300) startFly("home", now); }
+        if (now >= checkAt) { checkAt = now + 250; blocked = coversUi(b); }
+        if (mode === "pointer" && near(10) && hover === "default" && !blocked) { homeAt ||= now; if (now - homeAt > 300) startFly("home", now); }
         else if (mode === "pointer") homeAt = 0;
-        if (mode === "home" && !near(30)) startFly("pointer", now);
+        if (mode === "home" && (!near(30) || hover !== "default" || blocked)) startFly("pointer", now);
       }
       if (fly) {
         const k = Math.min(1, (now - fly.t0) / fly.dur), e = io(k);
@@ -121,10 +138,30 @@ export function CharacterCursor() {
         if (k >= 1) { mode = fly.to; fly = null; frame = 0; }
       } else if (mode === "home") {
         x = dcx; y = dcy + Math.sin(now / 700) * w * 0.02; s = 1;
-        frame = mx < dcx - 50 ? 11 : mx > dcx + 50 ? 1 : 0;                    // it looks toward the pointer
       } else {
         const k = Math.min(1, (1 - Math.pow(0.0001, dt / 1000)) * 2.2);       // a step behind the mouse
-        x += (mx - x) * k; y += (my - y) * k; s = small; frame = 0;
+        x += (mx - x) * k; y += (my - y) * k; s = small;
+      }
+      vx = vx * 0.8 + (mx - prevMx) * 0.2; if (Math.abs(mx - prevMx) > 0.5) movedAt = now; prevMx = mx;
+      // Left alone as the pointer (over plain space), after a little while it dances: a hop and a rock, a look right
+      // and left, a double bounce, a spin with a hop, a sway, a rest; then again. A solid character: it turns and
+      // rocks, never changes shape, and stays round the pointer. Any move, click or scroll stops it.
+      let rot = 0, dy = 0;
+      const idle = now - movedAt, dancing = seen && mode === "pointer" && !fly && !spin && hover === "default" && idle > 2500;
+      if (dancing) {
+        const u = (idle - 2500) % 3200, q = (a: number, z: number) => (u - a) / (z - a);
+        if (u < 360) { dy = -7 * Math.sin(Math.PI * q(0, 360)); rot = 8 * Math.sin(2 * Math.PI * q(0, 360)); frame = 0; }
+        else if (u < 960) frame = LOOK[Math.min(LOOK.length - 1, Math.floor((u - 360) / 60))];
+        else if (u < 1320) { const k = q(960, 1320); dy = -5 * Math.abs(Math.sin(2 * Math.PI * k)); rot = -6 * Math.sin(2 * Math.PI * k); frame = 0; }
+        else if (u < 1800) { frame = Math.floor((u - 1320) / 40) % FRAMES; dy = -6 * Math.sin(Math.PI * q(1320, 1800)); }
+        else if (u < 2400) { rot = 7 * Math.sin(2 * Math.PI * q(1800, 2400)); frame = 0; }
+        else frame = 0;
+      }
+      if (!fly && !spin && !dancing) {
+        // Looking for something it turns side on, toward where it is going (home: toward the pointer); at rest it
+        // turns back to face the visitor. One picture at a time, so it turns rather than jumps.
+        const want = mode === "home" ? (mx < dcx - 50 ? 10 : mx > dcx + 50 ? 2 : 0) : now - movedAt < 450 && Math.abs(vx) > 0.4 ? (vx > 0 ? 2 : 10) : 0;
+        if (frame !== want && now - stepAt > 45) { frame = steps(frame, want, 1); stepAt = now; }
       }
       if (spin && !fly) {
         // A click: one full turn; in the hero's empty space it then turns its eye the spray's way, sprays, turns back.
@@ -144,12 +181,13 @@ export function CharacterCursor() {
       }
       const pointing = mode === "pointer" && !fly;
       if (pointing && (hover === "link" || hover === "view") && now >= nextRipple) { ripple(x, y, (w * s) / 2 + 2); nextRipple = now + 900; }
-      ch.style.transform = `translate3d(${x - w / 2}px, ${y - w / 2}px, 0) scale(${s})`;
+      ch.style.transform = `translate3d(${x - w / 2}px, ${y - w / 2 + dy}px, 0) scale(${s}) rotate(${rot}deg)`;
       strip.style.transform = `translateX(${(-frame * 100) / FRAMES}%)`;
       tag.style.transform = `translate3d(${x + (w * s) / 2 + 10}px, ${y - 13}px, 0)`;
       dot.style.transform = `translate3d(${mx}px, ${my}px, 0)`;
       el.toggleAttribute("data-view", pointing && hover === "view");
       el.toggleAttribute("data-dot", seen && (mode === "home" || fly?.to === "home"));
+      el.toggleAttribute("data-home", mode === "home" || fly?.to === "home");
     };
 
     const setHover = (h: Hover) => {
@@ -168,6 +206,7 @@ export function CharacterCursor() {
     };
     let pending = 0;
     const refresh = () => {
+      movedAt = performance.now();                                           // scrolling: not idle
       if (!seen || pending) return;
       pending = requestAnimationFrame(() => { pending = 0; setHover(hoverFor(document.elementFromPoint(mx, my))); });
     };
@@ -179,6 +218,7 @@ export function CharacterCursor() {
       const dir = SPRAYS[sprayN % SPRAYS.length];
       if (empty) sprayN++;
       spin = { t0: performance.now(), face: empty ? facing(dir[0]) : null, dir, cx: e.clientX, cy: e.clientY, fired: false };
+      movedAt = performance.now();
     };
 
     raf = requestAnimationFrame(loop);
