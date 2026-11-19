@@ -332,39 +332,39 @@ if(MOTION)(()=>{
   else if(T==='One partner')words.forEach((s,i)=>rise(s,i<2?i*.05-.06:BEAT+(i-2)*.05,80,.18));
   else if(T.startsWith('Logo')){
     // Lucky (19 Nov): no hold on the big logo; it pulls back the whole time, from large to its own size on the last
-    // hit. The character starts close to us, facing us, turns half round (away from us) and jets into the O like its
-    // pass through the grid, its trail behind it; it goes through, rises behind the ring, turns the rest of the way
-    // round to face us as it comes out over the top, and settles in its place on the hit. Then it hops once, reads the
-    // call (left, then right), looks back at us, blinks and hovers.
+    // hit. The character starts close to us, facing us, turns half round (away from us), then jets into the O, slow at
+    // first and then very fast ("snappy ... slow to super fast"), its trail behind it. Through the O it snaps up to its
+    // place on top on the second beat ("super snappy and fast to settle to top"), overshooting a little and turning
+    // back to us in the same snap, and sits there, following the logo down as it settles. On the hit it hops once,
+    // then reads the call (left, then right), looks back at us, blinks and hovers.
     const H=LOGO_IN,L=window.LOGO,lg=f.querySelector('.logo'),u=800/L.vb[0],OX=560+L.o.x*u,OY=470+L.o.y*u;
-    const k=260/720,X=830+359.5*k,Y=150+357*k,D=497*k,S0=3.6,T1=.4,tC=.66,tA=1.28;   // T1: turned away, it jets; tC: through the O; tA: top of its arc
+    const k=260/720,X=830+359.5*k,Y=150+357*k,D=497*k,S0=3.6,T1=.4,tC=.66,tS=2*BEAT;   // T1: turned away, it jets; tC: through the O; tS: in its place
     const sc=t=>{const p=clamp(t/H);return Math.exp(Math.log(S0)*(1-(.5*p+2*p*p-1.5*p*p*p)))};   // eases to a stop on the hit
     const at=(s,px,py)=>[OX+(560+px*u-OX)*s,OY+(470+py*u-OY)*s];                    // a logo point on screen at size s
     const top=t=>at(sc(t),0,0)[1];                                                   // the top of the logo on screen
-    const herm=(a,va,b,vb,T,q)=>{const q2=q*q,q3=q2*q;return(2*q3-3*q2+1)*a+(q3-2*q2+q)*T*va+(-2*q3+3*q2)*b+(q3-q2)*T*vb};
-    // Close to us and low; it leans back a little as it turns away, then jets straight at the O: slow, then very fast
-    // (Lucky: "snappy ... slow to super fast"; 1/size grows with g^J), a little smaller than the O's opening as it goes
-    // through. Its trail shows as it picks up speed and fades as it reaches the O. Through, it shoots up at that speed
-    // and slows to the top of its arc (ease-out), turning back to us, then drops onto its place on the hit.
-    const D0=1150,D1=1240,P0=[880,720],Dt=.8*2*L.hole.r*u*sc(tC),[HX,HY]=at(sc(tC),L.hole.x,L.hole.y);
-    const J=4,vx=.25*J*(HX-P0[0])/(tC-T1),slope=-1,yA=Y-100,up=q=>(1-Math.pow(2,-10*q))/(1-Math.pow(2,-10));   // J: how hard it speeds up; up: the rise after the O
+    const back=q=>{const c=1.1;q=clamp(q)-1;return 1+(c+1)*q*q*q+c*q*q};             // fast out, a little past, back
+    // Close to us and low; it leans back a little as it turns away, then jets straight at the O (1/size grows with
+    // g^J), a little smaller than the O's opening as it goes through. Its trail shows as it picks up speed and fades
+    // as it reaches the O.
+    const D0=1150,D1=1240,P0=[880,720],J=4,Dt=.8*2*L.hole.r*u*sc(tC),[HX,HY]=at(sc(tC),L.hole.x,L.hole.y);
     const trailA=Math.atan2(P0[1]-HY,P0[0]-HX)*180/Math.PI-180;                      // its trail points back the way it came
+    const yOf=t=>Y+top(t)-470;                                                       // in its place: as high above the logo's top as at the end
     const flight=t=>{
-      if(t<T1){const q=io(t/T1);return{x:P0[0],y:P0[1],d:D0+(D1-D0)*q,turn:Math.PI*q,rot:0,jet:0,q:0}}
-      if(t<tC){const g=(t-T1)/(tC-T1),e=Math.pow(g,J),f=1-clamp((g-.85)/.15);return{x:P0[0]+(HX-P0[0])*e,y:P0[1]+(HY-P0[1])*e,d:1/((1-e)/D1+e/Dt),turn:Math.PI,rot:0,jet:.9*clamp(1.5*g*g*g)*f*f*(3-2*f),q:0}}
-      const q=(t-tC)/(H-tC),x=herm(HX,vx,X,0,H-tC,q),d=Math.exp(herm(Math.log(Dt),slope,Math.log(D),0,H-tC,q)),w=clamp((t-tC-.15)/.55);
-      const y=t<tA?HY+(yA-HY)*up((t-tC)/(tA-tC)):yA+(Y-yA)*Math.pow((t-tA)/(H-tA),2);
-      return{x,y,d,turn:Math.PI*(1+w*w*(3-2*w)),rot:-14*Math.sin(Math.PI*q),jet:0,q}};
+      if(t<T1){const q=io(t/T1);return{x:P0[0],y:P0[1],d:D0+(D1-D0)*q,turn:Math.PI*q,rot:0,jet:0}}
+      if(t<tC){const g=(t-T1)/(tC-T1),e=Math.pow(g,J),f=1-clamp((g-.85)/.15);return{x:P0[0]+(HX-P0[0])*e,y:P0[1]+(HY-P0[1])*e,d:1/((1-e)/D1+e/Dt),turn:Math.PI,rot:0,jet:.9*clamp(1.5*g*g*g)*f*f*(3-2*f)}}
+      if(t<tS){const q=(t-tC)/(tS-tC),w=io((t-tC-.02)/(tS-tC-.02));
+        return{x:HX+(X-HX)*ease(q),y:HY+(yOf(tS)-HY)*back(q),d:Dt+(D-Dt)*ease(q),turn:Math.PI*(1+w),rot:-14*Math.sin(Math.PI*clamp(q)),jet:0}}
+      return{x:X,y:yOf(t),d:D,turn:0,rot:rock(t-tS,1,8),jet:0,set:1}};
     // Lucky: "when it pass through zoom it little bit and when it start settle back to normal full screen": the camera
-    // pushes in a little on the O as it goes through, holds, and eases back out as it comes down to settle.
-    const Z=t=>1+.2*(io((t-.48)/.22)-io((t-1.05)/.55));
+    // pushes in a little on the O as it goes through and eases back out as it settles.
+    const Z=t=>1+.2*(io((t-.48)/.22)-io((t-.72)/.45));
     add(t=>{f.style.transformOrigin=`${HX}px ${HY}px`;f.style.transform=`scale(${Z(t)})`});
     words.forEach((s,i)=>rise(s,H+2*BEAT+i*.06,40,.2));
     add(t=>{const s=sc(t),[x,y]=at(s,0,0),p=flight(Math.min(t,H));Object.assign(lg.style,{left:x+'px',top:y+'px',width:800*s+'px',height:800*s*L.vb[1]/L.vb[0]+'px',
-      opacity:clamp(.2+t/.1),zIndex:t>=tC&&t<H&&p.y+p.d/2>top(t)-1?10:1})});   // over the character only while it is behind the logo
+      opacity:clamp(.2+t/.1),zIndex:t>=tC&&t<tS&&p.y+p.d/2>top(t)-1?10:1})});   // over the character only while it is behind the logo
     const land=hops([[H,X,Y],[H+.2,X,Y]],34,0,D);
     add(t=>{
-      if(t<H){const p=flight(t);return ball.at(p.x,p.y,p.d,{rot:p.rot,turn:p.turn,res:t<tC?1:1.2,floor:t>tA?Y+D/2:null,
+      if(t<H){const p=flight(t);return ball.at(p.x,p.y,p.d,{rot:p.rot,turn:p.turn,res:t<tC?1:1.2,floor:p.set?p.y+p.d/2:null,
         trail:p.jet,trailA,trailW:760,trailH:p.d/SPH*1.5+380})}
       const p=land(t),bob=t>H+1.8?6*(1-Math.cos((t-H-1.8)*7)):0,r=t-H,pose=r<1.02?'front':r<1.5?'down':'front';
       ball.at(p.x,p.y-bob,D,{rot:p.rot,pose,mirror:r>=1.02&&r<1.26,blink:blinkPh(t,H+1.75,H+2.2),floor:Y+D/2})})}

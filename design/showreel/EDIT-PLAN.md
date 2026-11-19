@@ -239,11 +239,12 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   logo let it rotate and settle to front view." Now the logo pulls back the whole time, from 3.6 times its size to its
   own size on the last hit, moving from the first frame. The character starts close to us, facing us, turns half round
   (away from us) and jets into the O with its trail, slow at first, then very fast ("make it snappy movement when it
-  pass through. Like slow to super fast. Now it's flat movement"); it goes through, shoots up at that speed and slows
-  to the top of its arc, turns the rest of the way round to face us, and settles in its place on the hit. The
-  camera pushes in a little on the O as it goes through and eases back to the full frame as it comes down to settle
-  ("when it pass through zoom it little bit and when it start settle back to normal full screen") (the turn after
-  landing is gone; it hops, reads the call, blinks and hovers as before). Preview of the close only, for approval:
+  pass through. Like slow to super fast. Now it's flat movement"); through the O it snaps up to its place on top
+  on the second beat, a little past and back, turning the rest of the way round to face us in the same snap ("at the
+  end character settle should be super snappy and fast to settle to top"), and sits there, following the logo down as
+  it settles; it hops on the hit. The camera pushes in a little on the O as it goes through and eases back to the full
+  frame as it settles ("when it pass through zoom it little bit and when it start settle back to normal full screen") (the turn after
+  landing is gone; on the hit it hops, then reads the call, blinks and hovers as before). Preview of the close only, for approval:
   `out/logo-ending-preview.mp4` (`build/logo_preview.py FRAMES_DIR OUT`). After his yes it goes into the website film
   and the share cut.
 - The logo keeps its own shape; only at the very end (cut 11, as Lucky asked) is it shown larger, then settles at
