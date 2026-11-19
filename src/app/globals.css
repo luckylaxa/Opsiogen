@@ -380,6 +380,31 @@
   }
 }
 
+/* About photo cards (ShortText in TextSections.tsx): the name and designation rise in
+   on hover, or while the card's link has focus. Touch screens can't hover, so there
+   they always show. Visitors who prefer less motion get them at once (rule above). */
+@media (hover: hover) {
+  .person-card__tag {
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  .person-card__tag p {
+    translate: 0 14px;
+    transition: translate 0.6s var(--ease-out-soft);
+  }
+  .person-card:hover .person-card__tag,
+  .person-card:focus-within .person-card__tag {
+    opacity: 1;
+  }
+  .person-card:hover .person-card__tag p,
+  .person-card:focus-within .person-card__tag p {
+    translate: none;
+  }
+  .person-card:hover .person-card__tag p + p {
+    transition-delay: 0.06s;
+  }
+}
+
 /* The page under the project pop-up stays still. */
 html.project-open {
   overflow: hidden;

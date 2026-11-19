@@ -41,7 +41,10 @@ export const LIST_IMAGES: Record<string, Img[]> = {
   ],
 };
 
-/** A photo card that can name its person: the name, designation and LinkedIn link show over the photo's foot. */
+/**
+ * A photo card that can name its person: the name, designation and LinkedIn link show over the photo's foot,
+ * on hover where the screen has a mouse, always on touch screens.
+ */
 export type CardPhoto = Img & { name?: string; role?: string; linkedin?: string };
 
 /**
@@ -50,8 +53,24 @@ export type CardPhoto = Img & { name?: string; role?: string; linkedin?: string 
  */
 export const CARD_IMAGES: Record<string, CardPhoto[]> = {
   about: [
-    { url: "/about/portrait-1.jpg", width: 706, height: 942, alt: "A man in a black jacket and sunglasses on a green sofa, against a warm wood wall", hotspot: { x: 0.84, y: 0.3 } },
-    { url: "/about/portrait-2.jpg", width: 926, height: 1234, alt: "A man in a cream knitted shirt holding his sunglasses, against a warm wood wall", hotspot: { x: 0.5, y: 0.3 } },
+    {
+      url: "/about/portrait-1.jpg",
+      width: 706,
+      height: 942,
+      alt: "A man in a black jacket and sunglasses on a green sofa, against a warm wood wall",
+      hotspot: { x: 0.84, y: 0.3 },
+      name: "Lucky Laxadhish",
+      role: "Founder & CEO",
+    },
+    {
+      url: "/about/portrait-2.jpg",
+      width: 926,
+      height: 1234,
+      alt: "A man in a cream knitted shirt holding his sunglasses, against a warm wood wall",
+      hotspot: { x: 0.5, y: 0.3 },
+      name: "Ajmal Sheed",
+      role: "Founder & COO",
+    },
   ],
 };
 

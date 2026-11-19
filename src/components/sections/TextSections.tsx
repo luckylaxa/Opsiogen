@@ -37,34 +37,39 @@ export function ShortText({ section }: { section: ShortTextSection }) {
       <div className="px-gutter">
         <div data-reveal className="grid gap-gap lg:grid-cols-2">
           <div className={cn("grid gap-gap", photos.length > 1 ? "grid-cols-2" : "grid-cols-1")}>
-            {photos.map((photo) => (
-              <div
-                key={photo.url}
-                className={cn(
-                  "relative overflow-hidden rounded-card bg-coal lg:aspect-auto lg:min-h-[clamp(460px,44vw,760px)]",
-                  photos.length > 1 ? "aspect-[3/4]" : "aspect-[4/3]",
-                )}
-              >
-                <Media image={photo} sizes={photos.length > 1 ? "(min-width: 1024px) 33vw, 50vw" : "(min-width: 1024px) 50vw, 100vw"} lowPriority />
-                {(photo.name || photo.linkedin) && (
-                  <div className="on-dark absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 bg-[linear-gradient(0deg,color-mix(in_srgb,var(--color-coal)_94%,transparent)_0%,color-mix(in_srgb,var(--color-coal)_70%,transparent)_45%,transparent_100%)] px-[clamp(14px,1.6vw,28px)] pt-[clamp(56px,7vw,120px)] pb-[clamp(14px,1.6vw,28px)] text-white">
-                    <div className="min-w-0">
-                      {photo.name && (
-                        <p className="text-[length:clamp(16px,calc(0.7vw+13px),26px)] leading-[1.1] font-semibold tracking-[-0.02em]">{photo.name}</p>
+            {photos.map((photo) => {
+              const named = Boolean(photo.name || photo.linkedin);
+              return (
+                // A named photo is a figure with its caption: the name and designation rise in on hover (person-card in globals.css).
+                <figure
+                  key={photo.url}
+                  className={cn(
+                    "relative overflow-hidden rounded-card bg-coal lg:aspect-auto lg:min-h-[clamp(460px,44vw,760px)]",
+                    photos.length > 1 ? "aspect-[3/4]" : "aspect-[4/3]",
+                    named && "person-card",
+                  )}
+                >
+                  <Media image={photo} sizes={photos.length > 1 ? "(min-width: 1024px) 33vw, 50vw" : "(min-width: 1024px) 50vw, 100vw"} lowPriority />
+                  {named && (
+                    <figcaption className="person-card__tag on-dark absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 bg-[linear-gradient(0deg,color-mix(in_srgb,var(--color-coal)_94%,transparent)_0%,color-mix(in_srgb,var(--color-coal)_70%,transparent)_45%,transparent_100%)] px-[clamp(14px,1.6vw,28px)] pt-[clamp(44px,7vw,120px)] pb-[clamp(14px,1.6vw,28px)] text-white">
+                      <div className="min-w-0">
+                        {photo.name && (
+                          <p className="text-[length:clamp(16px,calc(0.7vw+13px),26px)] leading-[1.1] font-semibold tracking-[-0.02em]">{photo.name}</p>
+                        )}
+                        {photo.role && <p className="mt-1 text-small text-white/70">{photo.role}</p>}
+                      </div>
+                      {photo.linkedin && (
+                        <SocialLinks
+                          onDark
+                          className="shrink-0"
+                          items={[{ label: photo.name ? `${photo.name} on LinkedIn` : "LinkedIn", href: photo.linkedin }]}
+                        />
                       )}
-                      {photo.role && <p className="mt-1 text-small text-white/70">{photo.role}</p>}
-                    </div>
-                    {photo.linkedin && (
-                      <SocialLinks
-                        onDark
-                        className="shrink-0"
-                        items={[{ label: photo.name ? `${photo.name} on LinkedIn` : "LinkedIn", href: photo.linkedin }]}
-                      />
-                    )}
-                  </div>
-                )}
-              </div>
-            ))}
+                    </figcaption>
+                  )}
+                </figure>
+              );
+            })}
           </div>
           <div className="on-dark flex flex-col justify-center rounded-card bg-coal p-[clamp(24px,calc(2.9vw+13px),80px)] text-white">
             {section.label && <p className="text-base text-white/55">{section.label}</p>}
