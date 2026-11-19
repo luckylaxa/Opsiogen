@@ -193,9 +193,9 @@ The motion language is in `design/showreel/EDIT-PLAN.md` ("Cut 7"). Everything b
 1. The 60-second film with sound.
 2. A short silent loop for the Work page, so the page stays fast.
 3. Optional vertical cut for social, only if asked.
-4. The share cut (19 Nov): the film with a client logo beat at the start, right after "You bring the idea.", for
-   sharing outside the site (see EDIT-PLAN.md): `SHARE=1 node build/frames.cjs DIR`, then
-   `SHARE=1 python3 build/film.py DIR OUT`. The website keeps the cut without it.
+4. The film with the client logo beat at the start, right after "You bring the idea." (see EDIT-PLAN.md):
+   `SHARE=1 node build/frames.cjs DIR`, then `SHARE=1 python3 build/film.py DIR OUT`. Since cut 13 it is the one
+   version, on the site and for sharing (Lucky: "use 62 sec version only").
 
 ## Publishing
 
@@ -203,7 +203,8 @@ The reel is the `showreel` section of the Home page in `src/content/seed-data.ts
 the Home hero, and the Work page opens with the featured project, Oh My Glam, instead):
 `/work/showreel.mp4`, `/work/showreel.webm` and the poster `/work/showreel.jpg` (1920 x 1080, with
 alt text). Since 18 Nov (Lucky: "for time being you can put this video in website") it is the whole
-showreel with its music (now cut 12): the card plays it muted and shows a sound button and a full-view button
+showreel with its music (now cut 13, the 62 s version with the opening logo beat: Lucky, 19 Nov, "use 62 sec
+version only"): the card plays it muted and shows a sound button and a full-view button
 (`sound: true`; full view fills the screen with the film and its sound and the browser's own controls), and is
 16:9 on phones too, so no edge of the film is cut. Web copies: H.264 CRF 26 with AAC (about 19 MB)
 and VP9 CRF 36 with Opus (about 20 MB). The poster is the burst grid with our character facing us.

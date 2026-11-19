@@ -263,8 +263,9 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   comes right after the beach (2 beats) and the wall of websites after it (1 beat). The share cut is the same film with
   the opening logo beat (12 beats) after "You bring the idea.", built whole by film.py:
   `SHARE=1 node build/frames.cjs DIR` then `SHARE=1 python3 build/film.py DIR OUT` (the website cut: the same without
-  SHARE). Out: `out/opsiogen-showreel-v13.mp4` (website; its web copies are on Home) and
-  `out/opsiogen-showreel-v13-share.mp4` (for sharing).
+  SHARE). Out: `out/opsiogen-showreel-v13.mp4` (57 s, without the logo beat) and
+  `out/opsiogen-showreel-v13-share.mp4` (62 s). Lucky, asked about the two: "use 62 sec version only", so the 62 s
+  film is the one everywhere, its web copies on Home too (the logo strip under it there is fine by him).
 - The logo keeps its own shape; only at the very end (cut 11, as Lucky asked) is it shown larger, then settles at
   its own size. Otherwise it only fades in. Nothing else is shown larger than its own size.
 
