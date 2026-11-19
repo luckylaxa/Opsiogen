@@ -2,6 +2,7 @@ import type { PostCard } from "@/lib/types";
 import { POST_CATEGORIES } from "@/lib/types";
 import { BLOG } from "@/content/blog";
 import { GiantHeading } from "@/components/ui/Headings";
+import { HeroGlow } from "@/components/sections/HeroGlow";
 import { CategoryFilter } from "./CategoryFilter";
 import { FeaturedPost, PostTile } from "./PostCards";
 
@@ -14,14 +15,18 @@ export function BlogIndex({ posts, notice }: { posts: PostCard[]; notice?: React
   const categories = POST_CATEGORIES.filter((c) => posts.some((p) => p.category === c));
   return (
     <>
-      <GiantHeading
-        as="h1"
-        label={BLOG.label}
-        labelStyle="pill"
-        heading={BLOG.heading}
-        text={BLOG.text}
-        className="pb-[clamp(40px,calc(2.6vw+30px),88px)] pt-[clamp(48px,calc(3.4vw+35px),110px)]"
-      />
+      {/* The inner pages' light behind the title, as on Work, Services and About. */}
+      <div className="relative isolate">
+        <HeroGlow short />
+        <GiantHeading
+          as="h1"
+          label={BLOG.label}
+          labelStyle="pill"
+          heading={BLOG.heading}
+          text={BLOG.text}
+          className="pb-[clamp(40px,calc(2.6vw+30px),88px)] pt-[clamp(48px,calc(3.4vw+35px),110px)]"
+        />
+      </div>
       {notice}
       <div id="posts" className="px-gutter">
         {categories.length > 1 && (

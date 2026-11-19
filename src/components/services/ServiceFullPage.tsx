@@ -1,6 +1,7 @@
 import type { ProcessSection, ProjectCard, Service, SiteSettings } from "@/lib/types";
 import { GROUP_LABELS } from "@/lib/utils";
 import { GiantHeading } from "@/components/ui/Headings";
+import { HeroGlow } from "@/components/sections/HeroGlow";
 import { ButtonLink } from "@/components/ui/Button";
 import { Accordion } from "@/components/ui/Accordion";
 import { BigCard } from "@/components/ui/BigCard";
@@ -46,13 +47,18 @@ export function ServiceFullPage({ service, settings, work }: Props) {
   return (
     <>
       {/* 1. Hero: giant title, one line, a button, then the service's thumbnail */}
-      <section data-band className="-mt-[var(--header-h)] bg-band pb-[clamp(40px,calc(2.3vw+31.4px),76px)] pt-[calc(var(--header-h)+clamp(40px,calc(1.57vw+34px),64px))]">
-        <GiantHeading as="h1" label={GROUP_LABELS[service.group]} labelStyle="pill" heading={service.name} text={service.tagline}>
-          <ButtonLink href={contact} className="mt-[clamp(28px,calc(1.7vw+21.6px),54px)]">
-            Get a quote
-          </ButtonLink>
-          {service.note && <p className="mt-5 text-small text-mute">{service.note}</p>}
-        </GiantHeading>
+      {/* On the page's own white or black, with the inner pages' light behind the heading, like Services and About
+          (Lucky, 19 Nov: the service pages were missing it). */}
+      <section data-band className="-mt-[var(--header-h)] bg-page pb-[clamp(40px,calc(2.3vw+31.4px),76px)] pt-[calc(var(--header-h)+clamp(40px,calc(1.57vw+34px),64px))]">
+        <div className="relative isolate">
+          <HeroGlow short />
+          <GiantHeading as="h1" label={GROUP_LABELS[service.group]} labelStyle="pill" heading={service.name} text={service.tagline}>
+            <ButtonLink href={contact} className="mt-[clamp(28px,calc(1.7vw+21.6px),54px)]">
+              Get a quote
+            </ButtonLink>
+            {service.note && <p className="mt-5 text-small text-mute">{service.note}</p>}
+          </GiantHeading>
+        </div>
         {service.card?.url ? (
           // The service's own thumbnail, as on the Services page: 4:3 on phones, wider from tablets up.
           <div className="relative mx-edge mt-[clamp(48px,calc(2.88vw+37.2px),92px)] aspect-[4/3] overflow-hidden rounded-card bg-night md:aspect-[2/1]">

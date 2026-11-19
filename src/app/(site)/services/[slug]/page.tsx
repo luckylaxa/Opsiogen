@@ -5,6 +5,7 @@ import { getComparison, getProcess, getProjects, getService, getServices, getSet
 import { buildMetadata } from "@/lib/metadata";
 import { cn, GROUP_LABELS } from "@/lib/utils";
 import { GiantHeading, Label } from "@/components/ui/Headings";
+import { HeroGlow } from "@/components/sections/HeroGlow";
 import { ButtonLink, buttonClass } from "@/components/ui/Button";
 import { Accordion } from "@/components/ui/Accordion";
 import { ArrowRight } from "@/components/ui/Icons";
@@ -102,10 +103,12 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
       <section
         data-band
         className={cn(
-          "-mt-[var(--header-h)] bg-band pt-[calc(var(--header-h)+clamp(40px,calc(1.57vw+34px),64px))]",
+          "-mt-[var(--header-h)] bg-page pt-[calc(var(--header-h)+clamp(40px,calc(1.57vw+34px),64px))]",
           work.length ? "pb-[clamp(40px,calc(2.3vw+31.4px),76px)]" : "pb-[clamp(72px,calc(5.24vw+52.3px),132px)]",
         )}
       >
+        <div className="relative isolate">
+        <HeroGlow short />
         <GiantHeading as="h1" label={GROUP_LABELS[service.group]} labelStyle="pill" heading={service.name} text={service.tagline}>
           <p className="mt-[clamp(20px,calc(1.3vw+15px),40px)] max-w-[60ch] text-base text-ink-2 text-pretty">{service.description}</p>
           <div className="mt-[clamp(28px,calc(1.7vw+21.6px),54px)] flex flex-wrap justify-center gap-3">
@@ -118,6 +121,7 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
           </div>
           {service.note && <p className="mt-5 text-small text-mute">{service.note}</p>}
         </GiantHeading>
+        </div>
         {work[0] && (
           <div className="mt-[clamp(48px,calc(2.88vw+37.2px),92px)]">
             <FeaturedProject project={work[0]} />

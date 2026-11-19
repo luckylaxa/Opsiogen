@@ -26,6 +26,24 @@ const SHORT_MASK = "linear-gradient(to bottom, transparent 0%, #000 22%, #000 55
 const vars = (p: string[]) => Object.fromEntries(p.map((c, i) => [`--c${i + 1}`, c])) as React.CSSProperties;
 
 /**
+ * The inner pages' light moves like slow liquid (Lucky, 19 Nov: "make gradient moving like liquid motion. very very
+ * slow motion"): each pool is an oval that drifts, turns and swells on its own long loop, out of step with the others,
+ * so the colours flow past each other. Only the individual transform properties move (no repaint), and the pointer
+ * parallax (`transform`) still adds on top.
+ */
+const LIQUID = (i: number): Keyframe[] => {
+  const s = i % 2 ? -1 : 1;
+  return [
+    { translate: "0 0", rotate: "0deg", scale: "1" },
+    { translate: `${9 * s}% -9%`, rotate: `${32 * s}deg`, scale: "1.16" },
+    { translate: `${-7 * s}% -3%`, rotate: `${-14 * s}deg`, scale: "0.9" },
+    { translate: `${4 * s}% 5%`, rotate: `${18 * s}deg`, scale: "1.08" },
+    { translate: "0 0", rotate: "0deg", scale: "1" },
+  ];
+};
+const LIQUID_SECONDS = [62, 74, 68, 80];
+
+/**
  * The Home hero's background light: soft pools of colour rising from the bottom of the first screen, on the
  * page's own white or black, and thinning out behind the section that follows. They lean a little toward the pointer, and each press on the character
  * (a `hero:pulse` event) sends a ring of new colour out from it and turns the pools to the next colour set.
@@ -33,7 +51,7 @@ const vars = (p: string[]) => Object.fromEntries(p.map((c, i) => [`--c${i + 1}`,
  */
 export function HeroGlow({ short = false }: {
   /**
-   * For a page top shorter than the screen, with no character (Services, About, Work, Contact): the light
+   * For a page top shorter than the screen, with no character (Services and each service, About, Work, Contact, Blog): the light
    * sits along the bottom of its own box, and a click on that box sends the colour ring out from the pointer.
    */
   short?: boolean;
@@ -49,9 +67,10 @@ export function HeroGlow({ short = false }: {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let turn = 0, front = 0, raf = 0, tx = 0, ty = 0, x = 0, y = 0;
 
-    // A slow drift, so the light is never quite still.
-    const drifts = reduce ? [] : blobs.map((b, i) =>
-      b.animate([{ translate: "0 0" }, { translate: `${i % 2 ? -4 : 4}% -6%` }, { translate: "0 0" }], { duration: Number(b.dataset.drift) * 1000, iterations: Infinity, easing: "ease-in-out" }));
+    // A slow drift, so the light is never quite still; on the inner pages a slower, liquid one (LIQUID).
+    const drifts = reduce ? [] : blobs.map((b, i) => short
+      ? b.animate(LIQUID(i), { duration: LIQUID_SECONDS[i % 4] * 1000, delay: -i * 11000, iterations: Infinity, easing: "ease-in-out" })
+      : b.animate([{ translate: "0 0" }, { translate: `${i % 2 ? -4 : 4}% -6%` }, { translate: "0 0" }], { duration: Number(b.dataset.drift) * 1000, iterations: Infinity, easing: "ease-in-out" }));
 
     const onPulse = (e: Event) => {
       const at = (e as CustomEvent<{ x: number; y: number }>).detail;
@@ -114,10 +133,11 @@ export function HeroGlow({ short = false }: {
               data-blob
               data-drift={b.drift}
               className={cn(
-                "absolute aspect-square rounded-full will-change-transform",
-                // Softer on the inner pages than on Home. On black only a faint wash of colour (Lucky, 18 Nov: the
-                // dark theme matters most, and the light there was too strong); the light theme is as it was.
-                short ? "opacity-50 dark:opacity-[0.12]" : "opacity-90 sm:max-md:mb-[30svh] dark:opacity-[0.2]",
+                "absolute rounded-full will-change-transform",
+                // Home: as it was (on black only a faint wash, Lucky, 18 Nov). The inner pages: very, very light
+                // (Lucky, 19 Nov: "very very light. currently its very high"), and ovals, so their slow turn reads as
+                // flowing liquid.
+                short ? "aspect-[3/2] opacity-[0.18] dark:opacity-[0.07]" : "aspect-square opacity-90 sm:max-md:mb-[30svh] dark:opacity-[0.2]",
               )}
               style={{
                 left: b.left, bottom: b.bottom, width: b.size,
