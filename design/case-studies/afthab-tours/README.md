@@ -40,4 +40,6 @@ is `card.html` (`card.cjs`), saved as `public/cards/afthab-tours.jpg` and `aftha
 The phone squares 06, 08 and 11 placed cut-outs of the wide frames in boxes of another shape, so they were squeezed
 sideways (a phone looked far too tall). 06 and 11 are now built in `square.html` from the creatives themselves, 08
 keeps its cut-out at its own shape. Stories in phones are shown whole (they were cropped at the sides, cutting
-"Book on WhatsApp" and the destination names), in story phones whose screen is 1:2, in both the wide and square frames.
+"Book on WhatsApp" and the destination names). Then (Lucky: "Not perfect mockup. Glitches") the black bands above and
+below each story and the camera cut-out over its edge looked broken, so story phones now have a 9:16 screen, the
+story's own shape: it fills the screen edge to edge, nothing cut, in both the wide and square frames.
