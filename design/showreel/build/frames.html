@@ -337,21 +337,23 @@ if(MOTION)(()=>{
     // round to face us as it comes out over the top, and settles in its place on the hit. Then it hops once, reads the
     // call (left, then right), looks back at us, blinks and hovers.
     const H=LOGO_IN,L=window.LOGO,lg=f.querySelector('.logo'),u=800/L.vb[0],OX=560+L.o.x*u,OY=470+L.o.y*u;
-    const k=260/720,X=830+359.5*k,Y=150+357*k,D=497*k,S0=3.6,T1=.36,tC=.62,tA=1.28;   // T1: turned away, it jets; tC: through the O; tA: top of its arc
+    const k=260/720,X=830+359.5*k,Y=150+357*k,D=497*k,S0=3.6,T1=.4,tC=.66,tA=1.28;   // T1: turned away, it jets; tC: through the O; tA: top of its arc
     const sc=t=>{const p=clamp(t/H);return Math.exp(Math.log(S0)*(1-(.5*p+2*p*p-1.5*p*p*p)))};   // eases to a stop on the hit
     const at=(s,px,py)=>[OX+(560+px*u-OX)*s,OY+(470+py*u-OY)*s];                    // a logo point on screen at size s
     const top=t=>at(sc(t),0,0)[1];                                                   // the top of the logo on screen
     const herm=(a,va,b,vb,T,q)=>{const q2=q*q,q3=q2*q;return(2*q3-3*q2+1)*a+(q3-2*q2+q)*T*va+(-2*q3+3*q2)*b+(q3-q2)*T*vb};
-    // Close to us and low; it leans back a little as it turns away, then jets straight at the O, speeding up (1/size
-    // grows with g^J), a little smaller than the O's opening as it goes through; its trail fades as it reaches the O.
+    // Close to us and low; it leans back a little as it turns away, then jets straight at the O: slow, then very fast
+    // (Lucky: "snappy ... slow to super fast"; 1/size grows with g^J), a little smaller than the O's opening as it goes
+    // through. Its trail shows as it picks up speed and fades as it reaches the O. Through, it shoots up at that speed
+    // and slows to the top of its arc (ease-out), turning back to us, then drops onto its place on the hit.
     const D0=1150,D1=1240,P0=[880,720],Dt=.8*2*L.hole.r*u*sc(tC),[HX,HY]=at(sc(tC),L.hole.x,L.hole.y);
-    const J=1.6,vx=J*(HX-P0[0])/(tC-T1),vy=J*(HY-P0[1])/(tC-T1),slope=-1,yA=Y-100;   // J: it speeds up as it jets (g^J), and keeps that speed through the O
+    const J=4,vx=.25*J*(HX-P0[0])/(tC-T1),slope=-1,yA=Y-100,up=q=>(1-Math.pow(2,-10*q))/(1-Math.pow(2,-10));   // J: how hard it speeds up; up: the rise after the O
     const trailA=Math.atan2(P0[1]-HY,P0[0]-HX)*180/Math.PI-180;                      // its trail points back the way it came
     const flight=t=>{
       if(t<T1){const q=io(t/T1);return{x:P0[0],y:P0[1],d:D0+(D1-D0)*q,turn:Math.PI*q,rot:0,jet:0,q:0}}
-      if(t<tC){const g=(t-T1)/(tC-T1),e=Math.pow(g,J),f=1-clamp((g-.75)/.25);return{x:P0[0]+(HX-P0[0])*e,y:P0[1]+(HY-P0[1])*e,d:1/((1-e)/D1+e/Dt),turn:Math.PI,rot:0,jet:.85*f*f*(3-2*f),q:0}}
+      if(t<tC){const g=(t-T1)/(tC-T1),e=Math.pow(g,J),f=1-clamp((g-.85)/.15);return{x:P0[0]+(HX-P0[0])*e,y:P0[1]+(HY-P0[1])*e,d:1/((1-e)/D1+e/Dt),turn:Math.PI,rot:0,jet:.9*clamp(1.5*g*g*g)*f*f*(3-2*f),q:0}}
       const q=(t-tC)/(H-tC),x=herm(HX,vx,X,0,H-tC,q),d=Math.exp(herm(Math.log(Dt),slope,Math.log(D),0,H-tC,q)),w=clamp((t-tC-.15)/.55);
-      const y=t<tA?herm(HY,vy,yA,0,tA-tC,(t-tC)/(tA-tC)):yA+(Y-yA)*Math.pow((t-tA)/(H-tA),2);
+      const y=t<tA?HY+(yA-HY)*up((t-tC)/(tA-tC)):yA+(Y-yA)*Math.pow((t-tA)/(H-tA),2);
       return{x,y,d,turn:Math.PI*(1+w*w*(3-2*w)),rot:-14*Math.sin(Math.PI*q),jet:0,q}};
     words.forEach((s,i)=>rise(s,H+2*BEAT+i*.06,40,.2));
     add(t=>{const s=sc(t),[x,y]=at(s,0,0),p=flight(Math.min(t,H));Object.assign(lg.style,{left:x+'px',top:y+'px',width:800*s+'px',height:800*s*L.vb[1]/L.vb[0]+'px',
