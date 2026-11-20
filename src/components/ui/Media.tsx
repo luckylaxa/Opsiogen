@@ -1,4 +1,5 @@
 import { getImageProps } from "next/image";
+import { preload } from "react-dom";
 import type { Img } from "@/lib/types";
 import { loaderFor } from "@/lib/sanityImage";
 import { cn } from "@/lib/utils";
@@ -59,6 +60,14 @@ export function Media({ image, sizes, className, priority, eager, lowPriority, f
   if (fill && phone?.url) {
     const wide = props(image.url);
     const narrow = props(phone.url);
+    if (priority) {
+      // React preloads a plain main image by itself, but not one inside <picture> (it can't tell which
+      // source a screen will pick), so phones found it late, in the page body. One hint per screen size,
+      // in <head>: each device fetches only its own version, straight away.
+      const hint = { as: "image" as const, imageSizes: sizes, fetchPriority: "high" as const };
+      preload(narrow.src, { ...hint, imageSrcSet: narrow.srcSet, media: `(max-width: ${phoneBelow - 0.02}px)` });
+      preload(wide.src, { ...hint, imageSrcSet: wide.srcSet, media: `(min-width: ${phoneBelow}px)` });
+    }
     return (
       <picture>
         <source media={`(min-width: ${phoneBelow}px)`} srcSet={wide.srcSet} sizes={sizes} />

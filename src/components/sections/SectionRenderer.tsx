@@ -68,7 +68,9 @@ export async function SectionRenderer({
                 {next._type === "featuredProject" ? (
                   <FeaturedProject project={next.project} priority={!layout.heroFull && !layout.heroImage} />
                 ) : (
-                  <Showreel section={next} />
+                  // Home: the reel's poster is in the first screen (its top edge on computers, all of it on phones,
+                  // where it is the largest thing shown), so it loads first unless the hero has its own image.
+                  <Showreel section={next} priority={!layout.heroImage} />
                 )}
               </Hero>
             </section>,

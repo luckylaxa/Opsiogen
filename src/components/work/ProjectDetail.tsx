@@ -129,8 +129,9 @@ export function ProjectDetail({
         ? {
             label: "Website",
             value: (
-              <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-2">
-                <span className="link-underline">{displayUrl(project.liveUrl)}</span>
+              <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="group inline-flex max-w-full items-center gap-2">
+                {/* A long address may break onto two lines on the narrowest phones rather than push the page sideways. */}
+                <span className="link-underline min-w-0 [overflow-wrap:anywhere]">{displayUrl(project.liveUrl)}</span>
                 <ExternalLink className="size-[1.1em] shrink-0 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 <span className="sr-only">(opens in a new tab)</span>
               </a>

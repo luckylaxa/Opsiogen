@@ -273,15 +273,28 @@ export function HeroCharacter({ className }: { className?: string }) {
       raf = requestAnimationFrame(frame);
     }
 
-    // Wait for the page to finish loading, then for a quiet moment, so the 3D never slows the first screen.
-    const later = () => {
-      const idle = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback;
-      if (idle) idle(() => void start(), { timeout: 2500 }); else setTimeout(() => void start(), 600);
+    // The 3D costs a mid-range phone about half a second of script, so it waits until the page has loaded
+    // and then for the visitor's first move (mouse, touch, scroll or key) or six quiet seconds, whichever
+    // comes first; the still picture stands in until then. It never slows the first screen or the first tap.
+    const KICK = ["pointermove", "pointerdown", "keydown", "scroll", "touchstart"] as const;
+    let wake = 0;
+    const unarm = () => {
+      window.clearTimeout(wake);
+      KICK.forEach((e) => window.removeEventListener(e, kick));
     };
-    if (document.readyState === "complete") later(); else window.addEventListener("load", later, { once: true });
+    function kick() {
+      unarm();
+      const idle = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback;
+      if (idle) idle(() => void start(), { timeout: 1500 }); else setTimeout(() => void start(), 300);
+    }
+    const arm = () => {
+      KICK.forEach((e) => window.addEventListener(e, kick, { passive: true }));
+      wake = window.setTimeout(kick, 6000);
+    };
+    if (document.readyState === "complete") arm(); else window.addEventListener("load", arm, { once: true });
 
     return () => {
-      stop = true; cancelAnimationFrame(raf); cleanup?.();
+      stop = true; cancelAnimationFrame(raf); cleanup?.(); unarm(); window.removeEventListener("load", arm);
       window.removeEventListener("pointermove", onMove); document.documentElement.removeEventListener("pointerleave", onLeave);
       window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", measure);
       el.removeEventListener("pointerdown", noFocusRing); el.removeEventListener("click", greet); window.removeEventListener("click", onPress);

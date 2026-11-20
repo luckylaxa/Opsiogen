@@ -40,7 +40,8 @@ export function Header({
           <ButtonLink href={settings.headerButton.href}>{settings.headerButton.label}</ButtonLink>
         </div>
         <MenuButton className="-mr-2 flex h-11 items-center gap-2 rounded-[var(--radius-btn)] px-2 text-base lg:hidden">
-          <span>Menu</span>
+          {/* Under 360px (small phones, zoomed display) the word would push the bar past the screen edge: icon only, still named "Menu". */}
+          <span className="max-[360px]:sr-only">Menu</span>
           <MenuIcon className="size-6" />
         </MenuButton>
       </div>

@@ -37,7 +37,7 @@ export function ShortText({ section }: { section: ShortTextSection }) {
       <div className="px-gutter">
         <div data-reveal className="grid gap-gap lg:grid-cols-2">
           <div className={cn("grid gap-gap", photos.length > 1 ? "grid-cols-2" : "grid-cols-1")}>
-            {photos.map((photo) => {
+            {photos.map((photo, i) => {
               const named = Boolean(photo.name || photo.linkedin);
               return (
                 // A named photo is a figure with its caption: the name and designation rise in on hover (person-card in globals.css).
@@ -49,7 +49,14 @@ export function ShortText({ section }: { section: ShortTextSection }) {
                     named && "person-card",
                   )}
                 >
-                  <Media image={photo} sizes={photos.length > 1 ? "(min-width: 1024px) 33vw, 50vw" : "(min-width: 1024px) 50vw, 100vw"} lowPriority />
+                  {/* These cards sit right under the About hero, in the first screen on phones and computers:
+                      the first photo is the page's main image and the others load at once beside it. */}
+                  <Media
+                    image={photo}
+                    sizes={photos.length > 1 ? "(min-width: 1024px) 25vw, 50vw" : "(min-width: 1024px) 50vw, 100vw"}
+                    priority={i === 0}
+                    eager={i > 0}
+                  />
                   {named && (
                     <figcaption className="person-card__tag on-dark absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 bg-[linear-gradient(0deg,color-mix(in_srgb,var(--color-coal)_94%,transparent)_0%,color-mix(in_srgb,var(--color-coal)_70%,transparent)_45%,transparent_100%)] px-[clamp(14px,1.6vw,28px)] pt-[clamp(44px,7vw,120px)] pb-[clamp(14px,1.6vw,28px)] text-white">
                       <div className="min-w-0">
