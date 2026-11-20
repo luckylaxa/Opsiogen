@@ -15,7 +15,22 @@ function siteHosts(): string[] {
   }
 }
 
+/**
+ * Sent with every response: other sites can't frame ours (clickjacking), browsers
+ * don't guess file types, links to other sites carry only our domain, and the
+ * camera, microphone and location stay off. Vercel adds HSTS on its own; the
+ * Hostinger move needs it set there (LAUNCH-CHECKLIST.md).
+ */
+const SECURITY_HEADERS = [
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  { key: "Content-Security-Policy", value: "frame-ancestors 'self'; base-uri 'self'; object-src 'none'" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), browsing-topics=()" },
+];
+
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
   experimental: {
     serverActions: { allowedOrigins: siteHosts() },
   },
@@ -33,6 +48,7 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
+      { source: "/:path*", headers: SECURITY_HEADERS },
       {
         source: "/covers/:path*",
         headers: [{ key: "Cache-Control", value: "public, max-age=604800" }],

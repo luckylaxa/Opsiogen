@@ -1,6 +1,6 @@
 # Launch checklist: what's still pending
 
-Last updated: 19 November 2026. Ask "what's pending" and Claude reads this file.
+Last updated: 20 November 2026. Ask "what's pending" and Claude reads this file.
 Tick items as they are done.
 
 ## Before moving to Hostinger (the site is a staging site until then)
@@ -8,6 +8,7 @@ Tick items as they are done.
 - [ ] Run the full checks in CLAUDE.md: lint, types, build, `npm run audit`, Lighthouse on mobile and desktop. (Run on the staging site on 16 November 2026, results below. Run them once more on Hostinger after the move.)
 - [x] Phone speed on pagespeed.web.dev (target 97+), 17 November, after each page's main image moved to the site's own address: `/work` 97, `/services/ai-websites` 96, `/work/cabot-solutions` 96 (were 95, 90 and 94); desktop 100 on all three. A score moves a point or two between runs. Putting the styles inside each page (`inlineCss`) was tried and undone: it made phones slower.
 - [ ] Phone speed on Home since the first-visit character intro went live (19 November): not measured yet, as pagespeed.web.dev's free daily limit was used up that day. Test a first visit (the intro plays once per visit, when it starts on Home); target 97+. If it falls short, the intro's two pictures (85 KB, `public/intro`) are the first thing to look at.
+- [ ] On Hostinger, send HSTS (`Strict-Transport-Security: max-age=63072000`) from the server or proxy. Vercel adds it by itself; the other security headers are in `next.config.ts` and go wherever the site runs.
 - [ ] On Hostinger, check the main images still load fast: they now come through the site's own image service (`/_next/image`), which Vercel caches worldwide and a single server does not.
 
 ## When you connect the real domain
@@ -72,6 +73,7 @@ Text and images edited in the Studio are not part of a restore point; the starte
 |---|---|---|---|
 | 17 November 2026 | The site before the lake studio picture went into the home hero | `78173a2` | `dpl_2N9PwFHHn7pkG12SH1VE3G8R5fAR` |
 | 19 November 2026 | The site before the character intro replaced the counter loader on Home | `4798c48` | `dpl_CHR5etUb64E5GCQSfpF8np5WUhbK` |
+| 20 November 2026 | The site before the security update (Next.js 16.4.6, Sanity 6.24, security headers) | `a3eef26` | `dpl_ADEqZjiNSoQjpW3mGZEBTUyEVvTW` |
 
 ## Checks run on 16 November 2026 (staging site)
 

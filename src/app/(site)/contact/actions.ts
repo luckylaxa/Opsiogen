@@ -11,6 +11,8 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const PHONE = /^[+()\-.\s\d]{6,30}$/;
 
 const text = (fd: FormData, key: string, max: number) => String(fd.get(key) ?? "").trim().slice(0, max);
+/** A one-line field: line breaks and runs of spaces become one space, so nothing can spill into the email's subject or headers. */
+const line = (fd: FormData, key: string, max: number) => text(fd, key, max).replace(/\s+/g, " ");
 
 const escape = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
@@ -31,12 +33,12 @@ export async function submitEnquiry(_prev: EnquiryState, formData: FormData): Pr
   ]);
 
   const values = {
-    name: text(formData, "name", 120),
-    email: text(formData, "email", 200),
-    phone: text(formData, "phone", 40),
-    company: text(formData, "company", 160),
+    name: line(formData, "name", 120),
+    email: line(formData, "email", 200),
+    phone: line(formData, "phone", 40),
+    company: line(formData, "company", 160),
     message: text(formData, "message", 5000),
-    source: text(formData, "source", 60),
+    source: line(formData, "source", 60),
     needs: formData
       .getAll("needs")
       .map(String)
