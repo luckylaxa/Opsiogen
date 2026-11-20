@@ -23,6 +23,15 @@ const CAP_WIDTHS: Record<string, number> = {
 };
 const GIANT_TRACKING: Record<string, number> = { "text-giant": -0.045, "text-giant-m": -0.045, "text-giant-l": -0.04 };
 
+/** Width of a word (or words with spaces) set in Outfit Bold capitals on a giant title, in em. */
+export function capsWidth(text: string, tracking = GIANT_TRACKING["text-giant"]) {
+  return [...text.normalize("NFD").replace(/\p{M}/gu, "").toUpperCase()].reduce(
+    // A space: Outfit's own plus the giant titles' wider word spacing (globals.css).
+    (sum, ch) => sum + (/\s/.test(ch) ? 0.34 : (CAP_WIDTHS[ch] ?? 0.86) + tracking),
+    0,
+  );
+}
+
 /**
  * Size for a giant heading: its usual size, made smaller only when its
  * longest word would not fit the width on one line, so words never split.
@@ -31,14 +40,7 @@ const GIANT_TRACKING: Record<string, number> = { "text-giant": -0.045, "text-gia
 export function giantSize(text: string) {
   const className = giantClass(text);
   const tracking = GIANT_TRACKING[className];
-  const longest = Math.max(
-    ...text.split(/\s+/).map((word) =>
-      [...word.normalize("NFD").replace(/\p{M}/gu, "").toUpperCase()].reduce(
-        (sum, ch) => sum + (CAP_WIDTHS[ch] ?? 0.86) + tracking,
-        0,
-      ),
-    ),
-  );
+  const longest = Math.max(...text.split(/\s+/).map((word) => capsWidth(word, tracking)));
   // A little room for rounding and the last letter's overhang.
   const fit = (longest * 1.04).toFixed(3);
   return { className, style: { fontSize: `min(var(--${className}), calc(100cqw / ${fit}))` } };

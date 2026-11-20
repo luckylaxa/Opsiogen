@@ -224,18 +224,23 @@
     word-spacing: 0.12em;
   }
 
-  /* Giant titles (GiantHeading): plain wrapping on phones; balanced lines from tablets up. Safari's balancing
-     squeezes them into more lines than they need (Home's hero went from three to five on a Mac, 20 Nov; on
-     iPhones "We are Opsiogen." went to one word per line), so Safari wraps them "pretty" instead, which still
-     keeps a word from sitting alone on the last line. Only Safari's engine has hanging punctuation. */
+  /* Giant titles (GiantHeading): plain wrapping on phones; balanced lines from tablets up. Safari squeezes them
+     into more lines than they need (Home's hero went from three rows to five on a Mac, 20 Nov; on iPhones
+     "We are Opsiogen." went to one word per line), so in Safari's engine (the only one with hanging punctuation)
+     they wrap plainly at every width, and each phrase gets a little spare room at its end: Safari can measure a
+     phrase a touch narrower than it draws it (the opened-up word spacing), which wrapped its last word. */
   @media (width >= 40rem) {
     .giant-wrap {
       text-wrap: balance;
     }
-    @supports (hanging-punctuation: first) {
-      .giant-wrap {
-        text-wrap: pretty;
-      }
+  }
+  @supports (hanging-punctuation: first) {
+    .giant-wrap {
+      text-wrap: wrap !important;
+    }
+    .giant-wrap .phrase {
+      padding-inline-end: 0.3em;
+      margin-inline-end: -0.3em;
     }
   }
 

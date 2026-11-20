@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { cn, giantSize } from "@/lib/utils";
+import { capsWidth, cn, giantSize } from "@/lib/utils";
 
 /** Small label above a heading, e.g. “Latest”. */
 export function Label({ children, className }: { children: React.ReactNode; className?: string }) {
@@ -52,6 +52,13 @@ export function accentRange(words: string[], accent?: string | null): [number, n
  */
 export function AccentText({ text, accent, phrases = false }: { text: string; accent?: string | null; phrases?: boolean }) {
   const words = text.trim().split(/\s+/);
+  // Giant titles: the last two words stay together when they are no wider than the longest word, so no browser
+  // leaves one word alone on the last line (Safari wraps these plainly; see `.giant-wrap` in globals.css). The
+  // title's size comes from its longest word (giantSize), so the pair always fits.
+  if (phrases && words.length > 2 && !/[,.;:!?\u2013\u2014]$/.test(words[words.length - 2])) {
+    const pair = `${words[words.length - 2]} ${words[words.length - 1]}`;
+    if (capsWidth(pair) <= Math.max(...words.map((w) => capsWidth(w)))) words.splice(-2, 2, pair.replace(" ", "\u00a0"));
+  }
   const [start, end] = accentRange(words, accent);
   // Words from `from` to `to`, with the accent words among them marked up.
   const run = (from: number, to: number) => {
@@ -86,7 +93,7 @@ export function AccentText({ text, accent, phrases = false }: { text: string; ac
       {groups.map(([from, to], i) => (
         <Fragment key={from}>
           {i > 0 && " "}
-          <span className="inline-block">{run(from, to)}</span>
+          <span className="phrase inline-block">{run(from, to)}</span>
         </Fragment>
       ))}
     </>
