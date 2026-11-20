@@ -19,6 +19,20 @@ function displayUrl(url: string) {
   }
 }
 
+/** Where a narrow phone has to wrap an address, it breaks before the ending ("cabotsolutions" / ".com"), never inside it. */
+function breakBeforeEnding(host: string) {
+  const dot = host.lastIndexOf(".");
+  return dot > 0 ? (
+    <>
+      {host.slice(0, dot)}
+      <wbr />
+      {host.slice(dot)}
+    </>
+  ) : (
+    host
+  );
+}
+
 /**
  * The work images: the gallery, or for projects without one, the card
  * mockup and the cover. The first is the big image under the name.
@@ -131,7 +145,7 @@ export function ProjectDetail({
             value: (
               <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="group inline-flex max-w-full items-center gap-2">
                 {/* A long address may break onto two lines on the narrowest phones rather than push the page sideways. */}
-                <span className="link-underline min-w-0 [overflow-wrap:anywhere]">{displayUrl(project.liveUrl)}</span>
+                <span className="link-underline min-w-0 [overflow-wrap:break-word]">{breakBeforeEnding(displayUrl(project.liveUrl))}</span>
                 <ExternalLink className="size-[1.1em] shrink-0 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 <span className="sr-only">(opens in a new tab)</span>
               </a>
