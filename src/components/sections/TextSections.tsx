@@ -98,9 +98,12 @@ export function ShortText({ section }: { section: ShortTextSection }) {
   return (
     <div>
       <SectionHeading label={section.label} heading={section.heading} className="mb-[clamp(32px,2.6vw,56px)]" />
+      {/* A reading column centred under the page title (the Privacy Policy), lines kept left-aligned. */}
       {section.body && section.body.length > 0 && (
-        <div className="max-w-[52ch] px-gutter">
-          <PortableText value={section.body} components={components} />
+        <div className="px-gutter">
+          <div className="mx-auto max-w-[60ch]">
+            <PortableText value={section.body} components={components} />
+          </div>
         </div>
       )}
     </div>
