@@ -90,7 +90,8 @@ export async function submitEnquiry(_prev: EnquiryState, formData: FormData): Pr
   // 2. Email the company inbox, sent through our own Google Workspace mailbox (SMTP with an app password), so no
   // other email service is needed and Google's own records for the domain cover it.
   const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
+  // Google shows app passwords in groups of four ("abcd efgh ijkl mnop"); the spaces are not part of it.
+  const pass = process.env.SMTP_PASS?.replace(/\s+/g, "");
   const to = process.env.ENQUIRY_TO_EMAIL || DEFAULT_ENQUIRY_INBOX;
   const mailer = user && pass;
   if (mailer) {
