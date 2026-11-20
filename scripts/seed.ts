@@ -240,6 +240,18 @@ const PAGE_REWRITES: { id: string; was: string }[] = [
   { id: "page-about", was: "The digital department for businesses that don’t have one." },
 ];
 
+/**
+ * Pages that were seeded with placeholder text. Add mode replaces the page's sections (and its share
+ * description) only while Studio still holds that placeholder as the first line, so a version edited
+ * in Studio is never overwritten.
+ */
+const PLACEHOLDER_REWRITES: { id: string; placeholder: string }[] = [
+  {
+    id: "page-privacy",
+    placeholder: "This is placeholder text. Replace it in the studio with your privacy policy before launch.",
+  },
+];
+
 /** Seeded buttons taken off a page since: removed in add mode while Studio still holds a seeded label. */
 const REMOVED_BUTTONS: { id: string; get: string; path: string; labels: string[] }[] = [
   // Home hero: Start a project is the header's label (the hero now says See our work).
@@ -694,6 +706,21 @@ async function run() {
       const sections = await Promise.all(page.sections.map(sectionDoc));
       console.log(`  rebuilding ${r.id}`);
       tx.patch(r.id, (p) => p.set({ sections }));
+    }
+  }
+
+  // Pages still showing their seeded placeholder get the real text (never a version edited in Studio).
+  if (!OVERWRITE && PLACEHOLDER_REWRITES.length) {
+    const held = await client.fetch<{ _id: string; first: string | null }[]>(
+      `*[_type == "page" && _id in $ids]{ _id, "first": sections[_key == "body"][0].body[0].children[0].text }`,
+      { ids: PLACEHOLDER_REWRITES.map((r) => r.id) },
+    );
+    for (const r of PLACEHOLDER_REWRITES) {
+      const page = PAGES.find((p) => p._id === r.id);
+      if (!page || held.find((h) => h._id === r.id)?.first !== r.placeholder) continue;
+      const sections = await Promise.all(page.sections.map(sectionDoc));
+      console.log(`  replacing the placeholder text on ${r.id}`);
+      tx.patch(r.id, (p) => p.set({ sections, ...(page.seo?.description ? { "seo.description": page.seo.description } : {}) }));
     }
   }
 

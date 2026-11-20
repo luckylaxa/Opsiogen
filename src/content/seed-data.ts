@@ -2256,27 +2256,72 @@ export const PAGES: Page[] = [
     _id: "page-privacy",
     title: "Privacy Policy",
     slug: "privacy",
-    seo: { noIndex: false },
+    seo: {
+      noIndex: false,
+      description:
+        "How Opsiogen Pvt Ltd collects, uses and protects the information you share through our website and contact form.",
+    },
+    // Approved by the owner on 20 November 2026. Plain and factual: it describes what the site does today.
     sections: [
       { _type: "hero", _key: "hero", heading: "Privacy Policy" },
       {
         _type: "shortText",
         _key: "body",
         body: [
+          block("p0", "Opsiogen Pvt Ltd, Kochi, Kerala, India. Last updated: 20 November 2026."),
           block(
             "p1",
-            "This is placeholder text. Replace it in the studio with your privacy policy before launch.",
+            "This policy explains what information we collect when you use opsiogen.com, why we collect it, and what you can ask us to do with it. We only collect what we need.",
           ),
-          block("h1", "Information we collect", "h2"),
+          block("h1", "What we collect", "h2"),
           block(
             "p2",
-            "Placeholder: describe what information is collected through the contact form and how it is used.",
+            "When you send an enquiry through our contact form, we collect what you type in: your name, email address, company, what you need help with and your message. If you choose to add them, we also collect your phone number and how you heard about us.",
           ),
-          block("h2", "How to contact us", "h2"),
           block(
             "p3",
-            "Placeholder: explain how people can ask about or update the information you hold about them.",
+            "Like most websites, our hosting provider records basic technical details when you visit, such as your IP address, browser type and the pages you open. These records help keep the site secure and working.",
           ),
+          block("h2", "How we use it", "h2"),
+          block(
+            "p4",
+            "We use your enquiry to reply to you, prepare a quote or plan, and, if we work together, deliver the project. We don’t use it for anything else, and we don’t add you to a mailing list without asking.",
+          ),
+          block("h3", "Where it’s kept and who sees it", "h2"),
+          block(
+            "p5",
+            "Enquiries are saved in our website’s content system and sent to our inbox. Only the people at Opsiogen who handle enquiries can read them. The site uses secure (HTTPS) connections.",
+          ),
+          block(
+            "p6",
+            "We use trusted providers to host the site, store content, deliver images and send email. They handle information only to provide those services to us. We never sell or rent your information.",
+          ),
+          block("h4", "Cookies and your browser", "h2"),
+          block(
+            "p7",
+            "We don’t use cookies for tracking or advertising, and we don’t run analytics. The site saves two small preferences in your own browser: your light or dark theme choice, and whether the opening animation has already played during your visit. They stay on your device.",
+          ),
+          block("h5", "How long we keep it", "h2"),
+          block(
+            "p8",
+            "We keep your enquiry only as long as we need it to reply to you and, if we work together, to deliver the project. You can ask us to delete it at any time.",
+          ),
+          block("h6", "Your rights", "h2"),
+          block(
+            "p9",
+            "You can ask us to show you the information we hold about you, correct it or delete it, and to stop contacting you. Email contact@opsiogen.com and we’ll reply within 30 days. If you’re not happy with our reply, you can complain to the data protection authority where you live.",
+          ),
+          block("h7", "Children", "h2"),
+          block("p10", "Our services are for businesses. We don’t knowingly collect information from children."),
+          block("h8", "Links to other sites", "h2"),
+          block(
+            "p11",
+            "Our case studies and footer link to other websites, such as our clients’ sites and social networks. Their own privacy policies apply there.",
+          ),
+          block("h9", "Changes", "h2"),
+          block("p12", "If we change this policy, we’ll update this page and the date at the top."),
+          block("h10", "Contact us", "h2"),
+          block("p13", "Questions about your privacy? Email contact@opsiogen.com."),
         ],
       },
     ],
