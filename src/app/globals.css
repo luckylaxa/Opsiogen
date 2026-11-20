@@ -405,6 +405,20 @@
   }
 }
 
+/* Client logos (ClientLogos.tsx): each file is a mask over the ink colour. The files wait for the page's
+   load event (page-loaded, set by THEME_SCRIPT in lib/theme.ts), so on phones they never compete with the
+   page's main image; the row keeps its size and the logos show a moment later. Without scripts: <noscript>
+   in the layout shows them at once. */
+.client-logo {
+  background-color: currentColor;
+  visibility: hidden;
+}
+.page-loaded .client-logo {
+  visibility: visible;
+  -webkit-mask: var(--logo) center / contain no-repeat;
+  mask: var(--logo) center / contain no-repeat;
+}
+
 /* The page under the project pop-up stays still. */
 html.project-open {
   overflow: hidden;

@@ -34,15 +34,17 @@ export async function ClientLogos({ heading = "Creative support for 200+ top glo
     const items = (copy: boolean) =>
       list.map((l) => {
         const src = `/logos/${l.key}.svg`;
+        // The file is a mask over the ink colour, applied once the page has loaded (.client-logo in globals.css).
         const mark = (
           <span
-            className="block bg-current"
-            style={{
-              height: `calc(var(--logo-h) * ${Math.min(1.4, (2 * l.size) / Math.sqrt(l.ratio)).toFixed(3)})`,
-              aspectRatio: l.ratio,
-              WebkitMask: `url(${src}) center / contain no-repeat`,
-              mask: `url(${src}) center / contain no-repeat`,
-            }}
+            className="client-logo block"
+            style={
+              {
+                height: `calc(var(--logo-h) * ${Math.min(1.4, (2 * l.size) / Math.sqrt(l.ratio)).toFixed(3)})`,
+                aspectRatio: l.ratio,
+                "--logo": `url(${src})`,
+              } as React.CSSProperties
+            }
           />
         );
         const look = "block opacity-80 transition-opacity duration-300 hover:opacity-100 focus-visible:opacity-100";

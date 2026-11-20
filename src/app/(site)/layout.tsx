@@ -65,6 +65,10 @@ export default async function SiteLayout({ children, modal }: LayoutProps<"/">) 
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         {/* Decides whether the first-visit intro plays, and starts it. */}
         <script dangerouslySetInnerHTML={{ __html: INTRO_SCRIPT }} />
+        {/* Without scripts nothing marks the page loaded: show the client logos straight away. */}
+        <noscript>
+          <style>{`.client-logo{visibility:visible;-webkit-mask:var(--logo) center/contain no-repeat;mask:var(--logo) center/contain no-repeat}`}</style>
+        </noscript>
       </head>
       <body>
         <JsonLd items={siteSchema(settings)} />
