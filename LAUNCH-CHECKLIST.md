@@ -56,7 +56,7 @@ the CDN serves files to Canada, the US and Europe). The domain, **opsiogen.com**
 
 ## Content
 
-- [ ] **Before launch:** the Privacy Policy page (/privacy) is still the starter placeholder text. Replace it with the real policy (what the contact form collects and why, where it is kept, how long, people's rights, and contact@opsiogen.com for privacy requests); the owner approves the wording.
+- [x] Privacy Policy (/privacy): the real policy replaced the placeholder on 20 November, approved by the owner (Opsiogen Pvt Ltd, Kochi, Kerala, India; contact@opsiogen.com). Update it if visitor statistics or any cookies are added later. It lives in Studio (Pages → Privacy Policy) and in `src/content/seed-data.ts`.
 
 - [ ] Afthab Tours still uses sample images, which search engines treat as thin pages. Send its Figma link or hide it until it's ready.
 - [ ] Case-study mockups for BigTapp and Cabot show a "Webflow" tag (a tool name) inside the images; edit the Figma frames if it should go.
