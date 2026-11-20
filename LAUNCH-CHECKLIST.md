@@ -13,17 +13,38 @@ Tick items as they are done.
 - [ ] On Hostinger, send HSTS (`Strict-Transport-Security: max-age=63072000`) from the server or proxy. Vercel adds it by itself; the other security headers are in `next.config.ts` and go wherever the site runs.
 - [ ] On Hostinger, check the main images still load fast: they now come through the site's own image service (`/_next/image`), which Vercel caches worldwide and a single server does not.
 
-## When you connect the real domain
+## Going live: the plan agreed on 20 November 2026
 
-- [ ] Connect the domain in Vercel (Project → Settings → Domains), with www or without, and redirect the other version to it.
-- [ ] In Vercel, set `NEXT_PUBLIC_SITE_URL` to the live address (e.g. `https://www.opsiogen.com`), then redeploy. Canonicals, the sitemap, robots.txt and the structured data all use it.
+Hosting: Hostinger **Unlimited** web hosting (Node.js web app), data centre **India** (most clients are in India and Dubai;
+the CDN serves files to Canada, the US and Europe). The domain stays at **GoDaddy**; email stays on **Google Workspace**
+(3 addresses). Vercel's free plan is personal use only, so the Vercel copy is switched off once Hostinger is live.
+
+- [ ] Buy Hostinger Unlimited (48 months). In hPanel: Websites → Add website → Node.js web app → connect GitHub →
+      `luckylaxa/Opsiogen`, branch `claude/admiring-einstein-4nf662` (or `main` once merged), Node 22.x, redeploy on push.
+      Build `npm run build`, start `npm start`. One Hostinger plan connects to one GitHub account: keep hosted repos there.
+- [ ] Environment variables in Hostinger: `NEXT_PUBLIC_SANITY_PROJECT_ID` (79m429dl), `NEXT_PUBLIC_SANITY_DATASET`
+      (production), `NEXT_PUBLIC_SANITY_API_VERSION` (2026-02-01), `ENQUIRY_TO_EMAIL`, `NEXT_PUBLIC_SITE_URL` (the temporary
+      hostingersite.com address first, then the live domain; the contact form needs it behind Hostinger's proxy), and a new
+      `SANITY_API_WRITE_TOKEN` (sanity.io/manage → API → Tokens, Editor; Vercel keeps the old one hidden).
+- [ ] Test on the temporary address before the domain moves (within Hostinger's 30-day refund): build fits the plan, every
+      page in Chrome, Safari and Firefox, PageSpeed, security headers, a real test enquiry.
+- [ ] GoDaddy DNS: change only the website records, `@` (A record) and `www` (CNAME), to the values Hostinger shows under
+      Connect domain. Do **not** change the nameservers and do not touch the MX, SPF, DKIM or verification records:
+      they keep Google Workspace email working. Remove any GoDaddy forwarding or parked page on `@`.
+- [ ] Set `NEXT_PUBLIC_SITE_URL` to the live address, redeploy. Canonicals, the sitemap, robots.txt and the structured
+      data all use it. Redirect the www or non-www twin to it.
 - [ ] Add the live address in Sanity → API → CORS origins with **Allow credentials** ticked, so `/studio` can sign in.
-- [ ] Check `/sitemap.xml` and `/robots.txt` on the live domain show the live address.
+- [ ] Check `/sitemap.xml` and `/robots.txt` on the live domain show the live address; send HSTS from Hostinger.
+- [ ] Switch off the Vercel copy (opsiogen.vercel.app) so Google sees one site.
 
 ## Contact form
 
-- [ ] Verify the sending domain in Resend.
-- [ ] Add `RESEND_API_KEY` and `RESEND_FROM_EMAIL` in Vercel, then redeploy. These aren't set yet, so enquiries are saved in the Studio but not emailed to `ENQUIRY_TO_EMAIL`.
+- [ ] Verify the sending domain in Resend: its records (on a `send.` subdomain and a `resend._domainkey` TXT) go in
+      GoDaddy DNS and don't affect Google Workspace's own SPF and MX records.
+- [ ] Add `RESEND_API_KEY` and `RESEND_FROM_EMAIL` (e.g. `Opsiogen <website@the-domain>`; no mailbox needed) in Hostinger,
+      then redeploy. Until then enquiries are saved in the Studio but not emailed to `ENQUIRY_TO_EMAIL`.
+- [ ] Decide where enquiries go: `ENQUIRY_TO_EMAIL` is opsiogen@gmail.com today; one of the Google Workspace addresses
+      may be better.
 - [ ] Send a test enquiry from the live site.
 
 ## SEO (from the checklist video)
