@@ -224,6 +224,21 @@
     word-spacing: 0.12em;
   }
 
+  /* Giant titles (GiantHeading): plain wrapping on phones; balanced lines from tablets up. Safari's balancing
+     squeezes them into more lines than they need (Home's hero went from three to five on a Mac, 20 Nov; on
+     iPhones "We are Opsiogen." went to one word per line), so Safari wraps them "pretty" instead, which still
+     keeps a word from sitting alone on the last line. Only Safari's engine has hanging punctuation. */
+  @media (width >= 40rem) {
+    .giant-wrap {
+      text-wrap: balance;
+    }
+    @supports (hanging-punctuation: first) {
+      .giant-wrap {
+        text-wrap: pretty;
+      }
+    }
+  }
+
   /* Line-mask reveal (design system): text rises from behind a mask. */
   .reveal-mask {
     display: block;
@@ -689,7 +704,7 @@ html[data-mega-open] .site-header {
 .intro-go .intro__strip {
   animation: intro-turn 1.62s both;
 }
-/* The landing ending (with ?intro=land, see INTRO_LAND in lib/theme.ts): the head script moves the character; the
+/* The landing ending (see INTRO_LAND in lib/theme.ts): the head script moves the character; the
    zoom's own parts stay still, and the hero's character waits under the panel until the hand-over (its pool of light
    shows as the backdrop fades, where the character is about to land). */
 .intro-land .intro__zoom,

@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 
-/** The character pointer being tried (CURSOR_KEY in lib/theme.ts): loaded only when it is on. */
+/** The character pointer (on with `data-pointer="character"`, set by INTRO_SCRIPT in lib/theme.ts): loaded only when used. */
 const CharacterCursor = dynamic(() => import("./CharacterCursor").then((m) => m.CharacterCursor), { ssr: false });
 
 type State = "default" | "link" | "view" | "text";

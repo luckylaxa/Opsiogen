@@ -149,9 +149,9 @@ export function GiantHeading({
           <Label className="mb-[clamp(20px,calc(2.29vw+11.4px),55px)]">{label}</Label>
         ))}
       {/* Whole words only: words wrap between each other, never inside (see giantSize), and between
-          phrases first (AccentText). Lines are balanced from tablets up; on phones they wrap plainly,
-          because iPhone Safari's balancing can break a short title into one word per line. */}
-      <Tag className={cn(size.className, "w-full font-bold uppercase sm:text-balance", roomy && "max-sm:leading-none")} style={size.style}>
+          phrases first (AccentText). Phones wrap plainly; from tablets up the lines are balanced, except
+          in Safari, whose balancing squeezes them into extra lines (see `.giant-wrap` in globals.css). */}
+      <Tag className={cn(size.className, "giant-wrap w-full font-bold uppercase", roomy && "max-sm:leading-none")} style={size.style}>
         {title}
       </Tag>
       {text && (

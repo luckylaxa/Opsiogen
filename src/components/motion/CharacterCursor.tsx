@@ -39,7 +39,7 @@ function steps(from: number, to: number, n: number) {
 }
 
 /**
- * The character pointer being tried (Lucky, 19 Nov; on with `?preview=character`, see CURSOR_KEY in lib/theme.ts).
+ * The character pointer (Lucky, 19 Nov; for every visitor with a mouse since 20 Nov, see INTRO_SCRIPT in lib/theme.ts).
  * On a computer with a mouse, the main character itself is the pointer, scaled down: a step behind the mouse, side on
  * toward where it is going and face on when it rests (left alone for 2 s, it dances: a moonwalk, head snaps, a spin and a freeze), filled
  * ripples of our colours over links and work ("View" over work), the normal typing cursor in text fields. A click
