@@ -39,12 +39,12 @@ the CDN serves files to Canada, the US and Europe). The domain, **opsiogen.com**
 
 ## Contact form
 
-- [ ] Enquiry emails go out through our own Google Workspace mailbox (decided 20 November: no other email service, no DNS
-      changes). The owner turns on 2-Step Verification for contact@opsiogen.com, creates an app password
-      (myaccount.google.com/apppasswords) and adds it as `SMTP_PASS` in Vercel (and later Hostinger); `SMTP_USER` is
-      `contact@opsiogen.com`. Then redeploy. Until then enquiries are saved in the Studio but not emailed.
+- [x] Enquiry emails go out through our own Google Workspace mailbox (decided 20 November: no other email service, no DNS
+      changes). Working since 20 November: 2-Step Verification on for contact@opsiogen.com, its app password is
+      `SMTP_PASS` in Vercel, `SMTP_USER` is `contact@opsiogen.com`; the test enquiry arrived in the Inbox.
+      At the move, add both to Hostinger too.
 - [x] Enquiries go to contact@opsiogen.com (Google Workspace), decided 20 November; set in Vercel and as the code's default.
-- [ ] Send a test enquiry from the live site.
+- [x] Send a test enquiry from the live site (20 November; five test enquiries named "Website test…" to delete in the Studio).
 
 ## SEO (from the checklist video)
 
