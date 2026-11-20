@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import type { ProjectCard, ServiceRef } from "@/lib/types";
 import { ProjectBigCard } from "./ProjectBigCard";
 import { buttonClass } from "@/components/ui/Button";
-import { ChevronDown, SearchIcon } from "@/components/ui/Icons";
+import { Check, ChevronDown, SearchIcon } from "@/components/ui/Icons";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -83,30 +83,27 @@ export function Directory({ projects, services, pageSize, children, feature, fea
           aria-label="Filter work"
           className="flex flex-wrap items-center gap-2 rounded-[8px] bg-band p-[clamp(6px,0.45vw,8px)] lg:flex-nowrap"
         >
-          <Select label="Service" value={service} onChange={(v) => update(() => setService(v))}>
-            {services.map((s) => (
-              <option key={s.slug} value={s.slug}>
-                {s.shortName}
-              </option>
-            ))}
-          </Select>
+          <Select
+            label="Service"
+            value={service}
+            onChange={(v) => update(() => setService(v))}
+            options={services.map((s) => ({ value: s.slug, label: s.shortName }))}
+          />
           {industries.length > 0 && (
-            <Select label="Industry" value={industry} onChange={(v) => update(() => setIndustry(v))}>
-              {industries.map((i) => (
-                <option key={i} value={i}>
-                  {i}
-                </option>
-              ))}
-            </Select>
+            <Select
+              label="Industry"
+              value={industry}
+              onChange={(v) => update(() => setIndustry(v))}
+              options={industries.map((i) => ({ value: i, label: i }))}
+            />
           )}
           {years.length > 0 && (
-            <Select label="Year" value={year} onChange={(v) => update(() => setYear(v))}>
-              {years.map((y) => (
-                <option key={y} value={y}>
-                  {y}
-                </option>
-              ))}
-            </Select>
+            <Select
+              label="Year"
+              value={year}
+              onChange={(v) => update(() => setYear(v))}
+              options={years.map((y) => ({ value: String(y), label: String(y) }))}
+            />
           )}
           <label className="flex h-[clamp(38px,calc(0.5vw+36px),46px)] min-w-[200px] flex-1 basis-full items-center gap-2 rounded-[6px] px-3 focus-within:bg-surface lg:basis-auto">
             <SearchIcon className="size-[1.1em] shrink-0 text-ink-2" />
@@ -183,34 +180,143 @@ function unique(values: (string | null | undefined)[]) {
   return Array.from(new Set(values.filter((v): v is string => Boolean(v))));
 }
 
+/**
+ * A filter dropdown drawn in the site's own style (the browser's own list looked out of place, Lucky 20 Nov): a button
+ * that opens a list. Keyboard: arrows, Home, End, a letter to jump, Enter or Space to choose, Escape to close.
+ * Choosing the first item (the filter's name) clears the filter.
+ */
 function Select({
   label,
   value,
   onChange,
-  children,
+  options,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
-  children: React.ReactNode;
+  options: { value: string; label: string }[];
 }) {
+  const items = useMemo(() => [{ value: ALL, label }, ...options], [label, options]);
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(0);
+  const button = useRef<HTMLButtonElement>(null);
+  const list = useRef<HTMLUListElement>(null);
+  const root = useRef<HTMLDivElement>(null);
+  const id = useId();
+  const current = items.find((o) => o.value === value);
+  const selectedIndex = Math.max(0, items.findIndex((o) => o.value === value));
+
+  const show = (index = selectedIndex) => {
+    setActive(index);
+    setOpen(true);
+  };
+  const close = (focusButton = true) => {
+    setOpen(false);
+    if (focusButton) button.current?.focus();
+  };
+  const choose = (index: number) => {
+    onChange(items[index].value);
+    close();
+  };
+
+  useEffect(() => {
+    if (!open) return;
+    list.current?.focus();
+    const away = (e: PointerEvent) => {
+      if (!root.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("pointerdown", away);
+    return () => document.removeEventListener("pointerdown", away);
+  }, [open]);
+
+  useEffect(() => {
+    if (open) list.current?.querySelector<HTMLElement>(`[data-index="${active}"]`)?.scrollIntoView({ block: "nearest" });
+  }, [open, active]);
+
+  const onListKey = (e: React.KeyboardEvent) => {
+    const last = items.length - 1;
+    const move = (to: number) => {
+      e.preventDefault();
+      setActive(Math.min(last, Math.max(0, to)));
+    };
+    if (e.key === "ArrowDown") move(active + 1);
+    else if (e.key === "ArrowUp") move(active - 1);
+    else if (e.key === "Home") move(0);
+    else if (e.key === "End") move(last);
+    else if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      choose(active);
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      close();
+    } else if (e.key === "Tab") setOpen(false);
+    else if (e.key.length === 1 && /\S/.test(e.key)) {
+      const k = e.key.toLowerCase();
+      const from = items.findIndex((o, i) => i > active && o.label.toLowerCase().startsWith(k));
+      const next = from >= 0 ? from : items.findIndex((o) => o.label.toLowerCase().startsWith(k));
+      if (next >= 0) move(next);
+    }
+  };
+
   return (
-    <label className="relative shrink-0">
-      <span className="sr-only">{label}</span>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
+    <div ref={root} className="relative shrink-0">
+      <button
+        ref={button}
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={`${id}-list`}
+        aria-label={value ? `${label}: ${current?.label}` : label}
+        onClick={() => (open ? close() : show())}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+            e.preventDefault();
+            show();
+          }
+        }}
         className={cn(
-          "h-[clamp(38px,calc(0.5vw+36px),46px)] cursor-pointer appearance-none rounded-[6px] border pl-[clamp(12px,0.9vw,16px)] pr-9 text-base transition-colors",
+          "flex h-[clamp(38px,calc(0.5vw+36px),46px)] max-w-[60vw] items-center gap-2 rounded-[6px] border pr-3 pl-[clamp(12px,0.9vw,16px)] text-base whitespace-nowrap transition-colors",
           value ? "border-ink bg-ink text-on-ink" : "border-ink/10 bg-surface text-ink hover:border-ink/40",
         )}
       >
-        <option value={ALL}>{label}</option>
-        {children}
-      </select>
-      <ChevronDown
-        className={cn("pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2", value ? "text-on-ink" : "text-ink")}
-      />
-    </label>
+        <span className="truncate">{value ? current?.label : label}</span>
+        <ChevronDown className={cn("size-4 shrink-0 transition-transform duration-200", open && "rotate-180")} />
+      </button>
+      {open && (
+        <ul
+          ref={list}
+          id={`${id}-list`}
+          role="listbox"
+          tabIndex={-1}
+          aria-label={label}
+          aria-activedescendant={`${id}-${active}`}
+          onKeyDown={onListKey}
+          className="absolute top-[calc(100%+6px)] left-0 z-30 max-h-[min(360px,60vh)] min-w-full w-max max-w-[min(320px,90vw)] overflow-y-auto overscroll-contain rounded-[8px] border border-ink/10 bg-surface p-1 shadow-[0_16px_40px_rgb(0_0_0/0.35)] outline-none"
+        >
+          {items.map((o, i) => {
+            const selected = i === selectedIndex;
+            return (
+              <li
+                key={o.value || "all"}
+                id={`${id}-${i}`}
+                data-index={i}
+                role="option"
+                aria-selected={selected}
+                onPointerMove={() => active !== i && setActive(i)}
+                onClick={() => choose(i)}
+                className={cn(
+                  "flex cursor-pointer items-center justify-between gap-4 rounded-[6px] px-3 py-2 text-base",
+                  i === active && "bg-ink/[0.07]",
+                  i === 0 && "text-ink-2",
+                )}
+              >
+                {o.label}
+                {selected && <Check className="size-4 shrink-0" />}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
   );
 }
