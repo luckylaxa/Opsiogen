@@ -718,6 +718,10 @@ html[data-mega-open] .site-header {
 .intro-land .intro__shell {
   animation: none;
 }
+/* The landing never shows the shell (see INTRO_START): left undrawn, its picture is not fetched. */
+.intro-land .intro__shell {
+  display: none;
+}
 .intro-land:not(.intro-done) [data-intro-land] > img,
 .intro-land:not(.intro-done) [data-intro-land] > canvas {
   visibility: hidden;

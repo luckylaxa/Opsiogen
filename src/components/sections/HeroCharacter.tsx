@@ -338,8 +338,9 @@ export function HeroCharacter({ className }: { className?: string }) {
           </span>
         ))}
       </span>
-      {/* eslint-disable-next-line @next/next/no-img-element -- a small still that only shows until the 3D model is drawn */}
-      <img ref={still} src="/home/character-front.webp" alt="" width={420} height={420} className="absolute inset-0 size-full object-contain transition-opacity duration-300" />
+      {/* A small still that shows until the 3D model is drawn. Low priority: on a first visit it waits under the intro, so it must not hold up the page's main image. */}
+      {/* eslint-disable-next-line @next/next/no-img-element -- see above */}
+      <img ref={still} src="/home/character-front.webp" alt="" width={420} height={420} fetchPriority="low" className="absolute inset-0 size-full object-contain transition-opacity duration-300" />
       <canvas ref={canvas} aria-hidden="true" className="absolute inset-0 size-full opacity-0 transition-opacity duration-300" />
     </button>
   );
