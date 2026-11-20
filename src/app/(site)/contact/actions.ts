@@ -1,6 +1,6 @@
 "use server";
 
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import { getServices, getSettings } from "@/lib/data";
 import { getWriteClient } from "@/sanity/lib/write-client";
 import { CONTACT_FORM } from "@/content/seed-data";
@@ -87,11 +87,13 @@ export async function submitEnquiry(_prev: EnquiryState, formData: FormData): Pr
     }
   }
 
-  // 2. Email the company inbox.
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM_EMAIL;
+  // 2. Email the company inbox, sent through our own Google Workspace mailbox (SMTP with an app password), so no
+  // other email service is needed and Google's own records for the domain cover it.
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
   const to = process.env.ENQUIRY_TO_EMAIL || DEFAULT_ENQUIRY_INBOX;
-  if (apiKey && from && to) {
+  const mailer = user && pass;
+  if (mailer) {
     const rows: [string, string][] = [
       ["Name", values.name],
       ["Email", values.email],
@@ -101,17 +103,18 @@ export async function submitEnquiry(_prev: EnquiryState, formData: FormData): Pr
       ["How did you hear about us?", values.source || "—"],
     ];
     try {
-      const { error } = await new Resend(apiKey).emails.send({
-        from,
-        to: to.split(",").map((s) => s.trim()).filter(Boolean),
-        replyTo: values.email,
-        subject: `New enquiry: ${values.name}, ${values.company}`,
-        text: `${rows.map(([k, v]) => `${k}: ${v}`).join("\n")}\n\nMessage:\n${values.message}`,
-        html: `<table cellpadding="6" style="font-family:Arial,sans-serif;font-size:14px;border-collapse:collapse">${rows
-          .map(([k, v]) => `<tr><td style="color:#6f6f6f;vertical-align:top">${escape(k)}</td><td>${escape(v)}</td></tr>`)
-          .join("")}</table><p style="font-family:Arial,sans-serif;font-size:14px;white-space:pre-wrap">${escape(values.message)}</p>`,
-      });
-      if (error) throw error;
+      await nodemailer
+        .createTransport({ host: process.env.SMTP_HOST || "smtp.gmail.com", port: 465, secure: true, auth: { user, pass } })
+        .sendMail({
+          from: { name: "Opsiogen Website", address: user },
+          to: to.split(",").map((s) => s.trim()).filter(Boolean),
+          replyTo: { name: values.name, address: values.email },
+          subject: `New enquiry: ${values.name}, ${values.company}`,
+          text: `${rows.map(([k, v]) => `${k}: ${v}`).join("\n")}\n\nMessage:\n${values.message}`,
+          html: `<table cellpadding="6" style="font-family:Arial,sans-serif;font-size:14px;border-collapse:collapse">${rows
+            .map(([k, v]) => `<tr><td style="color:#6f6f6f;vertical-align:top">${escape(k)}</td><td>${escape(v)}</td></tr>`)
+            .join("")}</table><p style="font-family:Arial,sans-serif;font-size:14px;white-space:pre-wrap">${escape(values.message)}</p>`,
+        });
       delivered = true;
     } catch (err) {
       console.error("Enquiry: could not send email", err);
@@ -119,9 +122,9 @@ export async function submitEnquiry(_prev: EnquiryState, formData: FormData): Pr
   }
 
   if (!delivered) {
-    if (!sanity && !(apiKey && from && to) && process.env.NODE_ENV !== "production") {
+    if (!sanity && !mailer && process.env.NODE_ENV !== "production") {
       // Local development before the keys are added: log instead of failing.
-      console.warn("Enquiry received but no Sanity token or Resend key is set:", { ...values, needs: needNames });
+      console.warn("Enquiry received but no Sanity token or mail login is set:", { ...values, needs: needNames });
     } else {
       return {
         status: "error",

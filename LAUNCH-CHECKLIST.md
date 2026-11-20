@@ -39,11 +39,10 @@ the CDN serves files to Canada, the US and Europe). The domain, **opsiogen.com**
 
 ## Contact form
 
-- [ ] Verify the sending domain in Resend: its records (on a `send.` subdomain and a `resend._domainkey` TXT) go in
-      GoDaddy DNS by hand (the GoDaddy connector can read domains but has no DNS editing) and don't affect Google
-      Workspace's own SPF and MX records. Add `_dmarc` only if the domain has none yet.
-- [ ] Add `RESEND_API_KEY` (and `RESEND_FROM_EMAIL` = `Opsiogen Website <website@opsiogen.com>`, already set in Vercel on 20 November; no mailbox needed) in Hostinger,
-      then redeploy. Until then enquiries are saved in the Studio but not emailed to `ENQUIRY_TO_EMAIL`.
+- [ ] Enquiry emails go out through our own Google Workspace mailbox (decided 20 November: no other email service, no DNS
+      changes). The owner turns on 2-Step Verification for contact@opsiogen.com, creates an app password
+      (myaccount.google.com/apppasswords) and adds it as `SMTP_PASS` in Vercel (and later Hostinger); `SMTP_USER` is
+      `contact@opsiogen.com`. Then redeploy. Until then enquiries are saved in the Studio but not emailed.
 - [x] Enquiries go to contact@opsiogen.com (Google Workspace), decided 20 November; set in Vercel and as the code's default.
 - [ ] Send a test enquiry from the live site.
 

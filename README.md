@@ -28,8 +28,8 @@ Production check: `npm run build && npm start`.
 | `NEXT_PUBLIC_SANITY_PROJECT_ID` | `79m429dl` (already filled in) |
 | `NEXT_PUBLIC_SANITY_DATASET` | `production` (already filled in) |
 | `SANITY_API_WRITE_TOKEN` | [sanity.io/manage → project → API → Tokens](https://www.sanity.io/manage/project/79m429dl/api#tokens) → Add API token, permission **Editor** |
-| `RESEND_API_KEY` | resend.com → API Keys |
-| `RESEND_FROM_EMAIL` | A sender on a domain verified in Resend, e.g. `Opsiogen <hello@yourdomain.com>` |
+| `SMTP_USER` | The Google Workspace mailbox that sends enquiry emails (contact@opsiogen.com) |
+| `SMTP_PASS` | A Google app password for that mailbox (myaccount.google.com/apppasswords) |
 | `ENQUIRY_TO_EMAIL` | `opsiogen@gmail.com` (already filled in; comma-separate for several) |
 
 ### Sanity setup
@@ -79,7 +79,7 @@ Every project shows the same **sample mockups** for now (`public/work/samples`: 
 Until the Hostinger plan is bought, the site runs on the Vercel project **opsiogen** (team luckylaxas-projects), linked to this repo. Every push to `claude/admiring-einstein-4nf662` redeploys it.
 
 - The Sanity project, dataset, API version and enquiry inbox are already set in Vercel → opsiogen → Settings → Environment Variables.
-- Add `SANITY_API_WRITE_TOKEN` there (and `RESEND_API_KEY` / `RESEND_FROM_EMAIL` when you have them), then redeploy: Deployments → latest → ⋯ → Redeploy.
+- Add `SANITY_API_WRITE_TOKEN` there (and `SMTP_USER` / `SMTP_PASS` for enquiry emails), then redeploy: Deployments → latest → ⋯ → Redeploy.
 - `NEXT_PUBLIC_SITE_URL` is optional on Vercel; the live address is picked up automatically.
 - The free Hobby plan is for non-commercial use, so treat it as a preview until the move.
 
@@ -110,8 +110,8 @@ The site runs as a Node.js web app (a Business or Cloud plan). It is a standard 
    | `NEXT_PUBLIC_SANITY_DATASET` | `production` |
    | `NEXT_PUBLIC_SANITY_API_VERSION` | `2026-02-01` |
    | `SANITY_API_WRITE_TOKEN` | Your Sanity Editor token (saves enquiries to the studio) |
-   | `RESEND_API_KEY` | From resend.com → API Keys (emails each enquiry) |
-   | `RESEND_FROM_EMAIL` | A sender on a domain verified in Resend |
+   | `SMTP_USER` | The Google Workspace mailbox that emails each enquiry (contact@opsiogen.com) |
+   | `SMTP_PASS` | A Google app password for that mailbox |
    | `ENQUIRY_TO_EMAIL` | `opsiogen@gmail.com` |
 
    On the live site the contact form needs at least the Sanity token or the two Resend values; with neither it shows an error instead of pretending to send.
