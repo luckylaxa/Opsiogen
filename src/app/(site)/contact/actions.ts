@@ -6,7 +6,7 @@ import { getWriteClient } from "@/sanity/lib/write-client";
 import { CONTACT_FORM } from "@/content/seed-data";
 import type { EnquiryState } from "./types";
 
-const DEFAULT_ENQUIRY_INBOX = "opsiogen@gmail.com";
+const DEFAULT_ENQUIRY_INBOX = "contact@opsiogen.com";
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const PHONE = /^[+()\-.\s\d]{6,30}$/;
 

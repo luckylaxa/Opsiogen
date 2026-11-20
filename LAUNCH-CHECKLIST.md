@@ -16,14 +16,14 @@ Tick items as they are done.
 ## Going live: the plan agreed on 20 November 2026
 
 Hosting: Hostinger **Unlimited** web hosting (Node.js web app), data centre **India** (most clients are in India and Dubai;
-the CDN serves files to Canada, the US and Europe). The domain stays at **GoDaddy**; email stays on **Google Workspace**
-(3 addresses). Vercel's free plan is personal use only, so the Vercel copy is switched off once Hostinger is live.
+the CDN serves files to Canada, the US and Europe). The domain, **opsiogen.com**, stays at **GoDaddy**; email stays on **Google Workspace**
+(3 addresses). The site's address is `https://opsiogen.com`, with `www.opsiogen.com` redirecting to it. Vercel's free plan is personal use only, so the Vercel copy is switched off once Hostinger is live.
 
 - [ ] Buy Hostinger Unlimited (48 months). In hPanel: Websites → Add website → Node.js web app → connect GitHub →
       `luckylaxa/Opsiogen`, branch `claude/admiring-einstein-4nf662` (or `main` once merged), Node 22.x, redeploy on push.
       Build `npm run build`, start `npm start`. One Hostinger plan connects to one GitHub account: keep hosted repos there.
 - [ ] Environment variables in Hostinger: `NEXT_PUBLIC_SANITY_PROJECT_ID` (79m429dl), `NEXT_PUBLIC_SANITY_DATASET`
-      (production), `NEXT_PUBLIC_SANITY_API_VERSION` (2026-02-01), `ENQUIRY_TO_EMAIL`, `NEXT_PUBLIC_SITE_URL` (the temporary
+      (production), `NEXT_PUBLIC_SANITY_API_VERSION` (2026-02-01), `ENQUIRY_TO_EMAIL` (contact@opsiogen.com), `NEXT_PUBLIC_SITE_URL` (the temporary
       hostingersite.com address first, then the live domain; the contact form needs it behind Hostinger's proxy), and a new
       `SANITY_API_WRITE_TOKEN` (sanity.io/manage → API → Tokens, Editor; Vercel keeps the old one hidden).
 - [ ] Test on the temporary address before the domain moves (within Hostinger's 30-day refund): build fits the plan, every
@@ -31,7 +31,7 @@ the CDN serves files to Canada, the US and Europe). The domain stays at **GoDadd
 - [ ] GoDaddy DNS: change only the website records, `@` (A record) and `www` (CNAME), to the values Hostinger shows under
       Connect domain. Do **not** change the nameservers and do not touch the MX, SPF, DKIM or verification records:
       they keep Google Workspace email working. Remove any GoDaddy forwarding or parked page on `@`.
-- [ ] Set `NEXT_PUBLIC_SITE_URL` to the live address, redeploy. Canonicals, the sitemap, robots.txt and the structured
+- [ ] Set `NEXT_PUBLIC_SITE_URL` to `https://opsiogen.com`, redeploy. Canonicals, the sitemap, robots.txt and the structured
       data all use it. Redirect the www or non-www twin to it.
 - [ ] Add the live address in Sanity → API → CORS origins with **Allow credentials** ticked, so `/studio` can sign in.
 - [ ] Check `/sitemap.xml` and `/robots.txt` on the live domain show the live address; send HSTS from Hostinger.
@@ -41,10 +41,9 @@ the CDN serves files to Canada, the US and Europe). The domain stays at **GoDadd
 
 - [ ] Verify the sending domain in Resend: its records (on a `send.` subdomain and a `resend._domainkey` TXT) go in
       GoDaddy DNS and don't affect Google Workspace's own SPF and MX records.
-- [ ] Add `RESEND_API_KEY` and `RESEND_FROM_EMAIL` (e.g. `Opsiogen <website@the-domain>`; no mailbox needed) in Hostinger,
+- [ ] Add `RESEND_API_KEY` and `RESEND_FROM_EMAIL` (e.g. `Opsiogen Website <website@opsiogen.com>`; no mailbox needed) in Hostinger,
       then redeploy. Until then enquiries are saved in the Studio but not emailed to `ENQUIRY_TO_EMAIL`.
-- [ ] Decide where enquiries go: `ENQUIRY_TO_EMAIL` is opsiogen@gmail.com today; one of the Google Workspace addresses
-      may be better.
+- [x] Enquiries go to contact@opsiogen.com (Google Workspace), decided 20 November; set in Vercel and as the code's default.
 - [ ] Send a test enquiry from the live site.
 
 ## SEO (from the checklist video)
@@ -56,6 +55,8 @@ the CDN serves files to Canada, the US and Europe). The domain stays at **GoDadd
 - [ ] Optional: show breadcrumbs on the page. They're already in the structured data.
 
 ## Content
+
+- [ ] **Before launch:** the Privacy Policy page (/privacy) is still the starter placeholder text. Replace it with the real policy (what the contact form collects and why, where it is kept, how long, people's rights, and contact@opsiogen.com for privacy requests); the owner approves the wording.
 
 - [ ] Afthab Tours still uses sample images, which search engines treat as thin pages. Send its Figma link or hide it until it's ready.
 - [ ] Case-study mockups for BigTapp and Cabot show a "Webflow" tag (a tool name) inside the images; edit the Figma frames if it should go.
