@@ -42,24 +42,14 @@ export type CardPhoto = Img & { name?: string; role?: string; linkedin?: string 
  * The About photos are half-body crops of the two call to action photos, with the heads the same size.
  */
 export const CARD_IMAGES: Record<string, CardPhoto[]> = {
+  // One photo of our office (the owner's, 21 Nov): the founders' photos made the site read like a personal portfolio.
   about: [
     {
-      url: "/about/portrait-1.jpg",
-      width: 706,
-      height: 942,
-      alt: "A man in a black jacket and sunglasses on a green sofa, against a warm wood wall",
-      hotspot: { x: 0.84, y: 0.3 },
-      name: "Lucky Laxadhish",
-      role: "Founder & CEO",
-    },
-    {
-      url: "/about/portrait-2.jpg",
-      width: 926,
-      height: 1234,
-      alt: "A man in a cream knitted shirt holding his sunglasses, against a warm wood wall",
-      hotspot: { x: 0.5, y: 0.3 },
-      name: "Ajmal Sheed",
-      role: "Founder & COO",
+      url: "/about/office-reception.jpg",
+      width: 1536,
+      height: 1024,
+      alt: "Our office reception: a yellow wall, a wooden desk and plants",
+      hotspot: { x: 0.45, y: 0.5 },
     },
   ],
 };

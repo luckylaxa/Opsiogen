@@ -7,6 +7,7 @@ import { submitEnquiry } from "@/app/(site)/contact/actions";
 import type { EnquiryState } from "@/app/(site)/contact/types";
 import { Check } from "@/components/ui/Icons";
 import { Mark } from "@/components/site/Mark";
+import { buttonClass } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 type Option = { value: string; label: string };
@@ -21,15 +22,6 @@ const field =
 const input = cn(field, "h-[clamp(44px,calc(0.6vw+42px),54px)]");
 const chip =
   "flex min-h-[clamp(44px,calc(0.72vw+41.3px),53px)] items-center gap-2 rounded-full border border-ink/15 px-[clamp(16px,calc(0.4vw+14px),22px)] py-2 text-base transition-[background-color,border-color,color] duration-200 hover:border-ink/60 peer-checked:border-ink peer-checked:bg-ink peer-checked:text-on-ink peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink [&>svg]:hidden peer-checked:[&>svg]:block";
-
-/**
- * The form's main button: a pill in ink with a thin ring of our logo's spectrum (Lucky, 21 Nov: the form should feel
- * like Opsiogen). The spectrum stays a line, never a fill, as in the design system.
- */
-const brandButton =
-  "btn-spectrum inline-flex h-[clamp(48px,calc(0.6vw+46px),58px)] items-center justify-center rounded-full px-[clamp(22px,1.6vw,32px)] text-base font-medium transition-[box-shadow,opacity] duration-300 hover:shadow-[0_8px_30px_-6px_rgb(155_28_240/0.45)] disabled:cursor-wait disabled:opacity-60";
-const quietButton =
-  "inline-flex h-[clamp(48px,calc(0.6vw+46px),58px)] items-center justify-center rounded-full border border-ink/15 px-[clamp(20px,1.4vw,28px)] text-base font-medium transition-colors duration-200 hover:border-ink/60";
 
 /** One question per screen. Each step names the fields it checks before moving on. */
 const STEPS = [
@@ -125,12 +117,12 @@ export function ContactForm({ needs, sources, preselect }: Props) {
           </p>
           <p className="mt-[clamp(12px,1vw,20px)] max-w-[34ch] text-lead text-ink-2 text-pretty">{state.message}</p>
           <div className="mt-[clamp(28px,2.4vw,48px)] flex flex-wrap items-center gap-3">
-            <Link href="/" className={brandButton}>
-              Back to home
+            <Link href="/" className={buttonClass("dark", "md")}>
+              <span className="btn-label">Back to home</span>
             </Link>
             {/* A full reload, so the form starts clean. */}
-            <button type="button" onClick={() => window.location.reload()} className={quietButton}>
-              Start again
+            <button type="button" onClick={() => window.location.reload()} className={buttonClass("outline", "md")}>
+              <span className="btn-label">Start again</span>
             </button>
           </div>
         </div>
@@ -279,18 +271,22 @@ export function ContactForm({ needs, sources, preselect }: Props) {
 
         <div className="mt-[clamp(28px,2.6vw,52px)] flex items-center gap-3">
           {step > 0 && (
-            <button type="button" onClick={() => go(step - 1)} className={quietButton}>
-              Back
+            <button type="button" onClick={() => go(step - 1)} className={buttonClass("outline", "lg")}>
+              <span className="btn-label">Back</span>
             </button>
           )}
           {step < LAST ? (
             // A submit button, so Enter in a field moves on too (see onSubmit).
-            <button type="submit" className={cn(brandButton, "flex-1")}>
-              Continue
+            <button type="submit" className={cn(buttonClass("dark", "lg"), "flex-1 sm:flex-none sm:min-w-[220px]")}>
+              <span className="btn-label">Continue</span>
             </button>
           ) : (
-            <button type="submit" disabled={pending} className={cn(brandButton, "flex-1")}>
-              {pending ? "Sending…" : "Send request"}
+            <button
+              type="submit"
+              disabled={pending}
+              className={cn(buttonClass("dark", "lg"), "flex-1 disabled:cursor-wait disabled:opacity-60 sm:flex-none sm:min-w-[220px]")}
+            >
+              <span className="btn-label">{pending ? "Sending…" : "Send request"}</span>
             </button>
           )}
         </div>

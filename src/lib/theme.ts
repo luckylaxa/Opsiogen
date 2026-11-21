@@ -7,13 +7,13 @@ export const THEME_KEY = "theme";
 export const THEME_BAR: Record<Theme, string> = { light: "#edeaed", dark: "#121115" };
 
 /** The theme a first-time visitor sees. */
-export const DEFAULT_THEME: Theme = "dark";
+export const DEFAULT_THEME: Theme = "light";
 
 /**
- * Runs in <head> before the first paint: dark unless the visitor chose light. Also marks <html> with
+ * Runs in <head> before the first paint: light unless the visitor chose dark (light by default since 21 Nov). Also marks <html> with
  * `page-loaded` once the page has loaded, for things that should wait until then (the client logos).
  */
-export const THEME_SCRIPT = `try{document.documentElement.dataset.theme=localStorage.getItem("${THEME_KEY}")==="light"?"light":"dark"}catch(e){}addEventListener("load",function(){document.documentElement.classList.add("page-loaded")});`;
+export const THEME_SCRIPT = `try{document.documentElement.dataset.theme=localStorage.getItem("${THEME_KEY}")==="dark"?"dark":"light"}catch(e){}addEventListener("load",function(){document.documentElement.classList.add("page-loaded")});`;
 
 /** sessionStorage key: the first-visit intro has run (or was skipped) in this visit. */
 export const INTRO_KEY = "op-preloaded";

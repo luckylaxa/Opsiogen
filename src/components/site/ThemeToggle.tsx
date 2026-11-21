@@ -10,7 +10,7 @@ const subscribe = (onChange: () => void) => {
   observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
   return () => observer.disconnect();
 };
-const current = (): Theme => (document.documentElement.dataset.theme === "light" ? "light" : "dark");
+const current = (): Theme => (document.documentElement.dataset.theme === "dark" ? "dark" : "light");
 
 /**
  * Switches between the light and dark theme and remembers the choice. The

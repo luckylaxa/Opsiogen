@@ -225,15 +225,6 @@
     word-spacing: 0.12em;
   }
 
-  /* A button in ink with a thin ring of the logo's spectrum (the contact form): the spectrum stays a line. */
-  .btn-spectrum {
-    border: 2px solid transparent;
-    background:
-      linear-gradient(var(--color-ink), var(--color-ink)) padding-box,
-      var(--gradient-brand) border-box;
-    color: var(--color-on-ink);
-  }
-
   /* Giant titles (GiantHeading): plain wrapping on phones; balanced lines from tablets up. Safari squeezes them
      into more lines than they need (Home's hero went from three rows to five on a Mac, 20 Nov; on iPhones
      "We are Opsiogen." went to one word per line), so in Safari's engine (the only one with hanging punctuation)
