@@ -44,7 +44,7 @@ export const SETTINGS: SiteSettings = {
   headerButton: { label: "Start a project", href: "/contact" },
   dockButton: { label: "Let’s talk", href: "/contact" },
   cta: {
-    heading: "One partner. Every digital need. One monthly plan.",
+    heading: "Have a project in mind? Let’s talk.",
     button: { label: "Get in touch", href: "/contact" },
   },
   enquirySuccessMessage:

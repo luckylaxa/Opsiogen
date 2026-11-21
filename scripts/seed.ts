@@ -204,6 +204,14 @@ const ORDER_SWAPS: [string, string][] = [
 const TEXT_UPDATES: { id: string; get: string; path: string; from: string; to: string }[] = [
   // Each call to action has its own label; Start a project stays with the header.
   { id: "siteSettings", get: "cta.button.label", path: "cta.button.label", from: "Start a project", to: "Get in touch" },
+  // The call to action speaks for the company, without the monthly plan (owner's partner, 21 Nov).
+  {
+    id: "siteSettings",
+    get: "cta.heading",
+    path: "cta.heading",
+    from: "One partner. Every digital need. One monthly plan.",
+    to: "Have a project in mind? Let’s talk.",
+  },
   { id: "service-ai-websites", get: "stats.label", path: "stats.label", from: "Why Opsiogen", to: "In numbers" },
   {
     id: "service-ai-websites",
