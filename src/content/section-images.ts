@@ -8,12 +8,11 @@ import type { Img } from "@/lib/types";
 const photo = (url: string, alt: string): Img => ({ url, width: 1600, height: 1200, alt });
 
 /**
- * The call to action banners (0: main pages, 1: service and case study pages): the text goes on the left. Company
- * pictures, not people: the founders' photos made the site read like a personal portfolio (owner's partner, 21 Nov).
- * Both show our studio by the lake with our mark lit up inside.
+ * The call to action banners (0: main pages, 1: service and case study pages): the text goes on the left. A collage of
+ * our service work (the owner's partner, 21 Nov: company and services, not people or the office).
  */
-const STUDIO: Img = { url: "/home/hero.jpg", width: 2560, height: 1440, alt: "", hotspot: { x: 0.62, y: 0.5 } };
-export const CTA_IMAGES: Img[] = [STUDIO, STUDIO];
+const SERVICES: Img = { url: "/cta/cta-services.jpg", width: 2400, height: 1350, alt: "", hotspot: { x: 0.6, y: 0.5 } };
+export const CTA_IMAGES: Img[] = [SERVICES, SERVICES];
 
 /** Promise list photos by section key, in item order. */
 export const LIST_IMAGES: Record<string, Img[]> = {
