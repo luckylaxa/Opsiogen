@@ -5,7 +5,6 @@ import { useActionState, useEffect, useId, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { submitEnquiry } from "@/app/(site)/contact/actions";
 import type { EnquiryState } from "@/app/(site)/contact/types";
-import { buttonClass } from "@/components/ui/Button";
 import { Check } from "@/components/ui/Icons";
 import { Mark } from "@/components/site/Mark";
 import { cn } from "@/lib/utils";
@@ -18,10 +17,19 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const PHONE = /^[+()\-.\s\d]{6,30}$/;
 
 const field =
-  "w-full rounded-[6px] border border-transparent bg-field px-[clamp(14px,calc(0.4vw+12.5px),20px)] text-base text-ink placeholder:text-mute transition-[border-color,background-color] duration-200 hover:border-ink/20 focus:border-ink focus:bg-surface focus:outline-none aria-[invalid=true]:border-error";
-const input = cn(field, "h-[clamp(48px,calc(0.79vw+45px),60px)]");
+  "w-full border-0 border-b border-ink/20 bg-transparent px-0 text-base text-ink placeholder:text-mute transition-[border-color] duration-200 hover:border-ink/50 focus:border-ink focus:outline-none aria-[invalid=true]:border-error";
+const input = cn(field, "h-[clamp(44px,calc(0.6vw+42px),54px)]");
 const chip =
-  "flex min-h-[clamp(44px,calc(0.72vw+41.3px),53px)] items-center gap-2 rounded-[8px] border border-ink/15 px-[clamp(14px,calc(0.33vw+12.8px),19px)] py-2 text-base transition-[background-color,border-color,color] duration-200 hover:border-ink/60 peer-checked:border-ink peer-checked:bg-ink peer-checked:text-on-ink peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink [&>svg]:hidden peer-checked:[&>svg]:block";
+  "flex min-h-[clamp(44px,calc(0.72vw+41.3px),53px)] items-center gap-2 rounded-full border border-ink/15 px-[clamp(16px,calc(0.4vw+14px),22px)] py-2 text-base transition-[background-color,border-color,color] duration-200 hover:border-ink/60 peer-checked:border-ink peer-checked:bg-ink peer-checked:text-on-ink peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink [&>svg]:hidden peer-checked:[&>svg]:block";
+
+/**
+ * The form's main button: a pill in ink with a thin ring of our logo's spectrum (Lucky, 21 Nov: the form should feel
+ * like Opsiogen). The spectrum stays a line, never a fill, as in the design system.
+ */
+const brandButton =
+  "btn-spectrum inline-flex h-[clamp(48px,calc(0.6vw+46px),58px)] items-center justify-center rounded-full px-[clamp(22px,1.6vw,32px)] text-base font-medium transition-[box-shadow,opacity] duration-300 hover:shadow-[0_8px_30px_-6px_rgb(155_28_240/0.45)] disabled:cursor-wait disabled:opacity-60";
+const quietButton =
+  "inline-flex h-[clamp(48px,calc(0.6vw+46px),58px)] items-center justify-center rounded-full border border-ink/15 px-[clamp(20px,1.4vw,28px)] text-base font-medium transition-colors duration-200 hover:border-ink/60";
 
 /** One question per screen. Each step names the fields it checks before moving on. */
 const STEPS = [
@@ -117,12 +125,12 @@ export function ContactForm({ needs, sources, preselect }: Props) {
           </p>
           <p className="mt-[clamp(12px,1vw,20px)] max-w-[34ch] text-lead text-ink-2 text-pretty">{state.message}</p>
           <div className="mt-[clamp(28px,2.4vw,48px)] flex flex-wrap items-center gap-3">
-            <Link href="/" className={buttonClass("dark", "md")}>
-              <span className="btn-label">Back to home</span>
+            <Link href="/" className={brandButton}>
+              Back to home
             </Link>
             {/* A full reload, so the form starts clean. */}
-            <button type="button" onClick={() => window.location.reload()} className={buttonClass("outline", "md")}>
-              <span className="btn-label">Start again</span>
+            <button type="button" onClick={() => window.location.reload()} className={quietButton}>
+              Start again
             </button>
           </div>
         </div>
@@ -271,22 +279,18 @@ export function ContactForm({ needs, sources, preselect }: Props) {
 
         <div className="mt-[clamp(28px,2.6vw,52px)] flex items-center gap-3">
           {step > 0 && (
-            <button type="button" onClick={() => go(step - 1)} className={buttonClass("outline", "lg")}>
-              <span className="btn-label">Back</span>
+            <button type="button" onClick={() => go(step - 1)} className={quietButton}>
+              Back
             </button>
           )}
           {step < LAST ? (
             // A submit button, so Enter in a field moves on too (see onSubmit).
-            <button type="submit" className={cn(buttonClass("dark", "lg"), "flex-1 sm:flex-none sm:min-w-[220px]")}>
-              <span className="btn-label">Continue</span>
+            <button type="submit" className={cn(brandButton, "flex-1")}>
+              Continue
             </button>
           ) : (
-            <button
-              type="submit"
-              disabled={pending}
-              className={cn(buttonClass("dark", "lg"), "flex-1 disabled:cursor-wait disabled:opacity-60 sm:flex-none sm:min-w-[220px]")}
-            >
-              <span className="btn-label">{pending ? "Sending…" : "Send request"}</span>
+            <button type="submit" disabled={pending} className={cn(brandButton, "flex-1")}>
+              {pending ? "Sending…" : "Send request"}
             </button>
           )}
         </div>
@@ -305,25 +309,34 @@ function stepFilled(i: number, fd: FormData) {
   return true;
 }
 
-/** The card around the steps: logo, step counter and a progress line. */
+/**
+ * The card around the steps, in a soft frame with "One question at a time" on top: logo, step counter and a progress
+ * line in our logo's spectrum that fills as the steps go by.
+ */
 function Card({ step, done, children }: { step: number; done?: boolean; children: React.ReactNode }) {
   const total = STEPS.length;
+  const shown = done ? total : step + 1;
   return (
-    <div className="self-start rounded-card border border-ink/10 bg-surface p-[clamp(22px,calc(2vw+14px),56px)]">
-      <div className="flex items-center justify-between">
-        <Mark className="size-[clamp(30px,2.2vw,40px)]" />
-        <p className="text-small text-mute tabular-nums" aria-live="polite">
-          <span className="sr-only">{done ? "Sent. " : "Step "}</span>
-          {done ? total : step + 1} / {total}
-        </p>
+    <div className="self-start rounded-[calc(var(--radius-card)+8px)] border border-ink/10 bg-ink/[0.04] p-[clamp(6px,0.5vw,8px)]">
+      <p className="py-[clamp(8px,0.6vw,12px)] text-center text-small text-mute">
+        One question at a <span className="font-medium text-ink">time</span>
+      </p>
+      <div className="rounded-card border border-ink/10 bg-surface p-[clamp(22px,calc(2vw+14px),56px)]">
+        <div className="flex items-center justify-between">
+          <Mark className="size-[clamp(30px,2.2vw,40px)]" />
+          <p className="text-small text-mute tabular-nums" aria-live="polite">
+            <span className="sr-only">{done ? "Sent. " : "Step "}</span>
+            {shown} / {total}
+          </p>
+        </div>
+        <div aria-hidden="true" className="relative mt-[clamp(14px,1.2vw,22px)] mb-[clamp(24px,2.4vw,48px)] h-[2px] rounded-full bg-ink/10">
+          <div
+            className="absolute inset-0 rounded-full bg-(image:--gradient-brand) transition-[clip-path] duration-500 ease-[var(--ease-out-soft)]"
+            style={{ clipPath: `inset(0 ${100 - (shown / total) * 100}% 0 0 round 999px)` }}
+          />
+        </div>
+        {children}
       </div>
-      <div aria-hidden="true" className="mt-[clamp(14px,1.2vw,22px)] mb-[clamp(24px,2.4vw,48px)] h-px bg-ink/10">
-        <div
-          className="h-px bg-ink transition-[width] duration-500 ease-[var(--ease-out-soft)]"
-          style={{ width: `${((done ? total : step + 1) / total) * 100}%` }}
-        />
-      </div>
-      {children}
     </div>
   );
 }
