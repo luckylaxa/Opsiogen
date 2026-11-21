@@ -306,17 +306,14 @@ function stepFilled(i: number, fd: FormData) {
 }
 
 /**
- * The card around the steps, in a soft frame with "One question at a time" on top: logo, step counter and a progress
- * line in our logo's spectrum that fills as the steps go by.
+ * The card around the steps, in a soft frame: logo, step counter and a progress line in our logo's spectrum that
+ * fills as the steps go by.
  */
 function Card({ step, done, children }: { step: number; done?: boolean; children: React.ReactNode }) {
   const total = STEPS.length;
   const shown = done ? total : step + 1;
   return (
     <div className="self-start rounded-[calc(var(--radius-card)+8px)] border border-ink/10 bg-ink/[0.04] p-[clamp(6px,0.5vw,8px)]">
-      <p className="py-[clamp(8px,0.6vw,12px)] text-center text-small text-mute">
-        One question at a <span className="font-medium text-ink">time</span>
-      </p>
       <div className="rounded-card border border-ink/10 bg-surface p-[clamp(22px,calc(2vw+14px),56px)]">
         <div className="flex items-center justify-between">
           <Mark className="size-[clamp(30px,2.2vw,40px)]" />

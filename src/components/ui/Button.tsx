@@ -8,10 +8,10 @@ const base =
   "btn inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-btn)] border font-medium transition-[background-color,color,border-color,scale,opacity] duration-300 ease-out active:scale-[0.97]";
 
 const variants: Record<Variant, string> = {
-  dark: "border-ink bg-ink text-on-ink hover:opacity-85",
+  dark: "btn-ring [--btn-fill:var(--color-ink)] text-on-ink hover:opacity-85",
   outline: "border-ink bg-transparent text-ink hover:bg-ink hover:text-on-ink",
   "outline-light": "border-white/90 bg-transparent text-white hover:bg-white hover:text-coal hover:border-white",
-  light: "theme-light border-band bg-band text-ink hover:bg-white hover:border-white",
+  light: "btn-ring theme-light [--btn-fill:var(--color-band)] text-ink hover:[--btn-fill:#fff]",
 };
 
 const sizes: Record<Size, string> = {

@@ -82,7 +82,7 @@
     --header-h: clamp(64px, calc(1.57vw + 58.1px), 88px);
     /*
      * "Fresh spectrum": the brightest highlights of the logo O in ring order.
-     * The logo only, never a fill and never a hover state. The same on
+     * The logo, and as a thin line: the progress line and the ring round solid buttons; never a fill. The same on
      * black and white; OKLCH interpolation where the browser supports it.
      */
     --gradient-brand: linear-gradient(120deg, #d8fa01 0%, #01f14c 14%, #00ecfd 29%, #01a5e2 43%, #9b1cf0 57%, #ff2a1a 71%, #fe9102 86%, #feb702 100%);
@@ -1026,3 +1026,18 @@ html.ccur-taken [data-intro-land] {
   }
 }
 
+
+/* Solid buttons (dark and light, the dock's Let's talk) carry a thin ring of the logo's spectrum around their own
+   square shape (Lucky, 21 Nov). The fill comes from --btn-fill, so hover states change the fill and keep the ring.
+   The spectrum stays a line, never a fill. Unlayered, so it wins over the border utilities. */
+.btn-ring {
+  border: 2px solid transparent;
+  background:
+    linear-gradient(var(--btn-fill), var(--btn-fill)) padding-box,
+    var(--gradient-brand) border-box;
+}
+@media (forced-colors: active) {
+  .btn-ring {
+    border-color: ButtonText;
+  }
+}

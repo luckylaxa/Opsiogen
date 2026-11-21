@@ -125,7 +125,7 @@ export function Dock({ menu, button }: { menu: LinkItem[]; button: LinkItem }) {
             <li className="flex flex-[1.3] px-1 py-2">
               <Link
                 href={button.href}
-                className="btn theme-light flex w-full items-center justify-center rounded-[5px] bg-[#f8f6f8] px-2 text-center text-[13px] leading-[1.15] font-semibold text-balance text-[#0a090d] transition-colors duration-300 hover:bg-white"
+                className="btn theme-light flex w-full items-center justify-center btn-ring rounded-[5px] [--btn-fill:#f8f6f8] px-2 text-center text-[13px] leading-[1.15] font-semibold text-balance text-[#0a090d] transition-colors duration-300 hover:[--btn-fill:#fff]"
               >
                 <span className="btn-label">{button.label}</span>
               </Link>
@@ -180,7 +180,7 @@ export function Dock({ menu, button }: { menu: LinkItem[]; button: LinkItem }) {
 
           <Link
             href={button.href}
-            className="btn theme-light flex h-full items-center rounded-[5px] bg-[#f8f6f8] px-[clamp(16px,calc(0.6vw+13px),24px)] text-[length:clamp(14px,calc(0.2vw+13px),17px)] font-medium text-[#0a090d] transition-colors duration-300 hover:bg-white"
+            className="btn theme-light flex h-full items-center btn-ring rounded-[5px] [--btn-fill:#f8f6f8] px-[clamp(16px,calc(0.6vw+13px),24px)] text-[length:clamp(14px,calc(0.2vw+13px),17px)] font-medium text-[#0a090d] transition-colors duration-300 hover:[--btn-fill:#fff]"
           >
             <span className="btn-label">{button.label}</span>
           </Link>
