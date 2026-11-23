@@ -276,13 +276,17 @@ def face_image(kind, blush=False):
     def P(x, z): return ((TW / 2 + x * PX) * SS, (TH / 2 - (z - VZ) * PX) * SS)
     def disc(x, z, r, fill=255): (a, b), (c, e) = P(x - r, z + r), P(x + r, z - r); d.ellipse((a, b, c, e), fill=fill)
     def arc(x, z, rx, rz, a0, a1, w, fill=255):                  # a stroke along an ellipse (angles from +x, counter-clockwise), round ends
-        pts = [P(x + rx * math.cos(math.radians(a)), z + rz * math.sin(math.radians(a))) for a in [a0 + (a1 - a0) * i / 80 for i in range(81)]]
-        d.line(pts, fill=fill, width=round(w * PX * SS), joint='curve')
-        for q in (pts[0], pts[-1]): rr = w * PX * SS / 2; d.ellipse((q[0] - rr, q[1] - rr, q[0] + rr, q[1] + rr), fill=fill)
+        outer, inner, ends = [], [], []
+        for i in range(121):
+            a = math.radians(a0 + (a1 - a0) * i / 120); px, pz = x + rx * math.cos(a), z + rz * math.sin(a)
+            nx, nz = rz * math.cos(a), rx * math.sin(a); L = math.hypot(nx, nz); nx, nz = nx / L, nz / L
+            outer.append(P(px + nx * w / 2, pz + nz * w / 2)); inner.append(P(px - nx * w / 2, pz - nz * w / 2))
+            if i in (0, 120): ends.append((px, pz))
+        d.polygon(outer + inner[::-1], fill=fill)
+        for ex, ez in ends: disc(ex, ez, w / 2, fill)
     def smile(x, z, w, h):                                        # a filled half-moon: flat top, round bottom, soft corners
         pts = [P(x + w / 2 * math.cos(math.radians(a)), z - h * math.sin(math.radians(a))) for a in range(0, 181, 3)]
-        d.polygon(pts, fill=255); rr = 0.02 * PX * SS
-        for q in (pts[0], pts[-1]): d.ellipse((q[0] - rr, q[1] - rr * 0.2, q[0] + rr, q[1] + rr * 1.8), fill=255)
+        d.polygon(pts, fill=255)
     def rrect(x, z, w, h, r, width):
         (a, b), (c, e) = P(x - w / 2, z + h / 2), P(x + w / 2, z - h / 2); d.rounded_rectangle((a, b, c, e), radius=r * PX * SS, outline=255, width=round(width * PX * SS))
     EX, EZ = 0.335, 0.085
@@ -314,9 +318,9 @@ def face_image(kind, blush=False):
                     x, z = cx + gx * 0.015 + (0.0075 if gz % 2 else 0), cz + gz * 0.013
                     if ((x - cx) / 0.085) ** 2 + ((z - cz) / 0.055) ** 2 <= 1: disc(x, z, 0.0042, fill=150)
     im = im.resize((TW, TH), Image.LANCZOS)
-    core = im.filter(ImageFilter.MinFilter(9)).filter(ImageFilter.GaussianBlur(3)); glow = im.filter(ImageFilter.GaussianBlur(14)).point(lambda v: min(255, int(v * 1.1)))
-    CY = (40, 235, 255)
-    layers = [Image.merge('RGB', [m.point(lambda v, k=k: int(v * k / 255)) for k in c]) for m, c in ((glow, CY), (im, CY), (core, (160, 40, 0)))]
+    core = im.filter(ImageFilter.GaussianBlur(9)).point(lambda v: 255 if v > 200 else int(v * v / 200 / 1.3)).filter(ImageFilter.GaussianBlur(4)); glow = im.filter(ImageFilter.GaussianBlur(14)).point(lambda v: min(255, int(v * 1.1)))
+    CY = (20, 225, 255)
+    layers = [Image.merge('RGB', [m.point(lambda v, k=k: int(v * k / 255)) for k in c]) for m, c in ((glow, CY), (im, CY), (core, (90, 30, 0)))]
     out = ImageChops.add(ImageChops.add(layers[0], layers[1]), layers[2])
     path = os.path.join(OUT, 'face-%s%s.png' % (kind, '-blush' if blush else '')); out.save(path); return path
 

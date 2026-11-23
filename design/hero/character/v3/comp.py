@@ -3,12 +3,14 @@ so the colours stay deep where they are bright and glow softly round them."""
 import numpy as np
 from PIL import Image, ImageFilter
 def hexrgb(h): return tuple(int(h[i:i + 2], 16) / 255 for i in (1, 3, 5))
-def composite(beauty, glow, out, floor=None):
+def composite(beauty, glow, out, floor=None, bloom=1.0, shadow=1.0):
     b = np.asarray(Image.open(beauty).convert('RGBA')).astype(np.float32) / 255; g = np.asarray(Image.open(glow).convert('RGBA')).astype(np.float32) / 255
+    if shadow != 1.0:                                            # the floor shadow is what the render holds beyond the character's own outline
+        ca = g[..., 3:]; sa = np.clip(b[..., 3:] - ca, 0, 1); b = np.concatenate([b[..., :3], np.clip(ca + sa * shadow, 0, 1)], axis=2)
     res = b.shape[0]; k = res / 640
     bp = b[..., :3] * b[..., 3:]; gp = np.clip(g[..., :3] * g[..., 3:], 0, 1)
     gi = Image.fromarray((gp * 255).astype(np.uint8))
-    bloom = sum(np.asarray(gi.filter(ImageFilter.GaussianBlur(r * k))).astype(np.float32) / 255 * wt for r, wt in ((6, 0.35), (16, 0.45), (38, 0.4), (80, 0.25)))
+    amt = bloom; bloom = sum(np.asarray(gi.filter(ImageFilter.GaussianBlur(r * k))).astype(np.float32) / 255 * wt * amt for r, wt in ((6, 0.35), (16, 0.45), (38, 0.4), (80, 0.25)))
     if floor:                                                    # a soft coloured glow on the floor under the character
         cx, cy, hw, hh = floor; yy, xx = np.mgrid[0:res, 0:res].astype(np.float32)
         fall = np.exp(-(((xx - cx) / hw) ** 2 + ((yy - cy) / hh) ** 2) * 1.6)[..., None]
