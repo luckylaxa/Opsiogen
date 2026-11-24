@@ -104,6 +104,9 @@ if 'preview' in SHOTS:
     G['turn'](-22); frame(); shot('final-preview', 480, 48)
 if 'top' in SHOTS:                                               # a close look at the top of the head, at full size
     G['turn'](-22); frame(target=(0.19, 0, 0.65), lens=175); shot('final-top', 600, 160, w=1400, floor=False)
+if 'face' in SHOTS:                                              # the face, close
+    G['turn'](-22); bpy.context.view_layer.update(); fc = root.matrix_world @ Vector((0, -1.0, 0.1))
+    frame(target=tuple(fc), lens=250); shot('final-face', 560, 128, w=1080, floor=False)
 if 'ear' in SHOTS:                                               # the near ear, close
     G['turn'](-22); bpy.context.view_layer.update(); ec = root.matrix_world @ (G['on_sphere'](G['EAR_LON'], G['EAR_LAT']) * 1.0)
     frame(target=tuple(ec), lens=400); shot('final-ear', 900, 128, w=900, floor=False)

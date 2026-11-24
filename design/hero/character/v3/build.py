@@ -398,8 +398,8 @@ def face_image(kind, blush=False):
         (a, b), (c, e) = P(x - w / 2, z + h / 2), P(x + w / 2, z - h / 2); d.rounded_rectangle((a, b, c, e), radius=r * PX * SS, outline=255, width=round(width * PX * SS))
     EX, EZ = 0.345, 0.125
     if kind == 'happy':
-        for sx in (-1, 1): arc(sx * EX, EZ - 0.055, 0.18, 0.15, 18, 162, 0.1, taper=0.5)
-        smile(0, -0.065, 0.3, 0.15, sag=0.04)
+        for sx in (-1, 1): arc(sx * 0.375, 0.03, 0.162, 0.115, 6, 174, 0.092, taper=0.1)   # wide, round arches, even thickness, fat round ends   # round arcs, even thickness, fat round ends that come well down
+        smile(0, -0.025, 0.3, 0.15, sag=0.035)                                                  # just under the eyes' ends
     elif kind == 'thinking':
         disc(-0.29, EZ, 0.075); disc(0.29, EZ, 0.075)
         arc(-0.31, EZ + 0.06, 0.11, 0.06, 70, 130, 0.035); arc(0.29, EZ + 0.08, 0.1, 0.07, 30, 150, 0.035)
@@ -426,9 +426,9 @@ def face_image(kind, blush=False):
                     if ((x - cx) / 0.085) ** 2 + ((z - cz) / 0.055) ** 2 <= 1: disc(x, z, 0.0042, fill=150)
     im = im.resize((TW, TH), Image.LANCZOS)
     im = im.filter(ImageFilter.GaussianBlur(7)).point(lambda v: 255 if v > 127 else 0).filter(ImageFilter.GaussianBlur(1.3))   # every corner softly rounded
-    core = im.filter(ImageFilter.GaussianBlur(9)).point(lambda v: 255 if v > 200 else int(v * v / 200 / 1.3)).filter(ImageFilter.GaussianBlur(4)); glow = im.filter(ImageFilter.GaussianBlur(14)).point(lambda v: min(255, int(v * 1.1)))
+    core = im.filter(ImageFilter.GaussianBlur(9)).point(lambda v: 255 if v > 200 else int(v * v / 200 / 1.3)).filter(ImageFilter.GaussianBlur(4)); glow = im.filter(ImageFilter.GaussianBlur(22)).point(lambda v: min(255, int(v * 1.4)))   # a soft, wide glow round the face
     CY = (20, 225, 255)
-    layers = [Image.merge('RGB', [m.point(lambda v, k=k: int(v * k / 255)) for k in c]) for m, c in ((glow, CY), (im, CY), (core, (90, 30, 0)))]
+    layers = [Image.merge('RGB', [m.point(lambda v, k=k: int(v * k / 255)) for k in c]) for m, c in ((glow, CY), (im, CY), (core, (150, 30, 0)))]
     out = ImageChops.add(ImageChops.add(layers[0], layers[1]), layers[2])
     path = os.path.join(OUT, 'face-%s%s.png' % (kind, '-blush' if blush else '')); out.save(path); return path
 
