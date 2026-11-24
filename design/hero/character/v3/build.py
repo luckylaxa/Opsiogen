@@ -191,7 +191,7 @@ mesh_object('Bezel', verts, faces, M_body, parent=root)
 EAR_LON, EAR_LAT = 76, 6
 for s in (1, -1):
     ax = on_sphere(s * EAR_LON, EAR_LAT); nm = 'L' if s > 0 else 'R'
-    plate = [(0.0, 1.012)] + [(rr, math.sqrt(1 - rr * rr) + 0.014) for rr in (0.2, 0.3, 0.4, 0.46, 0.485)] + [(0.497, math.sqrt(1 - 0.497 ** 2) + 0.005), (0.503, math.sqrt(1 - 0.503 ** 2) - 0.004), (0.505, math.sqrt(1 - 0.505 ** 2) - 0.02)]
+    plate = [(0.0, 1.012)] + [(rr, math.sqrt(1 - rr * rr) + 0.028) for rr in (0.2, 0.3, 0.4, 0.46, 0.485)] + [(0.497, math.sqrt(1 - 0.497 ** 2) + 0.016), (0.503, math.sqrt(1 - 0.503 ** 2) - 0.004), (0.505, math.sqrt(1 - 0.505 ** 2) - 0.02)]
     lathe('EarPlate' + nm, plate, M_body, axis=ax)
     lathe('EarCup' + nm, [(0.4, 0.88), (0.4, 0.955), (0.393, 0.995), (0.375, 1.025), (0.345, 1.045), (0.305, 1.056), (0.275, 1.054), (0.258, 1.047), (0.25, 1.038)], M_body, axis=ax)   # a low housing, close on the body
     lathe('EarCentre' + nm, [(0.238, 1.036), (0.2, 1.062), (0.1, 1.086), (0.0, 1.093)], M_black, axis=ax)
@@ -203,8 +203,8 @@ for s in (1, -1):
 E1 = on_sphere(EAR_LON, EAR_LAT); TOP = on_sphere(0, 58)
 n_ = Vector((1, 0, 0)).cross(TOP - Vector((0, E1.y, E1.z))).normalized(); d_ = n_.dot(E1); C_ = n_ * d_; rr_ = math.sqrt(1 - d_ * d_); up_ = n_.cross(Vector((1, 0, 0))).normalized()
 if up_.z < 0: up_ = -up_
-head_pts = [C_ + (rr_ - 0.006) * (math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_) for a in [math.radians(146 - 112 * i / 199) for i in range(200)]]
-tube('HeadStripe', head_pts, lambda t: 0.021 * math.sin(math.pi * t) ** 0.6 + 0.0004, M_head, n=12, color=lambda t: spectrum(0.875 - 0.5 * t), parent=root)   # in the cut; both ends come to a sharp point
+head_pts = [C_ + (rr_ + 0.002) * (math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_) for a in [math.radians(146 - 112 * i / 199) for i in range(200)]]
+tube('HeadStripe', head_pts, lambda t: 0.017 * math.sin(math.pi * t) ** 0.6 + 0.0004, M_head, n=12, color=lambda t: spectrum(0.875 - 0.5 * t), parent=root)   # in the cut, under the step; both ends come to a sharp point
 # the bottom piece, as on the current website character: a groove that parts the base panel, lit along its front with the gradient line
 M_base = material('base', (0.8, 0.82, 0.88), rough=0.18, coat=1.0); M_dark = material('socket', (0.012, 0.015, 0.02), rough=0.3); DARK_IN_GLOW |= {'base', 'socket'}
 RHO = math.radians(55); h0 = Vector((math.sin(math.radians(192)), -math.cos(math.radians(192)), 0))
@@ -221,17 +221,20 @@ for i in range(NG):
 cutter = mesh_object('GrooveCut', verts, faces, M_dark)
 mod = body.modifiers.new('cut', 'BOOLEAN'); mod.operation = 'DIFFERENCE'; mod.object = cutter; mod.solver = 'EXACT'; mod.material_mode = 'TRANSFER'
 bpy.context.view_layer.objects.active = body; bpy.ops.object.modifier_apply(modifier=mod.name); bpy.data.objects.remove(cutter)
-# the cut over the head that the top light sits in: a thin slot from ear to ear, so the shell reads as fitted panels
-hv, hf = [], []; HN = 120
-for i in range(HN + 1):
-    a = math.radians(3 + 174 * i / HN); dirv = math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_
-    for rad, tt in ((rr_ - 0.05, -0.015), (rr_ - 0.05, 0.015), (rr_ + 0.09, 0.015), (rr_ + 0.09, -0.015)): hv.append(C_ + dirv * rad + n_ * tt)
+# the cut that the top light sits in: a thin slot all round where the shell meets the face piece, and the shell behind it
+# stands a little proud, so there is a clear step edge with the light under it (fitted panels, as on the reference)
+hv, hf = [], []; HN = 240; SLOT = 0.011; STEP = 1.02
 for i in range(HN):
-    for k in range(4): hf.append((i * 4 + k, i * 4 + (k + 1) % 4, (i + 1) * 4 + (k + 1) % 4, (i + 1) * 4 + k))
-hf += [(0, 1, 2, 3), (HN * 4, HN * 4 + 1, HN * 4 + 2, HN * 4 + 3)]
+    a = 2 * math.pi * i / HN; dirv = math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_
+    for rad, tt in ((rr_ - 0.05, -SLOT), (rr_ - 0.05, SLOT), (rr_ + 0.09, SLOT), (rr_ + 0.09, -SLOT)): hv.append(C_ + dirv * rad + n_ * tt)
+for i in range(HN):
+    for k in range(4): hf.append((i * 4 + k, i * 4 + (k + 1) % 4, ((i + 1) % HN) * 4 + (k + 1) % 4, ((i + 1) % HN) * 4 + k))
 headcut = mesh_object('HeadCut', hv, hf, M_dark)
 mod = body.modifiers.new('headcut', 'BOOLEAN'); mod.operation = 'DIFFERENCE'; mod.object = headcut; mod.solver = 'EXACT'; mod.material_mode = 'TRANSFER'
 bpy.context.view_layer.objects.active = body; bpy.ops.object.modifier_apply(modifier=mod.name); bpy.data.objects.remove(headcut)
+s_top = 1 if n_.z > d_ else -1
+for v in body.data.vertices:
+    if s_top * (v.co.dot(n_) - d_) > SLOT - 0.0005 and v.co.length > 0.985: v.co = v.co * STEP
 me_ = body.data; base_slot = len(me_.materials); me_.materials.append(M_base); bm = bmesh.new(); bm.from_mesh(me_)
 for f in bm.faces:
     f.smooth = True
