@@ -192,10 +192,10 @@ for s in (1, -1):
     ax = on_sphere(s * EAR_LON, EAR_LAT); nm = 'L' if s > 0 else 'R'
     plate = [(0.0, 1.012)] + [(rr, math.sqrt(1 - rr * rr) + 0.012) for rr in (0.2, 0.3, 0.4, 0.44, 0.455)] + [(0.465, math.sqrt(1 - 0.465 ** 2) + 0.004), (0.47, math.sqrt(1 - 0.47 ** 2) - 0.004), (0.472, math.sqrt(1 - 0.472 ** 2) - 0.02)]
     lathe('EarPlate' + nm, plate, M_body, axis=ax)
-    lathe('EarCup' + nm, [(0.385, 0.86), (0.385, 0.985), (0.378, 1.02), (0.36, 1.045), (0.33, 1.06), (0.295, 1.066), (0.272, 1.062), (0.262, 1.054), (0.258, 1.046)], M_body, axis=ax)
-    lathe('EarCentre' + nm, [(0.259, 1.044), (0.2, 1.056), (0.1, 1.066), (0.0, 1.07)], M_black, axis=ax)
-    torus('EarRingIn' + nm, 0.232, 0.014, M_earRing, axis=ax, center=ax * 1.05, n=160, m=10, color=lambda t, b: hexrgb('#ff3fc8'), parent=root)
-    torus('EarRing' + nm, 0.262, 0.024, M_earRing, axis=ax, center=ax * 1.052, n=160, m=12, color=lambda t, b, s=s: ramp(EAR, (t + (0.25 if s > 0 else 0.75)) % 1.0))
+    lathe('EarCup' + nm, [(0.385, 0.86), (0.385, 1.05), (0.378, 1.085), (0.36, 1.11), (0.33, 1.125), (0.295, 1.13), (0.272, 1.126), (0.262, 1.118), (0.258, 1.108)], M_body, axis=ax)
+    lathe('EarCentre' + nm, [(0.259, 1.106), (0.2, 1.124), (0.1, 1.138), (0.0, 1.143)], M_black, axis=ax)
+    torus('EarRingIn' + nm, 0.226, 0.016, M_earRing, axis=ax, center=ax * 1.116, n=160, m=10, color=lambda t, b: hexrgb('#ff2fd0'), parent=root)
+    torus('EarRing' + nm, 0.262, 0.026, M_earRing, axis=ax, center=ax * 1.116, n=160, m=12, color=lambda t, b, s=s: ramp(EAR, (t + (0.25 if s > 0 else 0.75)) % 1.0))
     for o in ('EarPlate', 'EarCup', 'EarCentre', 'EarRing'): bpy.data.objects[o + nm].parent = root
 
 # ---------------------------------------------------------------- the rainbow stripe over the head, ear to ear, and the glowing seam low on the front
@@ -203,9 +203,41 @@ E1 = on_sphere(EAR_LON, EAR_LAT); TOP = on_sphere(0, 58)
 n_ = Vector((1, 0, 0)).cross(TOP - Vector((0, E1.y, E1.z))).normalized(); d_ = n_.dot(E1); C_ = n_ * d_; rr_ = math.sqrt(1 - d_ * d_); up_ = n_.cross(Vector((1, 0, 0))).normalized()
 if up_.z < 0: up_ = -up_
 head_pts = [C_ + rr_ * (math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_) for a in [math.radians(144 - 108 * i / 199) for i in range(200)]]
-tube('HeadStripe', head_pts, 0.021, M_head, n=12, color=lambda t: spectrum(0.875 - 0.5 * t), parent=root)
-seam_pts = [on_sphere(lon, -66 + 22 * (lon / 78) ** 2, 1.0) for lon in [-78 + 156 * i / 159 for i in range(160)]]
-tube('LowSeam', seam_pts, lambda t: 0.016 * min(1, 6 * t, 6 * (1 - t)) + 0.002, M_seam, n=12, color=lambda t: ramp(SEAM, t), parent=root)
+tube('HeadStripe', head_pts, lambda t: 0.026 * math.sin(math.pi * t) ** 0.75 + 0.0004, M_head, n=12, color=lambda t: spectrum(0.875 - 0.5 * t), parent=root)   # both ends come to a sharp point
+# the bottom piece, as on the current website character: a groove that parts the base panel, lit along its front with the gradient line
+M_base = material('base', (0.8, 0.82, 0.88), rough=0.18, coat=1.0); M_dark = material('socket', (0.012, 0.015, 0.02), rough=0.3); DARK_IN_GLOW |= {'base', 'socket'}
+RHO = math.radians(53); h0 = Vector((math.sin(math.radians(212)), -math.cos(math.radians(212)), 0))
+AX = (math.cos(math.radians(21)) * Vector((0, 0, -1)) + math.sin(math.radians(21)) * h0).normalized()
+U = (-h0 - AX * (-h0).dot(AX)).normalized(); V = AX.cross(U)
+def groove_pt(theta, phi, r): return r * (math.cos(theta) * AX + math.sin(theta) * (math.cos(phi) * U + math.sin(phi) * V))
+def half_width(phi): return 0.015 + 0.035 * (0.5 - 0.5 * math.cos(phi)) ** 1.3
+NG = 360; verts, faces = [], []
+for i in range(NG):
+    phi = 2 * math.pi * i / NG; hw = half_width(phi)
+    for th, r in ((RHO - hw, 0.90), (RHO + hw, 0.90), (RHO + hw, 1.08), (RHO - hw, 1.08)): verts.append(tuple(groove_pt(th, phi, r)))
+for i in range(NG):
+    for k in range(4): a, b = i * 4 + k, i * 4 + (k + 1) % 4; cc, dd = ((i + 1) % NG) * 4 + (k + 1) % 4, ((i + 1) % NG) * 4 + k; faces.append((a, b, cc, dd))
+cutter = mesh_object('GrooveCut', verts, faces, M_dark)
+mod = body.modifiers.new('cut', 'BOOLEAN'); mod.operation = 'DIFFERENCE'; mod.object = cutter; mod.solver = 'EXACT'; mod.material_mode = 'TRANSFER'
+bpy.context.view_layer.objects.active = body; bpy.ops.object.modifier_apply(modifier=mod.name); bpy.data.objects.remove(cutter)
+me_ = body.data; base_slot = len(me_.materials); me_.materials.append(M_base); bm = bmesh.new(); bm.from_mesh(me_)
+for f in bm.faces:
+    f.smooth = True
+    if f.material_index == 0 and f.calc_center_median().normalized().dot(AX) > math.cos(RHO): f.material_index = base_slot
+for e_ in bm.edges:
+    if len(e_.link_faces) == 2 and e_.calc_face_angle(0) > math.radians(30): e_.smooth = False
+bm.to_mesh(me_); bm.free()
+stops = [(0.00, (1.0, 0.5, 0.12)), (0.07, (1.0, 0.28, 0.55)), (0.16, (0.62, 0.3, 1.0)), (0.27, (0.2, 0.5, 1.0)), (0.36, (0.1, 0.8, 1.0)), (0.40, (0.02, 0.03, 0.05)),
+         (0.60, (0.02, 0.03, 0.05)), (0.64, (1.0, 0.3, 0.7)), (0.72, (0.62, 0.3, 1.0)), (0.82, (0.2, 0.5, 1.0)), (0.90, (0.1, 0.85, 1.0)), (0.95, (0.62, 0.3, 1.0)), (1.0, (1.0, 0.5, 0.12))]
+LINE = 0.027; verts, faces, cols = [], [], []
+def lit(t): return max(ramp(stops, t)) > 0.1
+for i in range(NG):
+    phi = 2 * math.pi * i / NG; t = ((i / NG) + 0.04) % 1.0; cl = ramp(stops, t); mid = RHO - half_width(phi) + LINE + 0.002
+    verts += [groove_pt(mid - LINE, phi, 1.003), groove_pt(mid, phi, 1.009), groove_pt(mid + LINE, phi, 1.003)]; cols += [lin(cl)] * 3
+for i in range(NG):
+    if not (lit(((i / NG) + 0.04) % 1.0) and lit((((i + 1) / NG) + 0.04) % 1.0)): continue
+    for k in range(2): a = i * 3 + k; faces.append((a, a + 1, ((i + 1) % NG) * 3 + k + 1, ((i + 1) % NG) * 3 + k))
+mesh_object('LowSeam', verts, faces, M_seam, colors=cols, merge=False, parent=root)
 
 # ---------------------------------------------------------------- the ring: close round the body, tilted, banded like a rainbow
 RING_R, RING_r, RING_Z, RING_ROT = 1.12, 0.09, -0.46, (math.radians(7), math.radians(-10), 0)
@@ -218,7 +250,7 @@ def ring_point(a_deg):
 # ---------------------------------------------------------------- hands: cartoon gloves, built in their own frame (palm at the origin,
 # fingers along +Z, palm facing -Y); th = +1 puts the thumb on +X (the character's right hand), -1 on -X (its left hand)
 POSES = {
-    'open':     dict(f=[(10, 14, 8), (8, 12, 6), (12, 16, 8)], spread=1.2, thumb=((0.62, -0.5, 0.6), (8, 10))),
+    'open':     dict(f=[(22, 26, 16), (18, 24, 14), (22, 26, 16), (28, 30, 18)], spread=1.2, thumb=((0.7, -0.35, 0.62), (6, 10))),
     'palm':     dict(f=[(3, 5, 3)] * 3, spread=1.4, thumb=((0.75, -0.35, 0.55), (0, 6))),
     'point':    dict(f=[(0, 0, 0), (90, 105, 75), (90, 105, 75)], spread=0.4, thumb=((0.3, -0.9, 0.4), (30, 34))),
     'thumbsup': dict(f=[(92, 105, 78)] * 3, spread=0.2, thumb=((1.0, -0.2, 0.35), (0, 0))),
@@ -226,7 +258,7 @@ POSES = {
     'chin':     dict(f=[(22, 20, 10), (86, 100, 72), (88, 102, 74)], spread=0.4, thumb=((0.7, -0.6, 0.45), (8, 8))),
     'pen':      dict(f=[(64, 80, 54), (70, 84, 58), (74, 88, 60)], spread=0.2, thumb=((0.4, -0.85, 0.5), (22, 24))),
 }
-FING = [(0.08, 0.053, (0.07, 0.05, 0.04), 10), (0.0, 0.055, (0.075, 0.054, 0.043), 0), (-0.08, 0.052, (0.066, 0.047, 0.038), -10)]   # three fingers and a thumb, cartoon style
+FING = [(0.093, 0.036, (0.05, 0.036, 0.03), 12), (0.032, 0.038, (0.058, 0.042, 0.034), 4), (-0.03, 0.037, (0.055, 0.04, 0.032), -4), (-0.09, 0.033, (0.044, 0.032, 0.026), -12)]   # four short, chubby fingers and a thumb
 HANDS = {}
 def frame_from(F, N):
     Z = Vector(F).normalized(); Nn = Vector(N); Y = -(Nn - Z * Nn.dot(Z)).normalized(); X = Y.cross(Z)
@@ -244,14 +276,14 @@ def finger_path(base, d0, axis, lengths, curls, steps=10):
 def hand(name, pose, th, pos, F, N, scale=1.0):
     P = POSES[pose]; e = bpy.data.objects.new(name, None); col.objects.link(e); e.parent = root
     e.matrix_basis = Matrix.Translation(pos) @ frame_from(F, N).to_4x4() @ Matrix.Scale(scale, 4)
-    parts = [superellipsoid(name + 'Palm', 0.125, 0.072, 0.095, 0.75, 0.8, M_glove, parent=e)]
+    parts = [superellipsoid(name + 'Palm', 0.135, 0.078, 0.1, 0.85, 0.85, M_glove, parent=e)]
     for k, (x, r, lens, spr) in enumerate(FING):
         sp = math.radians(spr * P['spread'] * (1 if th > 0 else -1)); d0 = Vector((math.sin(sp), 0, math.cos(sp)))
         axis = d0.cross(Vector((0, -1, 0))).normalized(); base = Vector((th * x, -0.004, 0.045))
-        parts.append(tube(name + 'F%d' % k, finger_path(base, d0, axis, lens, P['f'][k]), lambda t, r=r: r * (1 - 0.08 * t), M_glove, n=18, parent=e))
+        parts.append(tube(name + 'F%d' % k, finger_path(base, d0, axis, lens, P['f'][min(k, len(P['f']) - 1)]), lambda t, r=r: r * (1 - 0.08 * t), M_glove, n=18, parent=e))
     (tx, ty, tz), tc = P['thumb']; d0 = Vector((th * tx, ty, tz)).normalized(); base = Vector((th * 0.085, -0.022, -0.028))
     axis = d0.cross(Vector((-th * 0.35, -1, 0.1))).normalized()
-    parts.append(tube(name + 'Thumb', finger_path(base, d0, axis, (0.075, 0.065), tc), lambda t: 0.057 * (1 - 0.08 * t), M_glove, n=18, parent=e))
+    parts.append(tube(name + 'Thumb', finger_path(base, d0, axis, (0.055, 0.045), tc), lambda t: 0.046 * (1 - 0.08 * t), M_glove, n=18, parent=e))
     parts.append(lathe(name + 'Cuff', [(0.05, -0.03), (0.06, -0.08), (0.066, -0.12), (0.07, -0.15), (0.072, -0.165)], M_glove, parent=e, n=48))
     parts.append(lathe(name + 'Band', [(0.0, -0.163), (0.07, -0.163), (0.076, -0.168), (0.077, -0.2), (0.072, -0.205), (0.05, -0.206), (0.0, -0.206)], M_band, parent=e, n=48))
     parts.append(torus(name + 'CuffLight', 0.0745, 0.0075, M_cyan, center=(0, 0, -0.203), n=64, m=10, parent=e))
@@ -262,7 +294,7 @@ def show_hands(names):
     for k, objs in HANDS.items():
         for o in objs: o.hide_render = k not in names
 
-def side_hand(name, s, cuff=(1.0, -0.52, -0.56), pose='open', F=None, N=None, scale=1.75):
+def side_hand(name, s, cuff=(0.98, -0.5, -0.56), pose='open', F=None, N=None, scale=1.3):
     """A hand at the character's side (s = -1 its right, +1 its left), given by where its cuff ends."""
     F = Vector(F or (s * 0.95, -0.15, 0.27)).normalized(); N = N or (-s * 0.1, -0.6, 0.8)
     return hand(name, pose, -s, Vector((s * cuff[0], cuff[1], cuff[2])) + F * 0.205 * scale, F, N, scale)
