@@ -47,6 +47,8 @@ rb = bsdf('ring'); rb.inputs['Emission Strength'].default_value = 0.85; rb.input
 next(n for n in bpy.data.materials['ring'].node_tree.nodes if n.bl_idname == 'ShaderNodeMix').inputs['B'].default_value = (1, 1, 1, 1)   # the logo ring: glossy, deep colour, not a light tube
 
 for nm in ('LowSeam', 'HeadStripe'): bpy.data.objects[nm].visible_glossy = False   # no smeary reflections of the lights on the body or visor
+for o in bpy.data.objects:                                       # the gloves are not mirrored in the visor (no white smudge on the glass)
+    if o.name.startswith(('Turn', 'Think', 'Idea', 'Cool', 'Wink', 'Surp', 'Hero')): o.visible_glossy = False
 # ---------------------------------------------------------------- a floor that only catches the shadow
 FLOOR = -1.3
 bpy.ops.mesh.primitive_plane_add(size=30, location=(0, 0, FLOOR)); catcher = bpy.context.object; catcher.name = 'ShadowCatcher'; catcher.is_shadow_catcher = True
