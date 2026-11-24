@@ -22,10 +22,10 @@ def setp(name, **kw):
     b = bsdf(name)
     for k, v in kw.items(): b.inputs[k.replace('_', ' ')].default_value = v
 setp('body', Base_Color=(0.85, 0.85, 0.92, 1), Roughness=0.2, Coat_Weight=1.0, Coat_Roughness=0.012)
-setp('glove', Base_Color=(0.9, 0.9, 0.97, 1), Roughness=0.46, Coat_Weight=0.05, Coat_Roughness=0.18, Sheen_Weight=0.3, Sheen_Roughness=0.45, Subsurface_Weight=0.08, Subsurface_Scale=0.02)
+setp('glove', Base_Color=(0.9, 0.9, 0.97, 1), Roughness=0.5, Coat_Weight=0.0, Specular_IOR_Level=float(os.environ.get('GLOVESPEC', 0.25)), Coat_Roughness=0.18, Sheen_Weight=float(os.environ.get('GLOVESHEEN', 0.2)), Sheen_Roughness=0.45, Subsurface_Weight=0.08, Subsurface_Scale=0.02)
 def glove_shade():
-    """The gloves are shaded as on the reference: near white where they face the light (up, toward us and a little left), a soft mauve where they turn
-    away from it, a deeper lilac where one part tucks behind another, and a fine line right in each fold."""
+    """The gloves are shaded as on the reference: near white where they face the light (from above and a little toward us), a soft lilac and then mauve where they turn
+    away from it, a grey lavender shade on a part that lies behind another, and a fine line right in each fold."""
     nt = bpy.data.materials['glove'].node_tree; b = nt.nodes['Principled BSDF']; N = nt.nodes.new; L = nt.links.new
     def ramp(src, a, c, hi=1.0):
         m = N('ShaderNodeMapRange'); m.inputs['From Min'].default_value = a; m.inputs['From Max'].default_value = c; m.inputs['To Min'].default_value = 0.0; m.inputs['To Max'].default_value = hi; L(src, m.inputs['Value']); return m.outputs['Result']
@@ -35,13 +35,19 @@ def glove_shade():
         if isinstance(base, tuple): m.inputs['A'].default_value = base
         else: L(base, m.inputs['A'])
         return m.outputs['Result']
-    geo = N('ShaderNodeNewGeometry'); dot = N('ShaderNodeVectorMath'); dot.operation = 'DOT_PRODUCT'; L(geo.outputs['Normal'], dot.inputs[0]); dot.inputs[1].default_value = Vector((-0.15, -0.48, 0.865)).normalized()
-    side = ramp(dot.outputs['Value'], 0.85, -0.2, float(os.environ.get('GLOVEDOWN', 0.95)))                    # turned away from the light
-    ao = N('ShaderNodeAmbientOcclusion'); ao.inputs['Distance'].default_value = 0.05; ao.samples = 12; ao.only_local = True
-    tuck = ramp(ao.outputs['AO'], 0.95, 0.5, float(os.environ.get('GLOVETUCK', 1.0)))                          # tucked behind another part
-    line = ramp(geo.outputs['Pointiness'], 0.455, 0.43, float(os.environ.get('CREASE', 0.9)))                  # right in a fold
+    geo = N('ShaderNodeNewGeometry'); dot = N('ShaderNodeVectorMath'); dot.operation = 'DOT_PRODUCT'; L(geo.outputs['Normal'], dot.inputs[0]); _gl = [float(v) for v in os.environ.get('GLOVELIGHT', '0.05,-0.35,0.93').split(',')]; at = N('ShaderNodeAttribute'); at.attribute_type = 'OBJECT'; at.attribute_name = 'lx'   # each hand is shaded from its own wrist's side: the far hand is the near one's mirror
+    mx = N('ShaderNodeMath'); mx.operation = 'MULTIPLY'; mx.inputs[1].default_value = _gl[0]; L(at.outputs['Fac'], mx.inputs[0]); cb = N('ShaderNodeCombineXYZ'); cb.inputs['Y'].default_value = _gl[1]; cb.inputs['Z'].default_value = _gl[2]; L(mx.outputs[0], cb.inputs['X'])
+    nm_ = N('ShaderNodeVectorMath'); nm_.operation = 'NORMALIZE'; L(cb.outputs[0], nm_.inputs[0]); L(nm_.outputs['Vector'], dot.inputs[1])
+    side = ramp(dot.outputs['Value'], float(os.environ.get('GLOVESIDE', 0.9)), -0.2, float(os.environ.get('GLOVEDOWN', 0.95)))                    # turned away from the light
+    ao = N('ShaderNodeAmbientOcclusion'); ao.inputs['Distance'].default_value = float(os.environ.get('GLOVEAO', 0.045)); ao.samples = 12; ao.only_local = True
+    tuck = ramp(ao.outputs['AO'], float(os.environ.get('GLOVEAO0', 0.88)), 0.4, float(os.environ.get('GLOVETUCK', 1.0)))
+    sx = N('ShaderNodeSeparateXYZ'); L(geo.outputs['Normal'], sx.inputs[0]); up_ = N('ShaderNodeMapRange'); up_.inputs['From Min'].default_value = 0.2; up_.inputs['From Max'].default_value = 0.75; up_.inputs['To Min'].default_value = 1.0; up_.inputs['To Max'].default_value = float(os.environ.get('GLOVETOP', 0.15)); L(sx.outputs['Z'], up_.inputs['Value'])
+    tm = N('ShaderNodeMath'); tm.operation = 'MULTIPLY'; L(tuck, tm.inputs[0]); L(up_.outputs['Result'], tm.inputs[1]); tuck = tm.outputs[0]   # the top of a part that lies in front stays bright: the shade is on the part behind it                          # tucked behind another part
+    line = ramp(geo.outputs['Pointiness'], 0.455, 0.43, float(os.environ.get('CREASE', 0.5)))                  # right in a fold
     lw = N('ShaderNodeLayerWeight'); lw.inputs['Blend'].default_value = 0.22; edge = ramp(lw.outputs['Facing'], 0.7, 1.0, 0.12)   # a faint edge, so white stays readable on white
-    col = blend((0.93, 0.925, 0.99, 1), (0.76, 0.72, 0.97, 1), top(side, edge)); col = blend(col, (0.74, 0.5, 0.7, 1), ramp(dot.outputs['Value'], 0.0, -0.6, 0.9)); col = blend(col, (0.32, 0.28, 0.6, 1), top(tuck, line)); L(col, b.inputs['Base Color'])   # lilac as it turns away, mauve underneath, deeper where tucked
+    col = blend((0.915, 0.93, 0.995, 1), (0.74, 0.70, 0.93, 1), top(side, edge)); col = blend(col, (0.56, 0.40, 0.56, 1), ramp(dot.outputs['Value'], -0.05, -0.55, 0.9)); col = blend(col, (0.44, 0.41, 0.55, 1), tuck); col = blend(col, (0.3, 0.26, 0.5, 1), line); L(col, b.inputs['Base Color'])   # the shade under a part that lies in front is a soft grey lavender; only the line right in a fold is deeper
+    nz = N('ShaderNodeTexNoise'); nz.inputs['Scale'].default_value = 900.0; nz.inputs['Detail'].default_value = 2.0; bp = N('ShaderNodeBump'); bp.inputs['Strength'].default_value = float(os.environ.get('GRAIN', 0.05)); bp.inputs['Distance'].default_value = 0.001
+    L(nz.outputs['Fac'], bp.inputs['Height']); L(bp.outputs['Normal'], b.inputs['Normal'])                     # a fine grain, like soft leather   # lilac as it turns away, mauve underneath, deeper where tucked
 glove_shade()
 setp('visor', Base_Color=(0.003, 0.003, 0.005, 1), Roughness=0.05, Coat_Weight=1.0, Coat_Roughness=0.0)
 setp('earBlack', Base_Color=(0.004, 0.004, 0.008, 1), Roughness=0.07, Coat_Weight=1.0, Coat_Roughness=0.0)
@@ -79,7 +85,7 @@ next(n for n in bpy.data.materials['ring'].node_tree.nodes if n.bl_idname == 'Sh
 for nm in ('LowSeam', 'LowSeamGlow', 'HeadStripe'): bpy.data.objects[nm].visible_glossy = False   # no smeary reflections of the lights on the body or visor
 for o in bpy.data.objects:                                       # the gloves are not mirrored in the visor (no white smudge on the glass)
     if o.name.startswith(('Turn', 'Think', 'Idea', 'Cool', 'Wink', 'Surp', 'Hero')): o.visible_glossy = False
-setp('cuffLight', Emission_Strength=5.5)
+setp('cuffLight', Emission_Strength=3.6)
 # ---------------------------------------------------------------- a floor that only catches the shadow
 FLOOR = -1.14                                                    # close under the body, as on the reference
 bpy.ops.mesh.primitive_plane_add(size=30, location=(0, 0, FLOOR)); catcher = bpy.context.object; catcher.name = 'ShadowCatcher'; catcher.is_shadow_catcher = True
@@ -114,13 +120,17 @@ def hand_light(name, loc, size, energy, color=(1, 1, 1), shadow=True):
     d = bpy.data.lights.new(name, 'AREA'); d.size = size; d.energy = energy; d.color = color; d.use_shadow = shadow
     o = bpy.data.objects.new(name, d); sc.collection.objects.link(o); o.location = loc; o.rotation_euler = Vector(loc).to_track_quat('Z', 'Y').to_euler(); o.visible_glossy = False
     o.light_linking.receiver_collection = hands_only; o.light_linking.blocker_collection = hands_only; G['LIGHTS'].append(o); return o
-_hl = [float(v) for v in os.environ.get('HANDLIGHT', '720,110,150').split(',')]
+_hl = [float(v) for v in os.environ.get('HANDLIGHT', '720,110,170').split(',')]
 gloves_only = bpy.data.collections.new('GlovesOnly'); sc.collection.children.link(gloves_only)             # the white parts of the hands: they take a soft shine from the main hand light; the black wrist ball does not
+glove_near = bpy.data.collections.new('GloveNear'); sc.collection.children.link(glove_near); glove_far = bpy.data.collections.new('GloveFar'); sc.collection.children.link(glove_far)
 for o in hands_only.objects:
-    if o.data.materials and o.data.materials[0].name == 'glove': gloves_only.objects.link(o)
-_k = hand_light('HandKey', (-0.3, -4.4, 6.4), 5.0, _hl[0], shadow=False); _k.light_linking.receiver_collection = gloves_only; _k.visible_glossy = True                                                       # from above, the left and a little in front, as on the reference: the tops of the fingers and the palm are bright
+    if o.data.materials and o.data.materials[0].name == 'glove':
+        gloves_only.objects.link(o); far_ = o.name.startswith('TurnR'); o['lx'] = -1.0 if far_ else 1.0; (glove_far if far_ else glove_near).objects.link(o)
+_k = hand_light('HandKey', (0.3, -4.4, 6.4), 5.0, _hl[0], shadow=False); _k.light_linking.receiver_collection = glove_near; _k.visible_glossy = True; _k.data.color = (0.95, 1.0, 1.0)
+_k2 = hand_light('HandKeyFar', (-0.8, -4.4, 6.4), 5.0, _hl[0] * 1.06, shadow=False); _k2.light_linking.receiver_collection = glove_far; _k2.visible_glossy = True; _k2.data.color = (1.0, 0.975, 0.99)   # the far hand has the same light, mirrored; it gets no warm light back from the body, so its own is a touch warm
+#   # a touch cool, against the warm light the ring throws back                                                       # from above, the left and a little in front, as on the reference: the tops of the fingers and the palm are bright
 hand_light('HandFront', (0.0, -7.0, 1.0), 6.0, _hl[1], shadow=False).light_linking.receiver_collection = gloves_only                                        # a little from the camera's side
-hand_light('HandUnder', (0.8, -3.0, -5.0), 6.0, _hl[2], color=(0.95, 0.55, 0.8), shadow=False).light_linking.receiver_collection = gloves_only               # lilac from underneath, for the shade
+hand_light('HandUnder', (0.8, -3.0, -5.0), 6.0, _hl[2], color=(0.8, 0.72, 0.97), shadow=False).light_linking.receiver_collection = gloves_only               # lilac from underneath, for the shade
 floor_only = bpy.data.collections.new('FloorOnly'); sc.collection.children.link(floor_only); floor_only.objects.link(catcher)
 ff = bpy.data.lights.new('FloorFill', 'AREA'); ff.size = 12; ff.energy = 260; ff.use_shadow = False
 if hasattr(ff, 'cycles') and hasattr(ff.cycles, 'cast_shadow'): ff.cycles.cast_shadow = False
@@ -172,16 +182,17 @@ if 'hero' in SHOTS:
     G['turn'](HERO_TURN); frame(); shot('final-hero', 1200, 110)
 if 'views' in SHOTS:
     frame(dist=11.5, elev=6, target=(0, 0, -0.22))
-    for nm, deg in (('final-front', 0), ('final-tq', -32), ('final-side', -90), ('final-back', 180)): G['turn'](deg); shot(nm, 900, 96)
+    for nm, deg in (('final-front', 0), ('final-tq', -32), ('final-side', -78), ('final-back', 180)): G['turn'](deg); shot(nm, 900, 96)   # the reference's side view is turned a little toward the front
 def hand_shot(name, palm, res, samples, off=(0.056, 0, 0.0486), lens=620):   # one hand alone, close, framed like the clear reference picture of it
     G['turn'](HERO_TURN); bpy.context.view_layer.update(); e = bpy.data.objects[palm].parent; hp = e.matrix_world.translation
     frame(target=tuple(hp + Vector(off)), lens=lens); shot(name, res, samples, w=int(res * 1457 / 1079), floor=False)
     J = e.matrix_world @ Vector(G['WRIST']); up = cam.matrix_world.to_quaternion() @ Vector((0, 1, 0)); W_, H_ = sc.render.resolution_x, sc.render.resolution_y   # where the wrist is and how big the cuff's ring is, to lay it over the reference
     c = world_to_camera_view(sc, cam, J); c2 = world_to_camera_view(sc, cam, J + up * 0.122 * e.matrix_world.to_scale().x)
     json.dump({'J': [c.x * W_, (1 - c.y) * H_], 'a': abs(c2.y - c.y) * H_}, open(os.path.join(OUT, name + '.json'), 'w'))
-if 'hand' in SHOTS: hand_shot('final-hand', 'TurnLPalm', 900, 72)
+if 'hand' in SHOTS: hand_shot('final-hand', 'TurnLPalm', 1079, 80)
 if 'handlo' in SHOTS: hand_shot('lo-hand', 'TurnLPalm', 430, 20)
-if 'farhand' in SHOTS: hand_shot('final-farhand', 'TurnRPalm', 900, 72, off=(-0.056, 0, 0.0486))
+if 'handmid' in SHOTS: hand_shot('mid-hand', 'TurnLPalm', 760, 40)
+if 'farhand' in SHOTS: hand_shot('final-farhand', 'TurnRPalm', 1079, 80, off=(-0.056, 0, 0.0486))
 if 'farhandlo' in SHOTS: hand_shot('lo-farhand', 'TurnRPalm', 430, 20, off=(-0.056, 0, 0.0486))
 def region(name, res, samples):                                  # the near ear with the head above it and the ring below, framed like the reference crop
     G['turn'](HERO_TURN); frame(); bpy.context.view_layer.update(); sc.render.resolution_x = sc.render.resolution_y = res
