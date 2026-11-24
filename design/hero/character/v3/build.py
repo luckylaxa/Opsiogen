@@ -202,14 +202,14 @@ for s in (1, -1):
 E1 = on_sphere(EAR_LON, EAR_LAT); TOP = on_sphere(0, 58)
 n_ = Vector((1, 0, 0)).cross(TOP - Vector((0, E1.y, E1.z))).normalized(); d_ = n_.dot(E1); C_ = n_ * d_; rr_ = math.sqrt(1 - d_ * d_); up_ = n_.cross(Vector((1, 0, 0))).normalized()
 if up_.z < 0: up_ = -up_
-head_pts = [C_ + rr_ * (math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_) for a in [math.radians(172 - 164 * i / 199) for i in range(200)]]
-tube('HeadStripe', head_pts, 0.03, M_head, n=12, color=lambda t: spectrum(0.875 - 0.5 * t), parent=root)
+head_pts = [C_ + rr_ * (math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_) for a in [math.radians(149 - 118 * i / 199) for i in range(200)]]
+tube('HeadStripe', head_pts, lambda t: 0.019 * min(1, 9 * t, 9 * (1 - t)) + 0.002, M_head, n=12, color=lambda t: spectrum(0.875 - 0.5 * t), parent=root)
 seam_pts = [on_sphere(lon, -54 + 26 * (lon / 78) ** 2, 1.0) for lon in [-78 + 156 * i / 159 for i in range(160)]]
 tube('LowSeam', seam_pts, lambda t: 0.024 * min(1, 6 * t, 6 * (1 - t)) + 0.002, M_seam, n=12, color=lambda t: ramp(SEAM, t), parent=root)
 
 # ---------------------------------------------------------------- the ring: close round the body, tilted, banded like a rainbow
-RING_R, RING_r, RING_Z, RING_ROT = 1.06, 0.08, -0.47, (math.radians(6), math.radians(-13), 0)
-ring = torus('Ring', RING_R, RING_r, M_ring, n=360, m=24, u0=(1, 0, 0), color=lambda t, b: spectrum(2 * t - 0.23 + 0.06 * math.sin(b)), parent=root)
+RING_R, RING_r, RING_Z, RING_ROT = 1.14, 0.09, -0.4, (math.radians(8), math.radians(-16), 0)
+ring = torus('Ring', RING_R, RING_r, M_ring, n=360, m=24, u0=(1, 0, 0), color=lambda t, b: spectrum(2 * t - 0.23 + 0.1 * math.sin(b)), parent=root)
 ring.location = (0, 0, RING_Z); ring.rotation_euler = RING_ROT
 def ring_point(a_deg):
     a = math.radians(a_deg); m = Matrix.Translation((0, 0, RING_Z)) @ Euler(RING_ROT).to_matrix().to_4x4()
@@ -262,7 +262,7 @@ def show_hands(names):
     for k, objs in HANDS.items():
         for o in objs: o.hide_render = k not in names
 
-def side_hand(name, s, cuff=(0.93, -0.5, -0.55), pose='open', F=None, N=None, scale=1.4):
+def side_hand(name, s, cuff=(1.0, -0.52, -0.56), pose='open', F=None, N=None, scale=1.75):
     """A hand at the character's side (s = -1 its right, +1 its left), given by where its cuff ends."""
     F = Vector(F or (s * 0.95, -0.15, 0.27)).normalized(); N = N or (-s * 0.1, -0.6, 0.8)
     return hand(name, pose, -s, Vector((s * cuff[0], cuff[1], cuff[2])) + F * 0.205 * scale, F, N, scale)

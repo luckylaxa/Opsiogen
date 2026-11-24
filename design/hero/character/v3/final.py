@@ -39,7 +39,7 @@ def neon(name, strength, white=0.12):
     nt.links.new(inv.outputs[0], st.inputs['Value']); nt.links.new(st.outputs['Result'], b.inputs['Emission Strength'])
     b.inputs['Roughness'].default_value = 0.1; b.inputs['Coat Weight'].default_value = 1.0; b.inputs['Coat Roughness'].default_value = 0.0
 bpy.data.materials['visor'].node_tree.nodes['Principled BSDF'].inputs['Emission Strength'].default_value = 1.6
-for nm, s_ in (('ring', 1.0), ('headStripe', 1.15), ('lowSeam', 1.5), ('earRing', 1.6)): neon(nm, s_)
+for nm, s_ in (('ring', 1.15), ('headStripe', 1.6), ('lowSeam', 2.0), ('earRing', 1.6)): neon(nm, s_)
 
 # ---------------------------------------------------------------- a floor that only catches the shadow
 FLOOR = -1.3
