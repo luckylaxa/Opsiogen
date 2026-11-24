@@ -22,7 +22,7 @@ def setp(name, **kw):
     b = bsdf(name)
     for k, v in kw.items(): b.inputs[k.replace('_', ' ')].default_value = v
 setp('body', Base_Color=(0.85, 0.85, 0.92, 1), Roughness=0.2, Coat_Weight=1.0, Coat_Roughness=0.012)
-setp('glove', Base_Color=(0.88, 0.88, 0.91, 1), Roughness=0.48, Coat_Weight=0.2, Coat_Roughness=0.18, Sheen_Weight=0.3, Sheen_Roughness=0.45, Subsurface_Weight=0.08, Subsurface_Scale=0.02)
+setp('glove', Base_Color=(0.9, 0.9, 0.97, 1), Roughness=0.46, Coat_Weight=0.2, Coat_Roughness=0.18, Sheen_Weight=0.3, Sheen_Roughness=0.45, Subsurface_Weight=0.08, Subsurface_Scale=0.02)
 setp('visor', Base_Color=(0.003, 0.003, 0.005, 1), Roughness=0.05, Coat_Weight=1.0, Coat_Roughness=0.0)
 setp('earBlack', Base_Color=(0.004, 0.004, 0.008, 1), Roughness=0.07, Coat_Weight=1.0, Coat_Roughness=0.0)
 setp('cuffBand', Base_Color=(0.02, 0.021, 0.026, 1), Roughness=0.28, Coat_Weight=0.9, Coat_Roughness=0.04)
@@ -77,6 +77,18 @@ for l in G['LIGHTS']:
     else: l.light_linking.receiver_collection = chars
     if l.name in ('Blue', 'Pink'):                               # up from under the floor line, for the pearly colour on the body
         l.location = (-3.0 if l.name == 'Blue' else 3.0, -2.6, -1.0); l.rotation_euler = Vector(l.location).to_track_quat('Z', 'Y').to_euler(); l.data.energy = 190 if l.name == 'Blue' else 115   # less pink on the face of the ear and the gloves; the ring adds pink where it passes
+_hands = {o.name for objs in G['HANDS'].values() for o in objs if o.type == 'MESH'}                       # the gloves stay a cool white: the pink light and the ring's colour do not fall on them
+nohands = bpy.data.collections.new('NoHands'); sc.collection.children.link(nohands)
+for o in bpy.data.objects:
+    if o.type == 'MESH' and o is not catcher and o.name not in _hands: nohands.objects.link(o)
+for l in G['LIGHTS']:
+    if l.name == 'Pink': l.light_linking.receiver_collection = nohands
+bpy.data.objects['Ring'].light_linking.receiver_collection = nohands
+hands_only = bpy.data.collections.new('HandsOnly'); sc.collection.children.link(hands_only)              # a soft light from the camera's side for the gloves alone, so they read as clean white under the ring
+for o in bpy.data.objects:
+    if o.type == 'MESH' and o.name in _hands: hands_only.objects.link(o)
+hf = bpy.data.lights.new('HandFill', 'AREA'); hf.size = 6; hf.energy = float(os.environ.get('HANDFILL', 260)); hf.use_shadow = False
+hfo = bpy.data.objects.new('HandFill', hf); sc.collection.objects.link(hfo); hfo.location = (0.5, -7.0, 2.6); hfo.rotation_euler = Vector(hfo.location).to_track_quat('Z', 'Y').to_euler(); hfo.light_linking.receiver_collection = hands_only; hfo.visible_glossy = False
 floor_only = bpy.data.collections.new('FloorOnly'); sc.collection.children.link(floor_only); floor_only.objects.link(catcher)
 ff = bpy.data.lights.new('FloorFill', 'AREA'); ff.size = 12; ff.energy = 260; ff.use_shadow = False
 if hasattr(ff, 'cycles') and hasattr(ff.cycles, 'cast_shadow'): ff.cycles.cast_shadow = False
@@ -129,9 +141,16 @@ if 'hero' in SHOTS:
 if 'views' in SHOTS:
     frame(dist=11.5, elev=6, target=(0, 0, -0.22))
     for nm, deg in (('final-front', 0), ('final-tq', -32), ('final-side', -90), ('final-back', 180)): G['turn'](deg); shot(nm, 900, 96)
-if 'hand' in SHOTS:                                              # the near hand alone, close, like the reference crop
-    G['turn'](HERO_TURN); bpy.context.view_layer.update(); hp = bpy.data.objects['TurnLPalm'].matrix_world.translation
-    frame(target=tuple(hp + Vector((-0.06, 0, -0.02))), lens=330); shot('final-hand', 620, 64, w=820, floor=False)
+def hand_shot(name, palm, res, samples, off=(-0.06, 0, -0.02), lens=330):   # one hand alone, close, like the reference crop
+    G['turn'](HERO_TURN); bpy.context.view_layer.update(); e = bpy.data.objects[palm].parent; hp = e.matrix_world.translation
+    frame(target=tuple(hp + Vector(off)), lens=lens); shot(name, res, samples, w=int(res * 82 / 62), floor=False)
+    J = e.matrix_world @ Vector(G['WRIST']); up = cam.matrix_world.to_quaternion() @ Vector((0, 1, 0)); W_, H_ = sc.render.resolution_x, sc.render.resolution_y   # where the wrist is and how big the cuff's ring is, to lay it over the reference
+    c = world_to_camera_view(sc, cam, J); c2 = world_to_camera_view(sc, cam, J + up * 0.122 * e.matrix_world.to_scale().x)
+    json.dump({'J': [c.x * W_, (1 - c.y) * H_], 'a': abs(c2.y - c.y) * H_}, open(os.path.join(OUT, name + '.json'), 'w'))
+if 'hand' in SHOTS: hand_shot('final-hand', 'TurnLPalm', 620, 64)
+if 'handlo' in SHOTS: hand_shot('lo-hand', 'TurnLPalm', 420, 20)
+if 'farhand' in SHOTS: hand_shot('final-farhand', 'TurnRPalm', 620, 64, off=(0.06, 0, -0.02))
+if 'farhandlo' in SHOTS: hand_shot('lo-farhand', 'TurnRPalm', 420, 20, off=(0.06, 0, -0.02))
 def region(name, res, samples):                                  # the near ear with the head above it and the ring below, framed like the reference crop
     G['turn'](HERO_TURN); frame(); bpy.context.view_layer.update(); sc.render.resolution_x = sc.render.resolution_y = res
     cup = bpy.data.objects['EarCupL']; M = cup.matrix_world; P = [world_to_camera_view(sc, cam, M @ v.co) for v in cup.data.vertices]

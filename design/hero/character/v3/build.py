@@ -2,7 +2,7 @@
 A glossy white ball; a big domed black visor in a white bezel, with the face drawn as cyan light; a rainbow stripe
 over the head from ear to ear; headphone ears with a black centre and a blue-purple light ring; a rainbow ring close
 round the body; a glowing seam low on the front; cartoon gloves with black cuffs and cyan rings.
-Run with Blender's Python (free, no account):  pip install bpy pillow numpy fonttools brotli
+Run with Blender's Python (free, no account):  pip install bpy pillow numpy fonttools brotli scikit-image
    python build.py all    (renders go to ./out; or test, hands, views, emotions, hero), then  python sheet.py
 Replaces the version 2 concept (../v2). The site still uses version 1 (../model/build.py) until this is approved.
 Units: the body's radius. Front is -Y, up is +Z, the character's left is +X."""
@@ -372,7 +372,7 @@ def ring_point(a_deg):
 # fingers along +Z, palm facing -Y); th = +1 puts the thumb on +X (the character's right hand), -1 on -X (its left hand)
 POSES = {
     'open':     dict(f=[(14, 20, 12), (16, 22, 14), (22, 28, 16)], spread=1.3, thumb=((0.85, -0.25, 0.45), (8, 12))),
-    'present':  dict(f=[(2, 5, 4), (5, 9, 6), (40, 55, 40)], spread=1.2, thumb=((0.85, -0.1, 0.52), (8, 12))),   # the reference hand: thumb up, two fingers out, the last one curled
+    'present':  dict(f=[(3, 5, 5), (4, 6, 6), (6, 10, 8)], spread=1.0, lean=(3, -16, -23), thumb=((0.667, -0.342, 0.661), (4, 8))),   # the reference hand: open and almost flat, the thumb standing up, the fingers fanned out
     'palm':     dict(f=[(3, 5, 3)] * 3, spread=1.4, thumb=((0.75, -0.35, 0.55), (0, 6))),
     'point':    dict(f=[(0, 0, 0), (90, 105, 75), (90, 105, 75)], spread=0.4, thumb=((0.3, -0.9, 0.4), (30, 34))),
     'thumbsup': dict(f=[(92, 105, 78)] * 3, spread=0.2, thumb=((1.0, -0.2, 0.35), (0, 0))),
@@ -395,40 +395,93 @@ def finger_path(base, d0, axis, lengths, curls, steps=10):
             p = p + d * (L / steps); pts.append(p.copy())
     return pts
 
-def hand(name, pose, th, pos, F, N, scale=1.0, Fc=None):
+FINGERS = [(0.08, 0.043, 0.041, (0.067, 0.056, 0.045), 9), (0.021, 0.047, 0.044, (0.061, 0.051, 0.042), 0), (-0.05, 0.042, 0.040, (0.057, 0.048, 0.039), -10)]   # across the palm, radius at the root and at the tip, the three bones, how far it leans
+GLOVE_STEP = 0.0036
+WRIST = (0.0, 0.0, -0.03)                                        # the wrist: a dark ball that the glove and the cuff both sit on, so the wrist can bend
+def _smin(a, b, k): h = np.clip(0.5 + 0.5 * (b - a) / k, 0.0, 1.0); return b + (a - b) * h - k * h * (1.0 - h)      # two shapes melted together over a distance k
+def _smax(a, b, k): return -_smin(-a, -b, k)
+def glove_mesh(name, P, th, parent, aw, gap):
+    """The glove as one sculpted surface: a puffy palm with two soft pads, three long round fingers and a fat thumb that grow out of it, and a wrist that ends on the dark ball.
+    It is shaped as a distance field (rounded shapes melted together) and turned into a mesh with marching cubes; the result is kept in ./out so it is only worked out once."""
+    import hashlib; from skimage import measure
+    key = hashlib.md5(repr((sorted(P.items()), th, tuple(round(v, 5) for v in aw), round(gap, 4), FINGERS, GLOVE_STEP, 27)).encode()).hexdigest()[:16]; path = os.path.join(OUT, 'glove-%s.npz' % key)
+    if not os.path.exists(path):
+        fingers = []
+        for k, (x, rb, rt, lens, spr) in enumerate(FINGERS):
+            sp = math.radians((P['lean'][k] if 'lean' in P else spr * P['spread']) * (1 if th > 0 else -1)); d0 = Vector((math.sin(sp), 0, math.cos(sp)))
+            axis = d0.cross(Vector((0, -1, 0))).normalized(); pts = finger_path(Vector((th * x, -0.004, 0.1 - 0.045 * (k == 2))), d0, axis, lens, P['f'][min(k, len(P['f']) - 1)], steps=8); n = len(pts) - 1
+            fingers.append([(np.array(p, dtype=np.float32), (rb + (rt - rb) * (i / n)) * (1 - 0.05 * math.exp(-((i / n - 0.35) / 0.2) ** 2))) for i, p in enumerate(pts)])   # an even, round sausage of a finger, with a full round tip
+        (tx, ty, tz), tc = P['thumb']; d0 = Vector((th * tx, ty, tz)).normalized(); axis = d0.cross(Vector((-th * 0.35, -1, 0.1))).normalized()
+        pts = finger_path(Vector((th * 0.087, -0.021, 0.088)), d0, axis, (0.072, 0.056), tc, steps=8); n = len(pts) - 1
+        thumb = [(np.array(p, dtype=np.float32), 0.054 - 0.007 * (i / n) ** 1.4) for i, p in enumerate(pts)]     # a fat thumb that stands up out of the edge of the palm
+        aw_ = np.array(aw, dtype=np.float32); O = np.array(WRIST, dtype=np.float32)
+        lo = np.array([-0.17, -0.13, -0.16]); hi = np.array([0.17, 0.12, 0.2])
+        for dg in fingers + [thumb]:
+            for p, r in dg: lo = np.minimum(lo, p - r - 0.02); hi = np.maximum(hi, p + r + 0.02)
+        st = GLOVE_STEP; xs, ys, zs = (np.arange(lo[i], hi[i] + st, st, dtype=np.float32) for i in range(3)); X, Y, Z = np.meshgrid(xs, ys, zs, indexing='ij')
+        Zk = Z + 0.4 * np.maximum(0, 0.03 - th * X) * np.clip((Z - 0.02) / 0.08, 0, 1)                             # the knuckles slant back toward the little finger
+        qx, qy, qz = np.abs(X) - (0.068 - 0.018 * np.clip((0.05 - Z) / 0.08, 0, 1)), np.abs(Y - 0.004) - 0.018, np.abs(Zk - 0.06) - 0.022                     # the palm: a big, soft pillow
+        palm = np.sqrt(np.maximum(qx, 0) ** 2 + np.maximum(qy, 0) ** 2 + np.maximum(qz, 0) ** 2) + np.minimum(np.maximum(qx, np.maximum(qy, qz)), 0) - 0.068
+        pad = (np.sqrt(((X - th * 0.07) / 0.05) ** 2 + ((Y + 0.056) / 0.036) ** 2 + ((Z - 0.035) / 0.065) ** 2) - 1) * 0.036    # the pad at the root of the thumb
+        heel = (np.sqrt(((X + th * 0.062) / 0.05) ** 2 + ((Y + 0.054) / 0.034) ** 2 + ((Z - 0.02) / 0.06) ** 2) - 1) * 0.034   # and the heel of the hand, on the little finger's side
+        hx = (X - O[0]) * aw_[0] + (Y - O[1]) * aw_[1] + (Z - O[2]) * aw_[2]; rad = np.sqrt(np.maximum((X - O[0]) ** 2 + (Y - O[1]) ** 2 + (Z - O[2]) ** 2 - hx * hx, 0))
+        body = _smin(_smin(palm, pad, 0.05), heel, 0.05)
+        body = _smax(body, 0.13 - np.sqrt((X + th * 0.01) ** 2 + (Y + 0.205) ** 2 + (Z - 0.075) ** 2), 0.05)    # the palm is a little cupped
+        cr = np.full(X.shape, 1e3, dtype=np.float32)                                                              # one soft crease, from between thumb and first finger down across the palm
+        for k_ in range(21):
+            u_ = k_ / 20; cr = np.minimum(cr, np.sqrt((X - th * (0.07 - 0.075 * u_ + 0.02 * math.sin(math.pi * u_))) ** 2 + (Y + 0.094) ** 2 + (Z - (0.125 - 0.12 * u_)) ** 2) - 0.012 * math.sin(math.pi * (0.1 + 0.8 * u_)))
+        body = _smax(body, -cr, 0.03)
+        neck = np.minimum(np.sqrt((X - O[0]) ** 2 + (Y - O[1]) ** 2 + (Z - O[2]) ** 2) - 0.112, np.maximum(rad - 0.114, hx - 0.012))   # round over the ball: no flat end inside the palm
+        body = _smin(body, neck, 0.05)                                            # the wrist: a round neck from the ball up into the palm
+        def chain(dg):                                                                                           # a finger: a row of spheres, worked out only near it
+            out = np.full(X.shape, 1e3, dtype=np.float32); c = np.array([p for p, r in dg]); rr = max(r for p, r in dg) + 0.06
+            i0 = [max(0, int((c[:, i].min() - rr - lo[i]) / st)) for i in range(3)]; i1 = [min(X.shape[i], int((c[:, i].max() + rr - lo[i]) / st) + 2) for i in range(3)]
+            sl = tuple(slice(i0[i], i1[i]) for i in range(3)); xx, yy, zz = X[sl], Y[sl], Z[sl]; best = np.full(xx.shape, 1e3, dtype=np.float32)
+            for p, r in dg: best = np.minimum(best, np.sqrt((xx - p[0]) ** 2 + (yy - p[1]) ** 2 + (zz - p[2]) ** 2) - r)
+            out[sl] = best; return out
+        dig = chain(fingers[0])
+        for dg in fingers[1:]: dig = np.minimum(dig, chain(dg))                                                 # between each other the fingers keep a crease
+        d = _smin(_smin(body, dig, 0.014), chain(thumb), 0.017)                                                   # fingers and thumb melt into the palm at their roots
+        d = _smax(d, rad - (0.114 + np.maximum(0, hx - gap / 2) * 3.0), 0.012); d = np.maximum(d, gap / 2 - hx)  # at the wrist the glove is the ball's width, and ends there
+        v, f, _, _ = measure.marching_cubes(d, level=0.0, spacing=(st, st, st)); np.savez(path, v=(v + lo).astype(np.float32), f=f.astype(np.int32))
+    z = np.load(path); ob = mesh_object(name, z['v'].tolist(), z['f'].tolist(), M_glove, parent=parent)
+    m_ = ob.modifiers.new('soften', 'SMOOTH'); m_.factor = 0.5; m_.iterations = 2
+    return ob
+
+def hand(name, pose, th, pos, F, N, scale=1.0, Fc=None, Fw=None, gap=0.036):
+    """F: where the fingers point, N: where the palm faces. Fc: where the cuff points when the wrist is bent, Fw: the way the glove leaves the wrist. gap: how much of the dark ball shows between them."""
     P = POSES[pose]; e = bpy.data.objects.new(name, None); col.objects.link(e); e.parent = root
-    R = frame_from(F, N); e.matrix_basis = Matrix.Translation(pos) @ R.to_4x4() @ Matrix.Scale(scale, 4)
-    cf = e                                                       # the cuff can point its own way: the wrist bends
-    if Fc is not None:
-        cf = bpy.data.objects.new(name + 'CuffFrame', None); col.objects.link(cf); cf.parent = e
-        dz = (R.transposed() @ Vector(Fc)).normalized(); q = Vector((0, 0, 1)).rotation_difference(dz)
-        cf.matrix_basis = Matrix.Translation((0, 0, -0.03)) @ q.to_matrix().to_4x4() @ Matrix.Translation((0, 0, 0.03))
-    parts = [superellipsoid(name + 'Palm', 0.145, 0.11, 0.142, 1.0, 1.0, M_glove, parent=e)]   # a soft, puffy palm, as wide at the wrist as the cuff
-    for k, (x, r, lens, spr) in enumerate(FING):
-        sp = math.radians(spr * P['spread'] * (1 if th > 0 else -1)); d0 = Vector((math.sin(sp), 0, math.cos(sp)))
-        axis = d0.cross(Vector((0, -1, 0))).normalized(); base = Vector((th * x, -0.006, 0.105))
-        parts.append(tube(name + 'F%d' % k, finger_path(base, d0, axis, lens, P['f'][min(k, len(P['f']) - 1)]), lambda t, r=r: r * (1 - 0.08 * t), M_glove, n=18, parent=e))
-    (tx, ty, tz), tc = P['thumb']; d0 = Vector((th * tx, ty, tz)).normalized(); base = Vector((th * 0.108, -0.015, 0.02))
-    axis = d0.cross(Vector((-th * 0.35, -1, 0.1))).normalized()
-    parts.append(tube(name + 'Thumb', finger_path(base, d0, axis, (0.082, 0.062), tc), lambda t: 0.074 * (1 - 0.05 * t), M_glove, n=18, parent=e))   # a big, fat thumb
-    parts.append(lathe(name + 'Wrist', [(0.0, -0.02), (0.114, -0.02), (0.114, -0.088), (0.112, -0.092)], M_glove, parent=cf, n=64))   # straight, full width: no neck
-    parts.append(lathe(name + 'Band', [(0.112, -0.088), (0.1, -0.094), (0.098, -0.112), (0.1, -0.13), (0.114, -0.136)], M_band, parent=cf, n=64))   # the black band: a dark gap, the same width outside
-    parts.append(torus(name + 'CuffLight', 0.1155, 0.0065, M_cyan, center=(0, 0, -0.134), n=72, m=10, parent=cf))   # a thin cyan ring on the cuff's edge
-    parts.append(torus(name + 'CuffLight2', 0.111, 0.003, M_cyan, center=(0, 0, -0.09), n=72, m=8, parent=cf))   # and a finer one on the glove's edge
-    parts.append(lathe(name + 'Cuff', [(0.0, -0.137), (0.112, -0.137), (0.126, -0.141), (0.134, -0.153), (0.134, -0.212), (0.129, -0.234), (0.115, -0.248), (0.085, -0.255), (0.0, -0.256)], M_glove, parent=cf, n=64))   # a longer white cuff: more white
-    HANDS[name] = [e] + parts
+    R = frame_from(F, N); e.matrix_basis = Matrix.Translation(pos) @ R.to_4x4() @ Matrix.Scale(scale, 4); J = Vector(WRIST)
+    dzc = (R.transposed() @ Vector(Fc)).normalized() if Fc is not None else Vector((0, 0, 1)); aw = (R.transposed() @ Vector(Fw)).normalized() if Fw is not None else Vector((0, 0, 1))
+    cf = bpy.data.objects.new(name + 'CuffFrame', None); col.objects.link(cf); cf.parent = e                 # the cuff turns on the ball
+    cf.matrix_basis = Matrix.Translation(J) @ Vector((0, 0, 1)).rotation_difference(dzc).to_matrix().to_4x4(); z0 = -gap / 2
+    parts = [glove_mesh(name + 'Palm', P, th, e, tuple(aw), gap)]                                              # the whole glove, one surface
+    parts.append(lathe(name + 'Band', [(0.104 * math.sin(math.pi * k / 24), J.z + 0.104 * math.cos(math.pi * k / 24)) for k in range(25)], M_band, parent=e, n=64))   # the dark ball of the wrist
+    parts.append(torus(name + 'CuffLight', 0.1155, 0.0065, M_cyan, center=(0, 0, z0 + 0.003), n=72, m=10, parent=cf))   # a cyan ring on the cuff's edge
+    parts.append(lathe(name + 'Cuff', [(0.0, z0), (0.112, z0), (0.126, z0 - 0.004), (0.134, z0 - 0.016), (0.134, z0 - 0.075), (0.129, z0 - 0.097), (0.115, z0 - 0.111), (0.085, z0 - 0.118), (0.0, z0 - 0.119)], M_glove, parent=cf, n=64))   # the white cuff
+    HANDS[name] = [e, cf] + parts
     return e
 
 def show_hands(names):
     for k, objs in HANDS.items():
         for o in objs: o.hide_render = k not in names
 
-def side_hand(name, s, cuff=(1.0, -0.45, -0.64), pose='present', F=None, N=None, scale=1.17, Fc=None):   # a little smaller, as on the reference sheet
-    """A hand at the character's side (s = -1 its right, +1 its left), given by where its cuff ends."""
+TQ = math.radians(28)                                            # the reference's 3/4 view: the character is turned this far from the camera
+def tq(right, toward, up): return (right * math.cos(TQ) + toward * math.sin(TQ), right * math.sin(TQ) - toward * math.cos(TQ), up)   # a direction or a place as seen in that view -> the character's own axes
+def side_hand(name, s, cuff=(1.0, -0.45, -0.64), pose='present', F=None, N=None, scale=1.17, Fc=None, Fw=None, gap=0.036, wrist=None):   # a little smaller, as on the reference sheet
+    """A hand at the character's side (s = -1 its right, +1 its left), given by where its cuff ends, or by where its wrist is."""
     F = Vector(F or (s * 0.92, -0.22, 0.3)).normalized(); N = N or ((0.15, -0.72, 0.68) if s > 0 else (0.42, -0.65, 0.64))   # palm up and tilted to the viewer, fingers out to the side
-    return hand(name, pose, -s, Vector((s * cuff[0], cuff[1], cuff[2])) + Vector(Fc or F).normalized() * 0.253 * scale, F, N, scale, Fc)
+    pos = Vector(wrist) + F * 0.03 * scale if wrist is not None else Vector((s * cuff[0], cuff[1], cuff[2])) + (F * 0.03 + Vector(Fc or F).normalized() * (0.119 + gap / 2)) * scale
+    return hand(name, pose, -s, pos, F, N, scale, Fc, Fw, gap)
 
-side_hand('TurnR', -1, cuff=tuple(float(v) for v in os.environ.get('FARCUFF', '0.98,-0.8,-0.36').split(','))); side_hand('TurnL', 1, F=(0.897, 0.456, -0.06), N=(0.467, -0.806, 0.36), Fc=(1.0, 0.045, 0.06))   # palm to us, the cuff coming a little toward us   # the near hand lies out flat to the side, palm up to us
+def _env3(k, d): return tuple(float(v) for v in os.environ.get(k, d).split(','))
+def _axis(t, rise=5.0): t = math.radians(t); r = math.radians(rise); return tq(math.cos(t) * math.cos(r), math.sin(t), math.cos(t) * math.sin(r))   # out to the right in the 3/4 view, turned t degrees toward the viewer, rising so far in the picture
+# the near hand, as on the reference: the forearm comes toward us, the wrist bends, the palm is up and open to us, the thumb stands up, the fingers point out to the side
+_nt = _env3('NEARTILT', '15,30,56,38,8'); _g = math.radians(_nt[3]); _t = math.radians(_nt[0]); _r = math.radians(_nt[4])   # fingers, glove's wrist, cuff: degrees toward the viewer; how far the palm is tipped up; how the fingers rise
+_Nn = tq(-math.sin(_t) * math.cos(_r) * math.cos(_g) - math.sin(_r) * math.sin(_g), math.cos(_t) * math.cos(_g), -math.sin(_t) * math.sin(_r) * math.cos(_g) + math.cos(_r) * math.sin(_g))
+side_hand('TurnL', 1, wrist=tq(*_env3('NEARWRIST', '0.873,0.59,-0.551')), F=_axis(_nt[0], _nt[4]), N=_Nn, Fw=_axis(_nt[1], 2.0), Fc=_axis(_nt[2], 5.0), gap=0.006)
+# the far hand: held out past the end of the ring, palm to us, thumb up
+_ft = math.radians(15.0); side_hand('TurnR', -1, wrist=tq(*_env3('FARWRIST', '-1.439,0.385,-0.416')), F=tq(-math.cos(_ft), math.sin(_ft), 0.0), N=tq(math.sin(_ft) * math.cos(math.radians(20)), math.cos(_ft) * math.cos(math.radians(20)), math.sin(math.radians(20))))
 
 # ---------------------------------------------------------------- the face, drawn as light on the visor (the web page draws the same shapes live)
 TW = 1400; TH = round(TW * VB / VA); PX = TW / (2 * VA)
