@@ -320,7 +320,7 @@ def finger_path(base, d0, axis, lengths, curls, steps=10):
 def hand(name, pose, th, pos, F, N, scale=1.0):
     P = POSES[pose]; e = bpy.data.objects.new(name, None); col.objects.link(e); e.parent = root
     e.matrix_basis = Matrix.Translation(pos) @ frame_from(F, N).to_4x4() @ Matrix.Scale(scale, 4)
-    parts = [superellipsoid(name + 'Palm', 0.13, 0.1, 0.11, 1.0, 1.0, M_glove, parent=e, taper=0.22)]   # a soft, puffy palm
+    parts = [superellipsoid(name + 'Palm', 0.13, 0.116, 0.11, 1.0, 1.0, M_glove, parent=e)]   # a soft, puffy palm, as wide at the wrist as the cuff
     for k, (x, r, lens, spr) in enumerate(FING):
         sp = math.radians(spr * P['spread'] * (1 if th > 0 else -1)); d0 = Vector((math.sin(sp), 0, math.cos(sp)))
         axis = d0.cross(Vector((0, -1, 0))).normalized(); base = Vector((th * x, -0.006, 0.072))
@@ -328,10 +328,11 @@ def hand(name, pose, th, pos, F, N, scale=1.0):
     (tx, ty, tz), tc = P['thumb']; d0 = Vector((th * tx, ty, tz)).normalized(); base = Vector((th * 0.105, -0.015, -0.03))
     axis = d0.cross(Vector((-th * 0.35, -1, 0.1))).normalized()
     parts.append(tube(name + 'Thumb', finger_path(base, d0, axis, (0.07, 0.055), tc), lambda t: 0.06 * (1 - 0.06 * t), M_glove, n=18, parent=e))
-    parts.append(lathe(name + 'Wrist', [(0.0, -0.02), (0.1, -0.02), (0.1, -0.06), (0.097, -0.085), (0.095, -0.092)], M_glove, parent=e, n=64))   # short and full width
-    parts.append(lathe(name + 'Band', [(0.094, -0.088), (0.1, -0.093), (0.1, -0.137), (0.094, -0.141)], M_band, parent=e, n=64))   # the black band
-    parts.append(torus(name + 'CuffLight', 0.1, 0.01, M_cyan, center=(0, 0, -0.141), n=72, m=10, parent=e))
-    parts.append(lathe(name + 'Cuff', [(0.0, -0.142), (0.1, -0.142), (0.122, -0.148), (0.138, -0.165), (0.142, -0.19), (0.136, -0.214), (0.118, -0.228), (0.095, -0.233), (0.0, -0.234)], M_glove, parent=e, n=64))   # a big, puffy cuff
+    parts.append(lathe(name + 'Wrist', [(0.0, -0.02), (0.114, -0.02), (0.114, -0.088), (0.112, -0.092)], M_glove, parent=e, n=64))   # straight, full width: no neck
+    parts.append(lathe(name + 'Band', [(0.112, -0.088), (0.1, -0.094), (0.098, -0.112), (0.1, -0.13), (0.114, -0.136)], M_band, parent=e, n=64))   # the black band: a dark gap, the same width outside
+    parts.append(torus(name + 'CuffLight', 0.117, 0.011, M_cyan, center=(0, 0, -0.134), n=72, m=10, parent=e))   # a bright cyan ring on the cuff's edge
+    parts.append(torus(name + 'CuffLight2', 0.111, 0.0045, M_cyan, center=(0, 0, -0.09), n=72, m=8, parent=e))   # and a thin one on the glove's edge
+    parts.append(lathe(name + 'Cuff', [(0.0, -0.137), (0.112, -0.137), (0.124, -0.141), (0.13, -0.152), (0.13, -0.2), (0.125, -0.214), (0.112, -0.222), (0.08, -0.226), (0.0, -0.227)], M_glove, parent=e, n=64))   # the white cuff: straight sides, rounded end
     HANDS[name] = [e] + parts
     return e
 
@@ -342,7 +343,7 @@ def show_hands(names):
 def side_hand(name, s, cuff=(1.0, -0.45, -0.64), pose='open', F=None, N=None, scale=1.3):
     """A hand at the character's side (s = -1 its right, +1 its left), given by where its cuff ends."""
     F = Vector(F or (s * 0.92, -0.22, 0.3)).normalized(); N = N or ((0.15, -0.72, 0.68) if s > 0 else (0.42, -0.65, 0.64))   # palm up and tilted to the viewer, fingers out to the side
-    return hand(name, pose, -s, Vector((s * cuff[0], cuff[1], cuff[2])) + F * 0.234 * scale, F, N, scale)
+    return hand(name, pose, -s, Vector((s * cuff[0], cuff[1], cuff[2])) + F * 0.227 * scale, F, N, scale)
 
 side_hand('TurnR', -1); side_hand('TurnL', 1)
 

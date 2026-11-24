@@ -49,6 +49,7 @@ next(n for n in bpy.data.materials['ring'].node_tree.nodes if n.bl_idname == 'Sh
 for nm in ('LowSeam', 'HeadStripe'): bpy.data.objects[nm].visible_glossy = False   # no smeary reflections of the lights on the body or visor
 for o in bpy.data.objects:                                       # the gloves are not mirrored in the visor (no white smudge on the glass)
     if o.name.startswith(('Turn', 'Think', 'Idea', 'Cool', 'Wink', 'Surp', 'Hero')): o.visible_glossy = False
+setp('cuffLight', Emission_Strength=5.5)
 # ---------------------------------------------------------------- a floor that only catches the shadow
 FLOOR = -1.3
 bpy.ops.mesh.primitive_plane_add(size=30, location=(0, 0, FLOOR)); catcher = bpy.context.object; catcher.name = 'ShadowCatcher'; catcher.is_shadow_catcher = True
