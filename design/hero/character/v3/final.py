@@ -23,9 +23,24 @@ def setp(name, **kw):
     for k, v in kw.items(): b.inputs[k.replace('_', ' ')].default_value = v
 setp('body', Base_Color=(0.85, 0.85, 0.92, 1), Roughness=0.2, Coat_Weight=1.0, Coat_Roughness=0.012)
 setp('glove', Base_Color=(0.9, 0.9, 0.97, 1), Roughness=0.46, Coat_Weight=0.2, Coat_Roughness=0.18, Sheen_Weight=0.3, Sheen_Roughness=0.45, Subsurface_Weight=0.08, Subsurface_Scale=0.02)
+def glove_shade():
+    """The gloves are shaded as on the reference: white where they face the light (up and to the left), a soft lilac on the far side and in the folds
+    between the fingers, and a faint lilac edge so white shapes stay readable against white."""
+    nt = bpy.data.materials['glove'].node_tree; b = nt.nodes['Principled BSDF']; N = nt.nodes.new; L = nt.links.new
+    def ramp(src, a, c, hi=1.0):
+        m = N('ShaderNodeMapRange'); m.inputs['From Min'].default_value = a; m.inputs['From Max'].default_value = c; m.inputs['To Min'].default_value = 0.0; m.inputs['To Max'].default_value = hi; L(src, m.inputs['Value']); return m.outputs['Result']
+    def top(p, q): m = N('ShaderNodeMath'); m.operation = 'MAXIMUM'; L(p, m.inputs[0]); L(q, m.inputs[1]); return m.outputs[0]
+    geo = N('ShaderNodeNewGeometry'); dot = N('ShaderNodeVectorMath'); dot.operation = 'DOT_PRODUCT'; L(geo.outputs['Normal'], dot.inputs[0]); dot.inputs[1].default_value = Vector((-0.5, -0.32, 0.8)).normalized()
+    side = ramp(dot.outputs['Value'], 0.5, -0.55, float(os.environ.get('GLOVEDOWN', 1.0)))                    # turned away from the light
+    ao = N('ShaderNodeAmbientOcclusion'); ao.inputs['Distance'].default_value = 0.12; ao.samples = 12; ao.only_local = True
+    away = ramp(dot.outputs['Value'], 0.8, 0.3); away = top(away, ramp(dot.outputs['Value'], 2.0, 1.9, 0.4)); fm = N('ShaderNodeMath'); fm.operation = 'MULTIPLY'; L(ramp(ao.outputs['AO'], 0.96, 0.42), fm.inputs[0]); L(away, fm.inputs[1]); fold = fm.outputs[0]   # in a fold, on the side away from the light
+    lw = N('ShaderNodeLayerWeight'); lw.inputs['Blend'].default_value = 0.22; edge = ramp(lw.outputs['Facing'], 0.6, 1.0, 0.36)   # along an edge
+    mix = N('ShaderNodeMix'); mix.data_type = 'RGBA'; mix.inputs['A'].default_value = (0.96, 0.96, 1.0, 1); mix.inputs['B'].default_value = (0.48, 0.4, 0.92, 1)
+    L(top(top(side, fold), edge), mix.inputs['Factor']); L(mix.outputs['Result'], b.inputs['Base Color'])
+glove_shade()
 setp('visor', Base_Color=(0.003, 0.003, 0.005, 1), Roughness=0.05, Coat_Weight=1.0, Coat_Roughness=0.0)
 setp('earBlack', Base_Color=(0.004, 0.004, 0.008, 1), Roughness=0.07, Coat_Weight=1.0, Coat_Roughness=0.0)
-setp('cuffBand', Base_Color=(0.02, 0.021, 0.026, 1), Roughness=0.28, Coat_Weight=0.9, Coat_Roughness=0.04)
+setp('cuffBand', Base_Color=(0.006, 0.006, 0.01, 1), Roughness=0.32, Coat_Weight=0.3, Coat_Roughness=0.08, Specular_IOR_Level=0.3)   # the wrist ball: deep black, as on the reference
 
 def neon(name, strength, white=0.12):
     """A light tube: deep colour at its edges, a brighter, whiter core where it faces the camera, glossy on top."""
@@ -84,11 +99,20 @@ for o in bpy.data.objects:
 for l in G['LIGHTS']:
     if l.name == 'Pink': l.light_linking.receiver_collection = nohands
 bpy.data.objects['Ring'].light_linking.receiver_collection = nohands
-hands_only = bpy.data.collections.new('HandsOnly'); sc.collection.children.link(hands_only)              # a soft light from the camera's side for the gloves alone, so they read as clean white under the ring
+hands_only = bpy.data.collections.new('HandsOnly'); sc.collection.children.link(hands_only)              # the gloves have their own lights, as on the reference: lit from above, soft lilac shade underneath, no shadow from the ring
 for o in bpy.data.objects:
     if o.type == 'MESH' and o.name in _hands: hands_only.objects.link(o)
-hf = bpy.data.lights.new('HandFill', 'AREA'); hf.size = 6; hf.energy = float(os.environ.get('HANDFILL', 260)); hf.use_shadow = False
-hfo = bpy.data.objects.new('HandFill', hf); sc.collection.objects.link(hfo); hfo.location = (0.5, -7.0, 2.6); hfo.rotation_euler = Vector(hfo.location).to_track_quat('Z', 'Y').to_euler(); hfo.light_linking.receiver_collection = hands_only; hfo.visible_glossy = False
+rest = bpy.data.collections.new('NoHandsFloor'); sc.collection.children.link(rest); rest.objects.link(catcher)
+for o in nohands.objects: rest.objects.link(o)
+for l in G['LIGHTS']: l.light_linking.receiver_collection = rest if l.name in ('Top', 'Front') else nohands   # the character's own lights leave the gloves alone
+def hand_light(name, loc, size, energy, color=(1, 1, 1), shadow=True):
+    d = bpy.data.lights.new(name, 'AREA'); d.size = size; d.energy = energy; d.color = color; d.use_shadow = shadow
+    o = bpy.data.objects.new(name, d); sc.collection.objects.link(o); o.location = loc; o.rotation_euler = Vector(loc).to_track_quat('Z', 'Y').to_euler(); o.visible_glossy = False
+    o.light_linking.receiver_collection = hands_only; o.light_linking.blocker_collection = hands_only; G['LIGHTS'].append(o); return o
+_hl = [float(v) for v in os.environ.get('HANDLIGHT', '860,110,110').split(',')]
+hand_light('HandKey', (-4.2, -3.4, 5.2), 4.0, _hl[0])                                                       # from above, the left and a little in front, as on the reference: the tops of the fingers and the palm are bright
+hand_light('HandFront', (0.0, -7.0, 1.0), 6.0, _hl[1], shadow=False)                                        # a little from the camera's side
+hand_light('HandUnder', (0.8, -3.0, -5.0), 6.0, _hl[2], color=(0.5, 0.42, 1.0), shadow=False)               # lilac from underneath, for the shade
 floor_only = bpy.data.collections.new('FloorOnly'); sc.collection.children.link(floor_only); floor_only.objects.link(catcher)
 ff = bpy.data.lights.new('FloorFill', 'AREA'); ff.size = 12; ff.energy = 260; ff.use_shadow = False
 if hasattr(ff, 'cycles') and hasattr(ff.cycles, 'cast_shadow'): ff.cycles.cast_shadow = False
