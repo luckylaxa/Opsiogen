@@ -5,6 +5,7 @@ round the body; a glowing seam low on the front; cartoon gloves with black cuffs
 Run with Blender's Python (free, no account):  pip install bpy pillow numpy fonttools brotli scikit-image
    python build.py all    (renders go to ./out; or test, hands, views, emotions, hero), then  python sheet.py
 Replaces the version 2 concept (../v2). The site still uses version 1 (../model/build.py) until this is approved.
+The two open hands are jointed gloves: one smooth skin on a small skeleton (HAND, HAND_POSES, pose_glove), so they can be posed and animated.
 Units: the body's radius. Front is -Y, up is +Z, the character's left is +X."""
 import bpy, bmesh, math, sys, os
 import numpy as np
@@ -384,13 +385,14 @@ POSES = {
         # Folds, each drawn on the picture of the hand as a line of (along the hand, up the picture) points, with its depth, its width on the left and on the right of the way it is drawn,
         # and how near to us the surface is that it lies on (the picture is seen from a little above, so a nearer surface shows a little lower).
         # The plump side of a fold is steep and the other side runs up to it gently, so a fold reads as one soft part lying over the next, not as a scratch.
-        folds=((((-0.03, 0.071), (-0.004, 0.058), (0.0326, 0.0447), (0.0725, 0.0388), (0.092, 0.044), (0.105, 0.052)), 0.0026, 0.0026, 0.007, 0.06),                                 # under the cushion of the thumb: clearest on the wrist's side,
-               (((0.05, 0.041), (0.0725, 0.0388), (0.1004, 0.0487), (0.120, 0.0626), (0.132, 0.076), (0.137, 0.09)), 0.0012, 0.0026, 0.007, 0.06),                           # fainter as it runs up to the fork of thumb and finger
-               (((0.02, 0.04), (0.045, 0.027), (0.075, 0.008), (0.095, -0.012)), 0.001, 0.003, 0.003, 0.06),                                                               # a faint one leaving it across the palm
-               (((0.062, 0.156), (0.074, 0.138), (0.0949, 0.1147), (0.1194, 0.1011), (0.1355, 0.0989), (0.142, 0.099)), 0.0032, 0.003, 0.009, 0.03),                        # at the foot of the thumb
-               (((0.2095, 0.062), (0.2095, 0.03), (0.2095, -0.004)), 0.004, 0.008, 0.016, 0.074),                                                                          # the joint of each finger: the pad sits over the root
-               (((0.207, 0.008), (0.207, -0.012), (0.207, -0.028)), 0.004, 0.008, 0.016, 0.152),
-               (((0.130, -0.039), (0.1235, -0.046), (0.1165, -0.055), (0.111, -0.068), (0.109, -0.082)), 0.003, 0.006, 0.013, 0.17))),
+        folds=((((-0.03, 0.071), (-0.004, 0.058), (0.0326, 0.0447), (0.0725, 0.0388), (0.092, 0.044), (0.105, 0.052)), 0.0018, 0.004, 0.010, 0.06),                                  # under the cushion of the thumb: clearest on the wrist's side,
+               (((0.05, 0.041), (0.0725, 0.0388), (0.1004, 0.0487), (0.120, 0.0626), (0.132, 0.076), (0.137, 0.09)), 0.0009, 0.004, 0.010, 0.06),                           # fainter as it runs up to the fork of thumb and finger
+               (((0.02, 0.04), (0.045, 0.027), (0.075, 0.008), (0.095, -0.012)), 0.0006, 0.004, 0.004, 0.06),                                                              # a very faint one leaving it across the palm
+               (((0.062, 0.156), (0.074, 0.138), (0.0949, 0.1147), (0.1194, 0.1011), (0.1355, 0.0989), (0.142, 0.099)), 0.0024, 0.0045, 0.011, 0.03),                       # at the foot of the thumb
+               (((0.2095, 0.062), (0.2095, 0.03), (0.2095, -0.004)), 0.003, 0.009, 0.017, 0.074),                                                                          # the joint of each finger: the pad sits over the root
+               (((0.207, 0.008), (0.207, -0.012), (0.207, -0.028)), 0.003, 0.009, 0.017, 0.152),
+               (((0.130, -0.039), (0.1235, -0.046), (0.1165, -0.055), (0.111, -0.068), (0.109, -0.082)), 0.002, 0.007, 0.014, 0.17))),                                      # every fold is shallow and wide: the hand stays smooth, as on the picture
+    'open':     dict(jointed=os.environ.get('HANDPOSE', 'open')),                                                # the jointed glove (see HAND and HAND_POSES below)
     'palm':     dict(f=[(3, 5, 3)] * 3, spread=1.4, thumb=((0.75, -0.35, 0.55), (0, 6))),
     'point':    dict(f=[(0, 0, 0), (90, 105, 75), (90, 105, 75)], spread=0.4, thumb=((0.3, -0.9, 0.4), (30, 34))),
     'thumbsup': dict(f=[(92, 105, 78)] * 3, spread=0.2, thumb=((1.0, -0.2, 0.35), (0, 0))),
@@ -423,7 +425,7 @@ def glove_mesh(name, P, th, parent, aw, gap):
     and a wrist end that is one round pillow over the dark ball.
     It is shaped as a distance field (rounded shapes melted together) and turned into a mesh with marching cubes; the result is kept in ./out so it is only worked out once."""
     import hashlib; from skimage import measure
-    key = hashlib.md5(repr((sorted(P.items()), th, tuple(round(v, 5) for v in aw), round(gap, 4), FINGERS, GLOVE_STEP, 79)).encode()).hexdigest()[:16]; path = os.path.join(OUT, 'glove-%s.npz' % key)
+    key = hashlib.md5(repr((sorted(P.items()), th, tuple(round(v, 5) for v in aw), round(gap, 4), FINGERS, GLOVE_STEP, 81)).encode()).hexdigest()[:16]; path = os.path.join(OUT, 'glove-%s.npz' % key)
     if not os.path.exists(path):
         def strand(poly, step=0.006):                                                                            # a digit drawn as a line of points (across the palm toward the thumb, out of the palm, along the fingers, radius)
             out = []
@@ -498,6 +500,112 @@ def glove_mesh(name, P, th, parent, aw, gap):
     m_ = ob.modifiers.new('soften', 'SMOOTH'); m_.factor = 0.5; m_.iterations = 2
     return ob
 
+# ---------------------------------------------------------------- the jointed glove: one smooth surface on a small skeleton, so the hand can be posed and animated
+# The reference pictures are the style only: a small, plump, cute cartoon glove with three fingers and a thumb. Every finger is its own round form with a gap to the next,
+# there are no fold lines and no hard edges, and each finger has a knuckle and a joint to bend at.
+HAND = dict(   # in the hand's own axes and units: fingers along +Z, the palm faces -Y, the thumb is on +X (mirrored for the other hand)
+    # each digit: its knuckle, the way it points at rest (degrees toward the thumb's side, degrees in toward the palm), the lengths of its two parts, its radius at knuckle, joint and tip
+    digits=dict(index=((0.080, -0.002, 0.118), (12.0, 0.0), (0.062, 0.056), (0.0415, 0.0425, 0.0405)),
+                middle=((-0.003, -0.002, 0.130), (-2.0, 0.0), (0.066, 0.060), (0.043, 0.044, 0.042)),
+                last=((-0.086, -0.002, 0.110), (-18.0, 0.0), (0.058, 0.052), (0.040, 0.041, 0.039)),
+                thumb=((0.092, -0.018, 0.035), (55.0, 12.0), (0.058, 0.050), (0.047, 0.047, 0.044))),
+    web=0.022, between=0.012,                                       # how softly a digit runs into the palm, and two neighbours into each other at their roots
+    cushion=(0.060, 0.058, 0.050, 0.055, 0.024, 0.050))             # a low soft mound at the foot of the thumb: (toward the thumb, out of the palm, along the hand) and its three half-sizes
+HAND_POSES = {   # per digit: (spread toward the thumb's side, bend at the knuckle, bend at the joint), in degrees; for the thumb the spread opens it away from the fingers
+    'rest':     {},
+    'open':     dict(index=(2, 4, 6), middle=(0, 8, 9), last=(-2, 12, 12), thumb=(4, 4, 6)),                       # an open, offering hand, the fingers only just bent: the hero pose
+    'wave':     dict(index=(7, -4, 0), middle=(0, -5, 0), last=(-7, -4, 0), thumb=(12, 0, -4)),                    # flat and spread wide
+    'point':    dict(index=(0, 0, 0), middle=(0, 74, 76), last=(2, 68, 70), thumb=(-16, 28, 32)),
+    'thumbsup': dict(index=(-2, 74, 76), middle=(0, 74, 76), last=(2, 68, 70), thumb=(14, -4, -6)),
+    'hold':     dict(index=(0, 40, 44), middle=(0, 44, 46), last=(0, 46, 48), thumb=(-6, 18, 24)),                # closing round something
+    'fist':     dict(index=(-2, 74, 76), middle=(0, 74, 76), last=(2, 68, 70), thumb=(-20, 32, 36)),
+}
+RIGS = {}
+def digit_frame(nm, th):
+    """A digit at rest, in the hand's axes: its knuckle, joint and tip, its three radii, and the way it points."""
+    K, (out, inw), (l1, l2), rr = HAND['digits'][nm]; o, i = math.radians(out), math.radians(inw)
+    f = Vector((th * math.sin(o) * math.cos(i), -math.sin(i), math.cos(o) * math.cos(i))); K = Vector((th * K[0], K[1], K[2]))
+    return K, K + f * l1, K + f * (l1 + l2), rr, f
+
+def soft_glove(name, th, parent, aw, gap):
+    """The glove at rest, as one smooth surface: a plump palm, three fingers and a thumb growing softly out of it, and a wrist end that is a round pillow over the dark ball.
+    It is shaped as a distance field (round shapes melted together) and turned into a mesh; the result is kept in ./out so it is only worked out once."""
+    import hashlib; from skimage import measure; from scipy.ndimage import gaussian_filter
+    key = hashlib.md5(repr((HAND['digits'], HAND['web'], HAND['between'], HAND['cushion'], th, tuple(round(v, 5) for v in aw), round(gap, 4), GLOVE_STEP, 3)).encode()).hexdigest()[:16]; path = os.path.join(OUT, 'softglove-%s.npz' % key)
+    if not os.path.exists(path):
+        def strand(nm, step=0.004):                                                                              # a digit as a row of spheres from knuckle to tip
+            K, J, T, (rK, rJ, rT), f = digit_frame(nm, th); out = []
+            for (a, ra), (b, rb) in (((K, rK), (J, rJ)), ((J, rJ), (T, rT))):
+                n = max(1, int(math.ceil((b - a).length / step)))
+                for i in range(n): t = i / n; out.append((np.array(a + (b - a) * t, dtype=np.float32), ra + (rb - ra) * t))
+            out.append((np.array(T, dtype=np.float32), rT)); return out
+        D = {nm: strand(nm) for nm in HAND['digits']}
+        aw_ = np.array(aw, dtype=np.float32); O = np.array(WRIST, dtype=np.float32)
+        lo = np.array([-0.17, -0.13, -0.16]); hi = np.array([0.17, 0.12, 0.2])
+        for dg in D.values():
+            for p, r in dg: lo = np.minimum(lo, p - r - 0.02); hi = np.maximum(hi, p + r + 0.02)
+        st = GLOVE_STEP; xs, ys, zs = (np.arange(lo[i], hi[i] + st, st, dtype=np.float32) for i in range(3)); X, Y, Z = np.meshgrid(xs, ys, zs, indexing='ij')
+        Zk = Z + 0.5 * np.maximum(0, th * X - 0.045) * np.clip((Z - 0.02) / 0.08, 0, 1)                             # the far end of the palm slants back a little on the thumb's side
+        qx, qy, qz = np.abs(X - th * 0.005) - (0.073 - 0.03 * np.clip((0.04 - Z) / 0.08, 0, 1)), np.abs(Y - 0.004) - 0.012, np.abs(Zk - 0.045) - 0.055   # the palm: a big, round pillow
+        palm = np.sqrt(np.maximum(qx, 0) ** 2 + np.maximum(qy, 0) ** 2 + np.maximum(qz, 0) ** 2) + np.minimum(np.maximum(qx, np.maximum(qy, qz)), 0) - 0.065
+        hx = (X - O[0]) * aw_[0] + (Y - O[1]) * aw_[1] + (Z - O[2]) * aw_[2]; rad = np.sqrt(np.maximum((X - O[0]) ** 2 + (Y - O[1]) ** 2 + (Z - O[2]) ** 2 - hx * hx, 0))
+        body = _smax(palm, 0.13 - np.sqrt((X + th * 0.012) ** 2 + (Y + 0.193) ** 2 + (Z - 0.075) ** 2), 0.04)      # only slightly cupped
+        body = _smin(body, (np.sqrt((rad / 0.116) ** 2 + (hx / 0.105) ** 2) - 1.0) * 0.105, 0.05)                   # the wrist end: one full round pillow over the ball
+        cT, cN, cz, rT_, rN_, rz_ = HAND['cushion']; body = _smin(body, (np.sqrt(((X - th * cT) / rT_) ** 2 + ((Y + cN) / rN_) ** 2 + ((Z - cz) / rz_) ** 2) - 1) * rN_, 0.03)
+        def chain(dg):                                                                                           # a digit's distance field, worked out only near it
+            out = np.full(X.shape, 1e3, dtype=np.float32); c = np.array([p for p, r in dg]); rr = max(r for p, r in dg) + 0.06
+            i0 = [max(0, int((c[:, i].min() - rr - lo[i]) / st)) for i in range(3)]; i1 = [min(X.shape[i], int((c[:, i].max() + rr - lo[i]) / st) + 2) for i in range(3)]
+            sl = tuple(slice(i0[i], i1[i]) for i in range(3)); xx, yy, zz = X[sl], Y[sl], Z[sl]; best = np.full(xx.shape, 1e3, dtype=np.float32)
+            for p, r in dg: best = np.minimum(best, np.sqrt((xx - p[0]) ** 2 + (yy - p[1]) ** 2 + (zz - p[2]) ** 2) - r)
+            out[sl] = best; return out
+        dig = chain(D['index'])
+        for nm in ('middle', 'last'): dig = _smin(dig, chain(D[nm]), HAND['between'])
+        d = _smin(_smin(body, dig, HAND['web']), chain(D['thumb']), HAND['web'])
+        d = _smax(d, rad - (0.1165 + np.maximum(0, hx - gap / 2) * 3.0), 0.006); d = _smax(d, gap / 2 - hx, 0.006)  # the glove ends at the ball, as wide as the ball
+        d = gaussian_filter(d, 1.0)                                                                              # no steps, no hard edges
+        v, f, _, _ = measure.marching_cubes(d, level=0.0, spacing=(st, st, st)); np.savez(path, v=(v + lo).astype(np.float32), f=f.astype(np.int32))
+    z = np.load(path); return mesh_object(name, z['v'].tolist(), z['f'].tolist(), M_glove, parent=parent)
+
+def rig_glove(ob, e, th):
+    """A skeleton for the glove: a palm bone, and two bones for each digit (knuckle to joint, joint to tip). Every point of the glove follows the bones it is near,
+    shared out softly round each knuckle and joint, so the surface stays one smooth skin when a finger bends."""
+    arm = bpy.data.armatures.new(ob.name + 'Bones'); ao = bpy.data.objects.new(ob.name.replace('Palm', 'Rig'), arm); col.objects.link(ao); ao.parent = e
+    bpy.context.view_layer.objects.active = ao; bpy.ops.object.mode_set(mode='EDIT')
+    pb = arm.edit_bones.new('palm'); pb.head = WRIST; pb.tail = (0, 0, 0.06)
+    for nm in HAND['digits']:
+        K, J, T, rr, f = digit_frame(nm, th)
+        b1 = arm.edit_bones.new(nm + '1'); b1.head = K; b1.tail = J; b1.parent = pb
+        b2 = arm.edit_bones.new(nm + '2'); b2.head = J; b2.tail = T; b2.parent = b1; b2.use_connect = True
+    bpy.ops.object.mode_set(mode='OBJECT')
+    me = ob.data; P_ = np.empty(len(me.vertices) * 3, dtype=np.float64); me.vertices.foreach_get('co', P_); P_ = P_.reshape(-1, 3)
+    sstep = lambda a, b, x: (lambda t: t * t * (3 - 2 * t))(np.clip((x - a) / (b - a), 0.0, 1.0)); W = {}; near = {}; along = {}
+    for nm in HAND['digits']:                                                                                    # how near each point is to each digit's own surface
+        K, J, T, (rK, rJ, rT), f = digit_frame(nm, th); K_, f_ = np.array(K), np.array(f); l1 = (J - K).length; L = (T - K).length
+        u = (P_ - K_) @ f_; uc = np.clip(u, 0.0, L); rad_ = np.where(uc < l1, rK + (rJ - rK) * uc / l1, rJ + (rT - rJ) * (uc - l1) / (L - l1))
+        near[nm] = np.exp(-np.maximum(np.linalg.norm(P_ - (K_ + np.outer(uc, f_)), axis=1) - rad_, 0.0) / 0.005); along[nm] = (u, l1, (rK + rJ + rT) / 3)
+    tot = sum(near.values()) + 1e-9
+    for nm in HAND['digits']:                                                                                    # a point belongs to the digit whose surface it is on; a point between two (the web) is shared out
+        u, l1, r = along[nm]; m = near[nm] * near[nm] / tot
+        a = sstep(-0.8 * r, 0.8 * r, u); c = sstep(l1 - 0.8 * r, l1 + 0.8 * r, u)                                  # past the knuckle, past the joint: a wide, soft hand-over, so a bend is a curve and not a kink
+        W[nm + '1'] = m * a * (1 - c); W[nm + '2'] = m * a * c
+    W['palm'] = np.clip(1.0 - sum(W.values()), 0.0, 1.0)
+    for k, w in W.items():
+        vg = ob.vertex_groups.new(name=k); idx = np.nonzero(w > 1e-4)[0]
+        for i in idx.tolist(): vg.add([i], float(w[i]), 'REPLACE')
+    md = ob.modifiers.new('bones', 'ARMATURE'); md.object = ao; md.use_deform_preserve_volume = True
+    cs = ob.modifiers.new('unpinch', 'CORRECTIVE_SMOOTH'); cs.factor = 0.75; cs.iterations = 40; cs.smooth_type = 'LENGTH_WEIGHTED'; cs.rest_source = 'ORCO'   # irons out the inside of a bend without changing the hand at rest
+    sm = ob.modifiers.new('soften', 'SMOOTH'); sm.factor = 0.5; sm.iterations = 4
+    RIGS[ob.name.replace('Palm', '')] = (ao, th); return ao
+
+def pose_glove(ao, th, pose, frame=None):
+    """Bend the glove's digits: pose gives, per digit, (spread, bend at the knuckle, bend at the joint) in degrees. With a frame number the pose is keyed there, for animation."""
+    n = Vector((0, -1, 0)); Kt, Jt, Tt, _, ft = digit_frame('thumb', th); v = Vector((0.0, -0.09, 0.11)) - Jt; nt = (v - ft * v.dot(ft)).normalized()   # the thumb closes toward the middle of the palm
+    for nm in HAND['digits']:
+        sp, c1, c2 = pose.get(nm, (0, 0, 0)); K, J, T, rr, f = digit_frame(nm, th); cax = f.cross(nt if nm == 'thumb' else n).normalized(); sax = Vector((0, th, 0))
+        for b, q in ((nm + '1', Quaternion(sax, math.radians(sp)) @ Quaternion(cax, math.radians(c1))), (nm + '2', Quaternion(cax, math.radians(c2)))):
+            pbn = ao.pose.bones[b]; B = pbn.bone.matrix_local.to_3x3(); pbn.rotation_mode = 'QUATERNION'; pbn.rotation_quaternion = (B.inverted() @ q.to_matrix() @ B).to_quaternion()
+            if frame is not None: pbn.keyframe_insert('rotation_quaternion', frame=frame)
+
 def hand(name, pose, th, pos, F, N, scale=1.0, Fc=None, Fw=None, gap=0.036):
     """F: where the fingers point, N: where the palm faces. Fc: where the cuff points when the wrist is bent, Fw: the way the glove leaves the wrist. gap: how much of the dark ball shows between them."""
     P = POSES[pose]; e = bpy.data.objects.new(name, None); col.objects.link(e); e.parent = root
@@ -505,7 +613,9 @@ def hand(name, pose, th, pos, F, N, scale=1.0, Fc=None, Fw=None, gap=0.036):
     dzc = (R.transposed() @ Vector(Fc)).normalized() if Fc is not None else Vector((0, 0, 1)); aw = (R.transposed() @ Vector(Fw)).normalized() if Fw is not None else Vector((0, 0, 1))
     cf = bpy.data.objects.new(name + 'CuffFrame', None); col.objects.link(cf); cf.parent = e                 # the cuff turns on the ball
     cf.matrix_basis = Matrix.Translation(J) @ Vector((0, 0, 1)).rotation_difference(dzc).to_matrix().to_4x4(); z0 = -gap / 2
-    parts = [glove_mesh(name + 'Palm', P, th, e, tuple(aw), gap)]                                              # the whole glove, one surface
+    if 'jointed' in P:                                                                                         # the smooth glove on its skeleton, set in a pose
+        parts = [soft_glove(name + 'Palm', th, e, tuple(aw), gap)]; rig = rig_glove(parts[0], e, th); pose_glove(rig, th, HAND_POSES[P['jointed']]); parts.append(rig)
+    else: parts = [glove_mesh(name + 'Palm', P, th, e, tuple(aw), gap)]                                        # an older, fixed glove (the pen hand and the emotion sheet still use these)
     parts.append(lathe(name + 'Band', [(0.096 * math.sin(math.pi * k / 24), J.z + 0.096 * math.cos(math.pi * k / 24)) for k in range(25)], M_band, parent=e, n=64))   # the dark ball of the wrist
     parts.append(lathe(name + 'BandCap', [(0.0, z0 + 0.0012), (0.111, z0 + 0.0012)], M_band, parent=cf, n=64))   # the cuff's top is dark inside its ring
     parts.append(torus(name + 'CuffLight', 0.1155, 0.0065, M_cyan, center=(0, 0, z0 + 0.003), n=72, m=10, parent=cf))   # a cyan ring on the cuff's edge
@@ -532,7 +642,7 @@ def _axis(t, rise=5.0, s=1): t = math.radians(t); r = math.radians(rise); return
 _nt = _env3('NEARTILT', '0,37,70,27,0'); _g = math.radians(_nt[3]); _t = math.radians(_nt[0]); _r = math.radians(_nt[4])   # fingers, glove's wrist, cuff: degrees toward the viewer; how far the palm is tipped up; how the fingers rise
 def open_hand(name, s, wrist):
     Nn = tq(s * (-math.sin(_t) * math.cos(_r) * math.cos(_g) - math.sin(_r) * math.sin(_g)), math.cos(_t) * math.cos(_g), -math.sin(_t) * math.sin(_r) * math.cos(_g) + math.cos(_r) * math.sin(_g))
-    return side_hand(name, s, wrist=tq(*wrist), F=_axis(_nt[0], _nt[4], s), N=Nn, Fw=_axis(_nt[1], 2.0, s), Fc=_axis(_nt[2], 5.0, s), gap=0.006)
+    return side_hand(name, s, pose='open', wrist=tq(*wrist), F=_axis(_nt[0], _nt[4], s), N=Nn, Fw=_axis(_nt[1], 2.0, s), Fc=_axis(_nt[2], 5.0, s), gap=0.006)
 open_hand('TurnL', 1, _env3('NEARWRIST', '0.873,0.67,-0.551')); open_hand('TurnR', -1, _env3('FARWRIST', '-1.439,0.385,-0.416'))
 
 # ---------------------------------------------------------------- the face, drawn as light on the visor (the web page draws the same shapes live)

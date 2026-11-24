@@ -1,6 +1,7 @@
 """Final renders of the version 3 character: proper materials, studio lighting, a real soft shadow, on white.
 Builds the model with build.py (no shots), then swaps in final materials and a perspective camera.
 Run with Blender's Python:  python final.py hero views   (renders go to ./out; preview for a quick look), then  python final_strip.py
+Hands:  python final.py hand farhand poses anim   (close-ups, the six poses, and the frames of a short clip of the near hand moving from pose to pose).
 The floor shadow is lightened when the layers are combined (comp.py, shadow=0.42)."""
 import sys, os, math
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -43,10 +44,10 @@ def glove_shade():
     tuck = ramp(ao.outputs['AO'], float(os.environ.get('GLOVEAO0', 0.88)), 0.4, float(os.environ.get('GLOVETUCK', 1.0)))
     sx = N('ShaderNodeSeparateXYZ'); L(geo.outputs['Normal'], sx.inputs[0]); up_ = N('ShaderNodeMapRange'); up_.inputs['From Min'].default_value = 0.2; up_.inputs['From Max'].default_value = 0.75; up_.inputs['To Min'].default_value = 1.0; up_.inputs['To Max'].default_value = float(os.environ.get('GLOVETOP', 0.15)); L(sx.outputs['Z'], up_.inputs['Value'])
     tm = N('ShaderNodeMath'); tm.operation = 'MULTIPLY'; L(tuck, tm.inputs[0]); L(up_.outputs['Result'], tm.inputs[1]); tuck = tm.outputs[0]   # the top of a part that lies in front stays bright: the shade is on the part behind it                          # tucked behind another part
-    line = ramp(geo.outputs['Pointiness'], 0.455, 0.43, float(os.environ.get('CREASE', 0.5)))                  # right in a fold
+    line = ramp(geo.outputs['Pointiness'], 0.455, 0.43, float(os.environ.get('CREASE', 0.0)))                  # right in a fold
     lw = N('ShaderNodeLayerWeight'); lw.inputs['Blend'].default_value = 0.22; edge = ramp(lw.outputs['Facing'], 0.7, 1.0, 0.12)   # a faint edge, so white stays readable on white
     col = blend((0.915, 0.93, 0.995, 1), (0.74, 0.70, 0.93, 1), top(side, edge)); col = blend(col, (0.56, 0.40, 0.56, 1), ramp(dot.outputs['Value'], -0.05, -0.55, 0.9)); col = blend(col, (0.44, 0.41, 0.55, 1), tuck); col = blend(col, (0.3, 0.26, 0.5, 1), line); L(col, b.inputs['Base Color'])   # the shade under a part that lies in front is a soft grey lavender; only the line right in a fold is deeper
-    nz = N('ShaderNodeTexNoise'); nz.inputs['Scale'].default_value = 900.0; nz.inputs['Detail'].default_value = 2.0; bp = N('ShaderNodeBump'); bp.inputs['Strength'].default_value = float(os.environ.get('GRAIN', 0.05)); bp.inputs['Distance'].default_value = 0.001
+    nz = N('ShaderNodeTexNoise'); nz.inputs['Scale'].default_value = 900.0; nz.inputs['Detail'].default_value = 2.0; bp = N('ShaderNodeBump'); bp.inputs['Strength'].default_value = float(os.environ.get('GRAIN', 0.015)); bp.inputs['Distance'].default_value = 0.001
     L(nz.outputs['Fac'], bp.inputs['Height']); L(bp.outputs['Normal'], b.inputs['Normal'])                     # a fine grain, like soft leather   # lilac as it turns away, mauve underneath, deeper where tucked
 glove_shade()
 setp('visor', Base_Color=(0.003, 0.003, 0.005, 1), Roughness=0.05, Coat_Weight=1.0, Coat_Roughness=0.0)
@@ -194,6 +195,17 @@ if 'handlo' in SHOTS: hand_shot('lo-hand', 'TurnLPalm', 430, 20)
 if 'handmid' in SHOTS: hand_shot('mid-hand', 'TurnLPalm', 760, 40)
 if 'farhand' in SHOTS: hand_shot('final-farhand', 'TurnRPalm', 1079, 80, off=(-0.056, 0, 0.0486))
 if 'farhandlo' in SHOTS: hand_shot('lo-farhand', 'TurnRPalm', 430, 20, off=(-0.056, 0, 0.0486))
+POSE_NAMES = ('open', 'wave', 'point', 'thumbsup', 'hold', 'fist')
+if 'poses' in SHOTS:                                             # the near hand in each of its poses: the same glove, only its joints are turned
+    rig, th = G['RIGS']['TurnL']
+    for nm in POSE_NAMES: G['pose_glove'](rig, th, G['HAND_POSES'][nm]); hand_shot('pose-' + nm, 'TurnLPalm', 620, 36)
+    G['pose_glove'](rig, th, G['HAND_POSES'][G['POSES']['open']['jointed']])
+if 'anim' in SHOTS:                                              # a short clip of the near hand moving from pose to pose, to show the fingers bend at their joints
+    rig, th = G['RIGS']['TurnL']; os.makedirs(os.path.join(OUT, 'anim'), exist_ok=True); fr = 1; HOLD, MOVE = 5, 9
+    for nm in ('open', 'wave', 'open', 'point', 'thumbsup', 'hold', 'fist', 'open'):
+        G['pose_glove'](rig, th, G['HAND_POSES'][nm], frame=fr); G['pose_glove'](rig, th, G['HAND_POSES'][nm], frame=fr + HOLD); fr += HOLD + MOVE
+    for k in range(1, fr - MOVE + 1): sc.frame_set(k); hand_shot('anim/%04d' % k, 'TurnLPalm', 400, 16)
+    sc.frame_set(1)
 def region(name, res, samples):                                  # the near ear with the head above it and the ring below, framed like the reference crop
     G['turn'](HERO_TURN); frame(); bpy.context.view_layer.update(); sc.render.resolution_x = sc.render.resolution_y = res
     cup = bpy.data.objects['EarCupL']; M = cup.matrix_world; P = [world_to_camera_view(sc, cam, M @ v.co) for v in cup.data.vertices]
