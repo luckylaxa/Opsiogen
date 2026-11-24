@@ -42,7 +42,7 @@ bpy.data.materials['visor'].node_tree.nodes['Principled BSDF'].inputs['Emission 
 neon('lowSeam', 2.6)
 setp('headStripe', Roughness=0.3, Coat_Weight=0.25, Coat_Roughness=0.05, Emission_Strength=1.9)   # an even band of light, hard-edged
 for nm in ('rim',): setp(nm, Roughness=0.16, Coat_Weight=1.0, Coat_Roughness=0.01)
-neon('earRing', 1.3, white=0.0)
+neon('earRing', 1.7, white=0.0)
 rb = bsdf('ring'); rb.inputs['Emission Strength'].default_value = 0.85; rb.inputs['Roughness'].default_value = 0.1; rb.inputs['Coat Weight'].default_value = 1.0; rb.inputs['Coat Roughness'].default_value = 0.0
 next(n for n in bpy.data.materials['ring'].node_tree.nodes if n.bl_idname == 'ShaderNodeMix').inputs['B'].default_value = (1, 1, 1, 1)   # the logo ring: glossy, deep colour, not a light tube
 
@@ -104,6 +104,9 @@ if 'preview' in SHOTS:
     G['turn'](-22); frame(); shot('final-preview', 480, 48)
 if 'top' in SHOTS:                                               # a close look at the top of the head, at full size
     G['turn'](-22); frame(target=(0.19, 0, 0.65), lens=175); shot('final-top', 600, 160, w=1400, floor=False)
+if 'ear' in SHOTS:                                               # the near ear, close
+    G['turn'](-22); bpy.context.view_layer.update(); ec = root.matrix_world @ (G['on_sphere'](G['EAR_LON'], G['EAR_LAT']) * 1.0)
+    frame(target=tuple(ec), lens=400); shot('final-ear', 900, 128, w=900, floor=False)
 if 'hands' in SHOTS:                                             # both hands, close
     G['turn'](-22); frame(target=(0.0, 0, -0.52), lens=96); shot('final-hands', 700, 90, w=1800, floor=False)
 if 'hero' in SHOTS:
