@@ -30,7 +30,7 @@ def ramp(stops, t):
     for (t0, c0), (t1, c1) in zip(stops, stops[1:]):
         if t <= t1: k = (t - t0) / max(t1 - t0, 1e-9); k = k * k * (3 - 2 * k); return mix(c0, c1, k)
     return stops[-1][1]
-EAR = [(0.0, hexrgb('#2f6bff')), (0.33, hexrgb('#9b1cf0')), (0.55, hexrgb('#ff3fc8')), (0.75, hexrgb('#9b1cf0')), (1.0, hexrgb('#2f6bff'))]
+EAR = [(0.0, hexrgb('#2f6bff')), (0.5, hexrgb('#19c8ff')), (1.0, hexrgb('#2f6bff'))]
 SEAM = [(0.0, hexrgb('#2a7bff')), (0.5, hexrgb('#8a2cff')), (1.0, hexrgb('#ff4fd8'))]
 
 # ---------------------------------------------------------------- materials
@@ -194,21 +194,21 @@ for s in (1, -1):
     lathe('EarPlate' + nm, plate, M_body, axis=ax)
     lathe('EarCup' + nm, [(0.385, 0.86), (0.385, 0.985), (0.378, 1.02), (0.36, 1.045), (0.33, 1.06), (0.295, 1.066), (0.272, 1.062), (0.262, 1.054), (0.258, 1.046)], M_body, axis=ax)
     lathe('EarCentre' + nm, [(0.259, 1.044), (0.2, 1.056), (0.1, 1.066), (0.0, 1.07)], M_black, axis=ax)
-    torus('EarSeam' + nm, 0.47, 0.006, M_band, axis=ax, center=ax * math.sqrt(1 - 0.47 ** 2), n=160, m=8)
+    torus('EarRingIn' + nm, 0.232, 0.014, M_earRing, axis=ax, center=ax * 1.05, n=160, m=10, color=lambda t, b: hexrgb('#ff3fc8'), parent=root)
     torus('EarRing' + nm, 0.262, 0.024, M_earRing, axis=ax, center=ax * 1.052, n=160, m=12, color=lambda t, b, s=s: ramp(EAR, (t + (0.25 if s > 0 else 0.75)) % 1.0))
-    for o in ('EarPlate', 'EarCup', 'EarCentre', 'EarRing', 'EarSeam'): bpy.data.objects[o + nm].parent = root
+    for o in ('EarPlate', 'EarCup', 'EarCentre', 'EarRing'): bpy.data.objects[o + nm].parent = root
 
 # ---------------------------------------------------------------- the rainbow stripe over the head, ear to ear, and the glowing seam low on the front
 E1 = on_sphere(EAR_LON, EAR_LAT); TOP = on_sphere(0, 58)
 n_ = Vector((1, 0, 0)).cross(TOP - Vector((0, E1.y, E1.z))).normalized(); d_ = n_.dot(E1); C_ = n_ * d_; rr_ = math.sqrt(1 - d_ * d_); up_ = n_.cross(Vector((1, 0, 0))).normalized()
 if up_.z < 0: up_ = -up_
-head_pts = [C_ + rr_ * (math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_) for a in [math.radians(149 - 118 * i / 199) for i in range(200)]]
-tube('HeadStripe', head_pts, lambda t: 0.019 * min(1, 9 * t, 9 * (1 - t)) + 0.002, M_head, n=12, color=lambda t: spectrum(0.875 - 0.5 * t), parent=root)
-seam_pts = [on_sphere(lon, -54 + 26 * (lon / 78) ** 2, 1.0) for lon in [-78 + 156 * i / 159 for i in range(160)]]
-tube('LowSeam', seam_pts, lambda t: 0.024 * min(1, 6 * t, 6 * (1 - t)) + 0.002, M_seam, n=12, color=lambda t: ramp(SEAM, t), parent=root)
+head_pts = [C_ + rr_ * (math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_) for a in [math.radians(144 - 108 * i / 199) for i in range(200)]]
+tube('HeadStripe', head_pts, 0.021, M_head, n=12, color=lambda t: spectrum(0.875 - 0.5 * t), parent=root)
+seam_pts = [on_sphere(lon, -66 + 22 * (lon / 78) ** 2, 1.0) for lon in [-78 + 156 * i / 159 for i in range(160)]]
+tube('LowSeam', seam_pts, lambda t: 0.016 * min(1, 6 * t, 6 * (1 - t)) + 0.002, M_seam, n=12, color=lambda t: ramp(SEAM, t), parent=root)
 
 # ---------------------------------------------------------------- the ring: close round the body, tilted, banded like a rainbow
-RING_R, RING_r, RING_Z, RING_ROT = 1.14, 0.09, -0.4, (math.radians(8), math.radians(-16), 0)
+RING_R, RING_r, RING_Z, RING_ROT = 1.12, 0.09, -0.46, (math.radians(7), math.radians(-10), 0)
 ring = torus('Ring', RING_R, RING_r, M_ring, n=360, m=24, u0=(1, 0, 0), color=lambda t, b: spectrum(2 * t - 0.23 + 0.1 * math.sin(b)), parent=root)
 ring.location = (0, 0, RING_Z); ring.rotation_euler = RING_ROT
 def ring_point(a_deg):

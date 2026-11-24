@@ -41,6 +41,8 @@ def neon(name, strength, white=0.12):
 bpy.data.materials['visor'].node_tree.nodes['Principled BSDF'].inputs['Emission Strength'].default_value = 1.6
 for nm, s_ in (('ring', 1.15), ('headStripe', 1.6), ('lowSeam', 2.0), ('earRing', 1.6)): neon(nm, s_)
 
+for nm in ('Ring', 'LowSeam', 'HeadStripe'): bpy.data.objects[nm].visible_glossy = False   # no smeary reflections of the lights on the body or visor
+setp('ring', Coat_Weight=0.3)
 # ---------------------------------------------------------------- a floor that only catches the shadow
 FLOOR = -1.3
 bpy.ops.mesh.primitive_plane_add(size=30, location=(0, 0, FLOOR)); catcher = bpy.context.object; catcher.name = 'ShadowCatcher'; catcher.is_shadow_catcher = True
