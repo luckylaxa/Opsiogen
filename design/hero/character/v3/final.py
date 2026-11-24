@@ -152,3 +152,5 @@ for _t in [s for s in SHOTS if s.startswith('elev')]:            # quick 3/4 tes
 if 'bottom' in SHOTS:                                            # the bottom of the body from the four angles of the first website character's views
     for nm, deg in (('bot-front', 0), ('bot-left', 45), ('bot-backleft', -115), ('bot-back', 180)):
         G['turn'](deg); frame(target=(0, 0, -0.66), lens=135); shot(nm, 460, 40, w=1000)
+if 'blend' in SHOTS:                                             # the model as a Blender file, with its materials, lights and camera, to open in Blender
+    G['turn'](HERO_TURN); frame(); bpy.ops.file.pack_all(); bpy.ops.wm.save_as_mainfile(filepath=os.path.join(OUT, 'character-v3.blend'), compress=True); print('saved blend')

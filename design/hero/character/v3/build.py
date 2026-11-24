@@ -194,6 +194,7 @@ bezel_sweep('Bezel', [(0.016, 0.02), (0.0172, 0.0222), (0.0195, 0.0232), (0.034,
 # ---------------------------------------------------------------- ears: a raised plate, a cup, a black centre and a light ring
 EAR_LON, EAR_LAT = 78, 8                                         # out at the sides, as on the reference's front view: from the front the lens is seen nearly edge-on
 if os.environ.get('EAR'): EAR_LON, EAR_LAT = [float(v) for v in os.environ['EAR'].split(',')]
+EAR_S = float(os.environ.get('EARSIZE', 0.86))                      # the ear's size against the head, as measured on the reference's 3/4 view
 STRIPE_LON = 71                                                  # the top seam comes down to the housing's front-top edge
 EARBAND = [(0.0, hexrgb('#16c8ff')), (0.22, hexrgb('#1f6bff')), (0.45, hexrgb('#2a3cff')), (0.66, hexrgb('#7a2cff')), (0.84, hexrgb('#d81fe6')), (1.0, hexrgb('#ff1fc8'))]
 M_earWhite = material('earWhite', (1, 1, 1), rough=0.3, emit=(1, 1, 1), strength=5.0)
@@ -230,19 +231,20 @@ def ear_band(name, ax, r0, r1, h, bump=0.012, NA=200, K=10):
     return mesh_object(name, verts, faces, M_earRing, colors=cols, merge=False)
 for s in (1, -1):
     ax = on_sphere(s * EAR_LON, EAR_LAT); nm = 'L' if s > 0 else 'R'
-    lathe('EarCup' + nm, [(0.41, 0.86), (0.41, 0.99), (0.4085, 1.0), (0.404, 1.008), (0.397, 1.012), (0.385, 1.0155), (0.365, 1.0185), (0.345, 1.021), (0.325, 1.0225), (0.314, 1.023), (0.31, 1.0205)], M_body, axis=ax, n=200)   # the white housing: a short drum standing off the head, a crisp edge, a nearly flat face round a big opening
-    lathe('EarGroove' + nm, [(0.311, 1.0205), (0.309, 1.0075), (0.244, 1.0075), (0.242, 1.0155)], M_black, axis=ax, n=200)   # the channel: a thin dark edge round the light
-    ear_band('EarBand' + nm, ax, 0.2525, 0.304, 1.0095, bump=0.0125)                                                                  # the neon band
-    torus('EarWhite' + nm, 0.2385, 0.0042, M_earWhite, axis=ax, center=ax * 1.0185, n=200, m=10)                       # a thin white-hot line on its inner edge
-    ear_dome('EarCentre' + nm, ax, 0.2355, 1.0155, 0.04)                                                                 # the glossy lens
-    torus('EarLine' + nm, 0.413, 0.0035, M_earLine, axis=ax, center=ax * math.sqrt(1 - 0.413 ** 2), n=200, m=8)          # a soft grey line where the housing meets the head
+    def es(prof): return [(r * EAR_S, h if h <= 0.99 else 0.99 + (h - 0.99) * EAR_S) for r, h in prof]      # the whole ear, scaled to the reference's size
+    lathe('EarCup' + nm, es([(0.41, 0.86), (0.41, 0.99), (0.4085, 1.0), (0.404, 1.008), (0.397, 1.012), (0.385, 1.0155), (0.365, 1.0185), (0.345, 1.021), (0.32, 1.0222), (0.299, 1.0228), (0.289, 1.023), (0.285, 1.0205)]), M_body, axis=ax, n=200)   # the white housing: a short drum standing off the head, a crisp edge, a nearly flat face round a big opening
+    lathe('EarGroove' + nm, es([(0.286, 1.0205), (0.284, 1.0075), (0.2245, 1.0075), (0.2226, 1.0155)]), M_black, axis=ax, n=200)   # the channel: a thin dark edge round the light
+    ear_band('EarBand' + nm, ax, 0.2323 * EAR_S, 0.2797 * EAR_S, 0.99 + 0.0195 * EAR_S, bump=0.0125 * EAR_S)                         # the neon band
+    torus('EarWhite' + nm, 0.2194 * EAR_S, 0.004, M_earWhite, axis=ax, center=ax * (0.99 + 0.0285 * EAR_S), n=200, m=10)          # a thin white-hot line on its inner edge
+    ear_dome('EarCentre' + nm, ax, 0.2167 * EAR_S, 0.99 + 0.0255 * EAR_S, 0.04 * EAR_S)                                            # the glossy lens
+    torus('EarLine' + nm, 0.413 * EAR_S, 0.0035, M_earLine, axis=ax, center=ax * math.sqrt(1 - (0.413 * EAR_S) ** 2), n=200, m=8)   # a soft grey line where the housing meets the head
     for o in ('EarCup', 'EarGroove', 'EarBand', 'EarWhite', 'EarCentre', 'EarLine'): bpy.data.objects[o + nm].parent = root
 
 # ---------------------------------------------------------------- the rainbow stripe over the head, ear to ear, and the glowing seam low on the front
 E1 = on_sphere(STRIPE_LON, EAR_LAT); TOP = on_sphere(0, 58)
 n_ = Vector((1, 0, 0)).cross(TOP - Vector((0, E1.y, E1.z))).normalized(); d_ = n_.dot(E1); C_ = n_ * d_; rr_ = math.sqrt(1 - d_ * d_); up_ = n_.cross(Vector((1, 0, 0))).normalized()
 if up_.z < 0: up_ = -up_
-EAR_AX = on_sphere(EAR_LON, EAR_LAT); EAR_ANG = math.asin(0.41) + math.radians(1.2)
+EAR_AX = on_sphere(EAR_LON, EAR_LAT); EAR_ANG = math.asin(0.41 * EAR_S) + math.radians(1.2)
 def _circ(a): return C_ + rr_ * (math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_)
 A_EAR = next(math.radians(k / 10) for k in range(900, 0, -1) if _circ(math.radians(k / 10)).normalized().angle(EAR_AX) <= EAR_ANG)   # where the seam meets the housing
 A_GLOW = A_EAR + math.radians(10)                                                                  # the light fades out a little above it
