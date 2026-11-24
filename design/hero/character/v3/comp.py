@@ -16,11 +16,11 @@ def composite(beauty, glow, out, floor=None, bloom=1.0, shadow=1.0):
         cx, cy, hw, hh = floor; yy, xx = np.mgrid[0:b.shape[0], 0:b.shape[1]].astype(np.float32)
         fall = np.exp(-(((xx - cx) / hw) ** 2 + ((yy - cy) / hh) ** 2) * 1.6)[..., None]
         tt = np.clip((xx - cx) / (2 * hw) + 0.5, 0, 1)[..., None]
-        st = [(0.0, '#3fd4ff'), (0.3, '#3a66ff'), (0.55, '#8a2cf0'), (1.0, '#ff4fc8')]   # cyan, blue, purple, pink: as under the first website character
+        st = [(0.0, '#58a8ff'), (0.28, '#3a4cff'), (0.5, '#6a22e6'), (0.76, '#e63fe0'), (1.0, '#ff7ad6')]   # light blue, blue, deep purple, magenta, pink: as on the reference
         cc = np.zeros(tt.shape[:2] + (3,), np.float32)
         for (t0, h0), (t1, h1) in zip(st, st[1:]):
             m = (tt[..., 0] >= t0) & (tt[..., 0] <= t1); k = ((tt[..., 0] - t0) / (t1 - t0))[..., None]; cc[m] = (np.array(hexrgb(h0)) * (1 - k) + np.array(hexrgb(h1)) * k)[m]
-        bloom = bloom + cc * fall * 0.85
+        bloom = bloom + cc * fall * 0.95
     bloom = np.clip(bloom, 0, 1)
     ga = bloom.max(axis=2, keepdims=True)
     a = b[..., 3:] + ga * (1 - b[..., 3:])

@@ -41,8 +41,8 @@ def neon(name, strength, white=0.12):
     nt.links.new(inv.outputs[0], st.inputs['Value']); nt.links.new(st.outputs['Result'], b.inputs['Emission Strength'])
     b.inputs['Roughness'].default_value = 0.1; b.inputs['Coat Weight'].default_value = 1.0; b.inputs['Coat Roughness'].default_value = 0.0
 bpy.data.materials['visor'].node_tree.nodes['Principled BSDF'].inputs['Emission Strength'].default_value = 1.6
-neon('lowSeam', 5.0)                                             # the line in the cut glows brightly, as on the first website character
-setp('lowSeamGlow', Emission_Strength=3.2, Alpha=0.32)
+neon('lowSeam', 6.5)                                             # the line in the cut glows brightly, as on the first website character
+setp('lowSeamGlow', Emission_Strength=4.2, Alpha=0.5)
 setp('headStripe', Roughness=0.3, Coat_Weight=0.25, Coat_Roughness=0.05, Emission_Strength=2.5)   # an even band of light, hard-edged
 for nm in ('rim',): setp(nm, Roughness=0.16, Coat_Weight=1.0, Coat_Roughness=0.01)
 neon('earRing', 1.7, white=0.0)
@@ -57,7 +57,7 @@ for o in bpy.data.objects:                                       # the gloves ar
     if o.name.startswith(('Turn', 'Think', 'Idea', 'Cool', 'Wink', 'Surp', 'Hero')): o.visible_glossy = False
 setp('cuffLight', Emission_Strength=5.5)
 # ---------------------------------------------------------------- a floor that only catches the shadow
-FLOOR = -1.3
+FLOOR = -1.14                                                    # close under the body, as on the reference
 bpy.ops.mesh.primitive_plane_add(size=30, location=(0, 0, FLOOR)); catcher = bpy.context.object; catcher.name = 'ShadowCatcher'; catcher.is_shadow_catcher = True
 catcher.visible_diffuse = catcher.visible_glossy = catcher.visible_transmission = False      # it adds no light of its own to the character
 # only the top light reaches the floor, so there is one soft shadow under the character; the others light the character alone
@@ -101,8 +101,9 @@ def shot(name, res, samples, w=None, floor=True):
     BG.inputs['Strength'].default_value = G['WORLD']; catcher.hide_render = False
     for o in G['LIGHTS']: o.hide_render = False
     c = world_to_camera_view(sc, cam, Vector((0, 0, FLOOR + 0.02))); l = world_to_camera_view(sc, cam, Vector((-0.8, 0, FLOOR + 0.02))); u = world_to_camera_view(sc, cam, Vector((0, -0.25, FLOOR + 0.02)))
-    W_ = sc.render.resolution_x; fl = (c.x * W_, (1 - c.y) * res, abs(c.x - l.x) * W_ * 1.15, abs(c.x - l.x) * W_ * 0.3) if floor else None   # a broad, soft glow, as under the first website character
-    rgba = os.path.join(OUT, name + '.png'); composite(beauty, glow, rgba, fl, bloom=0.8, shadow=0.42)
+    W_ = sc.render.resolution_x; u = world_to_camera_view(sc, cam, Vector((0, -0.8, FLOOR + 0.02)))
+    fl = (c.x * W_, (1 - c.y) * res, abs(c.x - l.x) * W_ * 0.92, max(abs(c.y - u.y) * res * 1.15, 5)) if floor else None   # a flat disc of light on the floor, seen from the camera's height
+    rgba = os.path.join(OUT, name + '.png'); composite(beauty, glow, rgba, fl, bloom=0.8, shadow=0.3)
     im = Image.open(rgba); bg = Image.new('RGBA', im.size, (255, 255, 255, 255)); bg.alpha_composite(im); bg.convert('RGB').save(os.path.join(OUT, name + '-white.jpg'), quality=93)
     print('rendered', name)
 
