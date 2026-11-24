@@ -10,7 +10,7 @@ def composite(beauty, glow, out, floor=None, bloom=1.0, shadow=1.0):
     res = b.shape[0]; k = res / 640
     bp = b[..., :3] * b[..., 3:]; gp = np.clip(g[..., :3] * g[..., 3:], 0, 1)
     gi = Image.fromarray((gp * 255).astype(np.uint8))
-    amt = bloom; bloom = sum(np.asarray(gi.filter(ImageFilter.GaussianBlur(r * k))).astype(np.float32) / 255 * wt * amt for r, wt in ((6, 0.35), (16, 0.45), (38, 0.4), (80, 0.25)))
+    amt = bloom; bloom = sum(np.asarray(gi.filter(ImageFilter.GaussianBlur(r * k))).astype(np.float32) / 255 * wt * amt for r, wt in ((6, 0.08), (16, 0.24), (38, 0.36), (80, 0.25)))   # little blur close in, so edges stay crisp
     if floor:                                                    # a soft coloured glow on the floor under the character
         cx, cy, hw, hh = floor; yy, xx = np.mgrid[0:res, 0:res].astype(np.float32)
         fall = np.exp(-(((xx - cx) / hw) ** 2 + ((yy - cy) / hh) ** 2) * 1.6)[..., None]

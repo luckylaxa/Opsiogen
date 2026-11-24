@@ -132,13 +132,13 @@ def tube(name, pts, radius, mat, n=16, color=None, caps=True, parent=None):
         for k in range(n): p, q = i * n + k, i * n + (k + 1) % n; faces.append((p, q, q + n, p + n))
     return mesh_object(name, verts, faces, mat, colors=cols or None, parent=parent)
 
-def superellipsoid(name, a, b, c, e1, e2, mat, nu=56, nv=36, center=(0, 0, 0), parent=None):
+def superellipsoid(name, a, b, c, e1, e2, mat, nu=56, nv=36, center=(0, 0, 0), parent=None, taper=0.0):
     def C(w, m): return math.copysign(abs(math.cos(w)) ** m, math.cos(w))
     def S(w, m): return math.copysign(abs(math.sin(w)) ** m, math.sin(w))
     c0 = Vector(center); verts, faces = [], []
     for i in range(1, nv):
         v = -math.pi / 2 + math.pi * i / nv
-        for j in range(nu): u = -math.pi + 2 * math.pi * j / nu; verts.append(c0 + Vector((a * C(v, e1) * C(u, e2), b * C(v, e1) * S(u, e2), c * S(v, e1))))
+        for j in range(nu): u = -math.pi + 2 * math.pi * j / nu; z_ = c * S(v, e1); verts.append(c0 + Vector((a * (1 + taper * z_ / c) * C(v, e1) * C(u, e2), b * C(v, e1) * S(u, e2), z_)))
     bot = len(verts); verts.append(c0 + Vector((0, 0, -c))); top = len(verts); verts.append(c0 + Vector((0, 0, c)))
     for i in range(nv - 2):
         for j in range(nu): p = i * nu + j; q = i * nu + (j + 1) % nu; faces.append((p, q, q + nu, p + nu))
@@ -187,20 +187,20 @@ def bezel_sweep(name, prof, mat, MB=240):
     for j in range(MB):
         for i in range(L - 1): p = j * L + i; q = ((j + 1) % MB) * L + i; faces.append((p, q, q + 1, p + 1))
     return mesh_object(name, verts, faces, mat, parent=root)
-bezel_sweep('BezelChamfer', [(-0.016, -0.03), (-0.014, 0.004), (-0.008, 0.018), (0.014, 0.03), (0.048, 0.038)], M_rim)          # the lavender band round the glass
-bezel_sweep('Bezel', [(0.048, 0.038), (0.05, 0.04), (0.064, 0.035), (0.08, 0.022), (0.09, 0.006), (0.094, -0.03)], M_body)     # the white face, a crisp edge against the band
+bezel_sweep('BezelWall', [(-0.016, -0.03), (-0.0145, 0.004)], M_rim)
+bezel_sweep('BezelChamfer', [(-0.0145, 0.004), (0.044, 0.034)], M_rim)          # the lavender band round the glass
+bezel_sweep('Bezel', [(0.044, 0.034), (0.0455, 0.0365), (0.049, 0.0375), (0.066, 0.034), (0.084, 0.021), (0.096, 0.005), (0.1, -0.03)], M_body)     # the white face, a crisp edge against the band
 
 # ---------------------------------------------------------------- ears: a raised plate, a cup, a black centre and a light ring
 EAR_LON, EAR_LAT = 76, 6
 for s in (1, -1):
     ax = on_sphere(s * EAR_LON, EAR_LAT); nm = 'L' if s > 0 else 'R'
-    plate = [(0.0, 1.03)] + [(rr, math.sqrt(1 - rr * rr) + 0.03) for rr in (0.2, 0.3, 0.4, 0.46, 0.485)] + [(0.497, math.sqrt(1 - 0.497 ** 2) + 0.026), (0.503, math.sqrt(1 - 0.503 ** 2) + 0.012), (0.505, math.sqrt(1 - 0.505 ** 2) - 0.02)]
-    lathe('EarPlate' + nm, plate, M_body, axis=ax)
+    torus('EarSeam' + nm, 0.5, 0.0045, M_band, axis=ax, center=ax * math.sqrt(1 - 0.5 ** 2), n=200, m=8)   # the ear plate is flush, outlined by a thin dark seam
     lathe('EarCup' + nm, [(0.4, 0.88), (0.4, 0.955), (0.393, 0.995), (0.375, 1.025), (0.345, 1.045), (0.305, 1.056), (0.275, 1.054), (0.258, 1.047), (0.25, 1.038)], M_body, axis=ax)   # a low housing, close on the body
     lathe('EarCentre' + nm, [(0.238, 1.036), (0.2, 1.062), (0.1, 1.086), (0.0, 1.093)], M_black, axis=ax)
     torus('EarRingIn' + nm, 0.226, 0.015, M_earRing, axis=ax, center=ax * 1.05, n=160, m=10, color=lambda t, b, s=s: ramp(EARIN, (t + (0.25 if s > 0 else 0.75)) % 1.0), parent=root)
     torus('EarRing' + nm, 0.255, 0.022, M_earRing, axis=ax, center=ax * 1.048, n=160, m=12, color=lambda t, b, s=s: ramp(EAR, (t + (0.25 if s > 0 else 0.75)) % 1.0))
-    for o in ('EarPlate', 'EarCup', 'EarCentre', 'EarRing'): bpy.data.objects[o + nm].parent = root
+    for o in ('EarSeam', 'EarCup', 'EarCentre', 'EarRing'): bpy.data.objects[o + nm].parent = root
 
 # ---------------------------------------------------------------- the rainbow stripe over the head, ear to ear, and the glowing seam low on the front
 E1 = on_sphere(EAR_LON, EAR_LAT); TOP = on_sphere(0, 58)
@@ -224,7 +224,7 @@ mod = body.modifiers.new('cut', 'BOOLEAN'); mod.operation = 'DIFFERENCE'; mod.ob
 bpy.context.view_layer.objects.active = body; bpy.ops.object.modifier_apply(modifier=mod.name); bpy.data.objects.remove(cutter)
 # the cut that the top light sits in: a thin slot all round where the shell meets the face piece, and the shell behind it
 # stands a little proud, so there is a clear step edge with the light under it (fitted panels, as on the reference)
-hv, hf = [], []; HN = 240; SLOT = 0.0045   # a thin, crisp seam line all round
+hv, hf = [], []; HN = 240; SLOT = 0.008   # a thin, crisp seam line all round
 for i in range(HN):
     a = 2 * math.pi * i / HN; dirv = math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_
     for rad, tt in ((rr_ - 0.05, -SLOT), (rr_ - 0.05, SLOT), (rr_ + 0.09, SLOT), (rr_ + 0.09, -SLOT)): hv.append(C_ + dirv * rad + n_ * tt)
@@ -234,24 +234,25 @@ headcut = mesh_object('HeadCut', hv, hf, M_dark)
 mod = body.modifiers.new('headcut', 'BOOLEAN'); mod.operation = 'DIFFERENCE'; mod.object = headcut; mod.solver = 'EXACT'; mod.material_mode = 'TRANSFER'
 bpy.context.view_layer.objects.active = body; bpy.ops.object.modifier_apply(modifier=mod.name); bpy.data.objects.remove(headcut)
 s_top = 1 if n_.z > d_ else -1
-A_ = n_ * s_top; h_e = s_top * d_ + SLOT; RS = 1.024; th_e = math.acos(h_e / RS); rho_e = RS * math.sin(th_e)
+A_ = n_ * s_top; h_e = s_top * d_ + SLOT; RS = 1.005; th_e = math.acos(h_e / RS); rho_e = RS * math.sin(th_e)
 # the shell behind the cut, with a tiny rounded bevel on its edge so the edge catches a thin, sharp highlight, then a straight wall
-RB = 0.0035; thc = th_e - RB / RS; Rc = RS - RB
+RB = 0.0028; thc = th_e - RB / RS; Rc = RS - RB
 def er_(th): return Vector((math.sin(th), math.cos(th)))
 def et_(th): return Vector((math.cos(th), -math.sin(th)))
 prof = [(RS * math.sin(thc * k / 90), RS * math.cos(thc * k / 90)) for k in range(91)]
 for k in range(1, 9):
     ph = math.pi / 2 * k / 8; q = er_(thc) * Rc + RB * (math.cos(ph) * er_(thc) + math.sin(ph) * et_(thc)); prof.append((q.x, q.y))
 qe = Vector(prof[-1]); prof.append(tuple(qe * (0.985 / qe.length)))
-lathe('TopShell', prof, M_body, axis=A_, n=360); bpy.data.objects['TopShell'].parent = root
+lathe('TopShell', prof[:-1], M_body, axis=A_, n=360); bpy.data.objects['TopShell'].parent = root   # white surface and bevel only
+lathe('TopShellWall', [prof[-2], prof[-1]], M_dark, axis=A_, n=360); bpy.data.objects['TopShellWall'].parent = root   # the inside of the seam is dark
 # the top light: a flat band of light with hard edges, from the foot of the shell's edge down onto the face piece; its ends come to points
-def head_band(NA=260, K=7, W0=0.05):
-    verts, faces, cols = [], [], []; a0, a1 = math.radians(160), math.radians(20)
+def head_band(NA=300, K=7, W0=0.05):
+    verts, faces, cols = [], [], []; a0, a1 = math.radians(152), math.radians(34)
     for i in range(NA + 1):
-        t = i / NA; a = a0 + (a1 - a0) * t; dirv = math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_; W = W0 * math.sin(math.pi * t) ** 0.55
+        t = i / NA; a = a0 + (a1 - a0) * t; dirv = math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_; W = W0 * math.sin(math.pi * t) ** 1.15; fade = min(1.0, t / 0.14, (1 - t) / 0.14) ** 1.5   # long pointed ends that fade into the seam
         for k in range(K):
             u = s_top * SLOT - s_top * W * k / (K - 1)
-            q = n_ * (d_ + u) + dirv * math.sqrt(max(1 - (d_ + u) ** 2, 0.0)); verts.append(q * 1.0025); cols.append(lin(ramp(HEAD, t)))
+            q = n_ * (d_ + u) + dirv * math.sqrt(max(1 - (d_ + u) ** 2, 0.0)); verts.append(q * 1.0018); cols.append(lin(tuple(v * fade for v in ramp(HEAD, t))))
     for i in range(NA):
         for k in range(K - 1): p_ = i * K + k; faces.append((p_, p_ + 1, p_ + K + 1, p_ + K))
     return mesh_object('HeadStripe', verts, faces, M_head, colors=cols, merge=False, parent=root)
@@ -302,7 +303,7 @@ def ring_point(a_deg):
 # ---------------------------------------------------------------- hands: cartoon gloves, built in their own frame (palm at the origin,
 # fingers along +Z, palm facing -Y); th = +1 puts the thumb on +X (the character's right hand), -1 on -X (its left hand)
 POSES = {
-    'open':     dict(f=[(10, 16, 10), (8, 14, 8), (12, 18, 10)], spread=1.9, thumb=((0.78, -0.62, 0.12), (0, 6))),
+    'open':     dict(f=[(16, 22, 12), (14, 22, 12), (22, 30, 18)], spread=1.4, thumb=((0.92, -0.3, 0.25), (8, 12))),
     'palm':     dict(f=[(3, 5, 3)] * 3, spread=1.4, thumb=((0.75, -0.35, 0.55), (0, 6))),
     'point':    dict(f=[(0, 0, 0), (90, 105, 75), (90, 105, 75)], spread=0.4, thumb=((0.3, -0.9, 0.4), (30, 34))),
     'thumbsup': dict(f=[(92, 105, 78)] * 3, spread=0.2, thumb=((1.0, -0.2, 0.35), (0, 0))),
@@ -310,7 +311,7 @@ POSES = {
     'chin':     dict(f=[(22, 20, 10), (86, 100, 72), (88, 102, 74)], spread=0.4, thumb=((0.7, -0.6, 0.45), (8, 8))),
     'pen':      dict(f=[(64, 80, 54), (70, 84, 58), (74, 88, 60)], spread=0.2, thumb=((0.4, -0.85, 0.5), (22, 24))),
 }
-FING = [(0.086, 0.05, (0.07, 0.05, 0.036), 13), (0.0, 0.052, (0.076, 0.054, 0.04), 0), (-0.086, 0.049, (0.066, 0.048, 0.035), -13)]   # three fat fingers and a thumb, as on the reference
+FING = [(0.1, 0.052, (0.072, 0.056, 0.042), 14), (0.0, 0.054, (0.078, 0.06, 0.045), 0), (-0.1, 0.051, (0.068, 0.052, 0.04), -14)]   # three fat, rounded fingers, a little apart, and a thumb
 HANDS = {}
 def frame_from(F, N):
     Z = Vector(F).normalized(); Nn = Vector(N); Y = -(Nn - Z * Nn.dot(Z)).normalized(); X = Y.cross(Z)
@@ -328,18 +329,18 @@ def finger_path(base, d0, axis, lengths, curls, steps=10):
 def hand(name, pose, th, pos, F, N, scale=1.0):
     P = POSES[pose]; e = bpy.data.objects.new(name, None); col.objects.link(e); e.parent = root
     e.matrix_basis = Matrix.Translation(pos) @ frame_from(F, N).to_4x4() @ Matrix.Scale(scale, 4)
-    parts = [superellipsoid(name + 'Palm', 0.148, 0.088, 0.108, 0.9, 0.9, M_glove, parent=e)]
+    parts = [superellipsoid(name + 'Palm', 0.13, 0.1, 0.11, 1.0, 1.0, M_glove, parent=e, taper=0.22)]   # a soft, puffy palm
     for k, (x, r, lens, spr) in enumerate(FING):
         sp = math.radians(spr * P['spread'] * (1 if th > 0 else -1)); d0 = Vector((math.sin(sp), 0, math.cos(sp)))
-        axis = d0.cross(Vector((0, -1, 0))).normalized(); base = Vector((th * x, -0.004, 0.045))
+        axis = d0.cross(Vector((0, -1, 0))).normalized(); base = Vector((th * x, -0.006, 0.072))
         parts.append(tube(name + 'F%d' % k, finger_path(base, d0, axis, lens, P['f'][min(k, len(P['f']) - 1)]), lambda t, r=r: r * (1 - 0.08 * t), M_glove, n=18, parent=e))
-    (tx, ty, tz), tc = P['thumb']; d0 = Vector((th * tx, ty, tz)).normalized(); base = Vector((th * 0.085, -0.022, -0.028))
+    (tx, ty, tz), tc = P['thumb']; d0 = Vector((th * tx, ty, tz)).normalized(); base = Vector((th * 0.105, -0.015, -0.03))
     axis = d0.cross(Vector((-th * 0.35, -1, 0.1))).normalized()
-    parts.append(tube(name + 'Thumb', finger_path(base, d0, axis, (0.06, 0.045), tc), lambda t: 0.056 * (1 - 0.06 * t), M_glove, n=18, parent=e))
-    parts.append(lathe(name + 'Wrist', [(0.06, -0.04), (0.064, -0.1), (0.064, -0.13)], M_glove, parent=e, n=48))
-    parts.append(lathe(name + 'Cuff', [(0.0, -0.132), (0.07, -0.132), (0.092, -0.138), (0.104, -0.155), (0.107, -0.178), (0.1, -0.2), (0.084, -0.214), (0.0, -0.217)], M_glove, parent=e, n=48))   # the puffy white collar
-    parts.append(lathe(name + 'Band', [(0.068, -0.095), (0.07, -0.1), (0.07, -0.132)], M_band, parent=e, n=48))
-    parts.append(torus(name + 'CuffLight', 0.078, 0.011, M_cyan, center=(0, 0, -0.128), n=64, m=10, parent=e))
+    parts.append(tube(name + 'Thumb', finger_path(base, d0, axis, (0.07, 0.055), tc), lambda t: 0.06 * (1 - 0.06 * t), M_glove, n=18, parent=e))
+    parts.append(lathe(name + 'Wrist', [(0.0, -0.02), (0.1, -0.02), (0.1, -0.06), (0.097, -0.085), (0.095, -0.092)], M_glove, parent=e, n=64))   # short and full width
+    parts.append(lathe(name + 'Band', [(0.094, -0.088), (0.1, -0.093), (0.1, -0.137), (0.094, -0.141)], M_band, parent=e, n=64))   # the black band
+    parts.append(torus(name + 'CuffLight', 0.1, 0.01, M_cyan, center=(0, 0, -0.141), n=72, m=10, parent=e))
+    parts.append(lathe(name + 'Cuff', [(0.0, -0.142), (0.1, -0.142), (0.122, -0.148), (0.138, -0.165), (0.142, -0.19), (0.136, -0.214), (0.118, -0.228), (0.095, -0.233), (0.0, -0.234)], M_glove, parent=e, n=64))   # a big, puffy cuff
     HANDS[name] = [e] + parts
     return e
 
@@ -347,10 +348,10 @@ def show_hands(names):
     for k, objs in HANDS.items():
         for o in objs: o.hide_render = k not in names
 
-def side_hand(name, s, cuff=(0.98, -0.52, -0.56), pose='open', F=None, N=None, scale=1.45):
+def side_hand(name, s, cuff=(1.0, -0.5, -0.55), pose='open', F=None, N=None, scale=1.08):
     """A hand at the character's side (s = -1 its right, +1 its left), given by where its cuff ends."""
-    F = Vector(F or (s * 0.98, -0.16, 0.1)).normalized(); N = N or (0, -0.72, 0.69)
-    return hand(name, pose, -s, Vector((s * cuff[0], cuff[1], cuff[2])) + F * 0.205 * scale, F, N, scale)
+    F = Vector(F or (s * 0.96, -0.2, 0.18)).normalized(); N = N or ((0.15, -0.68, 0.72) if s > 0 else (0.55, -0.82, 0.18))   # palm up, tilted to the viewer, fingers outward   # palms up and toward the viewer
+    return hand(name, pose, -s, Vector((s * cuff[0], cuff[1], cuff[2])) + F * 0.234 * scale, F, N, scale)
 
 side_hand('TurnR', -1); side_hand('TurnL', 1)
 
