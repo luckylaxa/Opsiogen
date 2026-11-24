@@ -41,8 +41,12 @@ def neon(name, strength, white=0.12):
     nt.links.new(inv.outputs[0], st.inputs['Value']); nt.links.new(st.outputs['Result'], b.inputs['Emission Strength'])
     b.inputs['Roughness'].default_value = 0.1; b.inputs['Coat Weight'].default_value = 1.0; b.inputs['Coat Roughness'].default_value = 0.0
 bpy.data.materials['visor'].node_tree.nodes['Principled BSDF'].inputs['Emission Strength'].default_value = 1.6
-neon('lowSeam', 6.5)                                             # the line in the cut glows brightly, as on the first website character
-setp('lowSeamGlow', Emission_Strength=4.2, Alpha=0.5)
+neon('lowSeam', 2.8, white=0.05)                                             # the line in the cut glows brightly, as on the first website character
+_g = bpy.data.materials['lowSeamGlow']; _gt = _g.node_tree; _vc = next(n for n in _gt.nodes if n.bl_idname == 'ShaderNodeVertexColor')      # the halo only adds light: it never darkens or covers the body under it
+_em = _gt.nodes.new('ShaderNodeEmission'); _em.inputs['Strength'].default_value = 0.75; _gt.links.new(_vc.outputs['Color'], _em.inputs['Color'])
+_tr = _gt.nodes.new('ShaderNodeBsdfTransparent'); _ad = _gt.nodes.new('ShaderNodeAddShader'); _gt.links.new(_tr.outputs[0], _ad.inputs[0]); _gt.links.new(_em.outputs[0], _ad.inputs[1])
+_gt.links.new(_ad.outputs[0], next(n for n in _gt.nodes if n.bl_idname == 'ShaderNodeOutputMaterial').inputs['Surface'])
+bpy.data.objects['LowSeamGlow'].visible_shadow = False
 setp('headStripe', Roughness=0.3, Coat_Weight=0.25, Coat_Roughness=0.05, Emission_Strength=2.5)   # an even band of light, hard-edged
 for nm in ('rim',): setp(nm, Roughness=0.16, Coat_Weight=1.0, Coat_Roughness=0.01)
 neon('earRing', 1.7, white=0.0)
@@ -145,6 +149,6 @@ for _t in [s for s in SHOTS if s.startswith('turn')]:            # quick 3/4 tes
     G['turn'](-float(_t[4:])); frame(); shot('lo-' + _t, 600, 32)
 for _t in [s for s in SHOTS if s.startswith('elev')]:            # quick 3/4 tests at a given camera height, e.g. elev3
     G['turn'](HERO_TURN); frame(elev=float(_t[4:])); shot('lo-' + _t, 600, 32)
-if 'bottom' in SHOTS:                                            # the bottom of the body, as in the first website character's crops
-    for nm, deg in (('bot-front', 0), ('bot-left', 40), ('bot-back', 180), ('bot-right', -40)):
-        G['turn'](deg); frame(target=(0, 0, -0.78), lens=150); shot(nm, 420, 48, w=1000)
+if 'bottom' in SHOTS:                                            # the bottom of the body from the four angles of the first website character's views
+    for nm, deg in (('bot-front', 0), ('bot-left', 45), ('bot-backleft', -115), ('bot-back', 180)):
+        G['turn'](deg); frame(target=(0, 0, -0.66), lens=135); shot(nm, 460, 40, w=1000)

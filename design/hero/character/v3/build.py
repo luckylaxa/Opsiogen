@@ -248,11 +248,12 @@ A_EAR = next(math.radians(k / 10) for k in range(900, 0, -1) if _circ(math.radia
 A_GLOW = A_EAR + math.radians(10)                                                                  # the light fades out a little above it
 # the bottom piece, as on the current website character: a groove that parts the base panel, lit along its front with the gradient line
 M_base = material('base', (0.76, 0.79, 0.9), rough=0.16, coat=1.0); M_dark = material('socket', (0.012, 0.015, 0.02), rough=0.3); DARK_IN_GLOW |= {'base', 'socket'}
-RHO = math.radians(55); h0 = Vector((math.sin(math.radians(192)), -math.cos(math.radians(192)), 0))      # the first website character's cut, set so it stays in view under the ring, as on the reference sheet
-AX = (math.cos(math.radians(16)) * Vector((0, 0, -1)) + math.sin(math.radians(16)) * h0).normalized()
+# --- the bottom cut is the first website character's own, number for number (design/hero/character/model/build.py): do not retune it ---
+RHO = math.radians(53); h0 = Vector((math.sin(math.radians(212)), -math.cos(math.radians(212)), 0))
+AX = (math.cos(math.radians(21)) * Vector((0, 0, -1)) + math.sin(math.radians(21)) * h0).normalized()
 U = (-h0 - AX * (-h0).dot(AX)).normalized(); V = AX.cross(U)
 def groove_pt(theta, phi, r): return r * (math.cos(theta) * AX + math.sin(theta) * (math.cos(phi) * U + math.sin(phi) * V))
-def half_width(phi): return 0.024 + 0.035 * (0.5 - 0.5 * math.cos(phi)) ** 1.3   # a clear cut: at the front the light nearly fills it, toward the back a dark gap opens above the light
+def half_width(phi): return 0.015 + 0.035 * (0.5 - 0.5 * math.cos(phi)) ** 1.3   # a thin line at the front, opening into a dark recess toward the back
 NG = 360; verts, faces = [], []
 for i in range(NG):
     phi = 2 * math.pi * i / NG; hw = half_width(phi)
@@ -271,12 +272,19 @@ A_ = n_ * s_top; h_e = s_top * d_ + SLOT; RS = 1.005; th_e = math.acos(h_e / RS)
 RB = 0.0028; thc = th_e - RB / RS; Rc = RS - RB
 def er_(th): return Vector((math.sin(th), math.cos(th)))
 def et_(th): return Vector((math.cos(th), -math.sin(th)))
-prof = [(RS * math.sin(thc * k / 90), RS * math.cos(thc * k / 90)) for k in range(91)]
+TAPER = math.radians(24)                                          # the raised shell is only a band along the top light: it eases back down to the body, so the body and its bottom cut show everywhere else
+def shell_r(th): k = min(1.0, max(0.0, (thc - th) / TAPER)); return 1.0 - 0.0006 * k + (RS - 1.0 + 0.0006 * k) * (1 - k * k * (3 - 2 * k))
+prof = [(shell_r(thc - TAPER * (1 - k / 48)) * math.sin(thc - TAPER * (1 - k / 48)), shell_r(thc - TAPER * (1 - k / 48)) * math.cos(thc - TAPER * (1 - k / 48))) for k in range(49)]
 for k in range(1, 9):
     ph = math.pi / 2 * k / 8; q = er_(thc) * Rc + RB * (math.cos(ph) * er_(thc) + math.sin(ph) * et_(thc)); prof.append((q.x, q.y))
 qe = Vector(prof[-1]); prof.append(tuple(qe * (0.985 / qe.length)))
 lathe('TopShell', prof[:-1], M_body, axis=A_, n=360); bpy.data.objects['TopShell'].parent = root   # white surface and bevel only
 lathe('TopShellWall', [prof[-2], prof[-1]], M_body, axis=A_, n=360); bpy.data.objects['TopShellWall'].parent = root   # the shell's edge, white
+for _nm in ('TopShell', 'TopShellWall'):                          # and only over the top, from ear to ear: below the ears there is no shell
+    _me = bpy.data.objects[_nm].data; _bm = bmesh.new(); _bm.from_mesh(_me)
+    def _arc(p): return math.atan2(p.dot(up_), p.dot(Vector((1, 0, 0))))
+    _gone = [f for f in _bm.faces if not (A_EAR - 0.2 <= _arc(f.calc_center_median()) <= math.pi - A_EAR + 0.2)]
+    bmesh.ops.delete(_bm, geom=_gone, context='FACES'); _bm.to_mesh(_me); _bm.free()
 # the top light: a flat band of light with hard edges, from the foot of the shell's edge down onto the face piece; its ends come to points
 def head_band(NA=300, K=7, W0=0.064):
     verts, faces, cols = [], [], []; a0, a1 = math.radians(186) - A_GLOW, A_GLOW
@@ -302,9 +310,10 @@ for f in bm.faces:
 for e_ in bm.edges:
     if len(e_.link_faces) == 2 and e_.calc_face_angle(0) > math.radians(30): e_.smooth = False
 bm.to_mesh(me_); bm.free()
-stops = [(0.00, (1.0, 0.5, 0.12)), (0.07, (1.0, 0.28, 0.55)), (0.16, (0.62, 0.3, 1.0)), (0.27, (0.2, 0.5, 1.0)), (0.36, (0.1, 0.8, 1.0)), (0.40, (0.02, 0.03, 0.05)),
-         (0.60, (0.02, 0.03, 0.05)), (0.64, (1.0, 0.3, 0.7)), (0.72, (0.62, 0.3, 1.0)), (0.82, (0.2, 0.5, 1.0)), (0.90, (0.1, 0.85, 1.0)), (0.95, (0.62, 0.3, 1.0)), (1.0, (1.0, 0.5, 0.12))]
-LINE = 0.022; PHASE = 0.12                                       # half the lit line's width, and where the colours start: magenta at the lowest point, blue to one side, red and orange to the other
+# the colours as on the first website character's views: red at the lowest point, then magenta, purple, blue and cyan up each side to the dark recess across the back; orange just left of the lowest point
+stops = [(0.00, (1.0, 0.34, 0.12)), (0.04, (1.0, 0.2, 0.22)), (0.10, (1.0, 0.24, 0.72)), (0.18, (0.62, 0.3, 1.0)), (0.27, (0.2, 0.5, 1.0)), (0.36, (0.1, 0.8, 1.0)), (0.40, (0.02, 0.03, 0.05)),
+         (0.60, (0.02, 0.03, 0.05)), (0.64, (0.1, 0.85, 1.0)), (0.72, (0.2, 0.5, 1.0)), (0.80, (0.62, 0.3, 1.0)), (0.87, (1.0, 0.24, 0.72)), (0.93, (1.0, 0.22, 0.2)), (0.975, (1.0, 0.5, 0.12)), (1.0, (1.0, 0.34, 0.12))]
+LINE = 0.027; PHASE = 0.04                                       # half the lit line's width, and where the colours start: both as on the first website character
 def lit(t): return max(ramp(stops, t)) > 0.1
 def ribbon(name, r, grow, mat, fade=False):
     verts, faces, cols = [], [], []
@@ -314,20 +323,20 @@ def ribbon(name, r, grow, mat, fade=False):
         hw = LINE + grow if on else half_width(phi) * 0.7            # where it is not lit, the dark band fills the groove
         if not on: mid = RHO
         hot = tuple(v + (1 - v) * 0.22 for v in cl) if on and not fade else cl      # a brighter, whiter centre
-        if fade: hot = tuple(v * on for v in cl); cl = (0.0, 0.0, 0.0)          # the halo is brightest on the line and fades to nothing at its edges
+        if fade: k_ = min(1.0, max(0.0, (max(cl) - 0.1) / 0.5)); hot = tuple(v * k_ for v in cl); cl = (0.0, 0.0, 0.0)   # the halo is brightest on the line, fades to nothing at its edges and dies away where the line goes dark
         verts += [groove_pt(mid - hw, phi, r), groove_pt(mid, phi, r + (0.004 if not fade else 0)), groove_pt(mid + hw, phi, r)]; cols += [lin(cl), lin(hot), lin(cl)]
     for i in range(NG):
         if not (lit(((i / NG) + PHASE) % 1.0) and lit((((i + 1) / NG) + PHASE) % 1.0)): continue      # no line across the back: the groove is left open and dark
         for k in range(2): a = i * 3 + k; faces.append((a, a + 1, ((i + 1) % NG) * 3 + k + 1, ((i + 1) % NG) * 3 + k))
     return mesh_object(name, verts, faces, mat, colors=cols, merge=False, parent=root)
-ribbon('LowSeam', 0.994, 0.0, M_seam)
+ribbon('LowSeam', 0.990, 0.0, M_seam)
 M_seamGlow = material('lowSeamGlow', rough=1.0, vcol=True, strength=1.6); M_seamGlow.node_tree.nodes['Principled BSDF'].inputs['Alpha'].default_value = 0.2
-ribbon('LowSeamGlow', 1.003, 0.05, M_seamGlow, fade=True)
+ribbon('LowSeamGlow', 1.003, 0.06, M_seamGlow, fade=True)
 def above_groove(p): return p.normalized().dot(AX) < math.cos(RHO + 0.03)
 tube('SeamChin', [on_sphere(0, a) * 1.0004 for a in range(-27, -86, -1) if above_groove(on_sphere(0, a))], 0.0032, M_earLine, n=10, parent=root)   # a fine seam from under the visor down to the line
 
 # ---------------------------------------------------------------- the ring: close round the body, tilted, banded like a rainbow
-RING_R, RING_r, RING_Z, RING_ROT = 1.19, 0.07, -0.33, (math.radians(8), math.radians(-8), 0)   # between the reference's front and 3/4 views: under the visor at the front, across the foot of the near ear, up behind it
+RING_R, RING_r, RING_Z, RING_ROT = 1.19, 0.07, -0.27, (math.radians(11), math.radians(-6), 0)   # under the visor at the front, across the foot of the near ear and up behind it, and clear of the bottom cut on the far side
 if os.environ.get('RING'):                                       # for trying settings: RING=rho,z,pitch,roll
     _r = [float(v) for v in os.environ['RING'].split(',')]; RING_R, RING_Z, RING_ROT = _r[0], _r[1], (math.radians(_r[2]), math.radians(_r[3]), 0)
 LOGO = [(0.0, hexrgb('#ffb000')), (0.1, hexrgb('#b4f000')), (0.2, hexrgb('#19e05a')), (0.32, hexrgb('#00d8ff')), (0.45, hexrgb('#2a5bff')), (0.58, hexrgb('#9b1cf0')), (0.7, hexrgb('#ff2fd0')), (0.82, hexrgb('#ff3a2a')), (0.92, hexrgb('#ff8a00')), (1.0, hexrgb('#ffb000'))]
@@ -412,7 +421,7 @@ def side_hand(name, s, cuff=(1.0, -0.45, -0.64), pose='present', F=None, N=None,
     F = Vector(F or (s * 0.92, -0.22, 0.3)).normalized(); N = N or ((0.15, -0.72, 0.68) if s > 0 else (0.42, -0.65, 0.64))   # palm up and tilted to the viewer, fingers out to the side
     return hand(name, pose, -s, Vector((s * cuff[0], cuff[1], cuff[2])) + Vector(Fc or F).normalized() * 0.253 * scale, F, N, scale, Fc)
 
-side_hand('TurnR', -1, cuff=tuple(float(v) for v in os.environ.get('FARCUFF', '0.98,-0.8,-0.42').split(','))); side_hand('TurnL', 1, F=(0.897, 0.456, -0.06), N=(0.467, -0.806, 0.36), Fc=(1.0, 0.045, 0.06))   # palm to us, the cuff coming a little toward us   # the near hand lies out flat to the side, palm up to us
+side_hand('TurnR', -1, cuff=tuple(float(v) for v in os.environ.get('FARCUFF', '0.98,-0.8,-0.36').split(','))); side_hand('TurnL', 1, F=(0.897, 0.456, -0.06), N=(0.467, -0.806, 0.36), Fc=(1.0, 0.045, 0.06))   # palm to us, the cuff coming a little toward us   # the near hand lies out flat to the side, palm up to us
 
 # ---------------------------------------------------------------- the face, drawn as light on the visor (the web page draws the same shapes live)
 TW = 1400; TH = round(TW * VB / VA); PX = TW / (2 * VA)
