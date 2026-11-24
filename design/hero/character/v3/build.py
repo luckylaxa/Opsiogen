@@ -30,7 +30,7 @@ def ramp(stops, t):
     for (t0, c0), (t1, c1) in zip(stops, stops[1:]):
         if t <= t1: k = (t - t0) / max(t1 - t0, 1e-9); k = k * k * (3 - 2 * k); return mix(c0, c1, k)
     return stops[-1][1]
-HEAD = [(0.0, hexrgb('#ff9a00')), (0.2, hexrgb('#ff2a1a')), (0.45, hexrgb('#ff1fb0')), (0.7, hexrgb('#9b1cf0')), (1.0, hexrgb('#3a4bff'))]
+HEAD = [(0.0, hexrgb('#ffd400')), (0.22, hexrgb('#ffc000')), (0.32, hexrgb('#ff7a00')), (0.42, hexrgb('#ff1e10')), (0.53, hexrgb('#ff10a0')), (0.64, hexrgb('#a010f0')), (0.76, hexrgb('#4a28ff')), (1.0, hexrgb('#2a3cff'))]   # yellow, orange, red, magenta, purple, blue
 EAR = [(0.0, hexrgb('#2f6bff')), (0.5, hexrgb('#19c8ff')), (1.0, hexrgb('#2f6bff'))]
 EARIN = [(0.0, hexrgb('#ff1fd0')), (0.5, hexrgb('#8a2cff')), (1.0, hexrgb('#ff1fd0'))]
 SEAM = [(0.0, hexrgb('#2a7bff')), (0.5, hexrgb('#8a2cff')), (1.0, hexrgb('#ff4fd8'))]
@@ -206,8 +206,6 @@ for s in (1, -1):
 E1 = on_sphere(EAR_LON, EAR_LAT); TOP = on_sphere(0, 58)
 n_ = Vector((1, 0, 0)).cross(TOP - Vector((0, E1.y, E1.z))).normalized(); d_ = n_.dot(E1); C_ = n_ * d_; rr_ = math.sqrt(1 - d_ * d_); up_ = n_.cross(Vector((1, 0, 0))).normalized()
 if up_.z < 0: up_ = -up_
-head_pts = [C_ + (rr_ - 0.004) * (math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_) for a in [math.radians(150 - 120 * i / 199) for i in range(200)]]
-tube('HeadStripe', head_pts, lambda t: 0.025 * math.sin(math.pi * t) ** 0.45 + 0.0004, M_head, n=14, color=lambda t: ramp(HEAD, t), parent=root)   # fills the slot, under the lip; both ends sharp
 # the bottom piece, as on the current website character: a groove that parts the base panel, lit along its front with the gradient line
 M_base = material('base', (0.8, 0.82, 0.88), rough=0.18, coat=1.0); M_dark = material('socket', (0.012, 0.015, 0.02), rough=0.3); DARK_IN_GLOW |= {'base', 'socket'}
 RHO = math.radians(55); h0 = Vector((math.sin(math.radians(192)), -math.cos(math.radians(192)), 0))
@@ -226,7 +224,7 @@ mod = body.modifiers.new('cut', 'BOOLEAN'); mod.operation = 'DIFFERENCE'; mod.ob
 bpy.context.view_layer.objects.active = body; bpy.ops.object.modifier_apply(modifier=mod.name); bpy.data.objects.remove(cutter)
 # the cut that the top light sits in: a thin slot all round where the shell meets the face piece, and the shell behind it
 # stands a little proud, so there is a clear step edge with the light under it (fitted panels, as on the reference)
-hv, hf = [], []; HN = 240; SLOT = 0.024
+hv, hf = [], []; HN = 240; SLOT = 0.0045   # a thin, crisp seam line all round
 for i in range(HN):
     a = 2 * math.pi * i / HN; dirv = math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_
     for rad, tt in ((rr_ - 0.05, -SLOT), (rr_ - 0.05, SLOT), (rr_ + 0.09, SLOT), (rr_ + 0.09, -SLOT)): hv.append(C_ + dirv * rad + n_ * tt)
@@ -240,6 +238,8 @@ A_ = n_ * s_top; h_e = s_top * d_ + SLOT; RS = 1.024; th_e = math.acos(h_e / RS)
 lathe('TopShell', [(RS * math.sin(th_e * k / 90), RS * math.cos(th_e * k / 90)) for k in range(91)], M_body, axis=A_, n=320)   # the shell behind the cut
 lathe('TopShellLip', [(rho_e, h_e), (rho_e * 0.985 / RS, h_e * 0.985 / RS)], M_body, axis=A_, n=320)                            # its edge: a crisp step
 for o in ('TopShell', 'TopShellLip'): bpy.data.objects[o].parent = root
+head_pts = [C_ + (rr_ - 0.002) * (math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_) + n_ * (-s_top * 0.014) for a in [math.radians(158 - 136 * i / 199) for i in range(200)]]
+tube('HeadStripe', head_pts, lambda t: 0.026 * math.sin(math.pi * t) ** 0.4 + 0.0004, M_head, n=14, color=lambda t: ramp(HEAD, t), parent=root)   # along the lip; both ends sharp
 me_ = body.data; base_slot = len(me_.materials); me_.materials.append(M_base); bm = bmesh.new(); bm.from_mesh(me_)
 for f in bm.faces:
     f.smooth = True

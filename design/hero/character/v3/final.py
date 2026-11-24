@@ -39,7 +39,7 @@ def neon(name, strength, white=0.12):
     nt.links.new(inv.outputs[0], st.inputs['Value']); nt.links.new(st.outputs['Result'], b.inputs['Emission Strength'])
     b.inputs['Roughness'].default_value = 0.1; b.inputs['Coat Weight'].default_value = 1.0; b.inputs['Coat Roughness'].default_value = 0.0
 bpy.data.materials['visor'].node_tree.nodes['Principled BSDF'].inputs['Emission Strength'].default_value = 1.6
-neon('headStripe', 2.6, white=0.0); neon('lowSeam', 2.6)
+neon('headStripe', 1.7, white=0.0); neon('lowSeam', 2.6)
 for nm in ('rim',): setp(nm, Roughness=0.16, Coat_Weight=1.0, Coat_Roughness=0.01)
 neon('earRing', 1.3, white=0.0)
 rb = bsdf('ring'); rb.inputs['Emission Strength'].default_value = 0.85; rb.inputs['Roughness'].default_value = 0.1; rb.inputs['Coat Weight'].default_value = 1.0; rb.inputs['Coat Roughness'].default_value = 0.0
