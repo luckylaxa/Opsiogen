@@ -232,7 +232,12 @@ def ear_band(name, ax, r0, r1, h, bump=0.012, NA=200, K=10):
 for s in (1, -1):
     ax = on_sphere(s * EAR_LON, EAR_LAT); nm = 'L' if s > 0 else 'R'
     def es(prof): return [(r * EAR_S, h if h <= 0.99 else 0.99 + (h - 0.99) * EAR_S) for r, h in prof]      # the whole ear, scaled to the reference's size
-    lathe('EarCup' + nm, es([(0.41, 0.86), (0.41, 0.99), (0.4085, 1.0), (0.404, 1.008), (0.397, 1.012), (0.385, 1.0155), (0.365, 1.0185), (0.345, 1.021), (0.32, 1.0222), (0.299, 1.0228), (0.289, 1.023), (0.285, 1.0205)]), M_body, axis=ax, n=200)   # the white housing: a short drum standing off the head, a crisp edge, a nearly flat face round a big opening
+    # the white housing: it follows the head's curve, bends up from the body in a soft shoulder and blends back into it at its foot (no wall, no hard edge)
+    RF, RL, HL = 0.41 * EAR_S, 0.289 * EAR_S, 0.99 + 0.033 * EAR_S; DL = HL - math.sqrt(1 - RL * RL); cup = [(RF + 0.006, math.sqrt(1 - (RF + 0.006) ** 2) - 0.02)]
+    for k in range(81):
+        t = k / 80; r = RF + (RL - RF) * t; cup.append((r, math.sqrt(1 - r * r) + 0.009 * math.sqrt(min(1.0, t / 0.05)) + (DL - 0.009) * math.sin(math.pi / 2 * t) ** 1.15))   # one broad dome from the seam to the light: a small soft edge at its foot, then a gentle curve that follows the head
+    cup.append((0.285 * EAR_S, 0.99 + 0.0305 * EAR_S))
+    lathe('EarCup' + nm, cup, M_body, axis=ax, n=200)
     lathe('EarGroove' + nm, es([(0.286, 1.0205), (0.284, 1.0075), (0.2245, 1.0075), (0.2226, 1.0155)]), M_black, axis=ax, n=200)   # the channel: a thin dark edge round the light
     ear_band('EarBand' + nm, ax, 0.2323 * EAR_S, 0.2797 * EAR_S, 0.99 + 0.0195 * EAR_S, bump=0.0125 * EAR_S)                         # the neon band
     torus('EarWhite' + nm, 0.2194 * EAR_S, 0.004, M_earWhite, axis=ax, center=ax * (0.99 + 0.0285 * EAR_S), n=200, m=10)          # a thin white-hot line on its inner edge
