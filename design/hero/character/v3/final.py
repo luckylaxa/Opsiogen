@@ -117,3 +117,6 @@ if 'hero' in SHOTS:
 if 'views' in SHOTS:
     frame(dist=11.5, elev=6, target=(0, 0, -0.22))
     for nm, deg in (('final-front', 0), ('final-tq', -32), ('final-side', -90), ('final-back', 180)): G['turn'](deg); shot(nm, 900, 96)
+if 'hand' in SHOTS:                                              # the near hand alone, close, like the reference crop
+    G['turn'](-22); bpy.context.view_layer.update(); hp = bpy.data.objects['TurnLPalm'].matrix_world.translation
+    frame(target=tuple(hp + Vector((-0.06, 0, -0.02))), lens=330); shot('final-hand', 620, 64, w=820, floor=False)

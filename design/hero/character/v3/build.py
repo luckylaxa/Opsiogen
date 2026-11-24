@@ -188,48 +188,56 @@ def bezel_sweep(name, prof, mat, MB=240):
         for i in range(L - 1): p = j * L + i; q = ((j + 1) % MB) * L + i; faces.append((p, q, q + 1, p + 1))
     return mesh_object(name, verts, faces, mat, parent=root)
 bezel_sweep('BezelWall', [(-0.016, -0.03), (-0.0145, 0.004)], M_rim)
-bezel_sweep('BezelChamfer', [(-0.0145, 0.004), (0.044, 0.034)], M_rim)          # the lavender band round the glass
-bezel_sweep('Bezel', [(0.044, 0.034), (0.0455, 0.0365), (0.049, 0.0375), (0.066, 0.034), (0.084, 0.021), (0.096, 0.005), (0.1, -0.03)], M_body)     # the white face, a crisp edge against the band
+bezel_sweep('BezelChamfer', [(-0.0145, 0.004), (0.016, 0.02)], M_rim)   # a thin lavender band round the glass
+bezel_sweep('Bezel', [(0.016, 0.02), (0.0172, 0.0222), (0.0195, 0.0232), (0.034, 0.021), (0.05, 0.012), (0.062, 0.003), (0.066, -0.03)], M_body)   # a narrow white lip, a crisp edge against the band
 
 # ---------------------------------------------------------------- ears: a raised plate, a cup, a black centre and a light ring
-EAR_LON, EAR_LAT = 76, 6
-EARBAND = [(0.0, hexrgb('#2a7bff')), (0.3, hexrgb('#3d4bff')), (0.58, hexrgb('#8a2cff')), (1.0, hexrgb('#ff1fd0'))]
-M_earWhite = material('earWhite', (1, 1, 1), rough=0.3, emit=(1, 1, 1), strength=4.5)
+EAR_LON, EAR_LAT = 70, 6                                         # turned a little toward the front, like the reference
+STRIPE_LON = 76                                                  # the head stripe still ends under the housing
+EARBAND = [(0.0, hexrgb('#16c8ff')), (0.22, hexrgb('#1f6bff')), (0.45, hexrgb('#2a3cff')), (0.66, hexrgb('#7a2cff')), (0.84, hexrgb('#d81fe6')), (1.0, hexrgb('#ff1fc8'))]
+M_earWhite = material('earWhite', (1, 1, 1), rough=0.3, emit=(1, 1, 1), strength=5.0)
 M_earLine = material('earLine', (0.4, 0.42, 0.5), rough=0.45); DARK_IN_GLOW.add('earLine')
-M_earDome = material('earDome', (0.01, 0.012, 0.03), rough=0.05, coat=1.0, vcol=True, strength=0.9)
-def ear_dome(name, ax, R, h0, bulge, NA=180, K=24):
-    a, u, v = basis(ax); verts, faces, cols = [a * (h0 + bulge)], [], [lin((0.012, 0.016, 0.06))]
+M_earDome = material('earDome', (0.01, 0.012, 0.03), rough=0.04, coat=1.0, vcol=True, strength=1.6)
+def ear_dome(name, ax, R, h0, bulge, NA=200, K=32):
+    """The glossy lens: dark in the middle, taking the band's colour over its outer third."""
+    a, u, v = basis(ax); C0 = (0.004, 0.005, 0.02); verts, faces, cols = [a * (h0 + bulge)], [], [lin(C0)]
+    HL = Vector((0, -0.75, 1.0)); HL = (HL - a * HL.dot(a)).normalized()   # up and toward the front, in the lens's plane
     m = max(abs((math.cos(2 * math.pi * i / NA) * u + math.sin(2 * math.pi * i / NA) * v).z) for i in range(NA)) or 1.0
     for k in range(1, K + 1):
         f = k / K; rr = R * f; hh = h0 + bulge * (1 - f * f)
         for i in range(NA):
-            t = 2 * math.pi * i / NA; d = math.cos(t) * u + math.sin(t) * v; rim = ramp(EARBAND, 0.5 - 0.5 * d.z / m)
-            verts.append(a * hh + d * rr); cols.append(lin(mix((0.012, 0.016, 0.06), rim, 0.85 * f ** 2.6)))
+            t = 2 * math.pi * i / NA; d = math.cos(t) * u + math.sin(t) * v; rim = ramp(EARBAND, 0.3 + 0.7 * (0.5 - 0.5 * d.z / m))   # deeper: blue at the top, magenta at the bottom
+            hl = (d - HL).length                                 # the soft highlight at the lens's top front
+            w = min(1.0, max(0.0, (f - 0.3) / 0.7)) ** 1.3 * (0.75 + 0.25 * max(0.0, d.dot(HL)))
+            c = mix(C0, rim, w); g = 0.8 * math.exp(-(((f - 0.5) / 0.17) ** 2 + (hl / 0.45) ** 2))
+            verts.append(a * hh + d * rr); cols.append(lin(mix(c, (0.5, 0.52, 0.64), g)))
     for i in range(NA): faces.append((0, 1 + i, 1 + (i + 1) % NA))
     for k in range(K - 1):
         for i in range(NA): p_ = 1 + k * NA + i; q_ = 1 + k * NA + (i + 1) % NA; faces.append((p_, p_ + NA, q_ + NA, q_))
     return mesh_object(name, verts, faces, M_earDome, colors=cols)
-def ear_band(name, ax, r0, r1, h, NA=180, K=4):
+def ear_band(name, ax, r0, r1, h, bump=0.012, NA=200, K=10):
+    """One rounded band of light, a neon tube laid in the channel: cyan at the top, blue, violet, magenta at the bottom."""
     a, u, v = basis(ax); verts, faces, cols = [], [], []
     m = max(abs((math.cos(2 * math.pi * i / NA) * u + math.sin(2 * math.pi * i / NA) * v).z) for i in range(NA)) or 1.0
     for i in range(NA):
         t = 2 * math.pi * i / NA; d = math.cos(t) * u + math.sin(t) * v; c = ramp(EARBAND, 0.5 - 0.5 * d.z / m)
-        for k in range(K): rr = r0 + (r1 - r0) * k / (K - 1); verts.append(a * h + d * rr); cols.append(lin(c))
+        for k in range(K):
+            q = k / (K - 1); rr = r0 + (r1 - r0) * q; verts.append(a * (h + bump * math.sin(math.pi * q)) + d * rr); cols.append(lin(c))
     for i in range(NA):
         for k in range(K - 1): p_ = i * K + k; q_ = ((i + 1) % NA) * K + k; faces.append((p_, p_ + 1, q_ + 1, q_))
     return mesh_object(name, verts, faces, M_earRing, colors=cols, merge=False)
 for s in (1, -1):
     ax = on_sphere(s * EAR_LON, EAR_LAT); nm = 'L' if s > 0 else 'R'
-    lathe('EarCup' + nm, [(0.425, 0.86), (0.425, 0.955), (0.419, 0.99), (0.403, 1.015), (0.375, 1.033), (0.335, 1.044), (0.29, 1.049), (0.268, 1.049), (0.264, 1.046)], M_body, axis=ax)   # the white housing, a wide white face
-    lathe('EarGroove' + nm, [(0.27, 1.047), (0.266, 1.031), (0.182, 1.031), (0.18, 1.044)], M_black, axis=ax)   # the channel the light sits in: a thin dark edge round the light
-    ear_band('EarBand' + nm, ax, 0.188, 0.262, 1.0335)                                                            # one wide band of light: blue at the top to magenta at the bottom
-    torus('EarWhite' + nm, 0.1835, 0.0055, M_earWhite, axis=ax, center=ax * 1.044, n=160, m=10)                  # a thin white-hot line on its inner edge
-    ear_dome('EarCentre' + nm, ax, 0.18, 1.043, 0.034)                                                            # a glossy dark lens that takes the glow near its rim
-    torus('EarLine' + nm, 0.428, 0.0035, M_earLine, axis=ax, center=ax * math.sqrt(1 - 0.428 ** 2), n=200, m=8)   # a soft grey line where the housing meets the head
+    lathe('EarCup' + nm, [(0.425, 0.86), (0.425, 0.93), (0.423, 0.94), (0.416, 0.952), (0.4, 0.97), (0.375, 0.99), (0.35, 1.004), (0.33, 1.011), (0.322, 1.012), (0.318, 1.009)], M_body, axis=ax, n=160)   # the white housing: a gentle dome, a crisp edge, rolling into a big opening
+    lathe('EarGroove' + nm, [(0.319, 1.009), (0.317, 0.996), (0.25, 0.996), (0.248, 1.004)], M_black, axis=ax, n=160)   # the channel: a thin dark edge round the light
+    ear_band('EarBand' + nm, ax, 0.261, 0.315, 0.998, bump=0.013)                                                                     # the neon band
+    torus('EarWhite' + nm, 0.2465, 0.005, M_earWhite, axis=ax, center=ax * 1.007, n=200, m=10)                         # a thin white-hot line on its inner edge
+    ear_dome('EarCentre' + nm, ax, 0.243, 1.004, 0.04)                                                                   # the glossy lens
+    torus('EarLine' + nm, 0.428, 0.0035, M_earLine, axis=ax, center=ax * math.sqrt(1 - 0.428 ** 2), n=200, m=8)          # a soft grey line where the housing meets the head
     for o in ('EarCup', 'EarGroove', 'EarBand', 'EarWhite', 'EarCentre', 'EarLine'): bpy.data.objects[o + nm].parent = root
 
 # ---------------------------------------------------------------- the rainbow stripe over the head, ear to ear, and the glowing seam low on the front
-E1 = on_sphere(EAR_LON, EAR_LAT); TOP = on_sphere(0, 58)
+E1 = on_sphere(STRIPE_LON, EAR_LAT); TOP = on_sphere(0, 58)
 n_ = Vector((1, 0, 0)).cross(TOP - Vector((0, E1.y, E1.z))).normalized(); d_ = n_.dot(E1); C_ = n_ * d_; rr_ = math.sqrt(1 - d_ * d_); up_ = n_.cross(Vector((1, 0, 0))).normalized()
 if up_.z < 0: up_ = -up_
 # the bottom piece, as on the current website character: a groove that parts the base panel, lit along its front with the gradient line
@@ -322,6 +330,7 @@ def ring_point(a_deg):
 # fingers along +Z, palm facing -Y); th = +1 puts the thumb on +X (the character's right hand), -1 on -X (its left hand)
 POSES = {
     'open':     dict(f=[(14, 20, 12), (16, 22, 14), (22, 28, 16)], spread=1.3, thumb=((0.85, -0.25, 0.45), (8, 12))),
+    'present':  dict(f=[(2, 5, 4), (5, 9, 6), (40, 55, 40)], spread=1.2, thumb=((0.85, -0.1, 0.52), (8, 12))),   # the reference hand: thumb up, two fingers out, the last one curled
     'palm':     dict(f=[(3, 5, 3)] * 3, spread=1.4, thumb=((0.75, -0.35, 0.55), (0, 6))),
     'point':    dict(f=[(0, 0, 0), (90, 105, 75), (90, 105, 75)], spread=0.4, thumb=((0.3, -0.9, 0.4), (30, 34))),
     'thumbsup': dict(f=[(92, 105, 78)] * 3, spread=0.2, thumb=((1.0, -0.2, 0.35), (0, 0))),
@@ -329,7 +338,7 @@ POSES = {
     'chin':     dict(f=[(22, 20, 10), (86, 100, 72), (88, 102, 74)], spread=0.4, thumb=((0.7, -0.6, 0.45), (8, 8))),
     'pen':      dict(f=[(64, 80, 54), (70, 84, 58), (74, 88, 60)], spread=0.2, thumb=((0.4, -0.85, 0.5), (22, 24))),
 }
-FING = [(0.1, 0.054, (0.074, 0.058, 0.044), 14), (0.0, 0.056, (0.08, 0.062, 0.047), 0), (-0.1, 0.053, (0.07, 0.054, 0.042), -14)]   # three fat, rounded fingers and a thumb, as on the reference
+FING = [(0.092, 0.071, (0.064, 0.05, 0.038), 14), (-0.018, 0.073, (0.064, 0.05, 0.038), 0), (-0.112, 0.067, (0.05, 0.04, 0.032), -14)]   # three fat, rounded fingers and a thumb, as on the reference
 HANDS = {}
 def frame_from(F, N):
     Z = Vector(F).normalized(); Nn = Vector(N); Y = -(Nn - Z * Nn.dot(Z)).normalized(); X = Y.cross(Z)
@@ -344,22 +353,27 @@ def finger_path(base, d0, axis, lengths, curls, steps=10):
             p = p + d * (L / steps); pts.append(p.copy())
     return pts
 
-def hand(name, pose, th, pos, F, N, scale=1.0):
+def hand(name, pose, th, pos, F, N, scale=1.0, Fc=None):
     P = POSES[pose]; e = bpy.data.objects.new(name, None); col.objects.link(e); e.parent = root
-    e.matrix_basis = Matrix.Translation(pos) @ frame_from(F, N).to_4x4() @ Matrix.Scale(scale, 4)
-    parts = [superellipsoid(name + 'Palm', 0.13, 0.116, 0.11, 1.0, 1.0, M_glove, parent=e)]   # a soft, puffy palm, as wide at the wrist as the cuff
+    R = frame_from(F, N); e.matrix_basis = Matrix.Translation(pos) @ R.to_4x4() @ Matrix.Scale(scale, 4)
+    cf = e                                                       # the cuff can point its own way: the wrist bends
+    if Fc is not None:
+        cf = bpy.data.objects.new(name + 'CuffFrame', None); col.objects.link(cf); cf.parent = e
+        dz = (R.transposed() @ Vector(Fc)).normalized(); q = Vector((0, 0, 1)).rotation_difference(dz)
+        cf.matrix_basis = Matrix.Translation((0, 0, -0.03)) @ q.to_matrix().to_4x4() @ Matrix.Translation((0, 0, 0.03))
+    parts = [superellipsoid(name + 'Palm', 0.145, 0.11, 0.142, 1.0, 1.0, M_glove, parent=e)]   # a soft, puffy palm, as wide at the wrist as the cuff
     for k, (x, r, lens, spr) in enumerate(FING):
         sp = math.radians(spr * P['spread'] * (1 if th > 0 else -1)); d0 = Vector((math.sin(sp), 0, math.cos(sp)))
-        axis = d0.cross(Vector((0, -1, 0))).normalized(); base = Vector((th * x, -0.006, 0.072))
+        axis = d0.cross(Vector((0, -1, 0))).normalized(); base = Vector((th * x, -0.006, 0.105))
         parts.append(tube(name + 'F%d' % k, finger_path(base, d0, axis, lens, P['f'][min(k, len(P['f']) - 1)]), lambda t, r=r: r * (1 - 0.08 * t), M_glove, n=18, parent=e))
-    (tx, ty, tz), tc = P['thumb']; d0 = Vector((th * tx, ty, tz)).normalized(); base = Vector((th * 0.105, -0.015, -0.03))
+    (tx, ty, tz), tc = P['thumb']; d0 = Vector((th * tx, ty, tz)).normalized(); base = Vector((th * 0.108, -0.015, 0.02))
     axis = d0.cross(Vector((-th * 0.35, -1, 0.1))).normalized()
-    parts.append(tube(name + 'Thumb', finger_path(base, d0, axis, (0.07, 0.055), tc), lambda t: 0.06 * (1 - 0.06 * t), M_glove, n=18, parent=e))
-    parts.append(lathe(name + 'Wrist', [(0.0, -0.02), (0.114, -0.02), (0.114, -0.088), (0.112, -0.092)], M_glove, parent=e, n=64))   # straight, full width: no neck
-    parts.append(lathe(name + 'Band', [(0.112, -0.088), (0.1, -0.094), (0.098, -0.112), (0.1, -0.13), (0.114, -0.136)], M_band, parent=e, n=64))   # the black band: a dark gap, the same width outside
-    parts.append(torus(name + 'CuffLight', 0.1155, 0.0065, M_cyan, center=(0, 0, -0.134), n=72, m=10, parent=e))   # a thin cyan ring on the cuff's edge
-    parts.append(torus(name + 'CuffLight2', 0.111, 0.003, M_cyan, center=(0, 0, -0.09), n=72, m=8, parent=e))   # and a finer one on the glove's edge
-    parts.append(lathe(name + 'Cuff', [(0.0, -0.137), (0.112, -0.137), (0.126, -0.141), (0.134, -0.153), (0.134, -0.222), (0.129, -0.238), (0.116, -0.247), (0.085, -0.252), (0.0, -0.253)], M_glove, parent=e, n=64))   # a longer white cuff: more white
+    parts.append(tube(name + 'Thumb', finger_path(base, d0, axis, (0.082, 0.062), tc), lambda t: 0.074 * (1 - 0.05 * t), M_glove, n=18, parent=e))   # a big, fat thumb
+    parts.append(lathe(name + 'Wrist', [(0.0, -0.02), (0.114, -0.02), (0.114, -0.088), (0.112, -0.092)], M_glove, parent=cf, n=64))   # straight, full width: no neck
+    parts.append(lathe(name + 'Band', [(0.112, -0.088), (0.1, -0.094), (0.098, -0.112), (0.1, -0.13), (0.114, -0.136)], M_band, parent=cf, n=64))   # the black band: a dark gap, the same width outside
+    parts.append(torus(name + 'CuffLight', 0.1155, 0.0065, M_cyan, center=(0, 0, -0.134), n=72, m=10, parent=cf))   # a thin cyan ring on the cuff's edge
+    parts.append(torus(name + 'CuffLight2', 0.111, 0.003, M_cyan, center=(0, 0, -0.09), n=72, m=8, parent=cf))   # and a finer one on the glove's edge
+    parts.append(lathe(name + 'Cuff', [(0.0, -0.137), (0.112, -0.137), (0.126, -0.141), (0.134, -0.153), (0.134, -0.212), (0.129, -0.234), (0.115, -0.248), (0.085, -0.255), (0.0, -0.256)], M_glove, parent=cf, n=64))   # a longer white cuff: more white
     HANDS[name] = [e] + parts
     return e
 
@@ -367,12 +381,12 @@ def show_hands(names):
     for k, objs in HANDS.items():
         for o in objs: o.hide_render = k not in names
 
-def side_hand(name, s, cuff=(1.0, -0.45, -0.64), pose='open', F=None, N=None, scale=1.3):
+def side_hand(name, s, cuff=(1.0, -0.45, -0.64), pose='present', F=None, N=None, scale=1.3, Fc=None):
     """A hand at the character's side (s = -1 its right, +1 its left), given by where its cuff ends."""
     F = Vector(F or (s * 0.92, -0.22, 0.3)).normalized(); N = N or ((0.15, -0.72, 0.68) if s > 0 else (0.42, -0.65, 0.64))   # palm up and tilted to the viewer, fingers out to the side
-    return hand(name, pose, -s, Vector((s * cuff[0], cuff[1], cuff[2])) + F * 0.253 * scale, F, N, scale)
+    return hand(name, pose, -s, Vector((s * cuff[0], cuff[1], cuff[2])) + Vector(Fc or F).normalized() * 0.253 * scale, F, N, scale, Fc)
 
-side_hand('TurnR', -1); side_hand('TurnL', 1)
+side_hand('TurnR', -1); side_hand('TurnL', 1, F=(0.94, 0.36, -0.06), N=(0.38, -0.85, 0.36), Fc=(1.0, -0.06, 0.06))   # palm to us, the cuff coming a little toward us   # the near hand lies out flat to the side, palm up to us
 
 # ---------------------------------------------------------------- the face, drawn as light on the visor (the web page draws the same shapes live)
 TW = 1400; TH = round(TW * VB / VA); PX = TW / (2 * VA)
