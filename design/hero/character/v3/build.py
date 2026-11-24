@@ -30,6 +30,7 @@ def ramp(stops, t):
     for (t0, c0), (t1, c1) in zip(stops, stops[1:]):
         if t <= t1: k = (t - t0) / max(t1 - t0, 1e-9); k = k * k * (3 - 2 * k); return mix(c0, c1, k)
     return stops[-1][1]
+HEAD = [(0.0, hexrgb('#ff9a00')), (0.2, hexrgb('#ff2a1a')), (0.45, hexrgb('#ff1fb0')), (0.7, hexrgb('#9b1cf0')), (1.0, hexrgb('#3a4bff'))]
 EAR = [(0.0, hexrgb('#2f6bff')), (0.5, hexrgb('#19c8ff')), (1.0, hexrgb('#2f6bff'))]
 EARIN = [(0.0, hexrgb('#ff1fd0')), (0.5, hexrgb('#8a2cff')), (1.0, hexrgb('#ff1fd0'))]
 SEAM = [(0.0, hexrgb('#2a7bff')), (0.5, hexrgb('#8a2cff')), (1.0, hexrgb('#ff4fd8'))]
@@ -173,25 +174,27 @@ for i in range(KS - 1):
     for j in range(MS): p, q = 1 + i * MS + j, 1 + i * MS + (j + 1) % MS; faces.append((p, p + MS, q + MS, q))
 visor = mesh_object('Visor', verts, faces, M_visor, uvs=uvs, parent=root)
 
-BZ = [(-0.014, -0.03), (-0.008, 0.008), (-0.002, 0.02), (0.008, 0.026), (0.022, 0.028), (0.038, 0.025), (0.05, 0.017), (0.058, 0.006), (0.062, -0.02)]
-verts, faces = [], []; MB = 240
-C0 = proj(0, VZ)
-for j in range(MB):
-    th = 2 * math.pi * j / MB; bx, bz = bnd(th); B = proj(bx, VZ + bz)
-    b1, b2 = bnd(th + 0.002), bnd(th - 0.002); T = (proj(b1[0], VZ + b1[1]) - proj(b2[0], VZ + b2[1])).normalized(); N = B.normalized()
-    O = T.cross(N).normalized()
-    if O.dot(B - C0) < 0: O = -O
-    for d, h in BZ: verts.append(B + O * d + N * h)
-L = len(BZ)
-for j in range(MB):
-    for i in range(L - 1): p = j * L + i; q = ((j + 1) % MB) * L + i; faces.append((p, q, q + 1, p + 1))
-mesh_object('Bezel', verts, faces, M_body, parent=root)
+M_rim = material('rim', (0.5, 0.46, 0.72), rough=0.18, coat=1.0)
+def bezel_sweep(name, prof, mat, MB=240):
+    verts, faces = [], []; C0 = proj(0, VZ)
+    for j in range(MB):
+        th = 2 * math.pi * j / MB; bx, bz = bnd(th); B = proj(bx, VZ + bz)
+        b1, b2 = bnd(th + 0.002), bnd(th - 0.002); T = (proj(b1[0], VZ + b1[1]) - proj(b2[0], VZ + b2[1])).normalized(); N = B.normalized()
+        O = T.cross(N).normalized()
+        if O.dot(B - C0) < 0: O = -O
+        for d, h in prof: verts.append(B + O * d + N * h)
+    L = len(prof)
+    for j in range(MB):
+        for i in range(L - 1): p = j * L + i; q = ((j + 1) % MB) * L + i; faces.append((p, q, q + 1, p + 1))
+    return mesh_object(name, verts, faces, mat, parent=root)
+bezel_sweep('BezelChamfer', [(-0.016, -0.03), (-0.014, 0.004), (-0.008, 0.018), (0.014, 0.03), (0.048, 0.038)], M_rim)          # the lavender band round the glass
+bezel_sweep('Bezel', [(0.048, 0.038), (0.05, 0.04), (0.064, 0.035), (0.08, 0.022), (0.09, 0.006), (0.094, -0.03)], M_body)     # the white face, a crisp edge against the band
 
 # ---------------------------------------------------------------- ears: a raised plate, a cup, a black centre and a light ring
 EAR_LON, EAR_LAT = 76, 6
 for s in (1, -1):
     ax = on_sphere(s * EAR_LON, EAR_LAT); nm = 'L' if s > 0 else 'R'
-    plate = [(0.0, 1.012)] + [(rr, math.sqrt(1 - rr * rr) + 0.028) for rr in (0.2, 0.3, 0.4, 0.46, 0.485)] + [(0.497, math.sqrt(1 - 0.497 ** 2) + 0.016), (0.503, math.sqrt(1 - 0.503 ** 2) - 0.004), (0.505, math.sqrt(1 - 0.505 ** 2) - 0.02)]
+    plate = [(0.0, 1.03)] + [(rr, math.sqrt(1 - rr * rr) + 0.03) for rr in (0.2, 0.3, 0.4, 0.46, 0.485)] + [(0.497, math.sqrt(1 - 0.497 ** 2) + 0.026), (0.503, math.sqrt(1 - 0.503 ** 2) + 0.012), (0.505, math.sqrt(1 - 0.505 ** 2) - 0.02)]
     lathe('EarPlate' + nm, plate, M_body, axis=ax)
     lathe('EarCup' + nm, [(0.4, 0.88), (0.4, 0.955), (0.393, 0.995), (0.375, 1.025), (0.345, 1.045), (0.305, 1.056), (0.275, 1.054), (0.258, 1.047), (0.25, 1.038)], M_body, axis=ax)   # a low housing, close on the body
     lathe('EarCentre' + nm, [(0.238, 1.036), (0.2, 1.062), (0.1, 1.086), (0.0, 1.093)], M_black, axis=ax)
@@ -203,8 +206,8 @@ for s in (1, -1):
 E1 = on_sphere(EAR_LON, EAR_LAT); TOP = on_sphere(0, 58)
 n_ = Vector((1, 0, 0)).cross(TOP - Vector((0, E1.y, E1.z))).normalized(); d_ = n_.dot(E1); C_ = n_ * d_; rr_ = math.sqrt(1 - d_ * d_); up_ = n_.cross(Vector((1, 0, 0))).normalized()
 if up_.z < 0: up_ = -up_
-head_pts = [C_ + (rr_ + 0.002) * (math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_) for a in [math.radians(146 - 112 * i / 199) for i in range(200)]]
-tube('HeadStripe', head_pts, lambda t: 0.017 * math.sin(math.pi * t) ** 0.6 + 0.0004, M_head, n=12, color=lambda t: spectrum(0.875 - 0.5 * t), parent=root)   # in the cut, under the step; both ends come to a sharp point
+head_pts = [C_ + (rr_ - 0.004) * (math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_) for a in [math.radians(150 - 120 * i / 199) for i in range(200)]]
+tube('HeadStripe', head_pts, lambda t: 0.025 * math.sin(math.pi * t) ** 0.45 + 0.0004, M_head, n=14, color=lambda t: ramp(HEAD, t), parent=root)   # fills the slot, under the lip; both ends sharp
 # the bottom piece, as on the current website character: a groove that parts the base panel, lit along its front with the gradient line
 M_base = material('base', (0.8, 0.82, 0.88), rough=0.18, coat=1.0); M_dark = material('socket', (0.012, 0.015, 0.02), rough=0.3); DARK_IN_GLOW |= {'base', 'socket'}
 RHO = math.radians(55); h0 = Vector((math.sin(math.radians(192)), -math.cos(math.radians(192)), 0))
@@ -223,7 +226,7 @@ mod = body.modifiers.new('cut', 'BOOLEAN'); mod.operation = 'DIFFERENCE'; mod.ob
 bpy.context.view_layer.objects.active = body; bpy.ops.object.modifier_apply(modifier=mod.name); bpy.data.objects.remove(cutter)
 # the cut that the top light sits in: a thin slot all round where the shell meets the face piece, and the shell behind it
 # stands a little proud, so there is a clear step edge with the light under it (fitted panels, as on the reference)
-hv, hf = [], []; HN = 240; SLOT = 0.011; STEP = 1.02
+hv, hf = [], []; HN = 240; SLOT = 0.024
 for i in range(HN):
     a = 2 * math.pi * i / HN; dirv = math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_
     for rad, tt in ((rr_ - 0.05, -SLOT), (rr_ - 0.05, SLOT), (rr_ + 0.09, SLOT), (rr_ + 0.09, -SLOT)): hv.append(C_ + dirv * rad + n_ * tt)
@@ -233,8 +236,10 @@ headcut = mesh_object('HeadCut', hv, hf, M_dark)
 mod = body.modifiers.new('headcut', 'BOOLEAN'); mod.operation = 'DIFFERENCE'; mod.object = headcut; mod.solver = 'EXACT'; mod.material_mode = 'TRANSFER'
 bpy.context.view_layer.objects.active = body; bpy.ops.object.modifier_apply(modifier=mod.name); bpy.data.objects.remove(headcut)
 s_top = 1 if n_.z > d_ else -1
-for v in body.data.vertices:
-    if s_top * (v.co.dot(n_) - d_) > SLOT - 0.0005 and v.co.length > 0.985: v.co = v.co * STEP
+A_ = n_ * s_top; h_e = s_top * d_ + SLOT; RS = 1.024; th_e = math.acos(h_e / RS); rho_e = RS * math.sin(th_e)
+lathe('TopShell', [(RS * math.sin(th_e * k / 90), RS * math.cos(th_e * k / 90)) for k in range(91)], M_body, axis=A_, n=320)   # the shell behind the cut
+lathe('TopShellLip', [(rho_e, h_e), (rho_e * 0.985 / RS, h_e * 0.985 / RS)], M_body, axis=A_, n=320)                            # its edge: a crisp step
+for o in ('TopShell', 'TopShellLip'): bpy.data.objects[o].parent = root
 me_ = body.data; base_slot = len(me_.materials); me_.materials.append(M_base); bm = bmesh.new(); bm.from_mesh(me_)
 for f in bm.faces:
     f.smooth = True
