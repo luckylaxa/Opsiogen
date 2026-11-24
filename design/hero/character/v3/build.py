@@ -31,6 +31,7 @@ def ramp(stops, t):
         if t <= t1: k = (t - t0) / max(t1 - t0, 1e-9); k = k * k * (3 - 2 * k); return mix(c0, c1, k)
     return stops[-1][1]
 EAR = [(0.0, hexrgb('#2f6bff')), (0.5, hexrgb('#19c8ff')), (1.0, hexrgb('#2f6bff'))]
+EARIN = [(0.0, hexrgb('#ff1fd0')), (0.5, hexrgb('#8a2cff')), (1.0, hexrgb('#ff1fd0'))]
 SEAM = [(0.0, hexrgb('#2a7bff')), (0.5, hexrgb('#8a2cff')), (1.0, hexrgb('#ff4fd8'))]
 
 # ---------------------------------------------------------------- materials
@@ -193,9 +194,9 @@ for s in (1, -1):
     plate = [(0.0, 1.012)] + [(rr, math.sqrt(1 - rr * rr) + 0.012) for rr in (0.2, 0.3, 0.4, 0.44, 0.455)] + [(0.465, math.sqrt(1 - 0.465 ** 2) + 0.004), (0.47, math.sqrt(1 - 0.47 ** 2) - 0.004), (0.472, math.sqrt(1 - 0.472 ** 2) - 0.02)]
     lathe('EarPlate' + nm, plate, M_body, axis=ax)
     lathe('EarCup' + nm, [(0.385, 0.86), (0.385, 1.05), (0.378, 1.085), (0.36, 1.11), (0.33, 1.125), (0.295, 1.13), (0.272, 1.126), (0.262, 1.118), (0.258, 1.108)], M_body, axis=ax)
-    lathe('EarCentre' + nm, [(0.262, 1.106), (0.22, 1.135), (0.12, 1.16), (0.0, 1.168)], M_black, axis=ax)
-    torus('EarRingIn' + nm, 0.2, 0.014, M_earRing, axis=ax, center=ax * 1.142, n=160, m=10, color=lambda t, b: hexrgb('#ff1fd0'), parent=root)
-    torus('EarRing' + nm, 0.262, 0.026, M_earRing, axis=ax, center=ax * 1.116, n=160, m=12, color=lambda t, b, s=s: ramp(EAR, (t + (0.25 if s > 0 else 0.75)) % 1.0))
+    lathe('EarCentre' + nm, [(0.24, 1.104), (0.205, 1.14), (0.11, 1.17), (0.0, 1.18)], M_black, axis=ax)
+    torus('EarRingIn' + nm, 0.236, 0.016, M_earRing, axis=ax, center=ax * 1.122, n=160, m=10, color=lambda t, b, s=s: ramp(EARIN, (t + (0.25 if s > 0 else 0.75)) % 1.0), parent=root)
+    torus('EarRing' + nm, 0.266, 0.024, M_earRing, axis=ax, center=ax * 1.116, n=160, m=12, color=lambda t, b, s=s: ramp(EAR, (t + (0.25 if s > 0 else 0.75)) % 1.0))
     for o in ('EarPlate', 'EarCup', 'EarCentre', 'EarRing'): bpy.data.objects[o + nm].parent = root
 
 # ---------------------------------------------------------------- the rainbow stripe over the head, ear to ear, and the glowing seam low on the front
@@ -240,7 +241,7 @@ for i in range(NG):
 mesh_object('LowSeam', verts, faces, M_seam, colors=cols, merge=False, parent=root)
 
 # ---------------------------------------------------------------- the ring: close round the body, tilted, banded like a rainbow
-RING_R, RING_r, RING_Z, RING_ROT = 1.08, 0.088, -0.45, (math.radians(7), math.radians(-11), 0)
+RING_R, RING_r, RING_Z, RING_ROT = 1.08, 0.07, -0.45, (math.radians(7), math.radians(-11), 0)
 LOGO = [(0.0, hexrgb('#ffb000')), (0.1, hexrgb('#b4f000')), (0.2, hexrgb('#19e05a')), (0.32, hexrgb('#00d8ff')), (0.45, hexrgb('#2a5bff')), (0.58, hexrgb('#9b1cf0')), (0.7, hexrgb('#ff2fd0')), (0.82, hexrgb('#ff3a2a')), (0.92, hexrgb('#ff8a00')), (1.0, hexrgb('#ffb000'))]
 def logo_ring(name, R, w, h, mat, n=420, m=28, twist=1.0):
     """The ring as the logo's O: a flat glossy band that twists as it goes round, in the logo's deep colours with dark turns."""
@@ -257,7 +258,7 @@ def logo_ring(name, R, w, h, mat, n=420, m=28, twist=1.0):
     for i in range(n):
         for j in range(m): p_ = i * m + j; q_ = i * m + (j + 1) % m; faces.append((p_, q_, ((i + 1) % n) * m + (j + 1) % m, ((i + 1) % n) * m + j))
     return mesh_object(name, verts, faces, mat, colors=cols, parent=root)
-ring = logo_ring('Ring', RING_R, 0.088, 0.088, M_ring, twist=0.0)   # a round glossy tube in a bright rainbow, as on the reference
+ring = logo_ring('Ring', RING_R, 0.07, 0.07, M_ring, twist=0.0)   # a round glossy tube in a bright rainbow, as on the reference
 ring.location = (0, 0, RING_Z); ring.rotation_euler = RING_ROT
 def ring_point(a_deg):
     a = math.radians(a_deg); m = Matrix.Translation((0, 0, RING_Z)) @ Euler(RING_ROT).to_matrix().to_4x4()
@@ -266,7 +267,7 @@ def ring_point(a_deg):
 # ---------------------------------------------------------------- hands: cartoon gloves, built in their own frame (palm at the origin,
 # fingers along +Z, palm facing -Y); th = +1 puts the thumb on +X (the character's right hand), -1 on -X (its left hand)
 POSES = {
-    'open':     dict(f=[(14, 20, 12), (10, 18, 10), (16, 22, 12)], spread=1.5, thumb=((0.7, -0.35, 0.62), (6, 10))),
+    'open':     dict(f=[(16, 22, 12), (12, 20, 10), (18, 24, 12)], spread=1.7, thumb=((0.5, -0.72, 0.42), (4, 8))),
     'palm':     dict(f=[(3, 5, 3)] * 3, spread=1.4, thumb=((0.75, -0.35, 0.55), (0, 6))),
     'point':    dict(f=[(0, 0, 0), (90, 105, 75), (90, 105, 75)], spread=0.4, thumb=((0.3, -0.9, 0.4), (30, 34))),
     'thumbsup': dict(f=[(92, 105, 78)] * 3, spread=0.2, thumb=((1.0, -0.2, 0.35), (0, 0))),
@@ -274,7 +275,7 @@ POSES = {
     'chin':     dict(f=[(22, 20, 10), (86, 100, 72), (88, 102, 74)], spread=0.4, thumb=((0.7, -0.6, 0.45), (8, 8))),
     'pen':      dict(f=[(64, 80, 54), (70, 84, 58), (74, 88, 60)], spread=0.2, thumb=((0.4, -0.85, 0.5), (22, 24))),
 }
-FING = [(0.078, 0.046, (0.06, 0.044, 0.034), 11), (0.0, 0.048, (0.066, 0.048, 0.037), 0), (-0.078, 0.045, (0.058, 0.042, 0.033), -11)]   # three short, chubby fingers and a thumb, as on the reference
+FING = [(0.088, 0.052, (0.055, 0.04, 0.03), 12), (0.0, 0.054, (0.06, 0.044, 0.033), 0), (-0.088, 0.051, (0.053, 0.039, 0.029), -12)]   # three short, chubby fingers and a thumb, as on the reference
 HANDS = {}
 def frame_from(F, N):
     Z = Vector(F).normalized(); Nn = Vector(N); Y = -(Nn - Z * Nn.dot(Z)).normalized(); X = Y.cross(Z)
@@ -292,17 +293,18 @@ def finger_path(base, d0, axis, lengths, curls, steps=10):
 def hand(name, pose, th, pos, F, N, scale=1.0):
     P = POSES[pose]; e = bpy.data.objects.new(name, None); col.objects.link(e); e.parent = root
     e.matrix_basis = Matrix.Translation(pos) @ frame_from(F, N).to_4x4() @ Matrix.Scale(scale, 4)
-    parts = [superellipsoid(name + 'Palm', 0.135, 0.078, 0.1, 0.85, 0.85, M_glove, parent=e)]
+    parts = [superellipsoid(name + 'Palm', 0.148, 0.088, 0.108, 0.9, 0.9, M_glove, parent=e)]
     for k, (x, r, lens, spr) in enumerate(FING):
         sp = math.radians(spr * P['spread'] * (1 if th > 0 else -1)); d0 = Vector((math.sin(sp), 0, math.cos(sp)))
         axis = d0.cross(Vector((0, -1, 0))).normalized(); base = Vector((th * x, -0.004, 0.045))
         parts.append(tube(name + 'F%d' % k, finger_path(base, d0, axis, lens, P['f'][min(k, len(P['f']) - 1)]), lambda t, r=r: r * (1 - 0.08 * t), M_glove, n=18, parent=e))
     (tx, ty, tz), tc = P['thumb']; d0 = Vector((th * tx, ty, tz)).normalized(); base = Vector((th * 0.085, -0.022, -0.028))
     axis = d0.cross(Vector((-th * 0.35, -1, 0.1))).normalized()
-    parts.append(tube(name + 'Thumb', finger_path(base, d0, axis, (0.055, 0.045), tc), lambda t: 0.046 * (1 - 0.08 * t), M_glove, n=18, parent=e))
-    parts.append(lathe(name + 'Cuff', [(0.05, -0.03), (0.06, -0.08), (0.066, -0.12), (0.07, -0.15), (0.072, -0.165)], M_glove, parent=e, n=48))
-    parts.append(lathe(name + 'Band', [(0.0, -0.163), (0.07, -0.163), (0.076, -0.168), (0.077, -0.2), (0.072, -0.205), (0.05, -0.206), (0.0, -0.206)], M_band, parent=e, n=48))
-    parts.append(torus(name + 'CuffLight', 0.0745, 0.0075, M_cyan, center=(0, 0, -0.203), n=64, m=10, parent=e))
+    parts.append(tube(name + 'Thumb', finger_path(base, d0, axis, (0.06, 0.045), tc), lambda t: 0.056 * (1 - 0.06 * t), M_glove, n=18, parent=e))
+    parts.append(lathe(name + 'Wrist', [(0.06, -0.04), (0.064, -0.1), (0.064, -0.13)], M_glove, parent=e, n=48))
+    parts.append(lathe(name + 'Cuff', [(0.0, -0.132), (0.07, -0.132), (0.092, -0.138), (0.104, -0.155), (0.107, -0.178), (0.1, -0.2), (0.084, -0.214), (0.0, -0.217)], M_glove, parent=e, n=48))   # the puffy white collar
+    parts.append(lathe(name + 'Band', [(0.068, -0.095), (0.07, -0.1), (0.07, -0.132)], M_band, parent=e, n=48))
+    parts.append(torus(name + 'CuffLight', 0.078, 0.011, M_cyan, center=(0, 0, -0.128), n=64, m=10, parent=e))
     HANDS[name] = [e] + parts
     return e
 
@@ -323,24 +325,26 @@ def face_image(kind, blush=False):
     SS = 2; im = Image.new('L', (TW * SS, TH * SS), 0); d = ImageDraw.Draw(im)
     def P(x, z): return ((TW / 2 + x * PX) * SS, (TH / 2 - (z - VZ) * PX) * SS)
     def disc(x, z, r, fill=255): (a, b), (c, e) = P(x - r, z + r), P(x + r, z - r); d.ellipse((a, b, c, e), fill=fill)
-    def arc(x, z, rx, rz, a0, a1, w, fill=255):                  # a stroke along an ellipse (angles from +x, counter-clockwise), round ends
-        outer, inner, ends = [], [], []
+    def arc(x, z, rx, rz, a0, a1, w, fill=255, taper=0.0):       # a stroke along an ellipse (angles from +x, counter-clockwise), round ends;
+        outer, inner, ends = [], [], []                           # taper thins it toward both ends, for a crescent
         for i in range(121):
-            a = math.radians(a0 + (a1 - a0) * i / 120); px, pz = x + rx * math.cos(a), z + rz * math.sin(a)
+            u = i / 120; a = math.radians(a0 + (a1 - a0) * u); px, pz = x + rx * math.cos(a), z + rz * math.sin(a)
             nx, nz = rz * math.cos(a), rx * math.sin(a); L = math.hypot(nx, nz); nx, nz = nx / L, nz / L
-            outer.append(P(px + nx * w / 2, pz + nz * w / 2)); inner.append(P(px - nx * w / 2, pz - nz * w / 2))
-            if i in (0, 120): ends.append((px, pz))
+            ww = w * (1 - taper + taper * math.sin(math.pi * u) ** 0.85)
+            outer.append(P(px + nx * ww / 2, pz + nz * ww / 2)); inner.append(P(px - nx * ww / 2, pz - nz * ww / 2))
+            if i in (0, 120): ends.append((px, pz, ww))
         d.polygon(outer + inner[::-1], fill=fill)
-        for ex, ez in ends: disc(ex, ez, w / 2, fill)
-    def smile(x, z, w, h):                                        # a filled half-moon: flat top, round bottom, soft corners
-        pts = [P(x + w / 2 * math.cos(math.radians(a)), z - h * math.sin(math.radians(a))) for a in range(0, 181, 3)]
-        d.polygon(pts, fill=255)
+        for ex, ez, ww in ends: disc(ex, ez, ww / 2, fill)
+    def smile(x, z, w, h, sag=0.0):                               # a filled smile: the top edge dips a little, the bottom is a round bowl
+        top = [P(x + w / 2 * (2 * k / 60 - 1), z - sag * (1 - (2 * k / 60 - 1) ** 2)) for k in range(61)]
+        bot = [P(x + w / 2 * math.cos(math.radians(a)), z - h * math.sin(math.radians(a))) for a in range(0, 181, 3)]
+        d.polygon(top + bot, fill=255)
     def rrect(x, z, w, h, r, width):
         (a, b), (c, e) = P(x - w / 2, z + h / 2), P(x + w / 2, z - h / 2); d.rounded_rectangle((a, b, c, e), radius=r * PX * SS, outline=255, width=round(width * PX * SS))
     EX, EZ = 0.345, 0.125
     if kind == 'happy':
-        for sx in (-1, 1): arc(sx * EX, EZ - 0.05, 0.175, 0.155, 22, 158, 0.088)
-        smile(0, -0.07, 0.27, 0.125)
+        for sx in (-1, 1): arc(sx * EX, EZ - 0.055, 0.18, 0.15, 18, 162, 0.1, taper=0.5)
+        smile(0, -0.065, 0.3, 0.15, sag=0.04)
     elif kind == 'thinking':
         disc(-0.29, EZ, 0.075); disc(0.29, EZ, 0.075)
         arc(-0.31, EZ + 0.06, 0.11, 0.06, 70, 130, 0.035); arc(0.29, EZ + 0.08, 0.1, 0.07, 30, 150, 0.035)
@@ -366,6 +370,7 @@ def face_image(kind, blush=False):
                     x, z = cx + gx * 0.015 + (0.0075 if gz % 2 else 0), cz + gz * 0.013
                     if ((x - cx) / 0.085) ** 2 + ((z - cz) / 0.055) ** 2 <= 1: disc(x, z, 0.0042, fill=150)
     im = im.resize((TW, TH), Image.LANCZOS)
+    im = im.filter(ImageFilter.GaussianBlur(7)).point(lambda v: 255 if v > 127 else 0).filter(ImageFilter.GaussianBlur(1.3))   # every corner softly rounded
     core = im.filter(ImageFilter.GaussianBlur(9)).point(lambda v: 255 if v > 200 else int(v * v / 200 / 1.3)).filter(ImageFilter.GaussianBlur(4)); glow = im.filter(ImageFilter.GaussianBlur(14)).point(lambda v: min(255, int(v * 1.1)))
     CY = (20, 225, 255)
     layers = [Image.merge('RGB', [m.point(lambda v, k=k: int(v * k / 255)) for k in c]) for m, c in ((glow, CY), (im, CY), (core, (90, 30, 0)))]
