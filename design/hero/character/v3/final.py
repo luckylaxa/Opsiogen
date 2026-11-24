@@ -41,17 +41,18 @@ def neon(name, strength, white=0.12):
     nt.links.new(inv.outputs[0], st.inputs['Value']); nt.links.new(st.outputs['Result'], b.inputs['Emission Strength'])
     b.inputs['Roughness'].default_value = 0.1; b.inputs['Coat Weight'].default_value = 1.0; b.inputs['Coat Roughness'].default_value = 0.0
 bpy.data.materials['visor'].node_tree.nodes['Principled BSDF'].inputs['Emission Strength'].default_value = 1.6
-neon('lowSeam', 2.6)
-setp('headStripe', Roughness=0.3, Coat_Weight=0.25, Coat_Roughness=0.05, Emission_Strength=1.9)   # an even band of light, hard-edged
+neon('lowSeam', 5.0)                                             # the line in the cut glows brightly, as on the first website character
+setp('lowSeamGlow', Emission_Strength=3.2, Alpha=0.32)
+setp('headStripe', Roughness=0.3, Coat_Weight=0.25, Coat_Roughness=0.05, Emission_Strength=2.5)   # an even band of light, hard-edged
 for nm in ('rim',): setp(nm, Roughness=0.16, Coat_Weight=1.0, Coat_Roughness=0.01)
 neon('earRing', 1.7, white=0.0)
 rb = bsdf('ring'); rb.inputs['Emission Strength'].default_value = 0.85
 _nt = bpy.data.materials['ring'].node_tree; _lp = _nt.nodes.new('ShaderNodeLightPath'); _ma = _nt.nodes.new('ShaderNodeMath'); _ma.operation = 'MULTIPLY_ADD'
-_ma.inputs[1].default_value = 2.2; _ma.inputs[2].default_value = 0.85; _nt.links.new(_lp.outputs['Is Diffuse Ray'], _ma.inputs[0]); _nt.links.new(_ma.outputs[0], rb.inputs['Emission Strength'])   # the ring looks the same, but throws more of its colour onto the body, as on the reference
+_ma.inputs[1].default_value = 2.2; _ma.inputs[2].default_value = 1.1; _nt.links.new(_lp.outputs['Is Diffuse Ray'], _ma.inputs[0]); _nt.links.new(_ma.outputs[0], rb.inputs['Emission Strength'])   # the ring looks the same, but throws more of its colour onto the body, as on the reference
 rb.inputs['Emission Strength'].default_value = 0.85; rb.inputs['Roughness'].default_value = 0.1; rb.inputs['Coat Weight'].default_value = 1.0; rb.inputs['Coat Roughness'].default_value = 0.0
 next(n for n in bpy.data.materials['ring'].node_tree.nodes if n.bl_idname == 'ShaderNodeMix').inputs['B'].default_value = (1, 1, 1, 1)   # the logo ring: glossy, deep colour, not a light tube
 
-for nm in ('LowSeam', 'HeadStripe'): bpy.data.objects[nm].visible_glossy = False   # no smeary reflections of the lights on the body or visor
+for nm in ('LowSeam', 'LowSeamGlow', 'HeadStripe'): bpy.data.objects[nm].visible_glossy = False   # no smeary reflections of the lights on the body or visor
 for o in bpy.data.objects:                                       # the gloves are not mirrored in the visor (no white smudge on the glass)
     if o.name.startswith(('Turn', 'Think', 'Idea', 'Cool', 'Wink', 'Surp', 'Hero')): o.visible_glossy = False
 setp('cuffLight', Emission_Strength=5.5)
@@ -100,7 +101,7 @@ def shot(name, res, samples, w=None, floor=True):
     BG.inputs['Strength'].default_value = G['WORLD']; catcher.hide_render = False
     for o in G['LIGHTS']: o.hide_render = False
     c = world_to_camera_view(sc, cam, Vector((0, 0, FLOOR + 0.02))); l = world_to_camera_view(sc, cam, Vector((-0.8, 0, FLOOR + 0.02))); u = world_to_camera_view(sc, cam, Vector((0, -0.25, FLOOR + 0.02)))
-    fl = (c.x * res, (1 - c.y) * res, abs(c.x - l.x) * res, max(abs(c.y - u.y) * res, 6)) if floor else None
+    W_ = sc.render.resolution_x; fl = (c.x * W_, (1 - c.y) * res, abs(c.x - l.x) * W_ * 1.15, abs(c.x - l.x) * W_ * 0.3) if floor else None   # a broad, soft glow, as under the first website character
     rgba = os.path.join(OUT, name + '.png'); composite(beauty, glow, rgba, fl, bloom=0.8, shadow=0.42)
     im = Image.open(rgba); bg = Image.new('RGBA', im.size, (255, 255, 255, 255)); bg.alpha_composite(im); bg.convert('RGB').save(os.path.join(OUT, name + '-white.jpg'), quality=93)
     print('rendered', name)
@@ -138,8 +139,11 @@ if 'region' in SHOTS: region('final-region', 3000, 96)
 if 'regionlo' in SHOTS: region('lo-region', 1800, 24)
 if 'viewslo' in SHOTS:                                           # quick four views, to compare proportions with the reference sheet
     frame(dist=11.5, elev=6, target=(0, 0, -0.22))
-    for nm, deg in (('lo-front', 0), ('lo-tq', -32), ('lo-side', -90), ('lo-back', 180)): G['turn'](deg); shot(nm, 600, 32)
+    for nm, deg in (('lo-front', 0), ('lo-tq', -32), ('lo-side', -78), ('lo-back', 180)): G['turn'](deg); shot(nm, 600, 40)   # the reference's side view is turned a little toward the front
 for _t in [s for s in SHOTS if s.startswith('turn')]:            # quick 3/4 tests at a given turn, e.g. turn30
     G['turn'](-float(_t[4:])); frame(); shot('lo-' + _t, 600, 32)
 for _t in [s for s in SHOTS if s.startswith('elev')]:            # quick 3/4 tests at a given camera height, e.g. elev3
     G['turn'](HERO_TURN); frame(elev=float(_t[4:])); shot('lo-' + _t, 600, 32)
+if 'bottom' in SHOTS:                                            # the bottom of the body, as in the first website character's crops
+    for nm, deg in (('bot-front', 0), ('bot-left', 40), ('bot-back', 180), ('bot-right', -40)):
+        G['turn'](deg); frame(target=(0, 0, -0.78), lens=150); shot(nm, 420, 48, w=1000)
