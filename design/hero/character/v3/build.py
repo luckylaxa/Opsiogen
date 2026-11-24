@@ -193,8 +193,8 @@ for s in (1, -1):
     plate = [(0.0, 1.012)] + [(rr, math.sqrt(1 - rr * rr) + 0.012) for rr in (0.2, 0.3, 0.4, 0.44, 0.455)] + [(0.465, math.sqrt(1 - 0.465 ** 2) + 0.004), (0.47, math.sqrt(1 - 0.47 ** 2) - 0.004), (0.472, math.sqrt(1 - 0.472 ** 2) - 0.02)]
     lathe('EarPlate' + nm, plate, M_body, axis=ax)
     lathe('EarCup' + nm, [(0.385, 0.86), (0.385, 1.05), (0.378, 1.085), (0.36, 1.11), (0.33, 1.125), (0.295, 1.13), (0.272, 1.126), (0.262, 1.118), (0.258, 1.108)], M_body, axis=ax)
-    lathe('EarCentre' + nm, [(0.259, 1.106), (0.2, 1.124), (0.1, 1.138), (0.0, 1.143)], M_black, axis=ax)
-    torus('EarRingIn' + nm, 0.226, 0.016, M_earRing, axis=ax, center=ax * 1.116, n=160, m=10, color=lambda t, b: hexrgb('#ff2fd0'), parent=root)
+    lathe('EarCentre' + nm, [(0.262, 1.106), (0.22, 1.135), (0.12, 1.16), (0.0, 1.168)], M_black, axis=ax)
+    torus('EarRingIn' + nm, 0.2, 0.014, M_earRing, axis=ax, center=ax * 1.142, n=160, m=10, color=lambda t, b: hexrgb('#ff1fd0'), parent=root)
     torus('EarRing' + nm, 0.262, 0.026, M_earRing, axis=ax, center=ax * 1.116, n=160, m=12, color=lambda t, b, s=s: ramp(EAR, (t + (0.25 if s > 0 else 0.75)) % 1.0))
     for o in ('EarPlate', 'EarCup', 'EarCentre', 'EarRing'): bpy.data.objects[o + nm].parent = root
 
@@ -240,8 +240,24 @@ for i in range(NG):
 mesh_object('LowSeam', verts, faces, M_seam, colors=cols, merge=False, parent=root)
 
 # ---------------------------------------------------------------- the ring: close round the body, tilted, banded like a rainbow
-RING_R, RING_r, RING_Z, RING_ROT = 1.12, 0.09, -0.46, (math.radians(7), math.radians(-10), 0)
-ring = torus('Ring', RING_R, RING_r, M_ring, n=360, m=24, u0=(1, 0, 0), color=lambda t, b: spectrum(2 * t - 0.23 + 0.1 * math.sin(b)), parent=root)
+RING_R, RING_r, RING_Z, RING_ROT = 1.08, 0.088, -0.45, (math.radians(7), math.radians(-11), 0)
+LOGO = [(0.0, hexrgb('#ffb000')), (0.1, hexrgb('#b4f000')), (0.2, hexrgb('#19e05a')), (0.32, hexrgb('#00d8ff')), (0.45, hexrgb('#2a5bff')), (0.58, hexrgb('#9b1cf0')), (0.7, hexrgb('#ff2fd0')), (0.82, hexrgb('#ff3a2a')), (0.92, hexrgb('#ff8a00')), (1.0, hexrgb('#ffb000'))]
+def logo_ring(name, R, w, h, mat, n=420, m=28, twist=1.0):
+    """The ring as the logo's O: a flat glossy band that twists as it goes round, in the logo's deep colours with dark turns."""
+    verts, faces, cols = [], [], []; up = Vector((0, 0, 1))
+    for i in range(n):
+        t = i / n; a = 2 * math.pi * t; out = Vector((math.cos(a), math.sin(a), 0)); tw = twist * a
+        for j in range(m):
+            b = 2 * math.pi * j / m; x, y = w * math.cos(b), h * math.sin(b)
+            x, y = x * math.cos(tw) - y * math.sin(tw), x * math.sin(tw) + y * math.cos(tw)
+            verts.append(out * (R + x) + up * y)
+            c = ramp(LOGO, (2 * t + 0.02 + 0.07 * math.sin(b)) % 1.0)
+            shade = 1.0
+            cols.append(lin(tuple(v * shade for v in c)))
+    for i in range(n):
+        for j in range(m): p_ = i * m + j; q_ = i * m + (j + 1) % m; faces.append((p_, q_, ((i + 1) % n) * m + (j + 1) % m, ((i + 1) % n) * m + j))
+    return mesh_object(name, verts, faces, mat, colors=cols, parent=root)
+ring = logo_ring('Ring', RING_R, 0.088, 0.088, M_ring, twist=0.0)   # a round glossy tube in a bright rainbow, as on the reference
 ring.location = (0, 0, RING_Z); ring.rotation_euler = RING_ROT
 def ring_point(a_deg):
     a = math.radians(a_deg); m = Matrix.Translation((0, 0, RING_Z)) @ Euler(RING_ROT).to_matrix().to_4x4()
@@ -250,7 +266,7 @@ def ring_point(a_deg):
 # ---------------------------------------------------------------- hands: cartoon gloves, built in their own frame (palm at the origin,
 # fingers along +Z, palm facing -Y); th = +1 puts the thumb on +X (the character's right hand), -1 on -X (its left hand)
 POSES = {
-    'open':     dict(f=[(22, 26, 16), (18, 24, 14), (22, 26, 16), (28, 30, 18)], spread=1.2, thumb=((0.7, -0.35, 0.62), (6, 10))),
+    'open':     dict(f=[(14, 20, 12), (10, 18, 10), (16, 22, 12)], spread=1.5, thumb=((0.7, -0.35, 0.62), (6, 10))),
     'palm':     dict(f=[(3, 5, 3)] * 3, spread=1.4, thumb=((0.75, -0.35, 0.55), (0, 6))),
     'point':    dict(f=[(0, 0, 0), (90, 105, 75), (90, 105, 75)], spread=0.4, thumb=((0.3, -0.9, 0.4), (30, 34))),
     'thumbsup': dict(f=[(92, 105, 78)] * 3, spread=0.2, thumb=((1.0, -0.2, 0.35), (0, 0))),
@@ -258,7 +274,7 @@ POSES = {
     'chin':     dict(f=[(22, 20, 10), (86, 100, 72), (88, 102, 74)], spread=0.4, thumb=((0.7, -0.6, 0.45), (8, 8))),
     'pen':      dict(f=[(64, 80, 54), (70, 84, 58), (74, 88, 60)], spread=0.2, thumb=((0.4, -0.85, 0.5), (22, 24))),
 }
-FING = [(0.093, 0.036, (0.05, 0.036, 0.03), 12), (0.032, 0.038, (0.058, 0.042, 0.034), 4), (-0.03, 0.037, (0.055, 0.04, 0.032), -4), (-0.09, 0.033, (0.044, 0.032, 0.026), -12)]   # four short, chubby fingers and a thumb
+FING = [(0.078, 0.046, (0.06, 0.044, 0.034), 11), (0.0, 0.048, (0.066, 0.048, 0.037), 0), (-0.078, 0.045, (0.058, 0.042, 0.033), -11)]   # three short, chubby fingers and a thumb, as on the reference
 HANDS = {}
 def frame_from(F, N):
     Z = Vector(F).normalized(); Nn = Vector(N); Y = -(Nn - Z * Nn.dot(Z)).normalized(); X = Y.cross(Z)
@@ -294,9 +310,9 @@ def show_hands(names):
     for k, objs in HANDS.items():
         for o in objs: o.hide_render = k not in names
 
-def side_hand(name, s, cuff=(0.98, -0.5, -0.56), pose='open', F=None, N=None, scale=1.3):
+def side_hand(name, s, cuff=(0.98, -0.52, -0.56), pose='open', F=None, N=None, scale=1.45):
     """A hand at the character's side (s = -1 its right, +1 its left), given by where its cuff ends."""
-    F = Vector(F or (s * 0.95, -0.15, 0.27)).normalized(); N = N or (-s * 0.1, -0.6, 0.8)
+    F = Vector(F or (s * 0.97, -0.2, 0.12)).normalized(); N = N or (-s * 0.1, -0.5, 0.86)
     return hand(name, pose, -s, Vector((s * cuff[0], cuff[1], cuff[2])) + F * 0.205 * scale, F, N, scale)
 
 side_hand('TurnR', -1); side_hand('TurnL', 1)
