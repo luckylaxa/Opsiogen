@@ -372,12 +372,14 @@ def ring_point(a_deg):
 # fingers along +Z, palm facing -Y); th = +1 puts the thumb on +X (the character's right hand), -1 on -X (its left hand)
 POSES = {
     'open':     dict(f=[(14, 20, 12), (16, 22, 14), (22, 28, 16)], spread=1.3, thumb=((0.85, -0.25, 0.45), (8, 12))),
-    'present':  dict(f=[(3, 5, 5), (4, 6, 6), (6, 10, 8)], spread=1.0, thumb=((0.667, -0.342, 0.661), (4, 8)), melt=0.012, seen=27.0, digits=(   # the reference's open hand, measured off its picture.
-        # Each digit is a line of (along the hand from the wrist, up the picture, toward the viewer, radius), with the palm tipped back by `seen` degrees:
-        ((0.15, 0.072, 0.0, 0.030), (0.215, 0.081, 0.004, 0.030), (0.262, 0.097, 0.008, 0.039), (0.3025, 0.1045, 0.01, 0.0395)),                 # first finger: a narrow root and a round bulb of a tip, the farthest from us
-        ((0.13, 0.02, 0.02, 0.026), (0.20, 0.026, 0.03, 0.040), (0.2625, 0.0317, 0.05, 0.057)),                    # middle finger: the fattest, a teardrop whose round tip sits in front of the first finger's root
-        ((0.10, -0.036, 0.075, 0.020), (0.145, -0.034, 0.09, 0.036), (0.185, -0.031, 0.10, 0.050)),              # last finger: a teardrop curled in front of the palm, the nearest to us
-        ((0.14, 0.115, -0.04, 0.030), (0.164, 0.1682, 0.01, 0.0465), (0.179, 0.19, 0.005, 0.045), (0.193, 0.2105, 0.0, 0.039)))),   # thumb: a fat egg standing up, its round root in front of the top of the palm
+    'present':  dict(f=[(3, 5, 5), (4, 6, 6), (6, 10, 8)], spread=1.0, thumb=((0.667, -0.342, 0.661), (4, 8)), melt=0.007, seen=27.0,   # the reference's open hand: a child's chubby hand, measured off its clear picture.
+        # Each digit is a line of (along the hand from the wrist, up the picture, toward the viewer, radius), with the palm tipped back by `seen` degrees. Fingers are evenly fat from root to tip.
+        digits=(((0.115, 0.036, 0.0, 0.044), (0.1747, 0.0304, 0.004, 0.044), (0.239, 0.0248, 0.008, 0.0435), (0.3075, 0.0184, 0.01, 0.044)),   # first finger: straight out, the farthest from us
+                ((0.115, -0.03, 0.02, 0.046), (0.184, -0.0415, 0.028, 0.049), (0.2616, -0.0407, 0.035, 0.05)),                               # middle finger: the fattest, a step nearer, its top in front of the first finger
+                ((0.085, -0.068, 0.058, 0.04), (0.136, -0.078, 0.066, 0.043), (0.182, -0.074, 0.075, 0.043)),                                # last finger: short, the nearest, its top in front of the middle finger
+                ((0.085, 0.092, -0.03, 0.048), (0.114, 0.122, -0.006, 0.048), (0.148, 0.157, 0.016, 0.046), (0.181, 0.19, 0.03, 0.042))),            # thumb: short and fat, rising out of the top of the palm toward us
+        back=(((0.02, 0.072, -0.045, 0.055), (0.075, 0.108, -0.04, 0.045)),),                                                                # the shoulder of the hand behind the thumb
+        pads=((0.071, 0.07, 0.04, 0.05, 0.016, 0.07),)),                                                                                     # the low pad under the thumb, on the face of the palm: (toward the thumb, out of the palm, along the hand) and its three half-sizes
     'palm':     dict(f=[(3, 5, 3)] * 3, spread=1.4, thumb=((0.75, -0.35, 0.55), (0, 6))),
     'point':    dict(f=[(0, 0, 0), (90, 105, 75), (90, 105, 75)], spread=0.4, thumb=((0.3, -0.9, 0.4), (30, 34))),
     'thumbsup': dict(f=[(92, 105, 78)] * 3, spread=0.2, thumb=((1.0, -0.2, 0.35), (0, 0))),
@@ -409,7 +411,7 @@ def glove_mesh(name, P, th, parent, aw, gap):
     """The glove as one sculpted surface: a puffy palm with two soft pads, three long round fingers and a fat thumb that grow out of it, and a wrist that ends on the dark ball.
     It is shaped as a distance field (rounded shapes melted together) and turned into a mesh with marching cubes; the result is kept in ./out so it is only worked out once."""
     import hashlib; from skimage import measure
-    key = hashlib.md5(repr((sorted(P.items()), th, tuple(round(v, 5) for v in aw), round(gap, 4), FINGERS, GLOVE_STEP, 38)).encode()).hexdigest()[:16]; path = os.path.join(OUT, 'glove-%s.npz' % key)
+    key = hashlib.md5(repr((sorted(P.items()), th, tuple(round(v, 5) for v in aw), round(gap, 4), FINGERS, GLOVE_STEP, 47)).encode()).hexdigest()[:16]; path = os.path.join(OUT, 'glove-%s.npz' % key)
     if not os.path.exists(path):
         def strand(poly, step=0.006):                                                                            # a digit drawn as a line of points (across the palm toward the thumb, out of the palm, along the fingers, radius)
             out = []
@@ -418,8 +420,8 @@ def glove_mesh(name, P, th, parent, aw, gap):
                 for i in range(n): t = i / n; t = t * t * (3 - 2 * t) * 0.35 + t * 0.65; out.append((np.array((th * (a[0] + (b[0] - a[0]) * t), -(a[1] + (b[1] - a[1]) * t), a[2] + (b[2] - a[2]) * t), dtype=np.float32), a[3] + (b[3] - a[3]) * t))
             out.append((np.array((th * poly[-1][0], -poly[-1][1], poly[-1][2]), dtype=np.float32), poly[-1][3])); return out
         if 'digits' in P:                                                                                        # a pose can place every digit itself (the open hand is measured off the reference)
-            cs, sn = math.cos(math.radians(P['seen'])), math.sin(math.radians(P['seen'])); own = [[(cs * v - sn * w, sn * v + cs * w, u + WRIST[2], r) for u, v, w, r in poly] for poly in P['digits']]
-            fingers = [strand(p) for p in own[:-1]]; thumb = strand(own[-1])
+            cs, sn = math.cos(math.radians(P['seen'])), math.sin(math.radians(P['seen'])); own = lambda polys: [[(cs * v - sn * w, sn * v + cs * w, u + WRIST[2], r) for u, v, w, r in poly] for poly in polys]
+            dg_ = own(P['digits']); fingers = [strand(p) for p in dg_[:-1]]; thumb = strand(dg_[-1]); pads = list(P.get('pads', ())); backs = [strand(p) for p in own(P.get('back', ()))]
         else:
             fingers = []
             for k, (x, rb, rt, lens, spr) in enumerate(FINGERS):
@@ -428,29 +430,20 @@ def glove_mesh(name, P, th, parent, aw, gap):
                 fingers.append([(np.array(p, dtype=np.float32), (rb + (rt - rb) * (i / n)) * (1 - 0.05 * math.exp(-((i / n - 0.35) / 0.2) ** 2))) for i, p in enumerate(pts)])   # an even, round sausage of a finger, with a full round tip
             (tx, ty, tz), tc = P['thumb']; d0 = Vector((th * tx, ty, tz)).normalized(); axis = d0.cross(Vector((-th * 0.35, -1, 0.1))).normalized()
             pts = finger_path(Vector((th * 0.087, -0.021, 0.088)), d0, axis, (0.072, 0.056), tc, steps=8); n = len(pts) - 1
-            thumb = [(np.array(p, dtype=np.float32), 0.05 - 0.01 * (i / n) ** 1.4) for i, p in enumerate(pts)]   # a fat thumb that stands up beside the first finger
+            thumb = [(np.array(p, dtype=np.float32), 0.05 - 0.01 * (i / n) ** 1.4) for i, p in enumerate(pts)]; pads = []; backs = []   # a fat thumb that stands up beside the first finger
         aw_ = np.array(aw, dtype=np.float32); O = np.array(WRIST, dtype=np.float32)
         lo = np.array([-0.17, -0.13, -0.16]); hi = np.array([0.17, 0.12, 0.2])
-        for dg in fingers + [thumb]:
+        for dg in fingers + [thumb] + backs:
             for p, r in dg: lo = np.minimum(lo, p - r - 0.02); hi = np.maximum(hi, p + r + 0.02)
         st = GLOVE_STEP; xs, ys, zs = (np.arange(lo[i], hi[i] + st, st, dtype=np.float32) for i in range(3)); X, Y, Z = np.meshgrid(xs, ys, zs, indexing='ij')
-        qx, qy, qz = np.abs(X) - (0.056 - 0.012 * np.clip((0.04 - Z) / 0.08, 0, 1)), np.abs(Y - 0.004) - 0.017, np.abs(Z - 0.06) - 0.04                         # the palm: a big, round pillow
+        Zk = Z + 0.75 * np.maximum(0, th * X - 0.035) * np.clip((Z - 0.02) / 0.08, 0, 1)                         # the far end of the palm slants back on the thumb's side: nothing sticks out between thumb and first finger
+        qx, qy, qz = np.abs(X) - (0.078 - 0.03 * np.clip((0.04 - Z) / 0.08, 0, 1)), np.abs(Y - 0.004) - 0.012, np.abs(Zk - 0.045) - 0.055                         # the palm: a big, round pillow
         palm = np.sqrt(np.maximum(qx, 0) ** 2 + np.maximum(qy, 0) ** 2 + np.maximum(qz, 0) ** 2) + np.minimum(np.maximum(qx, np.maximum(qy, qz)), 0) - 0.065
         pad = (np.sqrt(((X - th * 0.06) / 0.052) ** 2 + ((Y + 0.056) / 0.036) ** 2 + ((Z - 0.065) / 0.045) ** 2) - 1) * 0.036    # the pad under the thumb
         hx = (X - O[0]) * aw_[0] + (Y - O[1]) * aw_[1] + (Z - O[2]) * aw_[2]; rad = np.sqrt(np.maximum((X - O[0]) ** 2 + (Y - O[1]) ** 2 + (Z - O[2]) ** 2 - hx * hx, 0))
-        body = _smin(palm, pad, 0.05)
-        body = _smax(body, 0.13 - np.sqrt((X + th * 0.012) ** 2 + (Y + 0.196) ** 2 + (Z - 0.07) ** 2), 0.05)   # the palm is a little cupped
-        cr = np.full(X.shape, 1e3, dtype=np.float32)                                                              # two soft creases in the palm, as on the reference
-        def crease(pts, r0):                                                                                     # a line of (toward the thumb, along the hand) on the face of the palm
-            for a, b_ in zip(pts[:-1], pts[1:]):
-                for i in range(9):
-                    s_ = i / 8; nonlocal_cr.append((a[0] + (b_[0] - a[0]) * s_, a[1] + (b_[1] - a[1]) * s_, r0))
-        nonlocal_cr = []
-        crease([(0.0215, 0.1455), (-0.0035, 0.128), (-0.031, 0.1125)], 0.010)                                   # one faint fold, under the root of the middle finger
-        for i_, (cT, cz, r0) in enumerate(nonlocal_cr):
-            cr = np.minimum(cr, np.sqrt((X - th * cT) ** 2 + (Y + 0.086) ** 2 + (Z - cz) ** 2) - r0)
-        body = _smax(body, -cr, 0.02)
-        neck = np.minimum(np.sqrt((X - O[0]) ** 2 + (Y - O[1]) ** 2 + (Z - O[2]) ** 2) - 0.112, np.maximum(rad - 0.114, hx - 0.012))   # round over the ball: no flat end inside the palm
+        body = palm if pads else _smin(palm, pad, 0.05)
+        body = _smax(body, 0.13 - np.sqrt((X + th * 0.012) ** 2 + (Y + 0.185) ** 2 + (Z - 0.075) ** 2), 0.04)   # the palm is a little cupped
+        neck = np.minimum(np.sqrt((X - O[0]) ** 2 + (Y - O[1]) ** 2 + (Z - O[2]) ** 2) - 0.102, np.maximum(rad - 0.114, hx - 0.012))   # round over the ball: no flat end inside the palm
         body = _smin(body, neck, 0.05)                                                                           # the wrist: a round neck from the ball up into the palm
         def chain(dg):                                                                                           # a finger: a row of spheres, worked out only near it
             out = np.full(X.shape, 1e3, dtype=np.float32); c = np.array([p for p, r in dg]); rr = max(r for p, r in dg) + 0.06
@@ -458,9 +451,11 @@ def glove_mesh(name, P, th, parent, aw, gap):
             sl = tuple(slice(i0[i], i1[i]) for i in range(3)); xx, yy, zz = X[sl], Y[sl], Z[sl]; best = np.full(xx.shape, 1e3, dtype=np.float32)
             for p, r in dg: best = np.minimum(best, np.sqrt((xx - p[0]) ** 2 + (yy - p[1]) ** 2 + (zz - p[2]) ** 2) - r)
             out[sl] = best; return out
+        for pd in backs: body = _smin(body, chain(pd), 0.04)                                                     # the shoulder runs smoothly into the palm
+        for pT, pN, pz, rT, rN, rz in pads: body = _smin(body, (np.sqrt(((X - th * pT) / rT) ** 2 + ((Y + pN) / rN) ** 2 + ((Z - pz) / rz) ** 2) - 1) * rN, 0.01)   # a low pad sits on the palm with a soft fold round it
         dig = chain(fingers[0])
-        for dg in fingers[1:]: dig = _smin(dig, chain(dg), 0.007)                                                # between each other the fingers keep a crease
-        d = np.minimum(_smin(body, dig, P.get('melt', 0.014)), _smin(body, chain(thumb), 0.012))                  # fingers and thumb melt into the palm at their roots; between thumb and first finger there is a sharp fold
+        for dg in fingers[1:]: dig = _smin(dig, chain(dg), 0.004)                                                # between each other the fingers keep a soft fold
+        d = np.minimum(_smin(body, dig, P.get('melt', 0.014)), _smin(body, chain(thumb), 0.004))                 # fingers melt into the palm at their roots; the thumb keeps a fold where it lies over the palm and the first finger
         d = _smax(d, rad - (0.114 + np.maximum(0, hx - gap / 2) * 3.0), 0.012); d = _smax(d, gap / 2 - hx, 0.006)  # at the wrist the glove is the ball's width, and ends there
         from scipy.ndimage import gaussian_filter; d = gaussian_filter(d, 0.8)                                   # takes the stair-steps out of folds and edges
         v, f, _, _ = measure.marching_cubes(d, level=0.0, spacing=(st, st, st)); np.savez(path, v=(v + lo).astype(np.float32), f=f.astype(np.int32))
@@ -476,7 +471,8 @@ def hand(name, pose, th, pos, F, N, scale=1.0, Fc=None, Fw=None, gap=0.036):
     cf = bpy.data.objects.new(name + 'CuffFrame', None); col.objects.link(cf); cf.parent = e                 # the cuff turns on the ball
     cf.matrix_basis = Matrix.Translation(J) @ Vector((0, 0, 1)).rotation_difference(dzc).to_matrix().to_4x4(); z0 = -gap / 2
     parts = [glove_mesh(name + 'Palm', P, th, e, tuple(aw), gap)]                                              # the whole glove, one surface
-    parts.append(lathe(name + 'Band', [(0.104 * math.sin(math.pi * k / 24), J.z + 0.104 * math.cos(math.pi * k / 24)) for k in range(25)], M_band, parent=e, n=64))   # the dark ball of the wrist
+    parts.append(lathe(name + 'Band', [(0.096 * math.sin(math.pi * k / 24), J.z + 0.096 * math.cos(math.pi * k / 24)) for k in range(25)], M_band, parent=e, n=64))   # the dark ball of the wrist
+    parts.append(lathe(name + 'BandCap', [(0.0, z0 + 0.0012), (0.111, z0 + 0.0012)], M_band, parent=cf, n=64))   # the cuff's top is dark inside its ring
     parts.append(torus(name + 'CuffLight', 0.1155, 0.0065, M_cyan, center=(0, 0, z0 + 0.003), n=72, m=10, parent=cf))   # a cyan ring on the cuff's edge
     parts.append(lathe(name + 'Cuff', [(0.0, z0), (0.112, z0), (0.126, z0 - 0.004), (0.134, z0 - 0.016), (0.134, z0 - 0.075), (0.129, z0 - 0.097), (0.115, z0 - 0.111), (0.085, z0 - 0.118), (0.0, z0 - 0.119)], M_glove, parent=cf, n=64))   # the white cuff
     HANDS[name] = [e, cf] + parts
@@ -497,7 +493,7 @@ def side_hand(name, s, cuff=(1.0, -0.45, -0.64), pose='present', F=None, N=None,
 def _env3(k, d): return tuple(float(v) for v in os.environ.get(k, d).split(','))
 def _axis(t, rise=5.0): t = math.radians(t); r = math.radians(rise); return tq(math.cos(t) * math.cos(r), math.sin(t), math.cos(t) * math.sin(r))   # out to the right in the 3/4 view, turned t degrees toward the viewer, rising so far in the picture
 # the near hand, as on the reference: the forearm comes toward us, the wrist bends, the palm is up and open to us, the thumb stands up, the fingers point out to the side
-_nt = _env3('NEARTILT', '0,30,56,27,0'); _g = math.radians(_nt[3]); _t = math.radians(_nt[0]); _r = math.radians(_nt[4])   # fingers, glove's wrist, cuff: degrees toward the viewer; how far the palm is tipped up; how the fingers rise
+_nt = _env3('NEARTILT', '0,37,66,27,0'); _g = math.radians(_nt[3]); _t = math.radians(_nt[0]); _r = math.radians(_nt[4])   # fingers, glove's wrist, cuff: degrees toward the viewer; how far the palm is tipped up; how the fingers rise
 _Nn = tq(-math.sin(_t) * math.cos(_r) * math.cos(_g) - math.sin(_r) * math.sin(_g), math.cos(_t) * math.cos(_g), -math.sin(_t) * math.sin(_r) * math.cos(_g) + math.cos(_r) * math.sin(_g))
 side_hand('TurnL', 1, wrist=tq(*_env3('NEARWRIST', '0.873,0.59,-0.551')), F=_axis(_nt[0], _nt[4]), N=_Nn, Fw=_axis(_nt[1], 2.0), Fc=_axis(_nt[2], 5.0), gap=0.006)
 # the far hand: held out past the end of the ring, palm to us, thumb up
