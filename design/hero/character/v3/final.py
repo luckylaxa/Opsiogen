@@ -19,7 +19,7 @@ def bsdf(name): return bpy.data.materials[name].node_tree.nodes['Principled BSDF
 def setp(name, **kw):
     b = bsdf(name)
     for k, v in kw.items(): b.inputs[k.replace('_', ' ')].default_value = v
-setp('body', Base_Color=(0.86, 0.86, 0.9, 1), Roughness=0.2, Coat_Weight=1.0, Coat_Roughness=0.012)
+setp('body', Base_Color=(0.85, 0.85, 0.92, 1), Roughness=0.2, Coat_Weight=1.0, Coat_Roughness=0.012)
 setp('glove', Base_Color=(0.88, 0.88, 0.91, 1), Roughness=0.48, Coat_Weight=0.2, Coat_Roughness=0.18, Sheen_Weight=0.3, Sheen_Roughness=0.45, Subsurface_Weight=0.08, Subsurface_Scale=0.02)
 setp('visor', Base_Color=(0.003, 0.003, 0.005, 1), Roughness=0.05, Coat_Weight=1.0, Coat_Roughness=0.0)
 setp('earBlack', Base_Color=(0.004, 0.004, 0.008, 1), Roughness=0.07, Coat_Weight=1.0, Coat_Roughness=0.0)
@@ -56,6 +56,8 @@ for l in G['LIGHTS']:
             if hasattr(l.data, attr): setattr(l.data, attr, False)
         if hasattr(l.data, 'cycles') and hasattr(l.data.cycles, 'cast_shadow'): l.data.cycles.cast_shadow = False
     else: l.light_linking.receiver_collection = chars
+    if l.name in ('Blue', 'Pink'):                               # up from under the floor line, for the pearly colour on the body
+        l.location = (-3.0 if l.name == 'Blue' else 3.0, -2.6, -1.0); l.rotation_euler = Vector(l.location).to_track_quat('Z', 'Y').to_euler(); l.data.energy = 190
 floor_only = bpy.data.collections.new('FloorOnly'); sc.collection.children.link(floor_only); floor_only.objects.link(catcher)
 ff = bpy.data.lights.new('FloorFill', 'AREA'); ff.size = 12; ff.energy = 260; ff.use_shadow = False
 if hasattr(ff, 'cycles') and hasattr(ff.cycles, 'cast_shadow'): ff.cycles.cast_shadow = False
@@ -66,7 +68,7 @@ cam.data.type = 'PERSP'; cam.data.sensor_width = 36
 def frame(dist=10.8, elev=8, target=(0, 0, -0.22), lens=85):
     cam.data.lens = lens; e = math.radians(elev); t = Vector(target)
     cam.location = t + Vector((0, -dist * math.cos(e), dist * math.sin(e))); cam.rotation_euler = (math.pi / 2 - e, 0, 0)
-sc.cycles.max_bounces = 8; sc.cycles.glossy_bounces = 6; sc.render.film_transparent = True; sc.view_settings.exposure = -0.35
+sc.cycles.max_bounces = 8; sc.cycles.glossy_bounces = 6; sc.render.film_transparent = True; sc.view_settings.exposure = -0.55
 
 def shot(name, res, samples):
     """Render; a quick pass of the lit parts for the glow; glow and floor glow laid over; flattened onto white."""
@@ -92,7 +94,7 @@ G['set_face']('happy'); G['show_hands'](['TurnR', 'TurnL'])
 if 'preview' in SHOTS:
     G['turn'](-22); frame(); shot('final-preview', 480, 48)
 if 'hero' in SHOTS:
-    G['turn'](-22); frame(); shot('final-hero', 1400, 144)
+    G['turn'](-22); frame(); shot('final-hero', 1200, 110)
 if 'views' in SHOTS:
     frame(dist=11.5, elev=6, target=(0, 0, -0.22))
     for nm, deg in (('final-front', 0), ('final-tq', -32), ('final-side', -90), ('final-back', 180)): G['turn'](deg); shot(nm, 900, 96)

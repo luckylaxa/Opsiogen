@@ -155,7 +155,7 @@ body.data.materials.append(M_body); body.parent = root
 for p in body.data.polygons: p.use_smooth = True
 
 # ---------------------------------------------------------------- visor: a rounded shape as seen from the front, domed, in a white bezel
-VA, VB, VZ, VN, BULGE = 0.765, 0.445, 0.095, 2.7, 0.095
+VA, VB, VZ, VN, BULGE = 0.8, 0.46, 0.1, 2.25, 0.035
 def bnd(th):
     c, s = math.cos(th), math.sin(th); return VA * math.copysign(abs(c) ** (2 / VN), c), VB * math.copysign(abs(s) ** (2 / VN), s)
 def proj(x, z, r=1.0): return Vector((x, -math.sqrt(max(r * r - x * x - z * z, 1e-6)), z))
@@ -172,7 +172,7 @@ for i in range(KS - 1):
     for j in range(MS): p, q = 1 + i * MS + j, 1 + i * MS + (j + 1) % MS; faces.append((p, p + MS, q + MS, q))
 visor = mesh_object('Visor', verts, faces, M_visor, uvs=uvs, parent=root)
 
-BZ = [(-0.016, -0.035), (-0.01, 0.02), (-0.003, 0.055), (0.012, 0.078), (0.034, 0.088), (0.058, 0.084), (0.08, 0.066), (0.096, 0.038), (0.105, 0.008), (0.108, -0.03)]
+BZ = [(-0.014, -0.03), (-0.008, 0.008), (-0.002, 0.02), (0.008, 0.026), (0.022, 0.028), (0.038, 0.025), (0.05, 0.017), (0.058, 0.006), (0.062, -0.02)]
 verts, faces = [], []; MB = 240
 C0 = proj(0, VZ)
 for j in range(MB):
@@ -187,15 +187,15 @@ for j in range(MB):
 mesh_object('Bezel', verts, faces, M_body, parent=root)
 
 # ---------------------------------------------------------------- ears: a raised plate, a cup, a black centre and a light ring
-EAR_LON, EAR_LAT = 72, 9
+EAR_LON, EAR_LAT = 76, 6
 for s in (1, -1):
     ax = on_sphere(s * EAR_LON, EAR_LAT); nm = 'L' if s > 0 else 'R'
-    plate = [(0.0, 1.012)] + [(rr, math.sqrt(1 - rr * rr) + 0.012) for rr in (0.2, 0.3, 0.36, 0.40, 0.415)] + [(0.425, math.sqrt(1 - 0.425 ** 2) + 0.004), (0.43, math.sqrt(1 - 0.43 ** 2) - 0.004), (0.432, math.sqrt(1 - 0.432 ** 2) - 0.02)]
+    plate = [(0.0, 1.012)] + [(rr, math.sqrt(1 - rr * rr) + 0.012) for rr in (0.2, 0.3, 0.4, 0.44, 0.455)] + [(0.465, math.sqrt(1 - 0.465 ** 2) + 0.004), (0.47, math.sqrt(1 - 0.47 ** 2) - 0.004), (0.472, math.sqrt(1 - 0.472 ** 2) - 0.02)]
     lathe('EarPlate' + nm, plate, M_body, axis=ax)
-    lathe('EarCup' + nm, [(0.34, 0.9), (0.34, 1.06), (0.333, 1.083), (0.316, 1.098), (0.29, 1.106), (0.255, 1.106), (0.222, 1.1), (0.21, 1.09), (0.205, 1.08)], M_body, axis=ax)
-    lathe('EarCentre' + nm, [(0.206, 1.078), (0.16, 1.083), (0.08, 1.086), (0.0, 1.087)], M_black, axis=ax)
-    torus('EarSeam' + nm, 0.43, 0.006, M_band, axis=ax, center=ax * math.sqrt(1 - 0.43 ** 2), n=160, m=8)
-    torus('EarRing' + nm, 0.208, 0.016, M_earRing, axis=ax, center=ax * 1.088, n=160, m=12, color=lambda t, b, s=s: ramp(EAR, (t + (0.25 if s > 0 else 0.75)) % 1.0))
+    lathe('EarCup' + nm, [(0.385, 0.86), (0.385, 0.985), (0.378, 1.02), (0.36, 1.045), (0.33, 1.06), (0.295, 1.066), (0.272, 1.062), (0.262, 1.054), (0.258, 1.046)], M_body, axis=ax)
+    lathe('EarCentre' + nm, [(0.259, 1.044), (0.2, 1.056), (0.1, 1.066), (0.0, 1.07)], M_black, axis=ax)
+    torus('EarSeam' + nm, 0.47, 0.006, M_band, axis=ax, center=ax * math.sqrt(1 - 0.47 ** 2), n=160, m=8)
+    torus('EarRing' + nm, 0.262, 0.024, M_earRing, axis=ax, center=ax * 1.052, n=160, m=12, color=lambda t, b, s=s: ramp(EAR, (t + (0.25 if s > 0 else 0.75)) % 1.0))
     for o in ('EarPlate', 'EarCup', 'EarCentre', 'EarRing', 'EarSeam'): bpy.data.objects[o + nm].parent = root
 
 # ---------------------------------------------------------------- the rainbow stripe over the head, ear to ear, and the glowing seam low on the front
@@ -203,12 +203,12 @@ E1 = on_sphere(EAR_LON, EAR_LAT); TOP = on_sphere(0, 58)
 n_ = Vector((1, 0, 0)).cross(TOP - Vector((0, E1.y, E1.z))).normalized(); d_ = n_.dot(E1); C_ = n_ * d_; rr_ = math.sqrt(1 - d_ * d_); up_ = n_.cross(Vector((1, 0, 0))).normalized()
 if up_.z < 0: up_ = -up_
 head_pts = [C_ + rr_ * (math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_) for a in [math.radians(172 - 164 * i / 199) for i in range(200)]]
-tube('HeadStripe', head_pts, 0.026, M_head, n=12, color=lambda t: spectrum(0.875 - 0.5 * t), parent=root)
+tube('HeadStripe', head_pts, 0.03, M_head, n=12, color=lambda t: spectrum(0.875 - 0.5 * t), parent=root)
 seam_pts = [on_sphere(lon, -54 + 26 * (lon / 78) ** 2, 1.0) for lon in [-78 + 156 * i / 159 for i in range(160)]]
-tube('LowSeam', seam_pts, lambda t: 0.017 * min(1, 6 * t, 6 * (1 - t)) + 0.002, M_seam, n=12, color=lambda t: ramp(SEAM, t), parent=root)
+tube('LowSeam', seam_pts, lambda t: 0.024 * min(1, 6 * t, 6 * (1 - t)) + 0.002, M_seam, n=12, color=lambda t: ramp(SEAM, t), parent=root)
 
 # ---------------------------------------------------------------- the ring: close round the body, tilted, banded like a rainbow
-RING_R, RING_r, RING_Z, RING_ROT = 1.16, 0.06, -0.37, (math.radians(10), math.radians(-15), 0)
+RING_R, RING_r, RING_Z, RING_ROT = 1.06, 0.08, -0.47, (math.radians(6), math.radians(-13), 0)
 ring = torus('Ring', RING_R, RING_r, M_ring, n=360, m=24, u0=(1, 0, 0), color=lambda t, b: spectrum(2 * t - 0.23 + 0.06 * math.sin(b)), parent=root)
 ring.location = (0, 0, RING_Z); ring.rotation_euler = RING_ROT
 def ring_point(a_deg):
@@ -226,7 +226,7 @@ POSES = {
     'chin':     dict(f=[(22, 20, 10), (86, 100, 72), (88, 102, 74)], spread=0.4, thumb=((0.7, -0.6, 0.45), (8, 8))),
     'pen':      dict(f=[(64, 80, 54), (70, 84, 58), (74, 88, 60)], spread=0.2, thumb=((0.4, -0.85, 0.5), (22, 24))),
 }
-FING = [(0.07, 0.04, (0.09, 0.065, 0.05), 8), (0.0, 0.0415, (0.095, 0.07, 0.055), 0), (-0.07, 0.039, (0.085, 0.06, 0.05), -8)]   # three fingers and a thumb, cartoon style
+FING = [(0.08, 0.053, (0.07, 0.05, 0.04), 10), (0.0, 0.055, (0.075, 0.054, 0.043), 0), (-0.08, 0.052, (0.066, 0.047, 0.038), -10)]   # three fingers and a thumb, cartoon style
 HANDS = {}
 def frame_from(F, N):
     Z = Vector(F).normalized(); Nn = Vector(N); Y = -(Nn - Z * Nn.dot(Z)).normalized(); X = Y.cross(Z)
@@ -244,14 +244,14 @@ def finger_path(base, d0, axis, lengths, curls, steps=10):
 def hand(name, pose, th, pos, F, N, scale=1.0):
     P = POSES[pose]; e = bpy.data.objects.new(name, None); col.objects.link(e); e.parent = root
     e.matrix_basis = Matrix.Translation(pos) @ frame_from(F, N).to_4x4() @ Matrix.Scale(scale, 4)
-    parts = [superellipsoid(name + 'Palm', 0.112, 0.062, 0.088, 0.7, 0.75, M_glove, parent=e)]
+    parts = [superellipsoid(name + 'Palm', 0.125, 0.072, 0.095, 0.75, 0.8, M_glove, parent=e)]
     for k, (x, r, lens, spr) in enumerate(FING):
         sp = math.radians(spr * P['spread'] * (1 if th > 0 else -1)); d0 = Vector((math.sin(sp), 0, math.cos(sp)))
         axis = d0.cross(Vector((0, -1, 0))).normalized(); base = Vector((th * x, -0.004, 0.045))
         parts.append(tube(name + 'F%d' % k, finger_path(base, d0, axis, lens, P['f'][k]), lambda t, r=r: r * (1 - 0.08 * t), M_glove, n=18, parent=e))
     (tx, ty, tz), tc = P['thumb']; d0 = Vector((th * tx, ty, tz)).normalized(); base = Vector((th * 0.085, -0.022, -0.028))
     axis = d0.cross(Vector((-th * 0.35, -1, 0.1))).normalized()
-    parts.append(tube(name + 'Thumb', finger_path(base, d0, axis, (0.075, 0.065), tc), lambda t: 0.045 * (1 - 0.08 * t), M_glove, n=18, parent=e))
+    parts.append(tube(name + 'Thumb', finger_path(base, d0, axis, (0.075, 0.065), tc), lambda t: 0.057 * (1 - 0.08 * t), M_glove, n=18, parent=e))
     parts.append(lathe(name + 'Cuff', [(0.05, -0.03), (0.06, -0.08), (0.066, -0.12), (0.07, -0.15), (0.072, -0.165)], M_glove, parent=e, n=48))
     parts.append(lathe(name + 'Band', [(0.0, -0.163), (0.07, -0.163), (0.076, -0.168), (0.077, -0.2), (0.072, -0.205), (0.05, -0.206), (0.0, -0.206)], M_band, parent=e, n=48))
     parts.append(torus(name + 'CuffLight', 0.0745, 0.0075, M_cyan, center=(0, 0, -0.203), n=64, m=10, parent=e))
@@ -262,7 +262,7 @@ def show_hands(names):
     for k, objs in HANDS.items():
         for o in objs: o.hide_render = k not in names
 
-def side_hand(name, s, cuff=(0.95, -0.45, -0.54), pose='open', F=None, N=None, scale=1.3):
+def side_hand(name, s, cuff=(0.93, -0.5, -0.55), pose='open', F=None, N=None, scale=1.4):
     """A hand at the character's side (s = -1 its right, +1 its left), given by where its cuff ends."""
     F = Vector(F or (s * 0.95, -0.15, 0.27)).normalized(); N = N or (-s * 0.1, -0.6, 0.8)
     return hand(name, pose, -s, Vector((s * cuff[0], cuff[1], cuff[2])) + F * 0.205 * scale, F, N, scale)
@@ -289,10 +289,10 @@ def face_image(kind, blush=False):
         d.polygon(pts, fill=255)
     def rrect(x, z, w, h, r, width):
         (a, b), (c, e) = P(x - w / 2, z + h / 2), P(x + w / 2, z - h / 2); d.rounded_rectangle((a, b, c, e), radius=r * PX * SS, outline=255, width=round(width * PX * SS))
-    EX, EZ = 0.335, 0.085
+    EX, EZ = 0.345, 0.125
     if kind == 'happy':
-        for sx in (-1, 1): arc(sx * EX, EZ - 0.07, 0.15, 0.135, 25, 155, 0.072)
-        smile(0, -0.055, 0.25, 0.1)
+        for sx in (-1, 1): arc(sx * EX, EZ - 0.05, 0.175, 0.155, 22, 158, 0.088)
+        smile(0, -0.07, 0.27, 0.125)
     elif kind == 'thinking':
         disc(-0.29, EZ, 0.075); disc(0.29, EZ, 0.075)
         arc(-0.31, EZ + 0.06, 0.11, 0.06, 70, 130, 0.035); arc(0.29, EZ + 0.08, 0.1, 0.07, 30, 150, 0.035)
