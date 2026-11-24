@@ -39,7 +39,8 @@ def neon(name, strength, white=0.12):
     nt.links.new(inv.outputs[0], st.inputs['Value']); nt.links.new(st.outputs['Result'], b.inputs['Emission Strength'])
     b.inputs['Roughness'].default_value = 0.1; b.inputs['Coat Weight'].default_value = 1.0; b.inputs['Coat Roughness'].default_value = 0.0
 bpy.data.materials['visor'].node_tree.nodes['Principled BSDF'].inputs['Emission Strength'].default_value = 1.6
-neon('headStripe', 1.7, white=0.0); neon('lowSeam', 2.6)
+neon('lowSeam', 2.6)
+setp('headStripe', Roughness=0.12, Coat_Weight=1.0, Coat_Roughness=0.0, Emission_Strength=1.9)   # an even band of light, hard-edged
 for nm in ('rim',): setp(nm, Roughness=0.16, Coat_Weight=1.0, Coat_Roughness=0.01)
 neon('earRing', 1.3, white=0.0)
 rb = bsdf('ring'); rb.inputs['Emission Strength'].default_value = 0.85; rb.inputs['Roughness'].default_value = 0.1; rb.inputs['Coat Weight'].default_value = 1.0; rb.inputs['Coat Roughness'].default_value = 0.0
@@ -73,11 +74,11 @@ cam.data.type = 'PERSP'; cam.data.sensor_width = 36
 def frame(dist=10.8, elev=8, target=(0, 0, -0.22), lens=85):
     cam.data.lens = lens; e = math.radians(elev); t = Vector(target)
     cam.location = t + Vector((0, -dist * math.cos(e), dist * math.sin(e))); cam.rotation_euler = (math.pi / 2 - e, 0, 0)
-sc.cycles.max_bounces = 8; sc.cycles.glossy_bounces = 6; sc.render.film_transparent = True; sc.view_settings.exposure = -0.55
+sc.render.filter_size = 1.0; sc.cycles.max_bounces = 8; sc.cycles.glossy_bounces = 6; sc.render.film_transparent = True; sc.view_settings.exposure = -0.55
 
-def shot(name, res, samples):
+def shot(name, res, samples, w=None, floor=True):
     """Render; a quick pass of the lit parts for the glow; glow and floor glow laid over; flattened onto white."""
-    sc.render.resolution_x = sc.render.resolution_y = res
+    sc.render.resolution_x = w or res; sc.render.resolution_y = res
     beauty = os.path.join(OUT, name + '-raw.png'); glow = os.path.join(OUT, name + '-glow.png')
     sc.cycles.samples = samples; sc.cycles.use_denoising = True; sc.render.filepath = beauty; bpy.ops.render.render(write_still=True)
     BG = G['BG']; BG.inputs['Strength'].default_value = 0.0; catcher.hide_render = True
@@ -90,7 +91,7 @@ def shot(name, res, samples):
     BG.inputs['Strength'].default_value = G['WORLD']; catcher.hide_render = False
     for o in G['LIGHTS']: o.hide_render = False
     c = world_to_camera_view(sc, cam, Vector((0, 0, FLOOR + 0.02))); l = world_to_camera_view(sc, cam, Vector((-0.8, 0, FLOOR + 0.02))); u = world_to_camera_view(sc, cam, Vector((0, -0.25, FLOOR + 0.02)))
-    fl = (c.x * res, (1 - c.y) * res, abs(c.x - l.x) * res, max(abs(c.y - u.y) * res, 6))
+    fl = (c.x * res, (1 - c.y) * res, abs(c.x - l.x) * res, max(abs(c.y - u.y) * res, 6)) if floor else None
     rgba = os.path.join(OUT, name + '.png'); composite(beauty, glow, rgba, fl, bloom=0.8, shadow=0.42)
     im = Image.open(rgba); bg = Image.new('RGBA', im.size, (255, 255, 255, 255)); bg.alpha_composite(im); bg.convert('RGB').save(os.path.join(OUT, name + '-white.jpg'), quality=93)
     print('rendered', name)
@@ -98,6 +99,8 @@ def shot(name, res, samples):
 G['set_face']('happy'); G['show_hands'](['TurnR', 'TurnL'])
 if 'preview' in SHOTS:
     G['turn'](-22); frame(); shot('final-preview', 480, 48)
+if 'top' in SHOTS:                                               # a close look at the top of the head, at full size
+    G['turn'](-22); frame(target=(0.19, 0, 0.65), lens=175); shot('final-top', 600, 160, w=1400, floor=False)
 if 'hero' in SHOTS:
     G['turn'](-22); frame(); shot('final-hero', 1200, 110)
 if 'views' in SHOTS:

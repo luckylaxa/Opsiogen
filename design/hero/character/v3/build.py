@@ -235,11 +235,27 @@ mod = body.modifiers.new('headcut', 'BOOLEAN'); mod.operation = 'DIFFERENCE'; mo
 bpy.context.view_layer.objects.active = body; bpy.ops.object.modifier_apply(modifier=mod.name); bpy.data.objects.remove(headcut)
 s_top = 1 if n_.z > d_ else -1
 A_ = n_ * s_top; h_e = s_top * d_ + SLOT; RS = 1.024; th_e = math.acos(h_e / RS); rho_e = RS * math.sin(th_e)
-lathe('TopShell', [(RS * math.sin(th_e * k / 90), RS * math.cos(th_e * k / 90)) for k in range(91)], M_body, axis=A_, n=320)   # the shell behind the cut
-lathe('TopShellLip', [(rho_e, h_e), (rho_e * 0.985 / RS, h_e * 0.985 / RS)], M_body, axis=A_, n=320)                            # its edge: a crisp step
-for o in ('TopShell', 'TopShellLip'): bpy.data.objects[o].parent = root
-head_pts = [C_ + (rr_ - 0.002) * (math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_) + n_ * (-s_top * 0.014) for a in [math.radians(158 - 136 * i / 199) for i in range(200)]]
-tube('HeadStripe', head_pts, lambda t: 0.026 * math.sin(math.pi * t) ** 0.4 + 0.0004, M_head, n=14, color=lambda t: ramp(HEAD, t), parent=root)   # along the lip; both ends sharp
+# the shell behind the cut, with a tiny rounded bevel on its edge so the edge catches a thin, sharp highlight, then a straight wall
+RB = 0.0035; thc = th_e - RB / RS; Rc = RS - RB
+def er_(th): return Vector((math.sin(th), math.cos(th)))
+def et_(th): return Vector((math.cos(th), -math.sin(th)))
+prof = [(RS * math.sin(thc * k / 90), RS * math.cos(thc * k / 90)) for k in range(91)]
+for k in range(1, 9):
+    ph = math.pi / 2 * k / 8; q = er_(thc) * Rc + RB * (math.cos(ph) * er_(thc) + math.sin(ph) * et_(thc)); prof.append((q.x, q.y))
+qe = Vector(prof[-1]); prof.append(tuple(qe * (0.985 / qe.length)))
+lathe('TopShell', prof, M_body, axis=A_, n=360); bpy.data.objects['TopShell'].parent = root
+# the top light: a flat band of light with hard edges, from the foot of the shell's edge down onto the face piece; its ends come to points
+def head_band(NA=260, K=7, W0=0.05):
+    verts, faces, cols = [], [], []; a0, a1 = math.radians(160), math.radians(20)
+    for i in range(NA + 1):
+        t = i / NA; a = a0 + (a1 - a0) * t; dirv = math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_; W = W0 * math.sin(math.pi * t) ** 0.55
+        for k in range(K):
+            u = s_top * SLOT - s_top * W * k / (K - 1)
+            q = n_ * (d_ + u) + dirv * math.sqrt(max(1 - (d_ + u) ** 2, 0.0)); verts.append(q * 1.0025); cols.append(lin(ramp(HEAD, t)))
+    for i in range(NA):
+        for k in range(K - 1): p_ = i * K + k; faces.append((p_, p_ + 1, p_ + K + 1, p_ + K))
+    return mesh_object('HeadStripe', verts, faces, M_head, colors=cols, merge=False, parent=root)
+head_band()
 me_ = body.data; base_slot = len(me_.materials); me_.materials.append(M_base); bm = bmesh.new(); bm.from_mesh(me_)
 for f in bm.faces:
     f.smooth = True
