@@ -30,7 +30,7 @@ def ramp(stops, t):
     for (t0, c0), (t1, c1) in zip(stops, stops[1:]):
         if t <= t1: k = (t - t0) / max(t1 - t0, 1e-9); k = k * k * (3 - 2 * k); return mix(c0, c1, k)
     return stops[-1][1]
-HEAD = [(0.0, hexrgb('#ffd400')), (0.22, hexrgb('#ffc000')), (0.32, hexrgb('#ff7a00')), (0.42, hexrgb('#ff1e10')), (0.53, hexrgb('#ff10a0')), (0.64, hexrgb('#a010f0')), (0.76, hexrgb('#4a28ff')), (1.0, hexrgb('#2a3cff'))]   # yellow, orange, red, magenta, purple, blue
+HEAD = [(0.0, hexrgb('#ffd400')), (0.22, hexrgb('#ffc000')), (0.32, hexrgb('#ff7a00')), (0.42, hexrgb('#ff1e10')), (0.53, hexrgb('#ff10a0')), (0.64, hexrgb('#a010f0')), (0.76, hexrgb('#6a24ff')), (1.0, hexrgb('#5034ff'))]   # yellow, orange, red, magenta, purple, violet
 EAR = [(0.0, hexrgb('#2f6bff')), (0.5, hexrgb('#19c8ff')), (1.0, hexrgb('#2f6bff'))]
 EARIN = [(0.0, hexrgb('#ff1fd0')), (0.5, hexrgb('#8a2cff')), (1.0, hexrgb('#ff1fd0'))]
 SEAM = [(0.0, hexrgb('#2a7bff')), (0.5, hexrgb('#8a2cff')), (1.0, hexrgb('#ff4fd8'))]
@@ -192,8 +192,9 @@ bezel_sweep('BezelChamfer', [(-0.0145, 0.004), (0.016, 0.02)], M_rim)   # a thin
 bezel_sweep('Bezel', [(0.016, 0.02), (0.0172, 0.0222), (0.0195, 0.0232), (0.034, 0.021), (0.05, 0.012), (0.062, 0.003), (0.066, -0.03)], M_body)   # a narrow white lip, a crisp edge against the band
 
 # ---------------------------------------------------------------- ears: a raised plate, a cup, a black centre and a light ring
-EAR_LON, EAR_LAT = 70, 6                                         # turned a little toward the front, like the reference
-STRIPE_LON = 76                                                  # the head stripe still ends under the housing
+EAR_LON, EAR_LAT = 68, 8                                         # as on the reference's 3/4 view (turned 28 degrees, the ear 40 degrees off the camera)
+if os.environ.get('EAR'): EAR_LON, EAR_LAT = [float(v) for v in os.environ['EAR'].split(',')]
+STRIPE_LON = 63                                                  # the top seam comes down to the housing's front-top edge
 EARBAND = [(0.0, hexrgb('#16c8ff')), (0.22, hexrgb('#1f6bff')), (0.45, hexrgb('#2a3cff')), (0.66, hexrgb('#7a2cff')), (0.84, hexrgb('#d81fe6')), (1.0, hexrgb('#ff1fc8'))]
 M_earWhite = material('earWhite', (1, 1, 1), rough=0.3, emit=(1, 1, 1), strength=5.0)
 M_earLine = material('earLine', (0.4, 0.42, 0.5), rough=0.45); DARK_IN_GLOW.add('earLine')
@@ -209,8 +210,9 @@ def ear_dome(name, ax, R, h0, bulge, NA=200, K=32):
             t = 2 * math.pi * i / NA; d = math.cos(t) * u + math.sin(t) * v; rim = ramp(EARBAND, 0.3 + 0.7 * (0.5 - 0.5 * d.z / m))   # deeper: blue at the top, magenta at the bottom
             hl = (d - HL).length                                 # the soft highlight at the lens's top front
             w = min(1.0, max(0.0, (f - 0.3) / 0.7)) ** 1.3 * (0.75 + 0.25 * max(0.0, d.dot(HL)))
-            c = mix(C0, rim, w); g = 0.8 * math.exp(-(((f - 0.5) / 0.17) ** 2 + (hl / 0.45) ** 2))
-            verts.append(a * hh + d * rr); cols.append(lin(mix(c, (0.5, 0.52, 0.64), g)))
+            c = mix(C0, rim, w); ang = math.acos(max(-1.0, min(1.0, d.dot(HL))))
+            g = 0.62 * math.exp(-((f - 0.64) / 0.2) ** 2 - (ang / 0.85) ** 2)        # a broad, soft sheen inside the upper front of the lens, like a softbox reflection
+            verts.append(a * hh + d * rr); cols.append(lin(mix(c, (0.56, 0.62, 0.8), g)))
     for i in range(NA): faces.append((0, 1 + i, 1 + (i + 1) % NA))
     for k in range(K - 1):
         for i in range(NA): p_ = 1 + k * NA + i; q_ = 1 + k * NA + (i + 1) % NA; faces.append((p_, p_ + NA, q_ + NA, q_))
@@ -228,18 +230,22 @@ def ear_band(name, ax, r0, r1, h, bump=0.012, NA=200, K=10):
     return mesh_object(name, verts, faces, M_earRing, colors=cols, merge=False)
 for s in (1, -1):
     ax = on_sphere(s * EAR_LON, EAR_LAT); nm = 'L' if s > 0 else 'R'
-    lathe('EarCup' + nm, [(0.425, 0.86), (0.425, 0.93), (0.423, 0.94), (0.416, 0.952), (0.4, 0.97), (0.375, 0.99), (0.35, 1.004), (0.33, 1.011), (0.322, 1.012), (0.318, 1.009)], M_body, axis=ax, n=160)   # the white housing: a gentle dome, a crisp edge, rolling into a big opening
-    lathe('EarGroove' + nm, [(0.319, 1.009), (0.317, 0.996), (0.25, 0.996), (0.248, 1.004)], M_black, axis=ax, n=160)   # the channel: a thin dark edge round the light
-    ear_band('EarBand' + nm, ax, 0.261, 0.315, 0.998, bump=0.013)                                                                     # the neon band
-    torus('EarWhite' + nm, 0.2465, 0.005, M_earWhite, axis=ax, center=ax * 1.007, n=200, m=10)                         # a thin white-hot line on its inner edge
-    ear_dome('EarCentre' + nm, ax, 0.243, 1.004, 0.04)                                                                   # the glossy lens
-    torus('EarLine' + nm, 0.428, 0.0035, M_earLine, axis=ax, center=ax * math.sqrt(1 - 0.428 ** 2), n=200, m=8)          # a soft grey line where the housing meets the head
+    lathe('EarCup' + nm, [(0.41, 0.86), (0.41, 0.99), (0.4085, 1.0), (0.404, 1.008), (0.397, 1.012), (0.385, 1.0155), (0.365, 1.0185), (0.345, 1.021), (0.325, 1.0225), (0.314, 1.023), (0.31, 1.0205)], M_body, axis=ax, n=200)   # the white housing: a short drum standing off the head, a crisp edge, a nearly flat face round a big opening
+    lathe('EarGroove' + nm, [(0.311, 1.0205), (0.309, 1.0075), (0.244, 1.0075), (0.242, 1.0155)], M_black, axis=ax, n=200)   # the channel: a thin dark edge round the light
+    ear_band('EarBand' + nm, ax, 0.2525, 0.304, 1.0095, bump=0.0125)                                                                  # the neon band
+    torus('EarWhite' + nm, 0.2385, 0.0042, M_earWhite, axis=ax, center=ax * 1.0185, n=200, m=10)                       # a thin white-hot line on its inner edge
+    ear_dome('EarCentre' + nm, ax, 0.2355, 1.0155, 0.04)                                                                 # the glossy lens
+    torus('EarLine' + nm, 0.413, 0.0035, M_earLine, axis=ax, center=ax * math.sqrt(1 - 0.413 ** 2), n=200, m=8)          # a soft grey line where the housing meets the head
     for o in ('EarCup', 'EarGroove', 'EarBand', 'EarWhite', 'EarCentre', 'EarLine'): bpy.data.objects[o + nm].parent = root
 
 # ---------------------------------------------------------------- the rainbow stripe over the head, ear to ear, and the glowing seam low on the front
 E1 = on_sphere(STRIPE_LON, EAR_LAT); TOP = on_sphere(0, 58)
 n_ = Vector((1, 0, 0)).cross(TOP - Vector((0, E1.y, E1.z))).normalized(); d_ = n_.dot(E1); C_ = n_ * d_; rr_ = math.sqrt(1 - d_ * d_); up_ = n_.cross(Vector((1, 0, 0))).normalized()
 if up_.z < 0: up_ = -up_
+EAR_AX = on_sphere(EAR_LON, EAR_LAT); EAR_ANG = math.asin(0.41) + math.radians(1.2)
+def _circ(a): return C_ + rr_ * (math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_)
+A_EAR = next(math.radians(k / 10) for k in range(900, 0, -1) if _circ(math.radians(k / 10)).normalized().angle(EAR_AX) <= EAR_ANG)   # where the seam meets the housing
+A_GLOW = A_EAR + math.radians(10)                                                                  # the light fades out a little above it
 # the bottom piece, as on the current website character: a groove that parts the base panel, lit along its front with the gradient line
 M_base = material('base', (0.8, 0.82, 0.88), rough=0.18, coat=1.0); M_dark = material('socket', (0.012, 0.015, 0.02), rough=0.3); DARK_IN_GLOW |= {'base', 'socket'}
 RHO = math.radians(55); h0 = Vector((math.sin(math.radians(192)), -math.cos(math.radians(192)), 0))
@@ -273,7 +279,7 @@ lathe('TopShell', prof[:-1], M_body, axis=A_, n=360); bpy.data.objects['TopShell
 lathe('TopShellWall', [prof[-2], prof[-1]], M_body, axis=A_, n=360); bpy.data.objects['TopShellWall'].parent = root   # the shell's edge, white
 # the top light: a flat band of light with hard edges, from the foot of the shell's edge down onto the face piece; its ends come to points
 def head_band(NA=300, K=7, W0=0.05):
-    verts, faces, cols = [], [], []; a0, a1 = math.radians(152), math.radians(34)
+    verts, faces, cols = [], [], []; a0, a1 = math.radians(186) - A_GLOW, A_GLOW
     for i in range(NA + 1):
         t = i / NA; a = a0 + (a1 - a0) * t; dirv = math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_; W = W0 * math.sin(math.pi * t) ** 1.15; fade = min(1.0, t / 0.14, (1 - t) / 0.14) ** 1.5   # long pointed ends that fade into the seam
         for k in range(K):
@@ -283,6 +289,12 @@ def head_band(NA=300, K=7, W0=0.05):
         for k in range(K - 1): p_ = i * K + k; faces.append((p_, p_ + 1, p_ + K + 1, p_ + K))
     return mesh_object('HeadStripe', verts, faces, M_head, colors=cols, merge=False, parent=root)
 head_band()
+def shell_edge_pt(a, lift=1.0025):
+    dirv = math.cos(a) * Vector((1, 0, 0)) + math.sin(a) * up_; u = s_top * SLOT
+    return (n_ * (d_ + u) + dirv * math.sqrt(max(1 - (d_ + u) ** 2, 0.0))) * lift
+for a_s, a_e in ((A_GLOW + math.radians(3), A_EAR), (math.radians(186) - A_GLOW - math.radians(3), math.pi - A_EAR)):   # both sides
+    pts = [shell_edge_pt(a_s + (a_e - a_s) * k / 40) for k in range(41)]
+    tube('TopSeam%d' % (a_s > 1.6), pts, 0.0032, M_earLine, n=10, parent=root)                 # a fine, soft grey seam from the end of the light down to the housing
 me_ = body.data; base_slot = len(me_.materials); me_.materials.append(M_base); bm = bmesh.new(); bm.from_mesh(me_)
 for f in bm.faces:
     f.smooth = True
@@ -303,7 +315,9 @@ for i in range(NG):
 mesh_object('LowSeam', verts, faces, M_seam, colors=cols, merge=False, parent=root)
 
 # ---------------------------------------------------------------- the ring: close round the body, tilted, banded like a rainbow
-RING_R, RING_r, RING_Z, RING_ROT = 1.08, 0.07, -0.45, (math.radians(7), math.radians(-11), 0)
+RING_R, RING_r, RING_Z, RING_ROT = 1.19, 0.07, -0.25, (math.radians(15), math.radians(-10), 0)   # fitted to the reference's 3/4 view: low at the front, across the foot of the ear, up behind it
+if os.environ.get('RING'):                                       # for trying settings: RING=rho,z,pitch,roll
+    _r = [float(v) for v in os.environ['RING'].split(',')]; RING_R, RING_Z, RING_ROT = _r[0], _r[1], (math.radians(_r[2]), math.radians(_r[3]), 0)
 LOGO = [(0.0, hexrgb('#ffb000')), (0.1, hexrgb('#b4f000')), (0.2, hexrgb('#19e05a')), (0.32, hexrgb('#00d8ff')), (0.45, hexrgb('#2a5bff')), (0.58, hexrgb('#9b1cf0')), (0.7, hexrgb('#ff2fd0')), (0.82, hexrgb('#ff3a2a')), (0.92, hexrgb('#ff8a00')), (1.0, hexrgb('#ffb000'))]
 def logo_ring(name, R, w, h, mat, n=420, m=28, twist=1.0):
     """The ring as the logo's O: a flat glossy band that twists as it goes round, in the logo's deep colours with dark turns."""
@@ -314,7 +328,7 @@ def logo_ring(name, R, w, h, mat, n=420, m=28, twist=1.0):
             b = 2 * math.pi * j / m; x, y = w * math.cos(b), h * math.sin(b)
             x, y = x * math.cos(tw) - y * math.sin(tw), x * math.sin(tw) + y * math.cos(tw)
             verts.append(out * (R + x) + up * y)
-            c = ramp(LOGO, (2 * t + 0.02 + 0.07 * math.sin(b)) % 1.0); hl = math.exp(-((((b - 1.1 + math.pi) % (2 * math.pi)) - math.pi) / 0.2) ** 2) * 0.85; c = mix(c, (1, 1, 1), hl)   # a glossy white line along the tube
+            ph = ((a + math.pi) % (2 * math.pi)) - math.pi; c = ramp(LOGO, min(1.0, max(0.0, 1.0 - abs(ph) / math.pi + 0.02 * math.sin(b))));   # mirrored like the reference: yellow on the left side, the same order over the front and the back hl = math.exp(-((((b - 1.1 + math.pi) % (2 * math.pi)) - math.pi) / 0.2) ** 2) * 0.85; c = mix(c, (1, 1, 1), hl)   # a glossy white line along the tube
             shade = 1.0
             cols.append(lin(tuple(v * shade for v in c)))
     for i in range(n):
@@ -386,7 +400,7 @@ def side_hand(name, s, cuff=(1.0, -0.45, -0.64), pose='present', F=None, N=None,
     F = Vector(F or (s * 0.92, -0.22, 0.3)).normalized(); N = N or ((0.15, -0.72, 0.68) if s > 0 else (0.42, -0.65, 0.64))   # palm up and tilted to the viewer, fingers out to the side
     return hand(name, pose, -s, Vector((s * cuff[0], cuff[1], cuff[2])) + Vector(Fc or F).normalized() * 0.253 * scale, F, N, scale, Fc)
 
-side_hand('TurnR', -1); side_hand('TurnL', 1, F=(0.94, 0.36, -0.06), N=(0.38, -0.85, 0.36), Fc=(1.0, -0.06, 0.06))   # palm to us, the cuff coming a little toward us   # the near hand lies out flat to the side, palm up to us
+side_hand('TurnR', -1, cuff=tuple(float(v) for v in os.environ.get('FARCUFF', '0.98,-0.78,-0.5').split(','))); side_hand('TurnL', 1, F=(0.897, 0.456, -0.06), N=(0.467, -0.806, 0.36), Fc=(1.0, 0.045, 0.06))   # palm to us, the cuff coming a little toward us   # the near hand lies out flat to the side, palm up to us
 
 # ---------------------------------------------------------------- the face, drawn as light on the visor (the web page draws the same shapes live)
 TW = 1400; TH = round(TW * VB / VA); PX = TW / (2 * VA)
