@@ -304,6 +304,10 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
 - **Cut 17 (25 Nov), solid again.** Lucky on cut 16: "Keep solid only. Squash not looking good." The squash and
   stretch are gone (film, module and Home); everything else is cut 16 (the acting hands, clear of the ring).
   Out: `out/opsiogen-showreel-v17.mp4`.
+- **Cut 18 (25 Nov), flips.** Lucky on the chapter words: "Instead of simple jump can we do flip jump to normal
+  position?" In the chapter words it flips right over from word to word and lands upright (hands tucked in the flip,
+  out wide to land); the four fast words at the end get a flip on each bounce, and it leaves on the last with one
+  more (`hops(..., {flip: 360})`). Still solid. Out: `out/opsiogen-showreel-v18.mp4`.
 - The logo keeps its own shape; only at the very end (cut 11, as Lucky asked) is it shown larger, then settles at
   its own size. Otherwise it only fades in. Nothing else is shown larger than its own size.
 
