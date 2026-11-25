@@ -337,29 +337,21 @@ export class Character {
     body.updateMatrixWorld(true);
     const chin = body.getObjectByName("SeamChin"), seamMat = chin?.material;
     for (const n of ["Sphere_1", "Sphere_2", "LowSeam", "LowSeamGlow", "SeamChin"]) body.getObjectByName(n)?.removeFromParent();
-    // The cut, as on the reference sheet: round the ball at RHO(f) from its lowest point, f being the way round from the
-    // front. Under the face it is the edge of a plane tilted back by TILT, so from the front it is one true, even arc, the
-    // same on both sides (Lucky, 25 Nov: "equal weight and perfect curve for front view"); it reaches SIDE at each side,
-    // then rises on to BACK across the back, levelling off as it goes, its slope carried on smoothly, so from the side
-    // it climbs and flattens out high at the back (Lucky's markup: "you can see that curve shape. Follow this").
-    const TILT = 26 * rad, CAP = 59 * rad, BACK = 73 * rad;
-    const plane = (a) => { const p = Math.cos(TILT), q = -Math.sin(TILT) * Math.cos(a), r = Math.hypot(p, q); return Math.atan2(q, p) + Math.acos(Math.cos(CAP) / r); };
-    // From the side on, it goes on rising at the same slope and eases out to level across the back, with no sudden bend
-    // (Lucky: "side view is not perfect arc or curved"): no change of curvature where the two halves meet, none at the back.
-    const SIDE = plane(Math.PI / 2), n = (Math.tan(TILT) * (Math.PI / 2)) / (BACK - SIDE);
-    const ease = (t) => n * t + (10 - 6 * n) * t ** 3 + (8 * n - 15) * t ** 4 + (6 - 3 * n) * t ** 5;
-    const RHO = (f) => {
-      const a = Math.abs(Math.atan2(Math.sin(f), Math.cos(f)));
-      return a <= Math.PI / 2 ? plane(a) : SIDE + (BACK - SIDE) * ease((a - Math.PI / 2) / (Math.PI / 2));
-    };
-    const AX = new V3(0, -1, 0), U = new V3(0, 0, 1), V = AX.clone().cross(U);
-    // The same gap all the way round (Lucky: "all the side cutting gaps should be the same"): widths are measured across
-    // the cut, so where it climbs steeply they are spread a little further along RHO (K) to stay the same across it.
+    // The cut (Lucky, 25 Nov: "it should be very perfect cutting. There should not be any curve, the angle deviations
+    // or anything like that ... you cut straight cut ... with a slight elevation"): one flat cut across the bottom of
+    // the ball, tilted back by TILT, so it is a perfect circle on the ball: one true, even arc from the front, a
+    // straight, gentle rise from the side, low under the face and a little higher at the back, never a bend. RHO is its
+    // angle from AX, the middle of the bottom panel; f goes round from the front.
+    const TILT = 20 * rad, CAP = 48 * rad;
+    const AX = new V3(0, -Math.cos(TILT), -Math.sin(TILT)), U = new V3(0, -Math.sin(TILT), Math.cos(TILT)), V = AX.clone().cross(U);
+    const RHO = () => CAP;
+    // The same gap all the way round (Lucky: "all the side cutting gaps should be the same"): on a flat cut every
+    // width is the same all round (K would spread widths where a cut climbs steeply; here it is 1 everywhere).
     const K = (f) => { const e = 1e-3, d = (RHO(f + e) - RHO(f - e)) / (2 * e); return Math.hypot(1, d / Math.sin(RHO(f))); };
     const dir = (th, f) => new V3().copy(U).multiplyScalar(Math.cos(f)).addScaledVector(V, Math.sin(f)).multiplyScalar(Math.sin(th)).addScaledVector(AX, Math.cos(th));
     const tang = (th, f) => new V3().copy(U).multiplyScalar(Math.cos(f)).addScaledVector(V, Math.sin(f)).multiplyScalar(Math.cos(th)).addScaledVector(AX, -Math.sin(th));
     const polar = (q) => { const d = q.clone().normalize(); return [Math.acos(Math.max(-1, Math.min(1, d.dot(AX)))), Math.atan2(d.dot(V), d.dot(U))]; };
-    const RP = 1, BP = 0.022, BS = 0.009, FLOOR = 0.9, OUT = 80 * rad, N = 240;
+    const RP = 1, BP = 0.022, BS = 0.009, FLOOR = 0.9, OUT = 75 * rad, N = 240;
     const edgeOf = (f) => RHO(f) - 0.033 * K(f);                         // the panel's edge
     const wallOf = (f) => RHO(f) + 0.006 * K(f);                         // the shell's wall
     // The shell: shaded as a ball (its points are packed small numbers: normals are rewritten, points never), and
