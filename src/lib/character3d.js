@@ -325,10 +325,9 @@ export class Character {
 
   /**
    * The bottom panel and the cut round it (Lucky, 25 Nov, from reference pictures: "it has a cutting ... this bottom
-   * rack will open ... inside that cutting that light gradient light comes in"). The cut is a plane tilted only front
-   * to back, as on the reference sheet: level and even from the front, slanting up toward the back from the side
-   * ("from the front view, it should look the straight cutting ... from the side view, it should look like a reference
-   * image"). The panel is part of the same ball as the shell, so the outline stays a perfect circle with only the cut
+   * rack will open ... inside that cutting that light gradient light comes in"). The cut follows the reference sheet:
+   * level and even from the front ("from the front view, it should look the straight cutting") and an S from the side,
+   * low under the face and high across the back. The panel is part of the same ball as the shell, so the outline stays a perfect circle with only the cut
    * between them; both edges of the cut are rounded, with walls down into it; and the light is inside the cut, on the
    * panel's edge, spilling onto the panel and the walls, dark across the back. The model's own bottom (its panel,
    * groove, drawn line and the shell round them) is replaced here, and the shell is shaded as the true ball it is.
@@ -338,16 +337,20 @@ export class Character {
     body.updateMatrixWorld(true);
     const chin = body.getObjectByName("SeamChin"), seamMat = chin?.material;
     for (const n of ["Sphere_1", "Sphere_2", "LowSeam", "LowSeamGlow", "SeamChin"]) body.getObjectByName(n)?.removeFromParent();
-    // The cut: the edge of a cap round AX (down, tilted back by TILT), RHO from it; thin at the front, wide at the back.
-    const TILT = 25 * rad, RHO = 55 * rad;
-    const AX = new V3(0, -Math.cos(TILT), -Math.sin(TILT)), U = new V3(0, -Math.sin(TILT), Math.cos(TILT)), V = AX.clone().cross(U);
+    // The cut, as on the reference sheet (Lucky's markup, 25 Nov: "you can see that curve shape. Follow this"): round the
+    // ball at RHO(f) from its lowest point, f being the way round from the front. Level under the face, it rises in a
+    // smooth S round each side to high across the back, so it is even from the front and an S from the side.
+    const smooth = (t) => { const k = Math.min(1, Math.max(0, t)); return k * k * k * (k * (6 * k - 15) + 10); };
+    const FRONT = 33 * rad, BACK = 70 * rad;
+    const RHO = (f) => FRONT + (BACK - FRONT) * smooth((Math.abs(Math.atan2(Math.sin(f), Math.cos(f))) - 65 * rad) / (80 * rad));
+    const AX = new V3(0, -1, 0), U = new V3(0, 0, 1), V = AX.clone().cross(U);
     const half = (f) => 0.015 + 0.035 * Math.pow(0.5 - 0.5 * Math.cos(f), 1.3);
     const dir = (th, f) => new V3().copy(U).multiplyScalar(Math.cos(f)).addScaledVector(V, Math.sin(f)).multiplyScalar(Math.sin(th)).addScaledVector(AX, Math.cos(th));
     const tang = (th, f) => new V3().copy(U).multiplyScalar(Math.cos(f)).addScaledVector(V, Math.sin(f)).multiplyScalar(Math.cos(th)).addScaledVector(AX, -Math.sin(th));
     const polar = (q) => { const d = q.clone().normalize(); return [Math.acos(Math.max(-1, Math.min(1, d.dot(AX)))), Math.atan2(d.dot(V), d.dot(U))]; };
-    const RP = 1, BP = 0.022, BS = 0.009, FLOOR = 0.9, OUT = 72 * rad, N = 240;
-    const edgeOf = (f) => RHO - half(f) - 0.018;                         // the panel's edge
-    const wallOf = (f) => RHO + half(f) - BS;                            // the shell's wall
+    const RP = 1, BP = 0.022, BS = 0.009, FLOOR = 0.9, OUT = 80 * rad, N = 240;
+    const edgeOf = (f) => RHO(f) - half(f) - 0.018;                      // the panel's edge
+    const wallOf = (f) => RHO(f) + half(f) - BS;                         // the shell's wall
     // The shell: shaded as a ball (its points are packed small numbers: normals are rewritten, points never), and
     // open round the bottom, where the new shell edge and the panel go.
     const toPivot = new THREE.Matrix4(), toLocal = new THREE.Matrix3(), p = new V3(), nn = new V3();
@@ -386,12 +389,18 @@ export class Character {
     const toBody = new THREE.Matrix4().copy(body.matrixWorld).invert().multiply(this.pivot.matrixWorld);
     const band = (rows, material) => {
       const pos = [], nor = [], col = [], glo = [], idx = []; let m = 0;
+      const at = (q, f) => dir(q.th, f).multiplyScalar(q.r), E = 1e-3;
       for (let i = 0; i <= N; i++) {
-        const f = (i / N) * 2 * Math.PI, row = rows(f); m = row.length;
-        for (const q of row) {
-          const d = dir(q.th, f), t = tang(q.th, f), a = q.a * rad, pt = d.clone().multiplyScalar(q.r), nn = d.multiplyScalar(Math.cos(a)).addScaledVector(t, Math.sin(a));
+        const f = (i / N) * 2 * Math.PI, row = rows(f), ahead = rows(f + E), back = rows(f - E); m = row.length;
+        row.forEach((q, k) => {
+          const pt = at(q, f), d = dir(q.th, f), a = q.a * rad, want = d.clone().multiplyScalar(Math.cos(a)).addScaledVector(tang(q.th, f), Math.sin(a));
+          let nn = d;                                                     // on the ball: straight out, as the shell is
+          if (q.a) {                                                       // elsewhere: square to the surface as built
+            const along = at(ahead[k], f + E).sub(at(back[k], f - E)), down = at(row[Math.min(m - 1, k + 1)], f).sub(at(row[Math.max(0, k - 1)], f));
+            nn = down.cross(along).normalize(); if (!(nn.lengthSq() > 0.5)) nn = want; else if (nn.dot(want) < 0) nn.negate();
+          }
           pos.push(pt.x, pt.y, pt.z); nor.push(nn.x, nn.y, nn.z); col.push(...q.c); glo.push(...(q.g ?? NONE));
-        }
+        });
       }
       for (let i = 0; i < N; i++) for (let k = 0; k < m - 1; k++) { const a = i * m + k, b = a + m; idx.push(a, a + 1, b, a + 1, b + 1, b); }
       const g = new THREE.BufferGeometry();
