@@ -220,7 +220,7 @@ showreel with its music (now cut 16, cut 14 with the version 3 character acting 
 version only", then "merge new opening and publish"): the card plays it muted and shows a sound button and a full-view button
 (`sound: true`; full view fills the screen with the film and its sound and the browser's own controls), and is
 16:9 on phones too, so no edge of the film is cut. Web copies: H.264 CRF 26 with AAC (about 19 MB)
-and VP9 CRF 36 with Opus (about 20 MB). The poster is the burst grid with our character facing us.
+and VP9 CRF 36 with Opus (about 20 MB). The poster is the burst grid with our character facing us (since cut 16 with its hands below the ring).
 To change it, replace the three files under the same names (add mode swaps a re-made video card
 in while Studio still holds the seeded file), update the poster alt, then follow "Staging mode"
 in CLAUDE.md (typecheck, commit, push, Seed Sanity in add mode, deploy through the Vercel API)
