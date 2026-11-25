@@ -256,7 +256,7 @@ export class Character {
       if (n === "lowSeamGlow") m.renderOrder = 2;
     });
     dress(body); dress(glove);
-    this.crispSeam(body);
+    this.bottomCut(body);
 
     // The faces: one picture, cut into one texture per face; the visor maps a face across its width.
     this.faces = {};
@@ -324,28 +324,25 @@ export class Character {
   }
 
   /**
-   * The cut round its bottom, crisp (Lucky, 25 Nov: "bottom part looks blurry and its not crisp and sharp like our
-   * previous character bottom"). No soft halo round the line; the lit line raised into the mouth of the cut, so its
-   * colours fill the cut with clean edges; and the shell shaded as the true sphere it is (the cut had left ragged
-   * shading along its edges). The model's points are packed small numbers, so the line is moved by its transform,
-   * never by rewriting its points.
+   * The bottom panel and the cut round it (Lucky, 25 Nov, from four reference pictures: "it has a cutting ... this
+   * bottom rack will open ... inside that cutting that light gradient light comes in"). The panel sits a little inside
+   * the shell; the shell's edge is rounded and has a wall down into the cut; and the light is inside the cut, on the
+   * panel's edge, spilling onto the panel and the walls, dark across the back. Made here on the model's own cut (its
+   * tilt, angle and width, from design/hero/character/v3/build.py with Blender's axes turned to the web's), in place
+   * of the model's flush panel, groove and drawn line. The shell is shaded as the true ball it is (the cut had left
+   * ragged shading along its edge).
    */
-  crispSeam(body) {
+  bottomCut(body) {
+    const V3 = THREE.Vector3, rad = Math.PI / 180;
     body.updateMatrixWorld(true);
-    const centre = this.pivot.localToWorld(new THREE.Vector3());          // the body is a ball of radius 1 round this
-    body.getObjectByName("LowSeamGlow")?.removeFromParent();
-    const seam = body.getObjectByName("LowSeam");
-    if (seam) {
-      const c = seam.parent.worldToLocal(centre.clone()), k = 1.009;      // its middle just reaches the surface
-      seam.position.sub(c).multiplyScalar(k).add(c); seam.scale.multiplyScalar(k);
-    }
-    const toPivot = new THREE.Matrix4(), toLocal = new THREE.Matrix3(), p = new THREE.Vector3(), n = new THREE.Vector3();
+    for (const n of ["Sphere_1", "Sphere_2", "LowSeam", "LowSeamGlow"]) body.getObjectByName(n)?.removeFromParent();
+    // The shell, shaded as a ball (its points are packed small numbers: normals are rewritten, points never).
+    const toPivot = new THREE.Matrix4(), toLocal = new THREE.Matrix3(), p = new V3(), n = new V3();
     const inv = new THREE.Matrix4().copy(this.pivot.matrixWorld).invert();
-    for (const name of ["Sphere", "Sphere_2"]) {                           // the shell and its bottom panel
-      const m = body.getObjectByName(name);
-      if (!m?.isMesh) continue;
-      toPivot.multiplyMatrices(inv, m.matrixWorld); toLocal.setFromMatrix4(toPivot).transpose();
-      const pos = m.geometry.attributes.position, nor = m.geometry.attributes.normal;
+    const shell = body.getObjectByName("Sphere");
+    if (shell?.isMesh) {
+      toPivot.multiplyMatrices(inv, shell.matrixWorld); toLocal.setFromMatrix4(toPivot).transpose();
+      const pos = shell.geometry.attributes.position, nor = shell.geometry.attributes.normal;
       for (let i = 0; i < pos.count; i++) {
         p.fromBufferAttribute(pos, i).applyMatrix4(toPivot);
         if (Math.abs(p.length() - 1) > 0.02) continue;                   // only points on the ball itself
@@ -353,6 +350,87 @@ export class Character {
       }
       nor.needsUpdate = true;
     }
+    // The cut: a tilted cone round AX (the panel is within RHO - w of it, the shell beyond RHO + w); thin at the front, wide at the back.
+    const h0 = new V3(Math.sin(212 * rad), -Math.cos(212 * rad), 0);
+    const axB = new V3(0, 0, -1).multiplyScalar(Math.cos(21 * rad)).addScaledVector(h0, Math.sin(21 * rad)).normalize();
+    const uB = h0.clone().negate().addScaledVector(axB, h0.dot(axB)).normalize();
+    const web = (v) => new V3(v.x, v.z, -v.y), AX = web(axB), U = web(uB), V = AX.clone().cross(U);
+    const RHO = 53 * rad, half = (f) => 0.015 + 0.035 * Math.pow(0.5 - 0.5 * Math.cos(f), 1.3);
+    const dir = (th, f) => new V3().copy(U).multiplyScalar(Math.cos(f)).addScaledVector(V, Math.sin(f)).multiplyScalar(Math.sin(th)).addScaledVector(AX, Math.cos(th));
+    const tang = (th, f) => new V3().copy(U).multiplyScalar(Math.cos(f)).addScaledVector(V, Math.sin(f)).multiplyScalar(Math.cos(th)).addScaledVector(AX, -Math.sin(th));
+    // The light's colours round the cut, as the model's line had them: red at the lowest point, then magenta, purple,
+    // blue and cyan up each side, dark across the back.
+    const STOPS = [[0, [1, 0.34, 0.12]], [0.04, [1, 0.2, 0.22]], [0.1, [1, 0.24, 0.72]], [0.18, [0.62, 0.3, 1]], [0.27, [0.2, 0.5, 1]], [0.36, [0.1, 0.8, 1]],
+      [0.4, [0.02, 0.03, 0.05]], [0.6, [0.02, 0.03, 0.05]], [0.64, [0.1, 0.85, 1]], [0.72, [0.2, 0.5, 1]], [0.8, [0.62, 0.3, 1]], [0.87, [1, 0.24, 0.72]],
+      [0.93, [1, 0.22, 0.2]], [0.975, [1, 0.5, 0.12]], [1, [1, 0.34, 0.12]]];
+    const light = (f) => {
+      const t = (f / (2 * Math.PI) + 0.04) % 1; let i = 1; while (STOPS[i][0] < t) i++;
+      const [t0, a] = STOPS[i - 1], [t1, c] = STOPS[i], k = (t - t0) / (t1 - t0);
+      return a.map((x, j) => Math.pow(x + (c[j] - x) * k, 2.2));
+    };
+    const mul = (c, k) => [c[0] * k, c[1] * k, c[2] * k], NONE = [0, 0, 0];
+    const WHITE = [0.945, 0.949, 0.969], DARK = [0.02, 0.024, 0.034];
+    const RP = 0.962, BP = 0.022, BS = 0.009, FLOOR = 0.9, N = 240;
+    // One surface round the cut: rows(f) gives its profile at f, the same number of points all the way round, each
+    // { th, r, a (the normal's tilt: 0 out, +90 toward the shell, -90 toward the panel), c (colour), g (light) }.
+    const toBody = new THREE.Matrix4().copy(body.matrixWorld).invert().multiply(this.pivot.matrixWorld);
+    const band = (rows, material) => {
+      const pos = [], nor = [], col = [], glo = [], idx = []; let m = 0;
+      for (let i = 0; i <= N; i++) {
+        const f = (i / N) * 2 * Math.PI, row = rows(f); m = row.length;
+        for (const q of row) {
+          const d = dir(q.th, f), t = tang(q.th, f), a = q.a * rad, pt = d.clone().multiplyScalar(q.r), nn = d.multiplyScalar(Math.cos(a)).addScaledVector(t, Math.sin(a));
+          pos.push(pt.x, pt.y, pt.z); nor.push(nn.x, nn.y, nn.z); col.push(...q.c); glo.push(...(q.g ?? NONE));
+        }
+      }
+      for (let i = 0; i < N; i++) for (let k = 0; k < m - 1; k++) { const a = i * m + k, b = a + m; idx.push(a, a + 1, b, a + 1, b + 1, b); }
+      const g = new THREE.BufferGeometry();
+      g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute("normal", new THREE.Float32BufferAttribute(nor, 3));
+      g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3)); g.setAttribute("glow", new THREE.Float32BufferAttribute(glo, 3));
+      g.setIndex(idx); g.applyMatrix4(toBody);
+      const mesh = new THREE.Mesh(g, material); body.add(mesh); return mesh;
+    };
+    const lit = new THREE.MeshPhysicalMaterial({ color: 0xffffff, vertexColors: true, roughness: 0.14, clearcoat: 1, clearcoatRoughness: 0.04 });
+    lit.onBeforeCompile = (sh) => {                                       // the cut's light, carried by each point
+      sh.vertexShader = sh.vertexShader.replace("#include <common>", "#include <common>\nattribute vec3 glow;\nvarying vec3 vGlow;").replace("#include <begin_vertex>", "#include <begin_vertex>\n\tvGlow = glow;");
+      sh.fragmentShader = sh.fragmentShader.replace("#include <common>", "#include <common>\nvarying vec3 vGlow;").replace("#include <emissivemap_fragment>", "#include <emissivemap_fragment>\n\ttotalEmissiveRadiance += vGlow;");
+    };
+    const arc = (n, fn) => Array.from({ length: n + 1 }, (_, k) => fn(k / n));
+    // The light at f as one pure colour at full strength (S), faded out where the line goes dark across the back.
+    const pure = (f) => { const L = light(f), m = Math.max(...L), on = Math.min(1, Math.max(0, (m - 0.004) / 0.25)); return m > 0 ? L.map((x) => (x / m) * on) : NONE; };
+    const edgeOf = (f) => RHO - half(f) - 0.018;                         // the panel's edge, a little in from the model's
+    const wallOf = (f) => RHO + half(f) - BS;                            // the shell's wall
+    // The panel: a dome a little inside the shell, white, with only a soft wash of the light near its edge.
+    band((f) => {
+      const S = pure(f), c = edgeOf(f) - BP / RP;
+      return [
+        ...arc(30, (u) => { const k = Math.exp(-(c - c * u) / 0.03); return { th: c * u, r: RP, a: 0, c: mul(WHITE, 1 - 0.35 * k), g: mul(S, 0.55 * k) }; }),
+        ...arc(2, (u) => { const b = u * 12 * rad; return { th: c + (BP / RP) * Math.sin(b), r: RP - BP + BP * Math.cos(b), a: u * 12, c: mul(WHITE, 0.65 - 0.4 * u), g: mul(S, 0.55 + 0.5 * u) }; }),
+      ];
+    }, lit);
+    // The light, on the panel's rounded edge and down its side into the cut: a sharp line, white-hot at its middle.
+    band((f) => {
+      const S = pure(f), c = edgeOf(f) - BP / RP, hot = (k) => S.map((x) => Math.min(1, x * 1.0 + 0.45 * k * Math.max(...S)));
+      return [
+        ...arc(8, (u) => { const b = (12 + u * 78) * rad; return { th: c + (BP / RP) * Math.sin(b), r: RP - BP + BP * Math.cos(b), a: 12 + u * 78, c: hot(Math.sin(Math.PI * Math.min(1, u * 1.15))) }; }),
+        ...arc(3, (u) => ({ th: edgeOf(f), r: RP - BP - (RP - BP - FLOOR) * u, a: 90, c: mul(S, 0.75 - 0.5 * u) })),
+      ];
+    }, new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false }));
+    // The floor of the cut, dark, with a little of the light on it.
+    band((f) => {
+      const S = pure(f), a = edgeOf(f), b = wallOf(f);
+      return arc(2, (u) => ({ th: a + (b - a) * u, r: FLOOR, a: 0, c: DARK, g: mul(S, 0.6) }));
+    }, lit);
+    // The shell's edge: a dark wall up out of the cut (the light reflected low on it), a rounded white lip, and the
+    // shell's surface out to (and a little over) the model's own edge, which it hides.
+    band((f) => {
+      const S = pure(f), w = wallOf(f);
+      return [
+        ...arc(2, (u) => ({ th: w, r: FLOOR + (1 - BS - FLOOR) * u, a: -90, c: DARK, g: mul(S, 1.0 * (1 - 0.65 * u)) })),
+        ...arc(7, (u) => { const b = (1 - u) * 90 * rad; return { th: w + BS - BS * Math.sin(b), r: 1 - BS + BS * Math.cos(b), a: -(1 - u) * 90, c: WHITE, g: mul(S, 0.45 * (1 - u)) }; }),
+        ...arc(2, (u) => ({ th: w + BS + (BS + 0.004) * u, r: 1.0004, a: 0, c: WHITE })),
+      ];
+    }, lit);
   }
 
   /** Puts it on a stage. The visor gets its own, much dimmer copy of the studio's reflection (a material only dims a
