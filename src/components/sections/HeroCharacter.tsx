@@ -24,6 +24,26 @@ const GLOW: React.CSSProperties = {
 };
 
 /**
+ * Whether this browser draws WebGL on a graphics chip. Without one (no graphics driver, a remote or virtual desktop, a
+ * chip the browser has turned off) WebGL falls back to drawing in software: each frame of the 3D then takes up to a
+ * second and the page stops answering, so the still picture stays instead.
+ */
+function drawsOnGpu() {
+  try {
+    const c = document.createElement("canvas");
+    const gl = (c.getContext("webgl2", { failIfMajorPerformanceCaveat: true }) ??
+      c.getContext("webgl", { failIfMajorPerformanceCaveat: true })) as WebGLRenderingContext | null;
+    if (!gl) return false;
+    const info = gl.getExtension("WEBGL_debug_renderer_info");
+    const name = String(gl.getParameter(info ? info.UNMASKED_RENDERER_WEBGL : gl.RENDERER));
+    gl.getExtension("WEBGL_lose_context")?.loseContext();
+    return !/swiftshader|llvmpipe|softpipe|software|basic render/i.test(name);
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Our character (version 3), drawn live as a real 3D model (src/lib/character3d.js) in the Home picture. It faces the
  * visitor with a happy smile and its rainbow ring always turning; its eyes open and follow the pointer. It waves hello
  * when it comes alive, and its hands float gently at its sides, below the ring. Poked, it is
@@ -32,7 +52,7 @@ const GLOW: React.CSSProperties = {
  * finger on its chin ("?"). A pool of coloured light sits on the ground below it. As the visitor scrolls through the
  * hero it turns and flies off into the scene, and only while it moves fast does a fan of rainbow light pour from its
  * back. The 3D code and the model load after the page has loaded, so the first screen never waits for them; until
- * then, and where 3D cannot be drawn, a still picture shows instead.
+ * then, and where 3D cannot be drawn on a graphics chip, a still picture shows instead.
  */
 export function HeroCharacter({ className }: { className?: string }) {
   const box = useRef<HTMLButtonElement>(null);
@@ -150,7 +170,7 @@ export function HeroCharacter({ className }: { className?: string }) {
     if (!stage) window.addEventListener("click", onPress);
 
     async function start() {
-      if (stop) return;
+      if (stop || !drawsOnGpu()) return;
       if (!reduce) fillRush();
       const { createStage, loadCharacter, hand } = await import("@/lib/character3d");
       if (stop) return;
