@@ -31,7 +31,7 @@ export const INTRO_IMAGES = ["/intro/turn.webp", "/intro/shell.webp"];
  */
 /**
  * The intro's ending (Lucky, 19 Nov; for everyone since 20 Nov): the character jumps into the page on an arc,
- * turning once, lands on the hero's own character (`[data-intro-land]`, the character pointer's home on computers)
+ * turning once, lands on the hero's own character (`[data-intro-land]`)
  * with a small rebound and a rock, and hands over to it as the dark backdrop fades. On a page with no such spot
  * (`?intro` elsewhere), it rushes at the screen and the page opens through its lens instead. The spot is measured in
  * a frame shortly before the jump, not when the intro starts: measuring then forced the whole page's first layout into
@@ -46,7 +46,6 @@ const INTRO_START = `d.dataset.intro="on";d.classList.add("preloading");s.setIte
  * Runs in <head> before the first paint. The intro plays once, when a visit starts on the home page; a visit that
  * starts on any other page marks it as seen, so later page loads skip it, and visitors who prefer reduced motion
  * never see it. `?intro` in the address plays it again, for checking it (so does the old preview link,
- * `?preview=character`). It also sets `data-pointer="character"`: on computers with a mouse, the main character is
- * the pointer (components/motion/Cursor.tsx); without it, the plain dot cursor comes back.
+ * `?preview=character`). The mouse pointer is the normal one (Lucky, 25 Nov).
  */
-export const INTRO_SCRIPT = `try{var d=document.documentElement;d.dataset.pointer="character";var s=sessionStorage;if(!matchMedia("(prefers-reduced-motion: reduce)").matches&&(/[?&](intro|preview=character)\\b/.test(location.search)||(!s.getItem("${INTRO_KEY}")&&location.pathname==="/"))){${INTRO_START}}else s.setItem("${INTRO_KEY}","1")}catch(e){}`;
+export const INTRO_SCRIPT = `try{var d=document.documentElement,s=sessionStorage;if(!matchMedia("(prefers-reduced-motion: reduce)").matches&&(/[?&](intro|preview=character)\\b/.test(location.search)||(!s.getItem("${INTRO_KEY}")&&location.pathname==="/"))){${INTRO_START}}else s.setItem("${INTRO_KEY}","1")}catch(e){}`;

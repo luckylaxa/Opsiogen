@@ -102,7 +102,6 @@ export function ProjectModal({
   useEffect(() => {
     scroller.current?.scrollTo({ top: 0 });
     dialog.current?.focus({ preventScroll: true });
-    window.dispatchEvent(new Event("cursor:refresh"));
   }, [slug]);
 
   // Escape closes, the arrow keys step through projects, Tab stays inside.
@@ -147,7 +146,6 @@ export function ProjectModal({
       onAnimationEnd={(e) => {
         if (e.target !== e.currentTarget) return;
         if (closing) back();
-        else window.dispatchEvent(new Event("cursor:refresh"));
       }}
     >
       <div ref={scroller} className="h-full overflow-y-auto overscroll-contain max-md:flex max-md:flex-col">

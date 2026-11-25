@@ -13,7 +13,6 @@ import { ScrollTop } from "@/components/site/ScrollTop";
 import { MenuProvider } from "@/components/site/MenuContext";
 import { MenuOverlay } from "@/components/site/MenuOverlay";
 import { Reveal } from "@/components/motion/Reveal";
-import { Cursor } from "@/components/motion/Cursor";
 import { BrandGradientDefs } from "@/components/site/SocialLinks";
 import { IntroLoader } from "@/components/motion/IntroLoader";
 import { JsonLd } from "@/components/site/JsonLd";
@@ -99,7 +98,6 @@ export default async function SiteLayout({ children, modal }: LayoutProps<"/">) 
             socialLinks={settings.socialLinks}
           />
           <Reveal />
-          <Cursor />
         </MenuProvider>
       </body>
     </html>
