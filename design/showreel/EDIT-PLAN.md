@@ -308,6 +308,10 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   position?" In the chapter words it flips right over from word to word and lands upright (hands tucked in the flip,
   out wide to land); the four fast words at the end get a flip on each bounce, and it leaves on the last with one
   more (`hops(..., {flip: 360})`). Still solid. Out: `out/opsiogen-showreel-v18.mp4`.
+- **Cut 19 (25 Nov), two flips to the right.** Lucky: "character flip two times and position to right side". In the
+  chapter words it drops onto the first word, flips over to the second, then flips on past the last word to stand at
+  the right of the line on its baseline, and stays there with its sign-off until the cut (no more springing away).
+  Out: `out/opsiogen-showreel-v19.mp4`.
 - The logo keeps its own shape; only at the very end (cut 11, as Lucky asked) is it shown larger, then settles at
   its own size. Otherwise it only fades in. Nothing else is shown larger than its own size.
 
