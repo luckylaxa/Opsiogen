@@ -32,6 +32,7 @@ function draw(canvas, state = {}) {
   if (!s) { s = { st: createStage(canvas, { keep: true }), size: 0 }; s.st.gl.setPixelRatio(1); stages.set(canvas, s); }
   if (ch.group.parent !== s.st.scene) ch.attach(s.st);
   if (s.size !== canvas.width) { s.st.gl.setSize(canvas.width, canvas.width, false); s.size = canvas.width; }
+  s.st.cam.position.set(0, 0, 9.6 * (state.room || 1)); s.st.cam.updateMatrixWorld();   // a wider canvas shows the character at the same size
   ch.pose(state); s.st.render();
 }
 

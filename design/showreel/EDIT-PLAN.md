@@ -298,7 +298,10 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   thumbs up; on the logo a wave as it turns away, a superhero fist into the O, balance, ta-da, hooray, a finger on
   each side of the call and the sign-off. The thinking hand shows the back of the hand, the finger on its chin, and
   the surprised hands rest on its cheeks (Lucky: the palm and cuff facing the camera was the wrong pose).
-  Same shots, cuts and music; out: `out/opsiogen-showreel-v16.mp4`.
+  Then Lucky: "character don't have to be solid, on big action you can make it flexible": it squashes as it lands and
+  springs back, and stretches along its way when it drops, hops, flies or jets fast (`at()` in `frames.html`, the
+  module's `squash`); the rest of the time it keeps its shape. Its canvas reaches past its own square (`ROOM`) so a
+  stretch or a flung-out hand is never cut off. Same shots, cuts and music; out: `out/opsiogen-showreel-v16.mp4`.
 - The logo keeps its own shape; only at the very end (cut 11, as Lucky asked) is it shown larger, then settles at
   its own size. Otherwise it only fades in. Nothing else is shown larger than its own size.
 

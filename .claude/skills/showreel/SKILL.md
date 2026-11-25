@@ -191,6 +191,9 @@ The motion language is in `design/showreel/EDIT-PLAN.md` ("Cut 7"). Everything b
    going round the ring if it has to; `v: vel(path, t)` makes them trail as it moves. The module never lets a hand
    into the ring, the body or the ears. The film loads the fuller model with thumbs up, fist and hold
    (`design/hero/character/v3/web/character-full.glb`, `webexport.py`).
+   Since cut 16 it is no longer always solid (Lucky, 25 Nov: "on big action you can make it flexible"): `at()`
+   squashes it as it lands (`o.land`, `o.rest`) and stretches it along fast moves (`o.v`); `ROOM` gives the canvas
+   space for it. Small moves keep its shape.
    `pieces.py` finds the separate pieces in flat-colour images (`a/pieces.js`) so each can move on its own;
    `screens.py` lifts the screens out of the latest case-study designs (`a/scr-*.jpg`, `a/screens.js`) for the
    single-screen shots, pairs and walls, cut past the design's frame with clean corners (no lines at the edges);

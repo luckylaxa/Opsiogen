@@ -71,6 +71,8 @@ export function HeroCharacter({ className }: { className?: string }) {
     // Its expressions (EXPRESSIONS in lib/character3d.js): `say` plays one for a while; otherwise it smiles at rest and
     // opens its eyes while the pointer moves. Left alone for a while, it thinks.
     let said = "happy", saidUntil = 0, lastPoke = performance.now(), nextThink = lastPoke + 8000;
+    // A big reaction (a poke, a click) makes it spring: it stretches up, squashes and settles ("flexible on big action").
+    let boingAt = -1e9, boingK = 0;
     const say = (name: string, ms: number) => { said = name; saidUntil = performance.now() + ms; };
     // The points in the picture: when the pointer goes to one, the character looks at it and its little screen opens.
     // Left alone for a while it shows them one by one itself; a press on the character shows the next one beside it.
@@ -110,7 +112,7 @@ export function HeroCharacter({ className }: { className?: string }) {
     // sprays toward the press. A press on the character itself: it is surprised, and its little screen opens.
     const spray = (ux: number, uy: number) => {
       lastMove = lastPoke = performance.now();
-      pose = [ux * 1.15, uy * 0.6]; poseUntil = performance.now() + 1900; say("wink", 1900);
+      pose = [ux * 1.15, uy * 0.6]; poseUntil = performance.now() + 1900; say("wink", 1900); boingAt = performance.now(); boingK = 0.55;
       window.clearTimeout(fire);
       fire = window.setTimeout(() => {
         const r = el.getBoundingClientRect();
@@ -132,7 +134,7 @@ export function HeroCharacter({ className }: { className?: string }) {
     };
     const greet = (e: MouseEvent) => {
       e.stopPropagation(); show(true);
-      lastMove = lastPoke = performance.now(); poseUntil = 0; say("surprised", 2200);
+      lastMove = lastPoke = performance.now(); poseUntil = 0; say("surprised", 2200); boingAt = performance.now(); boingK = 1;
     };
     const onPress = (e: MouseEvent) => {
       const t = e.target as Element;
@@ -217,12 +219,14 @@ export function HeroCharacter({ className }: { className?: string }) {
         fit();
         // Its hands float gently, wave hello at first, and trail behind it as it flies off.
         const hi = (now - helloAt) / 1000, wave = reduce || hi < 0 || hi > 1.7 ? 0 : clamp(Math.min(hi / 0.25, (1.7 - hi) / 0.3), 0, 1);
+        const bq = (now - boingAt) / 1000, boing = reduce || bq < 0 || bq > 0.9 ? 0 : boingK * Math.exp(-bq * 6) * Math.sin(bq * 20);
         ch.pose({
           yaw, pitch, roll: -lean[0] * 0.08 * (1 - away) - away * 0.1, look: [lean[0] * (1 - away), -lean[1] * (1 - away)],
           from: face.from, to: face.to, t: ft, blink: t < blinkTo ? 1 : 0, ring,
           sign: clamp((now - face.at - 150) / 450, 0, 1),
           time: reduce ? 0 : t, hands: wave > 0 ? { R: hand("wave", "R", hi) } : undefined, handsMix: wave,
           drift: away > 0.1 && v > 0.05 ? [v * 1.2, 0] : undefined,
+          squash: boing ? { s: 1 + 0.2 * boing, dir: [0, 1], at: [0, -1] } : undefined,
         });
         st.render();
         raf = requestAnimationFrame(frame);
