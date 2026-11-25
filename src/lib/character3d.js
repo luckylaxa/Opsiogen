@@ -342,12 +342,15 @@ export class Character {
     // same on both sides (Lucky, 25 Nov: "equal weight and perfect curve for front view"); it reaches SIDE at each side,
     // then rises on to BACK across the back, levelling off as it goes, its slope carried on smoothly, so from the side
     // it climbs and flattens out high at the back (Lucky's markup: "you can see that curve shape. Follow this").
-    const TILT = 31 * rad, CAP = 63 * rad, BACK = 70 * rad;
+    const TILT = 26 * rad, CAP = 59 * rad, BACK = 73 * rad;
     const plane = (a) => { const p = Math.cos(TILT), q = -Math.sin(TILT) * Math.cos(a), r = Math.hypot(p, q); return Math.atan2(q, p) + Math.acos(Math.cos(CAP) / r); };
-    const SIDE = plane(Math.PI / 2), BEND = (Math.tan(TILT) * (Math.PI / 2)) / (BACK - SIDE);
+    // From the side on, it goes on rising at the same slope and eases out to level across the back, with no sudden bend
+    // (Lucky: "side view is not perfect arc or curved"): no change of curvature where the two halves meet, none at the back.
+    const SIDE = plane(Math.PI / 2), n = (Math.tan(TILT) * (Math.PI / 2)) / (BACK - SIDE);
+    const ease = (t) => n * t + (10 - 6 * n) * t ** 3 + (8 * n - 15) * t ** 4 + (6 - 3 * n) * t ** 5;
     const RHO = (f) => {
       const a = Math.abs(Math.atan2(Math.sin(f), Math.cos(f)));
-      return a <= Math.PI / 2 ? plane(a) : BACK - (BACK - SIDE) * Math.pow(1 - (a - Math.PI / 2) / (Math.PI / 2), BEND);
+      return a <= Math.PI / 2 ? plane(a) : SIDE + (BACK - SIDE) * ease((a - Math.PI / 2) / (Math.PI / 2));
     };
     const AX = new V3(0, -1, 0), U = new V3(0, 0, 1), V = AX.clone().cross(U);
     // The same gap all the way round (Lucky: "all the side cutting gaps should be the same"): widths are measured across
