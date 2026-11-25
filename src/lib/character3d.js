@@ -325,12 +325,13 @@ export class Character {
 
   /**
    * The bottom panel and the cut round it (Lucky, 25 Nov, from four reference pictures: "it has a cutting ... this
-   * bottom rack will open ... inside that cutting that light gradient light comes in"). The panel sits a little inside
-   * the shell; the shell's edge is rounded and has a wall down into the cut; and the light is inside the cut, on the
-   * panel's edge, spilling onto the panel and the walls, dark across the back. Made here on the model's own cut (its
-   * tilt, angle and width, from design/hero/character/v3/build.py with Blender's axes turned to the web's), in place
-   * of the model's flush panel, groove and drawn line. The shell is shaded as the true ball it is (the cut had left
-   * ragged shading along its edge).
+   * bottom rack will open ... inside that cutting that light gradient light comes in"). The panel is part of the same
+   * ball as the shell, so the outline stays a perfect circle with only the cut between them (Lucky: "it should be a
+   * perfect circle ... there will be only the cutting in between"); both edges of the cut are rounded, with walls
+   * down into it; and the light is inside the cut, on the panel's edge, spilling onto the panel and the walls, dark
+   * across the back. Made here on the model's own cut (its tilt, angle and width, from design/hero/character/v3/build.py
+   * with Blender's axes turned to the web's), in place of the model's panel, groove and drawn line. The shell is shaded
+   * as the true ball it is (the cut had left ragged shading along its edge).
    */
   bottomCut(body) {
     const V3 = THREE.Vector3, rad = Math.PI / 180;
@@ -370,7 +371,7 @@ export class Character {
     };
     const mul = (c, k) => [c[0] * k, c[1] * k, c[2] * k], NONE = [0, 0, 0];
     const WHITE = [0.945, 0.949, 0.969], DARK = [0.02, 0.024, 0.034];
-    const RP = 0.962, BP = 0.022, BS = 0.009, FLOOR = 0.9, N = 240;
+    const RP = 1, BP = 0.022, BS = 0.009, FLOOR = 0.9, N = 240;
     // One surface round the cut: rows(f) gives its profile at f, the same number of points all the way round, each
     // { th, r, a (the normal's tilt: 0 out, +90 toward the shell, -90 toward the panel), c (colour), g (light) }.
     const toBody = new THREE.Matrix4().copy(body.matrixWorld).invert().multiply(this.pivot.matrixWorld);
@@ -400,7 +401,7 @@ export class Character {
     const pure = (f) => { const L = light(f), m = Math.max(...L), on = Math.min(1, Math.max(0, (m - 0.004) / 0.25)); return m > 0 ? L.map((x) => (x / m) * on) : NONE; };
     const edgeOf = (f) => RHO - half(f) - 0.018;                         // the panel's edge, a little in from the model's
     const wallOf = (f) => RHO + half(f) - BS;                            // the shell's wall
-    // The panel: a dome a little inside the shell, white, with only a soft wash of the light near its edge.
+    // The panel: the bottom of the same ball, white, with only a soft wash of the light near its edge.
     band((f) => {
       const S = pure(f), c = edgeOf(f) - BP / RP;
       return [
