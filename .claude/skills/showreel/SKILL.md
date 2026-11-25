@@ -218,11 +218,11 @@ The reel is the `showreel` section of the Home page in `src/content/seed-data.ts
 the Home hero, and the Work page opens with the featured project, Oh My Glam, instead):
 `/work/showreel.mp4`, `/work/showreel.webm` and the poster `/work/showreel.jpg` (1920 x 1080, with
 alt text). Since 18 Nov (Lucky: "for time being you can put this video in website") it is the whole
-showreel with its music (now cut 17 again, cut 14 with the version 3 character acting with its hands, solid, 60 s, the one version, with the opening logo beat: Lucky, 19 Nov, "use 62 sec
+showreel with its music (now cut 21: cut 17 rendered again with the character's new bottom cut; cut 14 with the version 3 character acting with its hands, solid, 60 s, the one version, with the opening logo beat: Lucky, 19 Nov, "use 62 sec
 version only", then "merge new opening and publish"): the card plays it muted and shows a sound button and a full-view button
 (`sound: true`; full view fills the screen with the film and its sound and the browser's own controls), and is
 16:9 on phones too, so no edge of the film is cut. Web copies: H.264 CRF 26 with AAC (about 19 MB)
-and VP9 CRF 36 with Opus (about 20 MB). The poster is the burst grid with our character facing us (since cut 16 with its hands below the ring).
+and VP9 CRF 36 with Opus (about 20 MB). The poster is the burst grid with our character facing us (since cut 16 with its hands below the ring; made again for cut 21 with the new bottom).
 To change it, replace the three files under the same names (add mode swaps a re-made video card
 in while Studio still holds the seeded file), update the poster alt, then follow "Staging mode"
 in CLAUDE.md (typecheck, commit, push, Seed Sanity in add mode, deploy through the Vercel API)

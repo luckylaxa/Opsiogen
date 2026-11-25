@@ -320,6 +320,10 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   jumping animation." The chapter words hop onto each word again (landing on "it.") and spring up and off the top
   into the next shot. With that, `frames.html` is cut 17 again, so the site shows cut 17's film
   (`out/opsiogen-showreel-v17.mp4`) once more; cuts 18 to 20 stay in `out/` for reference.
+- **Cut 21 (25 Nov), the new bottom.** Lucky: "Update showreel and loader". Cut 17 rendered again with the
+  character's new bottom: one flat cut across the ball, tilted back 20 degrees, with the light inside it. The film
+  draws the shared character module, so it matches the loader and Home. Out: `out/opsiogen-showreel-v21.mp4`, now on
+  the site, with a new poster.
 - The logo keeps its own shape; only at the very end (cut 11, as Lucky asked) is it shown larger, then settles at
   its own size. Otherwise it only fades in. Nothing else is shown larger than its own size.
 
