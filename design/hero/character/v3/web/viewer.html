@@ -1,0 +1,23 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- The website character (src/lib/character3d.js) on its own, for checking it: serve the repository root over HTTP
+     (python3 -m http.server) and open /design/hero/character/v3/web/viewer.html. shots.cjs saves pictures from it. -->
+<title>Character viewer</title>
+<style>html,body{margin:0;background:#f3f2f6}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/examples/jsm/":"/node_modules/three/examples/jsm/"}}</script>
+</head><body>
+<canvas id="c" width="640" height="640"></canvas>
+<script type="module">
+import { createStage, loadCharacter } from '/src/lib/character3d.js';
+const c = document.getElementById('c');
+const q = new URLSearchParams(location.search), size = +(q.get('size') || 640), dist = +(q.get('dist') || 9.6);
+c.width = c.height = size;
+const stage = createStage(c, { distance: dist, keep: true });
+stage.gl.setSize(size, size, false);
+window.ready = loadCharacter({ model: '/public/home/character.glb', faces: '/public/home/faces.webp' }).then((ch) => {
+  ch.attach(stage); window.ch = ch;
+  window.shot = (state) => { ch.pose(state); stage.render(); return c.toDataURL('image/png'); };
+  return true;
+});
+</script>
+</body></html>

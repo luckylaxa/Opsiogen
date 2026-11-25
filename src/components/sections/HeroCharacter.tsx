@@ -24,11 +24,14 @@ const GLOW: React.CSSProperties = {
 };
 
 /**
- * Our character, drawn live as a real 3D model, in the Home picture. It faces the visitor and its eye
- * follows the pointer straight away; a click anywhere on the first screen turns it that way and it sprays a fog of colour toward the click; a click on the character itself gives one full turn first. A pool of coloured light sits on the
- * ground below it. As the visitor scrolls through the hero it turns and flies off into the scene, and only
- * while it moves fast does a fan of rainbow light pour from its back. The 3D code and the model load after the page has loaded, so the first screen never
- * waits for them; until then, and where 3D cannot be drawn, a still picture shows instead.
+ * Our character (version 3), drawn live as a real 3D model (src/lib/character3d.js) in the Home picture. It faces the
+ * visitor with a happy smile and its rainbow ring always turning; its eyes open and follow the pointer. Poked, it is
+ * surprised (hands to its cheeks, "!!") and its little screen says what we do; a click elsewhere on the first screen
+ * turns it that way for a wink and a finger gun as a fog of colour sprays toward the click; left alone it thinks, a
+ * finger on its chin ("?"). A pool of coloured light sits on the ground below it. As the visitor scrolls through the
+ * hero it turns and flies off into the scene, and only while it moves fast does a fan of rainbow light pour from its
+ * back. The 3D code and the model load after the page has loaded, so the first screen never waits for them; until
+ * then, and where 3D cannot be drawn, a still picture shows instead.
  */
 export function HeroCharacter({ className }: { className?: string }) {
   const box = useRef<HTMLButtonElement>(null);
@@ -63,9 +66,11 @@ export function HeroCharacter({ className }: { className?: string }) {
       for (const r of rush) { const u = (narrow && r.dataset.narrow) || r.dataset.wide; if (u) r.style.backgroundImage = `url("${u}")`; }
     };
 
-    let want = [0, 0], blink = 0, blinkAt = 2, over = 0, turnTo = -1, poseUntil = 0, fire = 0, spinAt = -1e9, pose = [0, 0];
-    // Where it looks after each press (turn, tilt), in order.
-    const POSES = [[-1, -0.25], [-0.8, 0.5], [-1, 0.1], [0.9, -0.35]];
+    let want = [0, 0], over = 0, poseUntil = 0, fire = 0, pose = [0, 0];
+    // Its expressions (EXPRESSIONS in lib/character3d.js): `say` plays one for a while; otherwise it smiles at rest and
+    // opens its eyes while the pointer moves. Left alone for a while, it thinks.
+    let said = "happy", saidUntil = 0, lastPoke = performance.now(), nextThink = lastPoke + 8000;
+    const say = (name: string, ms: number) => { said = name; saidUntil = performance.now() + ms; };
     // The points in the picture: when the pointer goes to one, the character looks at it and its little screen opens.
     // Left alone for a while it shows them one by one itself; a press on the character shows the next one beside it.
     const spots = stage ? Array.from(stage.querySelectorAll<HTMLElement>("[data-hero-spot]")) : [];
@@ -77,11 +82,11 @@ export function HeroCharacter({ className }: { className?: string }) {
       close(); turn = (turn + 1) % spots.length; const sp = spots[turn];
       if (!beside && sp.offsetParent) { shown = sp; sp.dataset.on = ""; }
       else if (nt) { nt.children[1].textContent = sp.dataset.title ?? ""; nt.children[2].textContent = sp.dataset.text ?? ""; nt.style.opacity = "1"; }
-      blink = 1; window.clearTimeout(hide); hide = window.setTimeout(close, 3800);
+      window.clearTimeout(hide); hide = window.setTimeout(close, 3800);
     };
     const onOver = (e: PointerEvent) => {
       const sp = (e.target as Element).closest<HTMLElement>("[data-hero-spot]");
-      if (sp && sp !== hover) { close(); hover = sp; blink = 1; }
+      if (sp && sp !== hover) { close(); hover = sp; }
     };
     const onOut = (e: PointerEvent) => { if ((e.target as Element).closest("[data-hero-spot]") === hover) hover = null; };
     stage?.addEventListener("pointerover", onOver);
@@ -100,12 +105,11 @@ export function HeroCharacter({ className }: { className?: string }) {
       over = Math.hypot(dx, dy) < r.width * 0.5 ? 1 : 0;
     };
     const onLeave = () => { want = [0, 0]; over = 0; };
-    // A press anywhere on the first screen: it turns to look that way, then sprays a fog of colour toward the press.
-    // A press on the character itself: one full turn on the spot first, then the spray goes the next way round.
-    const spray = (ux: number, uy: number, spin: boolean) => {
-      blink = 1; lastMove = performance.now();
-      pose = [ux * 1.15, uy * 0.6]; poseUntil = performance.now() + (spin ? 2500 : 1900);
-      if (spin && !reduce) spinAt = performance.now();
+    // A press anywhere on the first screen: it turns to look that way with a wink and a finger gun, and a fog of colour
+    // sprays toward the press. A press on the character itself: it is surprised, and its little screen opens.
+    const spray = (ux: number, uy: number) => {
+      lastMove = lastPoke = performance.now();
+      pose = [ux * 1.15, uy * 0.6]; poseUntil = performance.now() + 1900; say("wink", 1900);
       window.clearTimeout(fire);
       fire = window.setTimeout(() => {
         const r = el.getBoundingClientRect();
@@ -113,8 +117,8 @@ export function HeroCharacter({ className }: { className?: string }) {
         window.dispatchEvent(new CustomEvent("hero:pulse", { detail: { x: r.left + r.width / 2 + dx, y: r.top + r.height / 2 + dy } }));
         const fl = el.querySelector<HTMLElement>("[data-flash]");
         if (fl && !reduce) {
-          // The fog starts just in front of the eye, at the edge of the body, so it never covers the eye itself.
-          fl.style.left = `${r.width / 2 + ux * r.width * 0.4}px`; fl.style.top = `${r.height / 2 + uy * r.height * 0.4}px`;
+          // The fog starts at the edge of its body, so it never covers its face.
+          fl.style.left = `${r.width / 2 + ux * r.width * 0.3}px`; fl.style.top = `${r.height / 2 + uy * r.height * 0.3}px`;
           fl.style.rotate = `${Math.atan2(uy, ux)}rad`;
           Array.from(fl.children).forEach((fog, n) => {
             (fog as HTMLElement).animate(
@@ -123,19 +127,17 @@ export function HeroCharacter({ className }: { className?: string }) {
             );
           });
         }
-      }, spin ? 900 : 380);
+      }, 380);
     };
     const greet = (e: MouseEvent) => {
       e.stopPropagation(); show(true);
-      turnTo = (turnTo + 1) % POSES.length;
-      const [ax, ay] = POSES[turnTo], len = Math.hypot(ax, ay);
-      spray(ax / len, ay / len, true);
+      lastMove = lastPoke = performance.now(); poseUntil = 0; say("surprised", 2200);
     };
     const onPress = (e: MouseEvent) => {
       const t = e.target as Element;
       if (t.closest("a, button, input, textarea, select, [role='button'], dialog, .site-header") || window.scrollY > window.innerHeight * 0.5) return;
       const r = el.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), len = Math.hypot(dx, dy);
-      if (len > 8) spray(dx / len, dy / len, false);
+      if (len > 8) spray(dx / len, dy / len);
     };
     const noFocusRing = (e: PointerEvent) => e.preventDefault();
     window.addEventListener("pointermove", onMove, { passive: true });
@@ -149,69 +151,14 @@ export function HeroCharacter({ className }: { className?: string }) {
     async function start() {
       if (stop) return;
       if (!reduce) fillRush();
-      const THREE = await import("three");
-      const { GLTFLoader } = await import("three/examples/jsm/loaders/GLTFLoader.js");
+      const { createStage, loadCharacter } = await import("@/lib/character3d");
       if (stop) return;
-      THREE.ColorManagement.enabled = false;
-      let gl: InstanceType<typeof THREE.WebGLRenderer>;
-      try { gl = new THREE.WebGLRenderer({ canvas: cv, alpha: true, antialias: true }); } catch { return; }
-      gl.outputColorSpace = THREE.SRGBColorSpace;
-      gl.setClearColor(0x000000, 0);
-      const scene = new THREE.Scene();
-      const cam = new THREE.PerspectiveCamera(20, 1, 1, 20);
-      cam.position.set(0, 0, 6.75);
-
-      // What the glossy white body reflects: a soft white studio with two bright windows, a warm hint of the sunrise,
-      // and colour coming up from below.
-      const W = 512, H = 256, data = new Float32Array(W * H * 4);
-      const wins = [[0.835, 0.885, 0.6, 0.8], [0.895, 0.93, 0.6, 0.8], [0.595, 0.64, 0.6, 0.77], [0.652, 0.682, 0.6, 0.77]];
-      const blob = (u: number, v: number, cu: number, cv2: number, r: number) => { const a = (u - cu) * 2, b = v - cv2, q = 1 - Math.sqrt(a * a + b * b) / r; return q > 0 ? q * q : 0; };
-      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
-        const u = x / W, v = y / H, l = v > 0.5 ? 0.27 + (v - 0.5) * 0.4 : 0.07 + v * 0.4;
-        let r = l * 0.97, g = l * 0.97, b = l * 1.02;
-        const bl = blob(u, v, 0.9, 0.1, 0.34), pk = blob(u, v, 0.62, 0.1, 0.34), vi = blob(u, v, 0.76, 0.02, 0.3), sun = blob(u, v, 0.3, 0.6, 0.25);
-        r += pk * 1.3 + vi * 0.5 + bl * 0.1 + sun * 0.9; g += bl * 0.35 + pk * 0.15 + vi * 0.18 + sun * 0.55; b += bl * 1.5 + vi * 0.9 + pk * 0.6 + sun * 0.25;
-        for (const w of wins) if (u > w[0] && u < w[1] && v > w[2] && v < w[3]) { r += 7; g += 7; b += 7.3; }
-        const o = (y * W + x) * 4; data[o] = r; data[o + 1] = g; data[o + 2] = b; data[o + 3] = 1;
-      }
-      const env = new THREE.DataTexture(data, W, H, THREE.RGBAFormat, THREE.FloatType);
-      env.mapping = THREE.EquirectangularReflectionMapping; env.needsUpdate = true;
-      const pm = new THREE.PMREMGenerator(gl);
-      scene.environment = pm.fromEquirectangular(env).texture; env.dispose(); pm.dispose();
-      const key = new THREE.DirectionalLight(0xffffff, 0.5); key.position.set(-3, 4, 4); scene.add(key);
-      const blue = new THREE.PointLight(0x3f7bff, 0.9, 6, 0); blue.position.set(-1.3, -2.3, 1.7); scene.add(blue);
-      const pink = new THREE.PointLight(0xff4fa0, 0.8, 6, 0); pink.position.set(1.4, -2.3, 1.7); scene.add(pink);
-
-      const looks: Record<string, InstanceType<typeof THREE.Material>> = {
-        body: new THREE.MeshPhysicalMaterial({ color: 0xeef0f6, roughness: 0.13, clearcoat: 1, clearcoatRoughness: 0.04 }),
-        base: new THREE.MeshPhysicalMaterial({ color: 0xdfe2ec, roughness: 0.16, clearcoat: 1, clearcoatRoughness: 0.06 }),
-        socket: new THREE.MeshStandardMaterial({ color: 0x05080c, roughness: 0.6 }),
-        gasket: new THREE.MeshPhysicalMaterial({ color: 0x07090d, roughness: 0.25, clearcoat: 1, clearcoatRoughness: 0.1 }),
-        glass: new THREE.MeshPhysicalMaterial({ color: 0x020406, roughness: 0.02, clearcoat: 1, transparent: true, opacity: 0.55, depthWrite: false }),
-        seam: new THREE.MeshBasicMaterial({ color: 0xa9aebd }),
-        strip: new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false }),
-        stripGlow: new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }),
-      };
-      type Mesh = InstanceType<typeof THREE.Mesh>;
-      let hud: Mesh | null = null;
-      let hudMat: InstanceType<typeof THREE.MeshBasicMaterial> | null = null;
-      const file = await new GLTFLoader().loadAsync("/home/character.glb").catch(() => null);
-      if (!file || stop) { gl.dispose(); return; }
-      file.scene.traverse((o) => {
-        const m = o as Mesh;
-        if (!m.isMesh) return;
-        const name = (m.material as InstanceType<typeof THREE.Material>).name;
-        if (name === "hud") {
-          const src = m.material as InstanceType<typeof THREE.MeshStandardMaterial>;
-          hudMat = new THREE.MeshBasicMaterial({ map: src.emissiveMap || src.map, toneMapped: false });
-          m.material = hudMat; hud = m;
-        } else if (looks[name]) { m.material = looks[name]; if (name === "glass" || name === "stripGlow") m.renderOrder = 2; }
-      });
-      const pivot = new THREE.Group(); pivot.rotation.order = "YXZ"; pivot.add(file.scene); scene.add(pivot);
-      const lineMat = new THREE.MeshBasicMaterial({ color: 0x4de9ff, transparent: true, opacity: 0, toneMapped: false, depthWrite: false });
-      const line = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.014), lineMat);
-      if (hud) { const bb = new THREE.Box3().setFromObject(hud as Mesh); line.position.set(0, (bb.min.y + bb.max.y) / 2, bb.max.z + 0.02); }
-      line.renderOrder = 1; pivot.add(line);
+      let st: ReturnType<typeof createStage>;
+      try { st = createStage(cv); } catch { return; }
+      const ch = await loadCharacter().catch(() => null);
+      if (!ch || stop) { st.gl.dispose(); return; }
+      ch.attach(st);
+      const gl = st.gl;
 
       let size = 0;
       const fit = () => { const w = Math.round(cv.clientWidth); if (!w || w === size) return; size = w; gl.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2)); gl.setSize(w, w, false); };
@@ -220,7 +167,8 @@ export function HeroCharacter({ className }: { className?: string }) {
 
       // A quick, springy turn: it follows the pointer at once and settles without wobbling.
       const AWAY = 1.2;                                                      // turned side-on to fly off to the right, so its back (where the trail comes from) is on the left
-      let yaw = 0, yawV = 0, pitch = 0, pitchV = 0, lean = [0, 0], grow = 0, flyX = 0, prev = performance.now();
+      let yaw = 0, yawV = 0, pitch = 0, pitchV = 0, lean = [0, 0], grow = 0, flyX = 0, ring = 0, blinkAt = 2, blinkTo = 0, prev = performance.now();
+      let face = { from: "happy", to: "happy", at: -1e9 };
       const frame = (now: number) => {
         if (stop) return;
         const dt = Math.min(0.05, (now - prev) / 1000); prev = now; const t = now / 1000;
@@ -233,15 +181,20 @@ export function HeroCharacter({ className }: { className?: string }) {
         const follow = 1 - Math.pow(1e-7, dt);
         lean = [lean[0] + (want[0] - lean[0]) * follow, lean[1] + (want[1] - lean[1]) * follow];
         const posed = now < poseUntil;
-        // One full turn on the spot, eased, when the character itself is pressed.
-        const sp = clamp((now - spinAt) / 900, 0, 1), twirl = sp < 1 ? sp * sp * (3 - 2 * sp) * Math.PI * 2 : 0;
+        // Left alone (no pointer, press or scroll) for a while, it thinks, now and then.
+        if (!reduce && away < 0.1 && now - Math.max(lastMove, lastPoke) > 7000 && now > nextThink && !document.hidden) { say("thinking", 2800); nextThink = now + 12000; }
+        const want_ = now < saidUntil ? said : now - lastMove < 2500 ? "neutral" : "happy";
+        if (want_ !== face.to) face = { from: face.to, to: want_, at: now };
+        const ft = clamp((now - face.at) / 380, 0, 1);
         const aimY = (1 - away) * (posed ? pose[0] : lean[0] * 0.95) + away * AWAY, aimX = (1 - away) * (posed ? pose[1] : lean[1] * 0.55) + away * 0.05;
         const k = posed ? 70 : 420, c = 2 * Math.sqrt(k) * 0.95;
-        yawV += ((aimY - yaw) * k - yawV * c) * dt; yaw += yawV * dt; pitchV += ((aimX - pitch) * k - pitchV * c) * dt; pitch += pitchV * dt;
-        if (Math.cos(yaw) > 0.9 && t > blinkAt && away < 0.1) { blink = 1; blinkAt = t + 3 + Math.random() * 3.5; }
-        blink = Math.max(0, blink - dt / 0.3);                                  // a blink of light, not lids
-        const ph = 1 - blink, dim = blink <= 0 ? 0 : ph < 0.3 ? ph / 0.3 : ph < 0.5 ? 1 : Math.max(0, 1 - (ph - 0.5) / 0.12);
-        const fl = blink > 0 && ph > 0.55 ? Math.sin(((ph - 0.55) / 0.45) * Math.PI) : 0;
+        // In small steps, so the spring stays steady however slowly the frames come (a slow phone, a busy page).
+        for (let n = Math.ceil(dt * 240), h = dt / n, i = 0; i < n; i++) {
+          yawV += ((aimY - yaw) * k - yawV * c) * h; yaw += yawV * h; pitchV += ((aimX - pitch) * k - pitchV * c) * h; pitch += pitchV * h;
+        }
+        if (t > blinkAt) { blinkTo = t + 0.13; blinkAt = t + 3 + Math.random() * 3.5; }   // its open eyes blink now and then
+        // The ring turns all the time it is about, faster as it flies.
+        if (!reduce) ring -= dt * (1.1 + v * 5);
         grow += ((over && away < 0.1 ? 1 : 0) - grow) * (1 - Math.pow(0.0001, dt));
         // It flies off to the right across the scene, eye first, while the picture moves toward us a little.
         flyX += (progress - flyX) * (1 - Math.pow(0.0005, dt));
@@ -258,16 +211,15 @@ export function HeroCharacter({ className }: { className?: string }) {
         gw.style.transform = `translateY(${(-bob).toFixed(1)}px) scale(${(1 + lift * 0.6).toFixed(3)})`;
         for (const r of rush) r.style.opacity = (clamp((v - 0.05) / 0.5, 0, 1) * 0.16).toFixed(3);
         fit();
-        pivot.rotation.y = yaw + twirl; pivot.rotation.x = pitch; pivot.rotation.z = -lean[0] * 0.08 * (1 - away) - away * 0.1;
-        if (hud && hudMat) {
-          (hud as Mesh).position.x = lean[0] * 0.06 * (1 - away); (hud as Mesh).position.y = -lean[1] * 0.05 * (1 - away);
-          (hudMat as InstanceType<typeof THREE.MeshBasicMaterial>).color.setScalar(1.5 * (1 - dim * 0.94) + fl * 1.2);
-        }
-        lineMat.opacity = dim;
-        gl.render(scene, cam);
+        ch.pose({
+          yaw, pitch, roll: -lean[0] * 0.08 * (1 - away) - away * 0.1, look: [lean[0] * (1 - away), -lean[1] * (1 - away)],
+          from: face.from, to: face.to, t: ft, blink: t < blinkTo ? 1 : 0, ring,
+          sign: clamp((now - face.at - 150) / 450, 0, 1),
+        });
+        st.render();
         raf = requestAnimationFrame(frame);
       };
-      fit(); gl.render(scene, cam);
+      fit(); ch.pose({}); st.render();
       cv.style.opacity = "1"; img.style.opacity = "0";
       raf = requestAnimationFrame(frame);
     }
@@ -307,13 +259,13 @@ export function HeroCharacter({ className }: { className?: string }) {
       type="button"
       data-intro-land
       aria-label="Our character. Press to hear what we do here."
-      className={`absolute block aspect-square w-[var(--w)] cursor-pointer rounded-full outline-offset-4 will-change-transform [-webkit-tap-highlight-color:transparent] ${className ?? "top-[calc(60%-var(--w)/2)] left-[calc(50%-var(--w)/2)] [--w:clamp(150px,46vw,230px)] md:top-[calc(42%-var(--w)/2)] md:left-[calc(39%-var(--w)/2)] md:[--w:clamp(200px,min(20vw,34svh),340px)]"}`}
+      className={`absolute block aspect-square w-[var(--w)] cursor-pointer rounded-full outline-offset-4 will-change-transform [-webkit-tap-highlight-color:transparent] ${className ?? "top-[calc(60%-var(--w)/2)] left-[calc(50%-var(--w)/2)] [--w:clamp(210px,64vw,322px)] md:top-[calc(42%-var(--w)/2)] md:left-[calc(39%-var(--w)/2)] md:[--w:clamp(280px,min(28vw,47.6svh),476px)]"}`}
     >
       {/* The trail starts behind its back and streams away to the left and a little down, widening as it goes. */}
       <span ref={trail} aria-hidden="true" className="pointer-events-none absolute top-1/2 right-1/2 -z-10 h-[150%] w-[min(85vw,1200px)] origin-right opacity-0 blur-[clamp(16px,2.2vw,36px)]">
         <span className="absolute inset-0" style={TRAIL} />
       </span>
-      <span ref={glow} aria-hidden="true" className="pointer-events-none absolute top-[88%] left-[-5%] -z-10 h-[34%] w-[110%] opacity-85 blur-[clamp(6px,0.7vw,12px)]" style={GLOW} />
+      <span ref={glow} aria-hidden="true" className="pointer-events-none absolute top-[76%] left-[12%] -z-10 h-[24%] w-[76%] opacity-85 blur-[clamp(6px,0.7vw,12px)]" style={GLOW} />
       {/* Its own little screen: what a press on it shows (and, on phones, what it shows by itself). */}
       <span ref={note} aria-live="polite" className="pointer-events-none absolute top-[108%] left-1/2 block w-[min(76vw,260px)] -translate-x-1/2 overflow-hidden rounded-[10px] border border-white/20 bg-[rgb(10_12_22/0.88)] px-3.5 pt-3 pb-3 text-left opacity-0 shadow-[0_12px_40px_rgb(0_0_0/0.45)] transition-opacity duration-200 md:top-auto md:bottom-[100%]">
         <span aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,#35d4ff,#5a7dff,#b667ff,#ff5fb4,#ff9a3c)]" />

@@ -3,7 +3,7 @@ import { INTRO_IMAGES } from "@/lib/theme";
 /**
  * The first-visit intro (design system; see INTRO_SCRIPT in lib/theme.ts and `.intro` in globals.css): our character
  * drops in, bounces, spins once in the air, lands facing the visitor, then jumps into the page and lands on the
- * hero's own character (on a page without one, it rushes at the screen and the page opens through its lens). Markup
+ * hero's own character (on a page without one, it rushes at the screen and the page opens through its visor). Markup
  * only: the head script starts it once its two pictures are in, so it plays before the page's scripts load. The
  * pictures are backgrounds, so pages that don't play it never fetch them.
  */

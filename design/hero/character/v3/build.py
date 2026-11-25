@@ -518,6 +518,7 @@ HAND_POSES = {   # per digit: (spread toward the thumb's side, bend at the knuck
     'point':    dict(index=(0, 0, 0), middle=(0, 74, 76), last=(2, 68, 70), thumb=(-16, 28, 32)),
     'thumbsup': dict(index=(-2, 74, 76), middle=(0, 74, 76), last=(2, 68, 70), thumb=(14, -4, -6)),
     'hold':     dict(index=(0, 40, 44), middle=(0, 44, 46), last=(0, 46, 48), thumb=(-6, 18, 24)),                # closing round something
+    'gun':      dict(index=(0, 0, 0), middle=(0, 74, 76), last=(2, 68, 70), thumb=(14, -4, -6)),                 # the finger gun of the wink: first finger out, thumb up
     'fist':     dict(index=(-2, 74, 76), middle=(0, 74, 76), last=(2, 68, 70), thumb=(-20, 32, 36)),
 }
 RIGS = {}
@@ -688,6 +689,9 @@ def face_image(kind, blush=False):
         disc(-0.29, EZ + 0.01, 0.088); disc(0.29, EZ + 0.01, 0.088); disc(0, -0.12, 0.045)
     elif kind == 'neutral':
         disc(-0.29, EZ, 0.08); disc(0.29, EZ, 0.08); smile(0, -0.08, 0.15, 0.075)
+    elif kind == 'blink':                                         # the open-eyed face with its eyes shut for a moment: two short soft arcs
+        for sx in (-1, 1): arc(sx * 0.29, EZ + 0.035, 0.085, 0.045, 200, 340, 0.045)
+        smile(0, -0.08, 0.15, 0.075)
     if blush:                                                    # dotted cheeks
         for sx in (-1, 1):
             cx, cz = sx * 0.5, -0.07

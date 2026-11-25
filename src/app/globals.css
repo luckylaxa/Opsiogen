@@ -593,7 +593,8 @@ html[data-mega-open] .site-header {
  * rising when the lens opens. The keyframes come from design/showreel/build/intro_css.py.
  */
 .intro {
-  --size: clamp(112px, 11.5vw, 172px);
+  /* The character's box: framed as the Home character's own 3D canvas (lib/character3d.js), its hands reaching to the sides. */
+  --size: clamp(157px, 16.1vw, 241px);
   position: fixed;
   inset: 0;
   z-index: 1000;
@@ -650,16 +651,16 @@ html[data-mega-open] .site-header {
   width: 124vmax;
   height: 124vmax;
   margin: -62vmax 0 0 -62vmax;
-  background: radial-gradient(circle, transparent calc(var(--size) * 0.4), #0a090d calc(var(--size) * 0.4 + 1px));
+  background: radial-gradient(circle, transparent calc(var(--size) * 0.28), #0a090d calc(var(--size) * 0.28 + 1px));
   opacity: 0;
 }
 /* The pool of our colours on the floor below it. */
 .intro__glow {
   position: absolute;
-  left: -25%;
-  top: 85%;
-  width: 150%;
-  height: 26%;
+  left: 8%;
+  top: 72%;
+  width: 84%;
+  height: 20%;
   background: linear-gradient(90deg, #35d4ff 4%, #5a7dff 26%, #b667ff 48%, #ff5fb4 70%, #ff9a3c 96%);
   -webkit-mask-image: radial-gradient(closest-side, #000 10%, transparent);
   mask-image: radial-gradient(closest-side, #000 10%, transparent);
