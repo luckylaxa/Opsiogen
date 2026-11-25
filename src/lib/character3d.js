@@ -337,13 +337,18 @@ export class Character {
     body.updateMatrixWorld(true);
     const chin = body.getObjectByName("SeamChin"), seamMat = chin?.material;
     for (const n of ["Sphere_1", "Sphere_2", "LowSeam", "LowSeamGlow", "SeamChin"]) body.getObjectByName(n)?.removeFromParent();
-    // The cut, as on the reference sheet (Lucky's markup, 25 Nov: "you can see that curve shape. Follow this"): round the
-    // ball at RHO(f) from its lowest point, f being the way round from the front. A gentle, even curve under the face
-    // (Lucky: "a slight curve in front view, but it's a symmetric curve"), then a smooth S up each side to high across
-    // the back, so it is an even smile from the front and an S from the side.
-    const smooth = (t) => { const k = Math.min(1, Math.max(0, t)); return k * k * k * (k * (6 * k - 15) + 10); };
-    const FRONT = 33 * rad, BACK = 70 * rad;
-    const RHO = (f) => { const a = Math.abs(Math.atan2(Math.sin(f), Math.cos(f))); return FRONT + 12 * rad * (1 - Math.cos(a)) / 2 + (BACK - FRONT - 12 * rad) * smooth((a - 55 * rad) / (95 * rad)); };
+    // The cut, as on the reference sheet: round the ball at RHO(f) from its lowest point, f being the way round from the
+    // front. Under the face it is the edge of a plane tilted back by TILT, so from the front it is one true, even arc, the
+    // same on both sides (Lucky, 25 Nov: "equal weight and perfect curve for front view"); it reaches SIDE at each side,
+    // then rises on to BACK across the back, levelling off as it goes, its slope carried on smoothly, so from the side
+    // it climbs and flattens out high at the back (Lucky's markup: "you can see that curve shape. Follow this").
+    const TILT = 31 * rad, CAP = 63 * rad, BACK = 70 * rad;
+    const plane = (a) => { const p = Math.cos(TILT), q = -Math.sin(TILT) * Math.cos(a), r = Math.hypot(p, q); return Math.atan2(q, p) + Math.acos(Math.cos(CAP) / r); };
+    const SIDE = plane(Math.PI / 2), BEND = (Math.tan(TILT) * (Math.PI / 2)) / (BACK - SIDE);
+    const RHO = (f) => {
+      const a = Math.abs(Math.atan2(Math.sin(f), Math.cos(f)));
+      return a <= Math.PI / 2 ? plane(a) : BACK - (BACK - SIDE) * Math.pow(1 - (a - Math.PI / 2) / (Math.PI / 2), BEND);
+    };
     const AX = new V3(0, -1, 0), U = new V3(0, 0, 1), V = AX.clone().cross(U);
     // The same gap all the way round (Lucky: "all the side cutting gaps should be the same"): widths are measured across
     // the cut, so where it climbs steeply they are spread a little further along RHO (K) to stay the same across it.
