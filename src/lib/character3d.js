@@ -344,13 +344,15 @@ export class Character {
     const FRONT = 33 * rad, BACK = 70 * rad;
     const RHO = (f) => FRONT + (BACK - FRONT) * smooth((Math.abs(Math.atan2(Math.sin(f), Math.cos(f))) - 65 * rad) / (80 * rad));
     const AX = new V3(0, -1, 0), U = new V3(0, 0, 1), V = AX.clone().cross(U);
-    const half = (f) => 0.015 + 0.035 * Math.pow(0.5 - 0.5 * Math.cos(f), 1.3);
+    // The same gap all the way round (Lucky: "all the side cutting gaps should be the same"): widths are measured across
+    // the cut, so where it climbs steeply they are spread a little further along RHO (K) to stay the same across it.
+    const K = (f) => { const e = 1e-3, d = (RHO(f + e) - RHO(f - e)) / (2 * e); return Math.hypot(1, d / Math.sin(RHO(f))); };
     const dir = (th, f) => new V3().copy(U).multiplyScalar(Math.cos(f)).addScaledVector(V, Math.sin(f)).multiplyScalar(Math.sin(th)).addScaledVector(AX, Math.cos(th));
     const tang = (th, f) => new V3().copy(U).multiplyScalar(Math.cos(f)).addScaledVector(V, Math.sin(f)).multiplyScalar(Math.cos(th)).addScaledVector(AX, -Math.sin(th));
     const polar = (q) => { const d = q.clone().normalize(); return [Math.acos(Math.max(-1, Math.min(1, d.dot(AX)))), Math.atan2(d.dot(V), d.dot(U))]; };
     const RP = 1, BP = 0.022, BS = 0.009, FLOOR = 0.9, OUT = 80 * rad, N = 240;
-    const edgeOf = (f) => RHO(f) - half(f) - 0.018;                      // the panel's edge
-    const wallOf = (f) => RHO(f) + half(f) - BS;                         // the shell's wall
+    const edgeOf = (f) => RHO(f) - 0.033 * K(f);                         // the panel's edge
+    const wallOf = (f) => RHO(f) + 0.006 * K(f);                         // the shell's wall
     // The shell: shaded as a ball (its points are packed small numbers: normals are rewritten, points never), and
     // open round the bottom, where the new shell edge and the panel go.
     const toPivot = new THREE.Matrix4(), toLocal = new THREE.Matrix3(), p = new V3(), nn = new V3();
@@ -368,7 +370,7 @@ export class Character {
       const idx = g.index ? g.index.array : Array.from({ length: pos.count }, (_, i) => i), keep = [];
       for (let i = 0; i < idx.length; i += 3) {
         const [th, f] = polar(at[idx[i]].clone().add(at[idx[i + 1]]).add(at[idx[i + 2]]));
-        if (th > wallOf(f) + BS + 0.03) keep.push(idx[i], idx[i + 1], idx[i + 2]);
+        if (th > wallOf(f) + BS * K(f) + 0.03) keep.push(idx[i], idx[i + 1], idx[i + 2]);
       }
       g.setIndex(keep);
     }
@@ -419,17 +421,17 @@ export class Character {
     const pure = (f) => { const L = light(f), m = Math.max(...L), on = Math.min(1, Math.max(0, (m - 0.004) / 0.25)); return m > 0 ? L.map((x) => (x / m) * on) : NONE; };
     // The panel: the bottom of the same ball, white, with only a soft wash of the light near its edge.
     band((f) => {
-      const S = pure(f), c = edgeOf(f) - BP / RP;
+      const S = pure(f), k = K(f), c = edgeOf(f) - (k * BP) / RP;
       return [
         ...arc(30, (u) => { const k = Math.exp(-(c - c * u) / 0.03); return { th: c * u, r: RP, a: 0, c: mul(WHITE, 1 - 0.35 * k), g: mul(S, 0.55 * k) }; }),
-        ...arc(2, (u) => { const b = u * 12 * rad; return { th: c + (BP / RP) * Math.sin(b), r: RP - BP + BP * Math.cos(b), a: u * 12, c: mul(WHITE, 0.65 - 0.4 * u), g: mul(S, 0.55 + 0.5 * u) }; }),
+        ...arc(2, (u) => { const b = u * 12 * rad; return { th: c + ((k * BP) / RP) * Math.sin(b), r: RP - BP + BP * Math.cos(b), a: u * 12, c: mul(WHITE, 0.65 - 0.4 * u), g: mul(S, 0.55 + 0.5 * u) }; }),
       ];
     }, lit);
     // The light, on the panel's rounded edge and down its side into the cut: a sharp line, white-hot at its middle.
     band((f) => {
-      const S = pure(f), c = edgeOf(f) - BP / RP, hot = (k) => S.map((x) => Math.min(1, x * 1.0 + 0.45 * k * Math.max(...S)));
+      const S = pure(f), k = K(f), c = edgeOf(f) - (k * BP) / RP, hot = (h) => S.map((x) => Math.min(1, x * 1.0 + 0.45 * h * Math.max(...S)));
       return [
-        ...arc(8, (u) => { const b = (12 + u * 78) * rad; return { th: c + (BP / RP) * Math.sin(b), r: RP - BP + BP * Math.cos(b), a: 12 + u * 78, c: hot(Math.sin(Math.PI * Math.min(1, u * 1.15))) }; }),
+        ...arc(8, (u) => { const b = (12 + u * 78) * rad; return { th: c + ((k * BP) / RP) * Math.sin(b), r: RP - BP + BP * Math.cos(b), a: 12 + u * 78, c: hot(Math.sin(Math.PI * Math.min(1, u * 1.15))) }; }),
         ...arc(3, (u) => ({ th: edgeOf(f), r: RP - BP - (RP - BP - FLOOR) * u, a: 90, c: mul(S, 0.75 - 0.5 * u) })),
       ];
     }, new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false }));
@@ -441,17 +443,17 @@ export class Character {
     // The shell's edge: a dark wall up out of the cut (the light reflected low on it), a rounded white lip, and the
     // shell's surface from there out past where the model's shell now begins (a hair below it, so it never shows through).
     band((f) => {
-      const S = pure(f), w = wallOf(f);
+      const S = pure(f), w = wallOf(f), k = K(f);
       return [
         ...arc(2, (u) => ({ th: w, r: FLOOR + (1 - BS - FLOOR) * u, a: -90, c: DARK, g: mul(S, 0.65 * (1 - 0.5 * u)) })),
-        ...arc(7, (u) => { const b = (1 - u) * 90 * rad; return { th: w + BS - BS * Math.sin(b), r: 1 - BS + BS * Math.cos(b), a: -(1 - u) * 90, c: WHITE, g: mul(S, 0.45 * (1 - u)) }; }),
+        ...arc(7, (u) => { const b = (1 - u) * 90 * rad; return { th: w + k * BS * (1 - Math.sin(b)), r: 1 - BS + BS * Math.cos(b), a: -(1 - u) * 90, c: WHITE, g: mul(S, 0.45 * (1 - u)) }; }),
       ];
     }, lit);
-    band((f) => { const w = wallOf(f) + BS; return arc(16, (u) => ({ th: w + (OUT - w) * u, r: u ? 0.9996 : 1, a: 0, c: WHITE })); }, shell?.material ?? lit);
+    band((f) => { const w = wallOf(f) + BS * K(f); return arc(16, (u) => ({ th: w + (OUT - w) * u, r: u ? 0.9996 : 1, a: 0, c: WHITE })); }, shell?.material ?? lit);
     // The fine seam down the front, from under the visor to the cut.
     if (seamMat) {
       const pts = [];
-      for (let lat = -27; lat > -89; lat -= 1) { const q = new V3(0, Math.sin(lat * rad), Math.cos(lat * rad)); const [th, f] = polar(q); if (th < wallOf(f) + BS + 0.004) break; pts.push(q.multiplyScalar(1.0004)); }
+      for (let lat = -27; lat > -89; lat -= 1) { const q = new V3(0, Math.sin(lat * rad), Math.cos(lat * rad)); const [th, f] = polar(q); if (th < wallOf(f) + BS * K(f) + 0.004) break; pts.push(q.multiplyScalar(1.0004)); }
       if (pts.length > 2) { const tube = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), pts.length * 2, 0.0032, 8), seamMat); tube.geometry.applyMatrix4(toBody); body.add(tube); }
     }
   }
