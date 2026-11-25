@@ -16,7 +16,7 @@ Outfit (SIL Open Font License, licence in `src/fonts/OFL.txt`), self-hosted as o
 
 ## Motion
 
-From the design system: a first-visit intro (our character drops in, spins once in the air and rushes at the screen, and the page opens through its lens; once per visit, when it starts on Home), a custom cursor (a dot that becomes a ring over links and a “View” disc over work), headings that rise from a mask, cards that fade up as they scroll in, buttons that press in slightly, and links and button labels that turn into the brand gradient on hover. The cursor switches off for touch screens; the intro and all the movement switch off for visitors who ask for reduced motion.
+From the design system: a first-visit intro (on a black screen our character jumps, does a backflip and flies at the screen, and the page opens through its visor; once per visit, when it starts on Home), a custom cursor (a dot that becomes a ring over links and a “View” disc over work), headings that rise from a mask, cards that fade up as they scroll in, buttons that press in slightly, and links and button labels that turn into the brand gradient on hover. The cursor switches off for touch screens; the intro and all the movement switch off for visitors who ask for reduced motion.
 
 ## Navigation
 

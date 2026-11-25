@@ -587,13 +587,15 @@ html[data-mega-open] .site-header {
 
 /*
  * First-visit intro (design system; components/motion/IntroLoader.tsx, started by INTRO_SCRIPT in lib/theme.ts).
- * Our character (a solid one: it tips and rocks but never changes shape) drops in, bounces, spins once in the air,
- * lands facing the visitor, then rushes at the screen and the page opens through its lens. Only transforms and opacity move, so it stays smooth while the page is still
- * busy loading. 1.62 s in all; `intro-bg` ends at 1.04 s, when the page's own entrance starts, so it is already
- * rising when the lens opens. The keyframes come from design/showreel/build/intro_css.py.
+ * On a black screen our character (a solid one: it never changes shape) pops in, crouches, jumps and does a backflip
+ * in the air, comes out of it facing the visitor, then flies at the screen and the page opens through its visor
+ * (Lucky, 25 Nov). Only transforms and opacity move, so it stays smooth while the page is still busy loading.
+ * 1.6 s in all; `intro-bg` ends at 1.04 s, when the page's own entrance starts, so it is already rising when the visor
+ * opens. The backdrop is pure black because the flip's pictures are drawn on it (no transparency, so a third of the
+ * size): any other dark would show their square. The rules come from design/showreel/build/intro_css.py.
  */
 .intro {
-  /* The character's box: framed as the Home character's own 3D canvas (lib/character3d.js), its hands reaching to the sides. */
+  /* The character's box, about as big as the Home character's own 3D canvas. */
   --size: clamp(157px, 16.1vw, 241px);
   position: fixed;
   inset: 0;
@@ -628,10 +630,12 @@ html[data-mega-open] .site-header {
 .intro__bg {
   position: absolute;
   inset: 0;
-  background: #0a090d;
+  background: #000;
 }
-/* The character's box, in the middle of the screen; it waits out of sight until its pictures are in. */
-.intro__zoom {
+/* The character's box in the middle of the screen, and the floor under it; they wait out of sight until the
+   pictures are in. The box carries the jump; the lens inside it the rush, about the visor. */
+.intro__zoom,
+.intro__floor {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -640,154 +644,164 @@ html[data-mega-open] .site-header {
   margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
   visibility: hidden;
 }
-.intro-go .intro__zoom {
+.intro-go .intro__zoom,
+.intro-go .intro__floor {
   visibility: visible;
 }
-/* Takes over from the backdrop for the rush and grows with the character; its hole is always under the shell. */
-.intro__veil {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 124vmax;
-  height: 124vmax;
-  margin: -62vmax 0 0 -62vmax;
-  background: radial-gradient(circle, transparent calc(var(--size) * 0.28), #0a090d calc(var(--size) * 0.28 + 1px));
-  opacity: 0;
-}
-/* The pool of our colours on the floor below it. */
-.intro__glow {
-  position: absolute;
-  left: 8%;
-  top: 72%;
-  width: 84%;
-  height: 20%;
-  background: linear-gradient(90deg, #35d4ff 4%, #5a7dff 26%, #b667ff 48%, #ff5fb4 70%, #ff9a3c 96%);
-  -webkit-mask-image: radial-gradient(closest-side, #000 10%, transparent);
-  mask-image: radial-gradient(closest-side, #000 10%, transparent);
-  opacity: 0;
-}
-.intro__hop,
-.intro__rock,
+.intro__lens,
+.intro__pop,
+.intro__front,
 .intro__shell,
 .intro__turn {
   position: absolute;
   inset: 0;
 }
-.intro__shell {
-  background: center / 100% 100% no-repeat;
+.intro__lens {
+  transform-origin: 50% 46.8%;
+}
+/* Takes over from the backdrop for the rush and grows with the character: dark all round, clear in the visor
+   (a little wider than the visor, under the shell's rim). */
+.intro__veil {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 160vmax;
+  height: 160vmax;
+  margin: -80vmax 0 0 -80vmax;
+  background: radial-gradient(calc(var(--size) * 0.2700) calc(var(--size) * 0.1578) at 50% calc(50% - var(--size) * 0.032), transparent 97%, #000 100%);
   opacity: 0;
 }
+/* The character facing the visitor: its shell (the visor cut out) over the visor picture, which clears for the rush. */
+.intro__face {
+  position: absolute;
+  left: 24.69%;
+  top: 31.87%;
+  width: 50.62%;
+  height: 29.84%;
+}
+.intro__face,
+.intro__shell {
+  background: center / 100% 100% no-repeat;
+}
+/* The jump and the backflip: 11 pictures side by side, on the backdrop's own dark. */
 .intro__turn {
   overflow: hidden;
+  opacity: 0;
 }
 .intro__strip {
   display: block;
-  width: 1200%;
+  width: 1100%;
   height: 100%;
   background: 0 0 / 100% 100% no-repeat;
+}
+/* The pool of our colours on the floor, just below the character. */
+.intro__glow {
+  position: absolute;
+  left: 10%;
+  top: 86%;
+  width: 80%;
+  height: 12%;
+  background: linear-gradient(90deg, #35d4ff 4%, #5a7dff 26%, #b667ff 48%, #ff5fb4 70%, #ff9a3c 96%);
+  -webkit-mask-image: radial-gradient(closest-side, #000 10%, transparent);
+  mask-image: radial-gradient(closest-side, #000 10%, transparent);
+  opacity: 0;
 }
 .intro-go .intro__bg {
   animation: intro-bg 1.04s both;
 }
 .intro-go .intro__zoom {
-  animation: intro-zoom 1.62s both;
+  animation: intro-path 1.6s both;
 }
-.intro-go .intro__veil,
-.intro-go .intro__shell {
-  animation: intro-on 1.62s both;
+.intro-go .intro__lens {
+  animation: intro-rush 1.6s both;
 }
-.intro-go .intro__glow {
-  animation: intro-glow 1.62s both;
+.intro-go .intro__veil {
+  animation: intro-on 1.6s both;
 }
-.intro-go .intro__hop {
-  animation: intro-hop 1.62s both;
+.intro-go .intro__pop {
+  animation: intro-pop 1.6s both;
 }
-.intro-go .intro__rock {
-  animation: intro-rock 1.62s both;
+.intro-go .intro__front {
+  animation: intro-front 1.6s both;
+}
+.intro-go .intro__face {
+  animation: intro-glass 1.6s both;
 }
 .intro-go .intro__turn {
-  animation: intro-glass 1.62s both;
+  animation: intro-flip 1.6s both;
 }
 .intro-go .intro__strip {
-  animation: intro-turn 1.62s both;
+  animation: intro-turn 1.6s both;
 }
-/* The landing ending (see INTRO_LAND in lib/theme.ts): the head script moves the character; the
-   zoom's own parts stay still, and the hero's character waits under the panel until the hand-over (its pool of light
-   shows as the backdrop fades, where the character is about to land). */
-.intro-land .intro__zoom,
-.intro-land .intro__turn,
-.intro-land .intro__veil,
-.intro-land .intro__shell {
-  animation: none;
-}
-/* The landing never shows the shell (see INTRO_START): left undrawn, its picture is not fetched. */
-.intro-land .intro__shell {
-  display: none;
-}
-.intro-land:not(.intro-done) [data-intro-land] > img,
-.intro-land:not(.intro-done) [data-intro-land] > canvas {
-  visibility: hidden;
+.intro-go .intro__glow {
+  animation: intro-glow 1.6s both;
 }
 @media (prefers-reduced-motion: reduce) {
   .intro {
     display: none !important;
   }
 }
-@keyframes intro-hop {
-  0% { transform: translateY(-62vh) rotate(0deg); animation-timing-function: cubic-bezier(0.333, 0, 0.667, 0.333); }
-  18.519% { transform: translateY(0) rotate(0deg); animation-timing-function: linear; }
-  21.605% { transform: translateY(0) rotate(0deg); animation-timing-function: cubic-bezier(0.333, 0.667, 0.667, 1); }
-  38.889% { transform: translateY(-15vh) rotate(-5deg); animation-timing-function: cubic-bezier(0.333, 0, 0.667, 0.333); }
-  56.173%, 100% { transform: translateY(0) rotate(0deg); }
+@keyframes intro-path {
+  0% { transform: translateY(0); animation-timing-function: linear; }
+  13.75% { transform: translateY(0); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+  20% { transform: translateY(calc(var(--size) * 0.06)); animation-timing-function: cubic-bezier(0.2, 0.75, 0.4, 1); }
+  31.25% { transform: translateY(calc(var(--size) * -0.9)); animation-timing-function: cubic-bezier(0.333, 0.667, 0.667, 1); }
+  41.25% { transform: translateY(calc(var(--size) * -0.98)); animation-timing-function: cubic-bezier(0.333, 0, 0.667, 0.333); }
+  53.75% { transform: translateY(calc(var(--size) * -0.9)); animation-timing-function: linear; }
+  58.75% { transform: translateY(calc(var(--size) * -0.86)); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+  65% { transform: translateY(calc(var(--size) * -0.76)); animation-timing-function: cubic-bezier(0.333, 0.667, 0.667, 1); }
+  82.5%, 100% { transform: translateY(0); }
 }
-@keyframes intro-rock {
-  0% { transform: rotate(0deg); animation-timing-function: linear; }
-  18.519% { transform: rotate(0deg); animation-timing-function: cubic-bezier(0.333, 0.667, 0.667, 1); }
-  22.222% { transform: rotate(-10deg); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
-  27.778% { transform: rotate(6deg); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
-  33.333% { transform: rotate(-2deg); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
-  38.272% { transform: rotate(0deg); animation-timing-function: linear; }
-  56.173% { transform: rotate(0deg); animation-timing-function: cubic-bezier(0.333, 0.667, 0.667, 1); }
-  59.259% { transform: rotate(8deg); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
-  62.963% { transform: rotate(-3deg); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
-  66.049%, 100% { transform: rotate(0deg); }
+@keyframes intro-rush {
+  0% { transform: scale(1); animation-timing-function: linear; }
+  58.75% { transform: scale(1); animation-timing-function: cubic-bezier(0.22, 0.8, 0.35, 1); }
+  65% { transform: scale(0.88); animation-timing-function: linear; }
+  73.75% { transform: scale(1.461); animation-timing-function: linear; }
+  80.75% { transform: scale(2.79); animation-timing-function: linear; }
+  86% { transform: scale(4.944); animation-timing-function: linear; }
+  90.2% { transform: scale(8.168); animation-timing-function: linear; }
+  93.7% { transform: scale(12.745); animation-timing-function: linear; }
+  96.5% { transform: scale(18.49); animation-timing-function: linear; }
+  98.6% { transform: scale(24.66); animation-timing-function: linear; }
+  100% { transform: scale(30); }
+}
+@keyframes intro-pop {
+  0% { transform: scale(0.4); opacity: 0; animation-timing-function: cubic-bezier(0.333, 0.667, 0.667, 1); }
+  8.75% { transform: scale(1.07); opacity: 1; animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+  13.75%, 100% { transform: scale(1); opacity: 1; }
+}
+@keyframes intro-front {
+  0% { opacity: 1; animation-timing-function: step-end; }
+  13.75% { opacity: 0; animation-timing-function: step-end; }
+  53.75%, 100% { opacity: 1; }
+}
+@keyframes intro-flip {
+  0% { opacity: 0; animation-timing-function: step-end; }
+  13.75% { opacity: 1; animation-timing-function: step-end; }
+  53.75%, 100% { opacity: 0; }
 }
 @keyframes intro-turn {
   0% { transform: translateX(0); animation-timing-function: step-end; }
-  28.794% { transform: translateX(-8.3333%); animation-timing-function: step-end; }
-  31.497% { transform: translateX(-16.6667%); animation-timing-function: step-end; }
-  33.741% { transform: translateX(-25%); animation-timing-function: step-end; }
-  35.759% { transform: translateX(-33.3333%); animation-timing-function: step-end; }
-  37.659% { transform: translateX(-41.6667%); animation-timing-function: step-end; }
-  39.506% { transform: translateX(-50%); animation-timing-function: step-end; }
-  41.354% { transform: translateX(-58.3333%); animation-timing-function: step-end; }
-  43.253% { transform: translateX(-66.6667%); animation-timing-function: step-end; }
-  45.271% { transform: translateX(-75%); animation-timing-function: step-end; }
-  47.515% { transform: translateX(-83.3333%); animation-timing-function: step-end; }
-  50.218% { transform: translateX(-91.6667%); animation-timing-function: step-end; }
-  54.321%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-9.0909%); animation-timing-function: step-end; }
+  31.25% { transform: translateX(-18.1818%); animation-timing-function: step-end; }
+  33.75% { transform: translateX(-27.2727%); animation-timing-function: step-end; }
+  36.25% { transform: translateX(-36.3636%); animation-timing-function: step-end; }
+  38.75% { transform: translateX(-45.4545%); animation-timing-function: step-end; }
+  41.25% { transform: translateX(-54.5455%); animation-timing-function: step-end; }
+  43.75% { transform: translateX(-63.6364%); animation-timing-function: step-end; }
+  46.25% { transform: translateX(-72.7273%); animation-timing-function: step-end; }
+  48.75% { transform: translateX(-81.8182%); animation-timing-function: step-end; }
+  51.25% { transform: translateX(-90.9091%); animation-timing-function: step-end; }
+  53.75%, 100% { transform: translateX(-90.9091%); }
 }
 @keyframes intro-glow {
-  0% { transform: scale(0.35); opacity: 0; animation-timing-function: cubic-bezier(0.333, 0, 0.667, 0.333); }
-  18.519% { transform: scale(1.1); opacity: 1; animation-timing-function: linear; }
-  21.605% { transform: scale(1.15); opacity: 1; animation-timing-function: cubic-bezier(0.333, 0.667, 0.667, 1); }
-  38.889% { transform: scale(0.7); opacity: 0.5; animation-timing-function: cubic-bezier(0.333, 0, 0.667, 0.333); }
-  56.173% { transform: scale(1.1); opacity: 1; animation-timing-function: cubic-bezier(0.333, 0.667, 0.667, 1); }
-  60.494% { transform: scale(1); opacity: 0.9; animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
-  66.667%, 100% { transform: scale(0.9); opacity: 0; }
-}
-@keyframes intro-zoom {
-  0% { transform: scale(1); animation-timing-function: linear; }
-  61.728% { transform: scale(1); animation-timing-function: cubic-bezier(0.22, 0.8, 0.35, 1); }
-  67.901% { transform: scale(0.86); animation-timing-function: linear; }
-  75.926% { transform: scale(1.432); animation-timing-function: linear; }
-  82.346% { transform: scale(2.747); animation-timing-function: linear; }
-  87.16% { transform: scale(4.887); animation-timing-function: linear; }
-  91.012% { transform: scale(8.099); animation-timing-function: linear; }
-  94.222% { transform: scale(12.674); animation-timing-function: linear; }
-  96.79% { transform: scale(18.432); animation-timing-function: linear; }
-  98.716% { transform: scale(24.628); animation-timing-function: linear; }
-  100% { transform: scale(30); }
+  0% { transform: scale(0.4); opacity: 0; animation-timing-function: cubic-bezier(0.333, 0.667, 0.667, 1); }
+  8.75% { transform: scale(1.05); opacity: 1; animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+  13.75% { transform: scale(1); opacity: 1; animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+  20% { transform: scale(1.12); opacity: 1; animation-timing-function: cubic-bezier(0.2, 0.75, 0.4, 1); }
+  31.25% { transform: scale(0.55); opacity: 0.45; animation-timing-function: linear; }
+  56.25% { transform: scale(0.6); opacity: 0.3; animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+  65%, 100% { transform: scale(0.6); opacity: 0; }
 }
 @keyframes intro-bg {
   0% { opacity: 1; animation-timing-function: step-end; }
@@ -795,12 +809,12 @@ html[data-mega-open] .site-header {
 }
 @keyframes intro-on {
   0% { opacity: 0; animation-timing-function: step-end; }
-  62.963%, 100% { opacity: 1; }
+  62.5%, 100% { opacity: 1; }
 }
 @keyframes intro-glass {
   0% { opacity: 1; animation-timing-function: linear; }
-  69.136% { opacity: 1; animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
-  79.012%, 100% { opacity: 0; }
+  70% { opacity: 1; animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+  78.75%, 100% { opacity: 0; }
 }
 
 @keyframes step-in {
