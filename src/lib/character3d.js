@@ -338,11 +338,12 @@ export class Character {
     const chin = body.getObjectByName("SeamChin"), seamMat = chin?.material;
     for (const n of ["Sphere_1", "Sphere_2", "LowSeam", "LowSeamGlow", "SeamChin"]) body.getObjectByName(n)?.removeFromParent();
     // The cut, as on the reference sheet (Lucky's markup, 25 Nov: "you can see that curve shape. Follow this"): round the
-    // ball at RHO(f) from its lowest point, f being the way round from the front. Level under the face, it rises in a
-    // smooth S round each side to high across the back, so it is even from the front and an S from the side.
+    // ball at RHO(f) from its lowest point, f being the way round from the front. A gentle, even curve under the face
+    // (Lucky: "a slight curve in front view, but it's a symmetric curve"), then a smooth S up each side to high across
+    // the back, so it is an even smile from the front and an S from the side.
     const smooth = (t) => { const k = Math.min(1, Math.max(0, t)); return k * k * k * (k * (6 * k - 15) + 10); };
     const FRONT = 33 * rad, BACK = 70 * rad;
-    const RHO = (f) => FRONT + (BACK - FRONT) * smooth((Math.abs(Math.atan2(Math.sin(f), Math.cos(f))) - 65 * rad) / (80 * rad));
+    const RHO = (f) => { const a = Math.abs(Math.atan2(Math.sin(f), Math.cos(f))); return FRONT + 12 * rad * (1 - Math.cos(a)) / 2 + (BACK - FRONT - 12 * rad) * smooth((a - 55 * rad) / (95 * rad)); };
     const AX = new V3(0, -1, 0), U = new V3(0, 0, 1), V = AX.clone().cross(U);
     // The same gap all the way round (Lucky: "all the side cutting gaps should be the same"): widths are measured across
     // the cut, so where it climbs steeply they are spread a little further along RHO (K) to stay the same across it.
