@@ -316,6 +316,10 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   flip to previous one." The flips are gone: the chapter words hop as before (arms up in the air, out wide to land)
   and still end with it standing at the right of the line; the closing fast words bounce with a fist punched up, and
   it leaves after the last as before. Everything else is cut 19. Out: `out/opsiogen-showreel-v20.mp4`.
+- **Back to cut 17 (25 Nov).** Lucky on the chapter lines: "Keep it as same previous one animation which we had
+  jumping animation." The chapter words hop onto each word again (landing on "it.") and spring up and off the top
+  into the next shot. With that, `frames.html` is cut 17 again, so the site shows cut 17's film
+  (`out/opsiogen-showreel-v17.mp4`) once more; cuts 18 to 20 stay in `out/` for reference.
 - The logo keeps its own shape; only at the very end (cut 11, as Lucky asked) is it shown larger, then settles at
   its own size. Otherwise it only fades in. Nothing else is shown larger than its own size.
 
