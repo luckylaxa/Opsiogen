@@ -181,6 +181,10 @@ The motion language is in `design/showreel/EDIT-PLAN.md` ("Cut 7"). Everything b
    draw it live from the hero's 3D model instead (`character3d.js` loads `public/home/character.glb` with three.js
    from `node_modules`, with the hero's studio, lights and materials): it turns right round, tilts, looks about and
    blinks its light, and never changes shape. `ch3d-test.html` draws six poses side by side as a quick check.
+   Since cut 15 (25 Nov) that model is the version 3 character, drawn by the site's own module
+   (`src/lib/character3d.js`; `character3d.js` here hands it the model, read from disk): its faces, its jointed
+   hands and the rainbow ring, which turns all the time it is on screen. `frames.html` gives each moment its
+   expression with `exAt(t, [t0, 'wink'], ...)` (wink, thinking, surprised, happy, neutral).
    `pieces.py` finds the separate pieces in flat-colour images (`a/pieces.js`) so each can move on its own;
    `screens.py` lifts the screens out of the latest case-study designs (`a/scr-*.jpg`, `a/screens.js`) for the
    single-screen shots, pairs and walls, cut past the design's frame with clean corners (no lines at the edges);
@@ -203,7 +207,7 @@ The reel is the `showreel` section of the Home page in `src/content/seed-data.ts
 the Home hero, and the Work page opens with the featured project, Oh My Glam, instead):
 `/work/showreel.mp4`, `/work/showreel.webm` and the poster `/work/showreel.jpg` (1920 x 1080, with
 alt text). Since 18 Nov (Lucky: "for time being you can put this video in website") it is the whole
-showreel with its music (now cut 14, 60 s, the one version, with the opening logo beat: Lucky, 19 Nov, "use 62 sec
+showreel with its music (now cut 15, cut 14 with the version 3 character, 60 s, the one version, with the opening logo beat: Lucky, 19 Nov, "use 62 sec
 version only", then "merge new opening and publish"): the card plays it muted and shows a sound button and a full-view button
 (`sound: true`; full view fills the screen with the film and its sound and the browser's own controls), and is
 16:9 on phones too, so no edge of the film is cut. Web copies: H.264 CRF 26 with AAC (about 19 MB)

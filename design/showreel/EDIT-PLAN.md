@@ -276,6 +276,14 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   from here."), the 13 hand-overs and the jet-and-snap logo ending; the logo shot is 9 beats (one less hold at the end)
   so the film is 60.0 s, "within a minute". Built with `SHARE=1` (frames.cjs and film.py); out:
   `out/opsiogen-showreel-v14.mp4`; its web copies are on Home.
+- **Cut 15 (25 Nov), the new character.** Lucky sent three expressions (a wink with a finger gun and sparks, a
+  finger on the chin with "?", hands to the cheeks with "!!") and asked to "update the showreel ... and keep rotating
+  the ring when character is active". Cut 14 as it was (same shots, cuts and music), with the version 3 character
+  drawn by the site's own module (`src/lib/character3d.js`, through `build/character3d.js`): its ring turns all the
+  time it is on screen, it smiles at rest and opens its eyes to look. Its expressions: she points at it and it is
+  caught out ("!!"); it cheers the win with a wink and a finger gun; on the closing words it thinks, a finger on its
+  chin, while each word types, then turns to us with a wink and a finger gun; on the logo it reads the call, then
+  signs off with a wink. Built as cut 14 (`SHARE=1`, the cut 14 stills); out: `out/opsiogen-showreel-v15.mp4`.
 - The logo keeps its own shape; only at the very end (cut 11, as Lucky asked) is it shown larger, then settles at
   its own size. Otherwise it only fades in. Nothing else is shown larger than its own size.
 
