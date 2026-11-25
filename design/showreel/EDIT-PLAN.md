@@ -284,6 +284,21 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   caught out ("!!"); it cheers the win with a wink and a finger gun; on the closing words it thinks, a finger on its
   chin, while each word types, then turns to us with a wink and a finger gun; on the logo it reads the call, then
   signs off with a wink. Built as cut 14 (`SHARE=1`, the cut 14 stills); out: `out/opsiogen-showreel-v15.mp4`.
+- **Cut 16 (25 Nov), hands that act.** Lucky on cut 15: the ring went through the hands ("it's look like bug") and
+  "most of the time hand is stiff and not engaging ... make more creative way of animation". The hands now rest
+  below the ring and never go into the ring, the body or the ears in any pose (`keepClear` in the site's module), and
+  the character acts with them in every shot (`HT()` hand tracks in `frames.html`, poses and moves from the module:
+  `HAND`, `wave`, `clap`, `pump`; the fuller model `design/hero/character/v3/web/character-full.glb` adds thumbs up,
+  fist and hold). Its hands trail behind it as it moves. Shot by shot: jazz hands as it pops up beside the woman, arms
+  out as it spins, hands on its cheeks when she points, then a wave to her; arms up as it drops in, out wide to
+  land, a hand over its eyes, a thumbs up before the dive into its eye; a superhero fist through the grid; arms up
+  in the air and out wide on each word it stamps, signing off each chapter its own way (thumbs up, ta-da, a fist up,
+  a wave); jumping for joy with the man who wins; a thumbs up and a wink for the smiling woman; a fist punched up on
+  each closing word; thinking on the spine, then pointing at the last words, then the wink with a finger gun and a
+  thumbs up; on the logo a wave as it turns away, a superhero fist into the O, balance, ta-da, hooray, a finger on
+  each side of the call and the sign-off. The thinking hand shows the back of the hand, the finger on its chin, and
+  the surprised hands rest on its cheeks (Lucky: the palm and cuff facing the camera was the wrong pose).
+  Same shots, cuts and music; out: `out/opsiogen-showreel-v16.mp4`.
 - The logo keeps its own shape; only at the very end (cut 11, as Lucky asked) is it shown larger, then settles at
   its own size. Otherwise it only fades in. Nothing else is shown larger than its own size.
 

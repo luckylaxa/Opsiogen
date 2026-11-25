@@ -16,7 +16,7 @@ G = {'__file__': os.path.join(HERE, 'build.py' if os.path.exists(os.path.join(HE
 exec(open(G['__file__']).read(), G)
 OUT = G['OUT']; root = G['root']
 DEST = os.environ.get('WEBOUT', OUT)
-POSES = ('gun', 'point', 'wave')                                  # the glove's blend shapes; its resting shape is the open hand
+POSES = tuple(os.environ.get('POSES', 'gun,point,wave,thumbsup,fist,hold').split(','))   # the glove's blend shapes (build.py's HAND_POSES); its resting shape is the open hand
 LOW = int(os.environ.get('GLOVEVERTS', 7000))                     # how many points the glove keeps
 
 

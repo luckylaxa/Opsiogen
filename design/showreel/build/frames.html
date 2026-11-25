@@ -239,8 +239,9 @@ const makeBall=()=>{const g=img(A+'ball-shadow.png',f,{position:'absolute',zInde
       Object.assign(c.style,{display:'block',left:x-S/2+'px',top:y-S/2+'px',width:S+'px',height:S+'px',opacity:o.op??1});
       const P=POSE[o.pose||'front'],m=o.mirror?-1:1;
       const b=o.blink||(o.pose==='blink'?.4:0),looking=(o.pose||'front')!=='front'&&o.pose!=='front2'&&o.pose!=='blink',ex=o.ex||{to:looking||b>0?'neutral':'happy'};
+      const dr=v=>Math.max(-1.2,Math.min(1.2,v/(D*5)));
       if(window.CH3D)CH3D.draw(c,{yaw:m*P[0]+(o.turn||0),pitch:P[1],roll:-(o.rot||0)*Math.PI/180,look:[m*P[2],-P[3]],blink:b>.12&&b<.6?1:0,ring:-RT*2.6,
-        from:ex.from??ex.to,to:ex.to,t:ex.t??1,sign:ex.sign??0});
+        from:ex.from??ex.to,to:ex.to,t:ex.t??1,sign:ex.sign??0,hands:o.hands,time:RT,drift:o.v?[dr(o.v[0]),dr(-o.v[1])]:undefined});
       if(o.trail){const tw=o.trailW??900*o.trail,th=o.trailH??S*1.5;Object.assign(tr.style,{display:'block',left:x-tw+'px',top:y-th/2+'px',width:tw+'px',height:th+'px',opacity:.72*o.trail,transform:`rotate(${o.trailA??-6}deg)`})}else tr.style.display='none';
       if(o.floor==null){g.style.display='none';return}
       const h=Math.max(0,o.floor-y-D/2),k=Math.max(.35,1-h/(2.2*D)),gw=.901*D*k,gh=.28*D*k;
@@ -269,6 +270,22 @@ const exAt=(t,...keys)=>{let i=-1;keys.forEach((k,j)=>{if(t>=k[0])i=j});if(i<0)r
   const to=keys[i][1],from=i?keys[i-1][1]:'happy',q=clamp((t-keys[i][0])/.3);return{from,to,t:q,sign:clamp((t-keys[i][0]-.12)/.36)}};
 const twirl=(t,t0,dir=1,dur=.8)=>{const q=(t-t0)/dur;return q<0||q>1?{turn:0,on:false}:{turn:dir*2*Math.PI*q*q*(3-2*q),on:true}};
 const blinkPh=(t,...at)=>{for(const b of at){const q=(t-b)/.3;if(q>0&&q<1)return q}return 0};
+// Its hands (cut 16; Lucky, 25 Nov: "in video most of the time hand is stiff ... make more creative way of animation"):
+// it acts with them all through. HT(t, keys) is where they are at t. keys: [t0, R, L], ...: R is its right hand (on the
+// left of the screen), L its left; each a pose or a move by name (HAND and MOVES in src/lib/character3d.js: rest, hi,
+// wave, cheer, pump, point, gun, thumbsup, chin, cheek, present, shade, clap, balance, fist, trail), 'ex:<name>' for
+// that expression's own hand, a pose (PT() points), or a function of the time since its key. At each key a hand gets
+// there in .16 s, a little past and back, going round the ring if it has to; a move starts from its beginning at its key.
+// o.v (how fast it moves on screen, px/s; vel()) makes its hands trail behind it.
+const backOut=q=>{const c=1.7;q=clamp(q)-1;return 1+(c+1)*q*q*q+c*q*q};
+const HT=(t,keys,dur=.16)=>{const H=window.CH3D;if(!H||!H.hand)return undefined;
+  const res=(s,side,tt)=>typeof s==='function'?s(tt,side):typeof s==='string'?(s.startsWith('ex:')?H.EXPRESSIONS[s.slice(3)].hands[side]:H.hand(s,side,tt)):s;
+  let i=0;keys.forEach((k,j)=>{if(t>=k[0])i=j});
+  const cur=keys[i],prev=keys[Math.max(0,i-1)],q=i===0?1:clamp((t-cur[0])/dur),out={};
+  ['R','L'].forEach((side,si)=>{const b=res(cur[1+si],side,t-cur[0]);out[side]=q>=1?b:[res(prev[1+si],side,t-prev[0]),b,backOut(q)]});
+  return out};
+const PT=(dir,side='R')=>window.CH3D&&window.CH3D.pointTo?window.CH3D.pointTo(dir,side):'point';   // a hand pointing along dir (its own space)
+const vel=(path,t)=>{const a=path(t),b=path(t-1/60);return[(a.x-b.x)*60,(a.y-b.y)*60]};
 let CH3D_READY=Promise.resolve(false);
 if(MOTION)CH3D_READY=new Promise(res=>{const sc=document.createElement('script');sc.type='module';sc.src='character3d.js';sc.onload=()=>res(window.CH3D?window.CH3D.ready:false);sc.onerror=()=>res(false);document.head.appendChild(sc)});
 window.anim=()=>{};
@@ -295,29 +312,43 @@ if(MOTION)(()=>{
     // It lands above the line, blinks, and the camera dives into its eye.
     const k=330/720,X=795+359.5*k,Y=90+357*k,D=497*k,LX=X,LY=Y,path=hops([[BEAT/4,X,Y]],0,0,D);
     add((t,d)=>{const p=path(t),q=clamp((t-.56)/(d-1/30-.56)),z=Math.pow(24,q*q);
-      ball.at(p.x,p.y,D,{rot:p.rot,pose:t>.15&&t<.32?'upleft':'front',blink:blinkPh(t,.33),res:z,floor:Y+D/2});
+      // Arms up as it drops in, out wide as it lands, a hand over its eyes as it looks up, then a thumbs up: we take it from here.
+      ball.at(p.x,p.y,D,{rot:p.rot,pose:t>.15&&t<.32?'upleft':'front',blink:blinkPh(t,.33),res:z,floor:Y+D/2,v:vel(path,t),
+        hands:HT(t,[[0,'cheer','cheer'],[BEAT/4,'balance','balance'],[.17,'shade','rest'],[.36,'rest','thumbsup']])});
       if(q>0){f.style.transformOrigin=`${LX}px ${LY}px`;f.style.transform=`translate(0,${(540-LY)*io(q)}px) scale(${z})`}})}
   else if(T==='Chapter word'){if(showUnder())add(t=>{f.style.clipPath=`circle(${ease(t/.22)*1110}px at 50% 50%)`});
     // It drops in and hops along the words on the eighths, stamping each one in, then springs up and out.
     const L=[BEAT/2,BEAT,BEAT*1.5],D=175;words.forEach(s=>{s.style.opacity=0});
     late.push(()=>{const keys=words.map((s,i)=>{const p=wtop(s);return[L[Math.min(i,2)]+.1*Math.max(0,i-2),p.x,p.y-D/2]}),path=hops(keys,130,.06,D),tl=keys[keys.length-1],t1=tl[0]+.06;
       words.forEach((s,i)=>add(t=>{const dt=t-keys[i][0];s.style.opacity=dt<0?0:1;const q=.55+.45*pop(dt/.16),a=stamp(dt);s.style.transformOrigin='50% 100%';s.style.transform=`scale(${q*(1+a*.4)},${q*(1-a*.6)})`}));
-      add((t,d)=>{if(t<t1){const p=path(t);ball.at(p.x,p.y,D,{...p,blink:blinkPh(t,tl[0])});return}
-        const q=clamp((t-t1)/(d-t1));ball.at(tl[1],tl[2]-(tl[2]+D)*(1-Math.pow(1-q,2)),D,{rot:rock(t-tl[0])+40*q})})})}
+      // Arms up in the air, out wide to land on each word (it stamps it in), and its own sign-off on the last one as it
+      // springs away: a thumbs up for brand, ta-da for design, a fist punched up for build, a wave goodbye for launch.
+      const wd=words.map(s=>s.textContent.toLowerCase()).join(' '),last=/brand/.test(wd)?['thumbsup','rest','thumbsup','cheer']:/design/.test(wd)?['present','present','cheer','cheer']:/build/.test(wd)?['pump','rest','pump','trail']:['wave','rest','wave','cheer'];
+      const hk=[[0,'cheer','cheer']];keys.forEach((k,i)=>{hk.push([k[0],'balance','balance']);if(i<keys.length-1)hk.push([(k[0]+keys[i+1][0])/2-.04,'cheer','cheer'])});
+      hk[hk.length-1]=[tl[0],last[0],last[1]];hk.push([t1+.02,last[2],last[3]]);
+      const pos=t=>{if(t<t1)return path(t);const q=clamp((t-t1)/(.87-t1));return{x:tl[1],y:tl[2]-(tl[2]+D)*(1-Math.pow(1-q,2))}};
+      add((t,d)=>{const hands=HT(t,hk),v=vel(pos,t);if(t<t1){const p=path(t);ball.at(p.x,p.y,D,{...p,blink:blinkPh(t,tl[0]),hands,v});return}
+        const q=clamp((t-t1)/(d-t1));ball.at(tl[1],tl[2]-(tl[2]+D)*(1-Math.pow(1-q,2)),D,{rot:rock(t-tl[0])+40*q,hands,v})})})}
   else if(T.startsWith('Fast word')){
     // It bounces on the beat, one word per bounce; after the last it leaves up and to the right.
     const D=175,first=T.endsWith('Brand'),last=T.endsWith('Launch'),t0=first?BEAT/4:0,side=T.endsWith('Design')||last?-1:1;
     late.push(()=>{const p=wtop(words[0]),Y=p.y-D/2,path=hops([[t0,p.x,Y],[BEAT,p.x,Y]],170,0,D,{dir0:side});
       words.forEach(s=>add(t=>{const a=stamp(t-t0);s.style.transformOrigin='50% 100%';s.style.transform=`scale(${1+a*.45},${1-a*.7})`}));
-      add(t=>{if(last){const q=clamp(t/BEAT);ball.at(p.x+700*q,Y-(Y+D)*(1-Math.pow(1-q,2)),D,{rot:rock(t,side)+50*q});return}
-        const q=path(t);ball.at(q.x,q.y,D,q)})})}
+      // A fist punched up on each bounce, one hand then the other; it leaves on the last like a superhero.
+      const hk=first?[[0,'cheer','cheer'],[t0,'balance','balance'],[t0+.07,'pump','rest']]:last?[[0,'pump','trail']]:T.endsWith('Design')?[[0,'balance','balance'],[.06,'rest','pump']]:[[0,'balance','balance'],[.06,'pump','rest']];
+      const out=t=>{const q=clamp(t/BEAT);return{x:p.x+700*q,y:Y-(Y+D)*(1-Math.pow(1-q,2))}};
+      add(t=>{const hands=HT(t,hk);if(last){const q=clamp(t/BEAT),o=out(t);ball.at(o.x,o.y,D,{rot:rock(t,side)+50*q,hands,v:vel(out,t)});return}
+        const q=path(t);ball.at(q.x,q.y,D,{...q,hands,v:vel(path,t)})})})}
   else if(T.startsWith('The spine')){const wt=words.map((s,i)=>i<2?i*.05-.1:(1+1.5*(i-2))*BEAT/2);words.forEach((s,i)=>rise(s,wt[i],80,.16));
     // It drops in beside the lines and watches each word arrive (a nod each time), thinking, a finger on its chin, then
     // turns to us with a wink and a finger gun.
     late.push(()=>{const R=Math.max(...words.map(s=>s.getBoundingClientRect().right)),D=Math.min(260,(1920-R)*.6),X=(R+1920)/2,Y=600,path=hops([[.14,X,Y]],0,0,D);
       add(t=>{const p=path(t);let k=-1;wt.forEach((w,i)=>{if(t>=w)k=i});const nod=k>1?rock(t-wt[k],-1,7):0,line=k<2?0:k<4?1:2;
         const pose=t<.14||t>=1.4?'front':line<2?'upleft':'down';
-        ball.at(p.x,p.y,D,{rot:p.rot+nod,pose,mirror:pose==='down',ex:exAt(t,[.3,'thinking'],[1.36,'wink']),floor:Y+D/2})})})}
+        // It drops in arms up, lands, thinks (a finger on its chin) as the first words type, then points at each of the
+        // last ones as it arrives, and turns to us with a wink, a finger gun and a thumbs up.
+        ball.at(p.x,p.y,D,{rot:p.rot+nod,pose,mirror:pose==='down',ex:exAt(t,[.24,'thinking'],[wt[4]-.02,'neutral'],[1.36,'wink']),floor:Y+D/2,v:vel(path,t),
+          hands:HT(t,[[0,'cheer','cheer'],[.14,'balance','balance'],[.24,'rest','ex:thinking'],[wt[4]-.02,PT([0,.08,1]),'rest'],[wt[5]-.02,PT([.3,0,1]),'rest'],[1.36,'thumbsup','ex:wink']])})})})}
   else if(T==='Brands already did'){
     // Aqua grows out of the full stop of "idea.". The opening line goes on (Lucky, 19 Nov: the lines were not
     // connected; one sentence across the opening): "Like brands before you." builds word by word, centred on its own;
@@ -365,22 +396,34 @@ if(MOTION)(()=>{
     add(t=>{const s=sc(t),[x,y]=at(s,0,0),p=flight(Math.min(t,H));Object.assign(lg.style,{left:x+'px',top:y+'px',width:800*s+'px',height:800*s*L.vb[1]/L.vb[0]+'px',
       opacity:clamp(.2+t/.1),zIndex:t>=tC&&t<tS&&p.y+p.d/2>top(t)-1?10:1})});   // over the character only while it is behind the logo
     const land=hops([[H,X,Y],[H+.2,X,Y]],34,0,D);
-    add(t=>{
+    // Its hands: a wave as it turns away (follow me), a fist out in front as it jets through the O like a superhero, arms
+    // out to balance as it snaps onto the top, ta-da over the logo, hooray on the hop, a finger on each side of the call
+    // as it reads it, then the wink, the finger gun and a thumbs up.
+    const hk=[[0,'wave','rest'],[.24,'fist','trail'],[tC+.02,'balance','balance'],[tS+.14,'rest','rest'],[1.25,'present','present'],[H,'cheer','cheer'],[H+.2,'rest','rest'],
+      [H+1.02,PT([0,-.2,1]),'rest'],[H+1.26,'rest',PT([0,-.2,1],'L')],[H+1.55,'thumbsup','ex:wink']];
+    const where=t=>{if(t<H){const p=flight(t);return{x:p.x,y:p.y}}const p=land(t);return{x:p.x,y:p.y}};
+    add(t=>{const hands=HT(t,hk),v=vel(where,t);
       if(t<H){const p=flight(t);return ball.at(p.x,p.y,p.d,{rot:p.rot,turn:p.turn,res:t<tC?1:1.2,floor:p.set?p.y+p.d/2:null,
-        trail:p.jet,trailA,trailW:760,trailH:p.d/SPH*1.5+380})}
+        trail:p.jet,trailA,trailW:760,trailH:p.d/SPH*1.5+380,hands,v})}
       const p=land(t),bob=t>H+1.8?6*(1-Math.cos((t-H-1.8)*7)):0,r=t-H,pose=r<1.02?'front':r<1.5?'down':'front';
-      ball.at(p.x,p.y-bob,D,{rot:p.rot,pose,mirror:r>=1.02&&r<1.26,ex:exAt(t,[H+1.02,'neutral'],[H+1.55,'wink']),floor:Y+D/2})})}
+      ball.at(p.x,p.y-bob,D,{rot:p.rot,pose,mirror:r>=1.02&&r<1.26,ex:exAt(t,[H+1.02,'neutral'],[H+1.55,'wink']),floor:Y+D/2,hands,v})})}
   // Over the stock clips (|alpha): it meets the people. After the opening line the clip opens in our lens circle:
   // the line's last frame is drawn over the clip with a hole that grows from the middle.
   if(ALPHA){
     if(under&&T.includes('488563452')){under.style.display='block';add(t=>{const r=ease(t/.26)*1110;under.style.maskImage=under.style.webkitMaskImage=`radial-gradient(circle at 50% 50%, transparent ${r}px, #000 ${r+.5}px)`})}
     if(T.includes('488563452')){const X=1520,Y=640,D=300;   // she points to her side: it pops up right there, then she turns to look at it and it looks back
       add(t=>{const q=pop((t-.35)/.2);if(q<=0)return ball.hide();const bob=t>.6?5*(1-Math.cos((t-.6)*8)):0;
-        const w=twirl(t,.35,1,.7);ball.at(X,Y-bob,D*q,{turn:w.turn,pose:t<1.05?'front':'upleft',ex:exAt(t,[.7,'surprised'],[1.05,'neutral']),floor:Y+D*q/2})})}
+        // Jazz hands as it pops up, arms out as it spins, both hands to its cheeks when she points at it, then a wave to her.
+        const w=twirl(t,.35,1,.7);ball.at(X,Y-bob,D*q,{turn:w.turn,pose:t<1.05?'front':'upleft',ex:exAt(t,[.7,'surprised'],[1.05,'neutral']),floor:Y+D*q/2,
+          hands:HT(t,[[0,'cheer','cheer'],[.45,'balance','balance'],[.7,'ex:surprised','ex:surprised'],[1.05,'wave','rest']])})})}
     if(T.includes('480737977')){const X=1720,Y=300,D=230,path=hops([.214,.429,.643,.857].map(t=>[t,X,Y]),90,.02,D,{turn:[0,0,360,0]});   // the win: it cheers with him
-      add(t=>{const p=path(t);if(p.off)return ball.hide();ball.at(p.x,p.y,D,{...p,pose:'upleft',ex:exAt(t,[.2,'wink'])})})}
+      // Jumping for joy with him: arms up in the air, out wide on each landing and for the spin, then a fist punched up.
+      add(t=>{const p=path(t);if(p.off)return ball.hide();ball.at(p.x,p.y,D,{...p,pose:'upleft',ex:exAt(t,[.2,'wink']),v:vel(path,t),
+        hands:HT(t,[[0,'cheer','cheer'],[.214,'balance','balance'],[.3,'cheer','cheer'],[.429,'balance','balance'],[.643,'balance','balance'],[.7,'pump','cheer']])})})}
     if(T.includes('490354049')){const X=1620,Y=640,D=280,path=hops([[.214,X,Y]],0,.02,D);   // her smile: it lands beside her and looks at her
-      add(t=>{const p=path(t);if(p.off)return ball.hide();const w=twirl(t,.214,-1,.6);ball.at(p.x,p.y,D,{rot:p.rot,turn:w.turn,pose:t<.82?'front':'upleft',floor:Y+D/2})})}
+      // Arms up as it drops in, out wide for the spin, then a thumbs up and a wink for her.
+      add(t=>{const p=path(t);if(p.off)return ball.hide();const w=twirl(t,.214,-1,.6);ball.at(p.x,p.y,D,{rot:p.rot,turn:w.turn,pose:t<.82?'front':'upleft',floor:Y+D/2,
+        ex:exAt(t,[.62,'wink']),v:vel(path,t),hands:HT(t,[[0,'cheer','cheer'],[.214,'balance','balance'],[.6,'thumbsup','rest']])})})}
   }
   if(!ALPHA){
   // Phones: rise or split in, then drift. The burst opens out of the character's eye and its screens light up one by one.
@@ -420,7 +463,9 @@ if(MOTION)(()=>{
     tiles.forEach((e,i)=>{const col=i%3,dl=col*.04+Math.floor(i/3)*.02,dy=col%2?700:-700,ims=[...e.querySelectorAll('img')],cx=parseFloat(e.style.left)+parseFloat(e.style.width)/2;
       e.style.transformOrigin=`${960-parseFloat(e.style.left)}px ${540-parseFloat(e.style.top)}px`;
       add(t=>{const q=pop((t-dl)/IN);e.style.transform=`rotate(${-8*(1-q)}deg) translateY(${(1-q)*dy}px)`;const s=Math.min(ims.length-1,t<.26?0:bx(t)+D*.3<cx?1:2);ims.forEach((im,j)=>{im.style.display=j===s?'block':'none'})})});
-    add(t=>{if(t<.3||t>.76)return ball.hide();ball.at(bx(t),540-Math.sin(clamp((t-.3)/.45)*Math.PI)*40,D,{pose:'fly',rot:6,trail:1})})}
+    // It flies through like a superhero: a fist out in front, the other hand trailing.
+    const fl=t=>({x:bx(t),y:540-Math.sin(clamp((t-.3)/.45)*Math.PI)*40});
+    add(t=>{if(t<.3||t>.76)return ball.hide();const p=fl(t);ball.at(p.x,p.y,D,{pose:'fly',rot:6,trail:1,v:vel(fl,t),hands:HT(t,[[0,'fist','trail']])})})}
   else if(tiles.length){tiles.forEach(e=>{e.style.transformOrigin=`${960-parseFloat(e.style.left)}px ${540-parseFloat(e.style.top)}px`});
     add((t,d)=>{const q=io(t/(d*.85));tiles.forEach((e,i)=>{const col=i%3;e.style.transform=`rotate(${-9*(1-q)}deg) scale(${1+.6*(1-q)}) translateY(${(col%2?-1:1)*160*(1-q)}px)`})})}
   // Pieces of a flat-colour image: a row springs up one after another; a single piece takes one of three entrances.

@@ -185,6 +185,12 @@ The motion language is in `design/showreel/EDIT-PLAN.md` ("Cut 7"). Everything b
    (`src/lib/character3d.js`; `character3d.js` here hands it the model, read from disk): its faces, its jointed
    hands and the rainbow ring, which turns all the time it is on screen. `frames.html` gives each moment its
    expression with `exAt(t, [t0, 'wink'], ...)` (wink, thinking, surprised, happy, neutral).
+   Since cut 16 its hands act in every shot (Lucky: never stiff): `HT(t, [[t0, R, L], ...])` gives both hands per
+   frame from the module's poses and moves (rest, hi, wave, cheer, pump, point, gun, thumbsup, chin, cheek, present,
+   shade, clap, balance, fist, trail; `PT(dir)` points), each getting to its pose in .16 s with a little overshoot and
+   going round the ring if it has to; `v: vel(path, t)` makes them trail as it moves. The module never lets a hand
+   into the ring, the body or the ears. The film loads the fuller model with thumbs up, fist and hold
+   (`design/hero/character/v3/web/character-full.glb`, `webexport.py`).
    `pieces.py` finds the separate pieces in flat-colour images (`a/pieces.js`) so each can move on its own;
    `screens.py` lifts the screens out of the latest case-study designs (`a/scr-*.jpg`, `a/screens.js`) for the
    single-screen shots, pairs and walls, cut past the design's frame with clean corners (no lines at the edges);
@@ -207,7 +213,7 @@ The reel is the `showreel` section of the Home page in `src/content/seed-data.ts
 the Home hero, and the Work page opens with the featured project, Oh My Glam, instead):
 `/work/showreel.mp4`, `/work/showreel.webm` and the poster `/work/showreel.jpg` (1920 x 1080, with
 alt text). Since 18 Nov (Lucky: "for time being you can put this video in website") it is the whole
-showreel with its music (now cut 15, cut 14 with the version 3 character, 60 s, the one version, with the opening logo beat: Lucky, 19 Nov, "use 62 sec
+showreel with its music (now cut 16, cut 14 with the version 3 character acting with its hands, 60 s, the one version, with the opening logo beat: Lucky, 19 Nov, "use 62 sec
 version only", then "merge new opening and publish"): the card plays it muted and shows a sound button and a full-view button
 (`sound: true`; full view fills the screen with the film and its sound and the browser's own controls), and is
 16:9 on phones too, so no edge of the film is cut. Web copies: H.264 CRF 26 with AAC (about 19 MB)

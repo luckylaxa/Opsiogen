@@ -1,11 +1,12 @@
 // Our character (version 3), drawn live with three.js. The Home hero (components/sections/HeroCharacter.tsx), the intro's
 // pictures and the showreel's 3D shots (design/showreel/build) all draw it with this, so it looks and moves the same
 // everywhere. Its model is public/home/character.glb and its faces public/home/faces.webp, both made from the Blender
-// model by design/hero/character/v3/webexport.py.
+// model by design/hero/character/v3/webexport.py (the showreel loads a fuller model with more hand shapes).
 //
 // The model: the body with its visor, ears, top stripe, lit seam and the rainbow ring (which spins about its own axis),
 // and one glove (fingers along +y, palm toward +z, thumb on +x) drawn twice, once mirrored, for the two hands. The glove
-// carries its poses as blend shapes: the open hand at rest, and `gun`, `point` and `wave`.
+// carries its poses as blend shapes: the open hand at rest, and `gun`, `point` and `wave` (the showreel's model also
+// `thumbsup`, `fist` and `hold`).
 //
 // A character's state, set each frame with `pose()`:
 //   yaw, pitch, roll   how it is turned (radians; yaw > 0 turns its face to the right of the screen, pitch > 0 down)
@@ -15,57 +16,117 @@
 //   ring               the ring's spin (radians)
 //   sign               0..1: how far the sign of the expression it is going to (sparks, ?, !!) has popped in; the sign
 //                      of the one it is leaving goes by itself in the first half of the change
+//   hands: { R, L }    hand poses that take over from the expression's, each or both: a pose (HAND, hand()), a name,
+//                      or [from, to, k] for a hand on its way from one pose to another (see travel())
+//   handsMix           0..1: how far they have taken over (default 1)
+//   time               seconds, for the hands' gentle float (they never hang quite still)
+//   drift: [x, y]      which way it is moving on screen, about -1..1 each: its hands trail behind
+// Whatever the pose, a hand never goes into the ring, the body, the visor or an ear: it is pushed clear (keepClear).
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 
 /** The faces in public/home/faces.webp, three to a row. */
 export const FACES = ["happy", "neutral", "blink", "wink", "thinking", "surprised"];
-const SHAPES = ["gun", "point", "wave"];
 
 /**
- * Where the hands go, in the character's own space: x to the right of the screen, y up, z toward the viewer, its body
- * a ball of radius 1. `at` is the middle of the wrist, `fingers` and `palm` the ways they point, `size` its scale,
- * `shape` the glove's pose. R is its right hand (on the left of the screen), L its left.
+ * Hand poses, given for its right hand (on the left of the screen) in the character's own space: x to the right of the
+ * screen, y up, z toward the viewer, its body a ball of radius 1. `at` is the middle of the wrist, `fingers` and `palm`
+ * the ways they point, `size` its scale, `shape` the glove's blend shapes. Its left hand takes the mirror image
+ * (mirror()). The ring runs round the body just under the visor, lower on its right side than its left, and the ears
+ * stand out at the sides of the head, so a hand at its side rests below the ring and comes up in front of the ears.
  */
-const REST = {
-  R: { at: [-1.16, -0.34, 0.3], fingers: [-0.8, 0.5, 0.33], palm: [0.25, 0.4, 0.88], size: 1.22, shape: {} },
-  L: { at: [1.16, -0.34, 0.3], fingers: [0.8, 0.5, 0.33], palm: [-0.25, 0.4, 0.88], size: 1.22, shape: {} },
+export const HAND = {
+  /** At rest: open at its side below the ring, palm up and turned to us, fingers out. */
+  rest: { at: [-1.18, -0.71, 0.36], fingers: [-0.85, 0.32, 0.42], palm: [0.22, 0.6, 0.77], size: 1.14 },
+  /** Hello: up beside its head, palm to us (wave() waves it). */
+  hi: { at: [-1.2, 0.64, 0.52], fingers: [-0.32, 0.95, 0.05], palm: [0.08, 0, 1], size: 1.12, shape: { wave: 1 } },
+  /** Hooray: up high, open. */
+  cheer: { at: [-0.98, 0.98, 0.44], fingers: [-0.3, 0.95, 0.05], palm: [0.05, 0.05, 1], size: 1.1, shape: { wave: 1 } },
+  /** A fist punched up. */
+  pump: { at: [-1.02, 0.88, 0.44], fingers: [-0.12, 0.99, 0.05], palm: [0.25, 0, 0.97], size: 1.12, shape: { fist: 1 } },
+  /** Pointing out to its side (pointTo() points it anywhere). */
+  point: { at: [-1.1, -0.04, 0.86], fingers: [-0.9, 0.1, 0.42], palm: [0, -1, 0.1], size: 1.14, shape: { point: 1 } },
+  /** A finger gun, low and out to its side, thumb up. */
+  gun: { at: [-1.02, -0.68, 1.02], fingers: [-0.88, 0.12, 0.45], palm: [0, 0.1, 1], size: 1.24, shape: { gun: 1 } },
+  /** Thumbs up, in front. */
+  thumbsup: { at: [-0.96, -0.56, 1.06], fingers: [0.5, 0, 0.86], palm: [0.86, 0, -0.5], size: 1.24, shape: { thumbsup: 1 } },
+  /** Thinking: its first finger up on its chin, the back of the hand to us, the wrist coming up from below. */
+  chin: { at: [-0.36, -0.3, 1.33], fingers: [0.2, 0.68, -0.7], palm: [0, 0.18, -1], size: 1.2, shape: { point: 1 } },
+  /** On its cheek, the back of the hand to us (both: "oh!"). */
+  cheek: { at: [-0.78, 0.06, 1.0], fingers: [0.28, 0.95, -0.15], palm: [0.4, -0.05, -0.92], size: 1.14, shape: { wave: 1 } },
+  /** Ta-da: palm up, held out to the side and in front. */
+  present: { at: [-1.12, -0.36, 1.02], fingers: [-0.8, 0.15, 0.58], palm: [0.1, 0.95, 0.2], size: 1.18 },
+  /** Shading its eyes to look far off. */
+  shade: { at: [-0.58, 0.64, 1.06], fingers: [0.95, 0.1, 0.22], palm: [0, -1, 0.2], size: 1.12, shape: { wave: 1 } },
+  /** Ready to clap: in front, palm facing the other hand (clap() claps). */
+  clap: { at: [-0.22, -0.2, 1.36], fingers: [0.1, 0.99, 0.12], palm: [1, 0, 0.02], size: 1.12, shape: { wave: 1 } },
+  /** Out wide for balance, below the ring. */
+  balance: { at: [-1.2, -0.78, 0.25], fingers: [-0.9, 0.38, 0.2], palm: [0.05, -1, 0.05], size: 1.1, shape: { wave: 1 } },
+  /** A fist out in front, as it flies (turned to face where it goes). */
+  fist: { at: [-0.36, 0.14, 1.42], fingers: [0.05, 0.1, 1], palm: [1, 0, 0], size: 1.15, shape: { fist: 1 } },
+  /** Trailing behind it as it flies. */
+  trail: { at: [-0.85, -0.56, -0.86], fingers: [-0.3, -0.25, -0.92], palm: [0, -1, 0.2], size: 1.1, shape: { wave: 1 } },
 };
+
+/** The same pose for the other hand. */
+export const mirror = (h) => ({ ...h, at: [-h.at[0], h.at[1], h.at[2]], fingers: [-h.fingers[0], h.fingers[1], h.fingers[2]], palm: [-h.palm[0], h.palm[1], h.palm[2]] });
+const lerp3 = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
+const clamp01 = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+/** Partway from one hand pose to another (k may run a little past 1 for an overshoot). */
+export function mixHand(a, b, k) {
+  const shape = {};
+  for (const n of new Set([...Object.keys(a.shape ?? {}), ...Object.keys(b.shape ?? {})])) shape[n] = clamp01((a.shape?.[n] ?? 0) + ((b.shape?.[n] ?? 0) - (a.shape?.[n] ?? 0)) * k);
+  return { at: lerp3(a.at, b.at, k), fingers: lerp3(a.fingers, b.fingers, k), palm: lerp3(a.palm, b.palm, k), size: a.size + (b.size - a.size) * k, shape };
+}
+/** Turns a hand's fingers about its palm (radians): a wave, a wag. */
+function twist(h, a) {
+  const f = new THREE.Vector3(...h.fingers).applyAxisAngle(new THREE.Vector3(...h.palm).normalize(), a);
+  return { ...h, fingers: f.toArray() };
+}
+const add3 = (h, d) => ({ ...h, at: [h.at[0] + d[0], h.at[1] + d[1], h.at[2] + d[2]] });
+const TAU = Math.PI * 2;
+/** Hand moves that play over time t (seconds), for its right hand; hand() mirrors them for the left. */
+const MOVES = {
+  /** Waving hello. */
+  wave: (t) => add3(twist(HAND.hi, 0.42 * Math.sin(TAU * 2.4 * t)), [0.05 * Math.sin(TAU * 2.4 * t + 0.6), 0, 0]),
+  /** Clapping: the hands meet in the middle three times a second. */
+  clap: (t) => { const k = Math.pow(0.5 - 0.5 * Math.cos(TAU * 3 * t), 0.6); return add3(twist(HAND.clap, -0.15 * k), [0.3 * (1 - k) - 0.16, 0, 0]); },
+  /** A fist pumped up and down. */
+  pump: (t) => add3(HAND.pump, [0, 0.14 * Math.pow(Math.abs(Math.sin(TAU * 1.6 * t)), 0.7) - 0.07, 0]),
+};
+/**
+ * A hand pose by name, for its right hand ("R") or left ("L"): one of HAND, or a move in MOVES played at time t. A
+ * pose object passes through (mirrored for "L" only if asked with mirrored = true).
+ */
+export function hand(name, side = "R", t = 0) {
+  const h = typeof name === "string" ? (MOVES[name] ? MOVES[name](t, side) : HAND[name] ?? HAND.rest) : name;
+  return side === "L" && typeof name === "string" ? mirror(h) : h;
+}
+/** Points a hand's first finger along a direction in the character's own space (for side R or L), from near its side. */
+export function pointTo(dir, side = "R") {
+  const d = new THREE.Vector3(...dir).normalize(), s = side === "L" ? 1 : -1;
+  const at = [s * 0.95 + d.x * 0.25, 0.02 + d.y * 0.3, 0.8 + d.z * 0.2];
+  const palm = new THREE.Vector3(0, -1, 0).addScaledVector(d, d.y).normalize();
+  return { at, fingers: d.toArray(), palm: palm.toArray(), size: 1.14, shape: { point: 1 } };
+}
+
+const REST = { R: HAND.rest, L: mirror(HAND.rest) };
 export const EXPRESSIONS = {
   /** At rest: smiling, eyes shut in a happy curve, hands open at its sides. */
   happy: { face: "happy", hands: REST },
   /** Looking about: eyes open. */
   neutral: { face: "neutral", hands: REST },
   /** A wink and a finger gun, with a little burst of sparks. */
-  wink: {
-    face: "wink", sign: "spark",
-    hands: { R: REST.R, L: { at: [0.82, -0.46, 0.98], fingers: [1, -0.08, 0.3], palm: [0, 0.05, 1], size: 1.34, shape: { gun: 1 } } },
-  },
+  wink: { face: "wink", sign: "spark", hands: { R: HAND.rest, L: mirror(HAND.gun) } },
   /** Hmm: a finger on its chin, a question mark. */
-  thinking: {
-    face: "thinking", sign: "question",
-    hands: { R: REST.R, L: { at: [0.5, -0.84, 1.24], fingers: [-0.56, 0.8, -0.16], palm: [0.12, 0.32, 1], size: 1.34, shape: { point: 1 } } },
-  },
-  /** Oh!: both hands up by its cheeks, palms out. */
-  surprised: {
-    face: "surprised", sign: "bang",
-    hands: {
-      R: { at: [-0.7, -0.42, 1.0], fingers: [0.16, 1, 0.1], palm: [0.1, 0, 1], size: 1.2, shape: { wave: 1 } },
-      L: { at: [0.7, -0.42, 1.0], fingers: [-0.16, 1, 0.1], palm: [-0.1, 0, 1], size: 1.2, shape: { wave: 1 } },
-    },
-  },
+  thinking: { face: "thinking", sign: "question", hands: { R: HAND.rest, L: mirror(HAND.chin) } },
+  /** Oh!: both hands on its cheeks. */
+  surprised: { face: "surprised", sign: "bang", hands: { R: HAND.cheek, L: mirror(HAND.cheek) } },
 };
 
-const v3 = (a) => new THREE.Vector3(a[0], a[1], a[2]);
-/** A hand's place as a transform: the glove's own frame turned so its fingers and palm point the given ways. */
-function place(h, mirror) {
-  const y = v3(h.fingers).normalize(), n = v3(h.palm), z = n.sub(y.clone().multiplyScalar(n.dot(y))).normalize(), x = new THREE.Vector3().crossVectors(y, z);
-  const q = new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(x, y, z));
-  return { p: v3(h.at).addScaledVector(y, 0.03 * h.size), q, s: h.size * (mirror ? -1 : 1), w: SHAPES.map((k) => h.shape[k] ?? 0) };
-}
-const PLACES = Object.fromEntries(Object.entries(EXPRESSIONS).map(([k, e]) => [k, { R: place(e.hands.R, false), L: place(e.hands.L, true) }]));
 const ease = (t) => (t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t));
+const v3 = (a) => new THREE.Vector3(a[0], a[1], a[2]);
 
 /** The studio it is lit in, as on the Home hero: soft white with two bright windows, a warm glow, and our colours from below. */
 function studio(gl, scene) {
@@ -139,6 +200,25 @@ function signTexture(kind) {
 }
 const SIGN_AT = { spark: [1.18, 0.98, 0.5], question: [1.08, 1.28, 0.3], bang: [1.12, 1.18, 0.3] };
 
+/**
+ * What a hand keeps clear of, in the character's own space: the ring (fitted from the model in the constructor), the
+ * body, the visor's bulge and the two ears. Each is a distance: how far a point is outside it (less than 0 inside), and
+ * the way out.
+ */
+const GAP = { ring: 0.035, body: 0.02 };
+const EAR = { x: 0.93, y: 0.125, z: 0.19, r: 0.37, half: 0.12 };       // an ear: a disc on the side of the head
+function sphereOut(p, cx, cy, cz, r, out) {
+  const dx = p.x - cx, dy = p.y - cy, dz = p.z - cz, l = Math.hypot(dx, dy, dz) || 1e-6;
+  out.set(dx / l, dy / l, dz / l); return l - r;
+}
+function earOut(p, s, out) {
+  const ax = s * (p.x - s * EAR.x), dy = p.y - EAR.y, dz = p.z - EAR.z, rho = Math.hypot(dy, dz) || 1e-6;
+  const a = Math.abs(p.x - s * EAR.x) - EAR.half, b = rho - EAR.r;
+  if (a > 0 && b > 0) { const l = Math.hypot(a, b); out.set((Math.sign(ax) * s * a) / l, (dy / rho) * (b / l), (dz / rho) * (b / l)); return l; }
+  if (a > b) { out.set(Math.sign(ax || 1) * s, 0, 0); return a; }
+  out.set(0, dy / rho, dz / rho); return b;
+}
+
 export class Character {
   /** @param {THREE.Object3D} model the loaded glTF scene  @param {HTMLImageElement | ImageBitmap} sheet the faces */
   constructor(model, sheet) {
@@ -188,16 +268,50 @@ export class Character {
     });
     this.visorMat.emissiveMap = this.faces.happy;
 
-    // The ring spins about its own axis.
+    // The ring spins about its own axis, so the space it takes never changes: a tube round a circle (the torus a hand
+    // keeps clear of), measured from the model.
     this.ring = body.getObjectByName("Ring"); this.ring0 = this.ring.quaternion.clone();
+    this.group.updateMatrixWorld(true);
+    {
+      const pts = [];
+      this.ring.traverse((m) => {
+        if (!m.isMesh) return; const a = m.geometry.attributes.position, step = Math.max(1, Math.floor(a.count / 600));
+        for (let i = 0; i < a.count; i += step) pts.push(new THREE.Vector3().fromBufferAttribute(a, i).applyMatrix4(m.matrixWorld));
+      });
+      const c = pts.reduce((s, p) => s.add(p), new THREE.Vector3()).multiplyScalar(1 / pts.length);
+      const n = new THREE.Vector3(0, 1, 0).applyQuaternion(this.ring.getWorldQuaternion(new THREE.Quaternion())).normalize();
+      let R = 0; for (const p of pts) { const q = p.clone().sub(c); R += q.addScaledVector(n, -q.dot(n)).length(); } R /= pts.length;
+      let r = 0; for (const p of pts) { const q = p.clone().sub(c), h = q.dot(n); r = Math.max(r, Math.hypot(q.addScaledVector(n, -h).length() - R, h)); }
+      this.torus = { c, n, R, r };
+    }
 
-    // The hands: the glove as it is (its right hand) and a mirrored copy (its left).
-    glove.removeFromParent();
+    // The hands: the glove as it is (its right hand) and a mirrored copy (its left). Its blend shapes by name.
+    glove.removeFromParent(); glove.position.set(0, 0, 0); glove.quaternion.identity(); glove.scale.set(1, 1, 1); glove.updateMatrixWorld(true);
     this.hands = { R: glove, L: glove.clone(true) };
     for (const h of Object.values(this.hands)) {
       h.traverse((m) => { if (m.isMesh && m.morphTargetInfluences) h.userData.glove = m; });
       this.pivot.add(h);
     }
+    const dict = this.hands.R.userData.glove?.morphTargetDictionary ?? {};
+    this.shapes = Object.keys(dict).sort((a, b) => dict[a] - dict[b]);
+    // Points spread evenly over the glove and its cuff (one in each small cube of the hand's own space, with how it
+    // moves in each blend shape): what is checked against the ring and the body.
+    this.samples = [];
+    {
+      const inv = new THREE.Matrix4().copy(glove.matrixWorld).invert(), seen = new Set(), CELL = 0.03;
+      glove.traverse((m) => {
+        if (!m.isMesh) return;
+        const rel = new THREE.Matrix4().multiplyMatrices(inv, m.matrixWorld), lin = new THREE.Matrix3().setFromMatrix4(rel);
+        const a = m.geometry.attributes.position, morph = m.geometry.morphAttributes.position;
+        for (let i = 0; i < a.count; i++) {
+          const p = new THREE.Vector3().fromBufferAttribute(a, i).applyMatrix4(rel);
+          const key = `${Math.floor(p.x / CELL)},${Math.floor(p.y / CELL)},${Math.floor(p.z / CELL)}`;
+          if (seen.has(key)) continue; seen.add(key);
+          this.samples.push({ p, d: morph ? morph.map((ma) => new THREE.Vector3().fromBufferAttribute(ma, i).applyMatrix3(lin)) : null });
+        }
+      });
+    }
+    this._p = new THREE.Vector3(); this._n = new THREE.Vector3(); this._best = new THREE.Vector3(); this._q = new THREE.Quaternion();
 
     // The signs: they stay beside it whichever way it turns.
     this.signs = {};
@@ -216,8 +330,65 @@ export class Character {
     return this;
   }
 
-  /** Sets the whole state (see the top of this file); anything left out takes its resting value. */
-  pose({ yaw = 0, pitch = 0, roll = 0, look = [0, 0], from = "happy", to = from, t = 1, blink = 0, ring = 0, sign = 0 } = {}) {
+  /** Puts a hand where a pose says: its place, turn, size (mirrored for the left hand) and blend shapes. */
+  _place(h, spec, mirrored) {
+    const y = v3(spec.fingers).normalize(), n = v3(spec.palm), z = n.sub(y.clone().multiplyScalar(n.dot(y))).normalize(), x = new THREE.Vector3().crossVectors(y, z);
+    h.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(x, y, z));
+    h.position.copy(v3(spec.at)).addScaledVector(y, 0.03 * spec.size);
+    const s = spec.size; h.scale.set(mirrored ? -s : s, s, s);
+    const g = h.userData.glove; if (g) this.shapes.forEach((k, i) => { g.morphTargetInfluences[i] = clamp01(spec.shape?.[k] ?? 0); });
+  }
+
+  /** How far the nearest thing is from point p (less than 0: inside it), and the way out of it into `out`. */
+  _distance(p, out) {
+    const { c, n, R, r } = this.torus, e = this._n;
+    // the ring: from the nearest point of its centre line
+    const qx = p.x - c.x, qy = p.y - c.y, qz = p.z - c.z, h = qx * n.x + qy * n.y + qz * n.z;
+    let rx = qx - n.x * h, ry = qy - n.y * h, rz = qz - n.z * h; const rl = Math.hypot(rx, ry, rz) || 1e-6;
+    rx = c.x + (rx / rl) * R; ry = c.y + (ry / rl) * R; rz = c.z + (rz / rl) * R;
+    const dx = p.x - rx, dy = p.y - ry, dz = p.z - rz, dl = Math.hypot(dx, dy, dz) || 1e-6;
+    let best = dl - r - GAP.ring; out.set(dx / dl, dy / dl, dz / dl);
+    let d = sphereOut(p, 0, 0, 0, 1 + GAP.body, e); if (d < best) { best = d; out.copy(e); }             // the body
+    d = sphereOut(p, 0, 0.1, 0.25, 0.78 + GAP.body, e); if (d < best) { best = d; out.copy(e); }         // the visor's bulge
+    for (const s of [-1, 1]) { d = earOut(p, s, e) - GAP.body; if (d < best) { best = d; out.copy(e); } } // the ears
+    return best;
+  }
+
+  /**
+   * Partway (k, 0..1) from hand pose a to pose b. A hand that goes from below the ring to above it (or back) swings out
+   * round it on the way, and any other move bows out a little, so a hand never cuts through the ring or the body.
+   */
+  travel(a, b, k) {
+    const m = mixHand(a, b, k); if (k <= 0 || k >= 1) return m;
+    const { c, n, R, r } = this.torus, side = (h) => v3(h.at).sub(c).dot(n);
+    const q = v3(mixHand(a, b, 0.5).at).sub(c), h = q.dot(n), u = q.addScaledVector(n, -h), rho = u.length() || 1e-6;
+    const crosses = Math.sign(side(a)) !== Math.sign(side(b)) || Math.abs(h) < 0.35;
+    const out = (crosses ? Math.max(0.12, R + r + 0.28 - rho) : 0.1) * Math.sin(Math.PI * clamp01(k));
+    u.multiplyScalar(out / rho);
+    return { ...m, at: [m.at[0] + u.x, m.at[1] + u.y, m.at[2] + u.z] };
+  }
+
+  /** Moves a placed hand out of anything it has gone into (a few small steps; poses are made to need none). */
+  keepClear(h) {
+    const g = h.userData.glove, w = g ? g.morphTargetInfluences : [], p = this._p, out = this._best, dir = new THREE.Vector3();
+    for (let pass = 0; pass < 5; pass++) {
+      let worst = 0;
+      for (const s of this.samples) {
+        p.copy(s.p); if (s.d) for (let k = 0; k < s.d.length; k++) if (w[k]) p.addScaledVector(s.d[k], w[k]);
+        p.multiply(h.scale).applyQuaternion(h.quaternion).add(h.position);
+        const d = this._distance(p, dir); if (d < worst) { worst = d; out.copy(dir); }
+      }
+      if (worst >= 0) return;
+      h.position.addScaledVector(out, -worst + 0.002);
+    }
+  }
+
+  /**
+   * Sets the whole state (see the top of this file); anything left out takes its resting value.
+   * @param {{ yaw?: number, pitch?: number, roll?: number, look?: number[], from?: string, to?: string, t?: number, blink?: number,
+   *   ring?: number, sign?: number, hands?: { R?: any, L?: any }, handsMix?: number, time?: number, drift?: number[] }} [state]
+   */
+  pose({ yaw = 0, pitch = 0, roll = 0, look = [0, 0], from = "happy", to = from, t = 1, blink = 0, ring = 0, sign = 0, hands, handsMix = 1, time = 0, drift } = {}) {
     this.pivot.rotation.set(pitch, yaw, roll);
     this.ring.quaternion.copy(this.ring0).multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), ring));
     // The face changes halfway, while the hands are on their way.
@@ -226,14 +397,31 @@ export class Character {
     const face = this.faces[open && blink > 0.5 ? "blink" : e.face];
     if (this.visorMat.emissiveMap !== face) { this.visorMat.emissiveMap = face; }
     face.offset.set(-look[0] * 0.045, look[1] * 0.04);
+    // Moving, its hands trail behind (the way it moves, in its own space).
+    let dv = null;
+    if (drift && (drift[0] || drift[1])) {
+      const q = this._q.setFromEuler(this.pivot.rotation).invert();
+      dv = new THREE.Vector3(drift[0], drift[1], 0).applyQuaternion(q);
+    }
     for (const side of ["R", "L"]) {
-      const a = (PLACES[from] ?? PLACES.happy)[side], b = (PLACES[to] ?? PLACES.happy)[side], h = this.hands[side];
-      h.position.lerpVectors(a.p, b.p, k);
-      h.quaternion.slerpQuaternions(a.q, b.q, k);
-      // A hand that moves rises a little on the way, so it never passes through the body.
-      const lift = a === b ? 0 : Math.sin(Math.PI * k) * 0.12; h.position.z += lift;
-      const s = a.s + (b.s - a.s) * k; h.scale.set(s, Math.abs(s), Math.abs(s));
-      const g = h.userData.glove; for (let i = 0; i < SHAPES.length; i++) g.morphTargetInfluences[i] = a.w[i] + (b.w[i] - a.w[i]) * k;
+      const a = (EXPRESSIONS[from] ?? EXPRESSIONS.happy).hands[side], b = (EXPRESSIONS[to] ?? EXPRESSIONS.happy).hands[side];
+      let spec = a === b ? a : this.travel(a, b, k);
+      // Its own hand poses: a pose, a name, or [from, to, k] for one on its way.
+      let own = hands?.[side];
+      if (typeof own === "string") own = hand(own, side, time);
+      else if (Array.isArray(own)) own = this.travel(own[0], own[1], own[2]);
+      if (own) spec = handsMix >= 1 ? own : this.travel(spec, own, handsMix);
+      // A gentle float, each hand in its own time, and a little turn of the wrist.
+      const ph = side === "R" ? 0 : 1.9;
+      spec = twist(add3(spec, [0, 0.022 * Math.sin(time * 2.2 + ph), 0.01 * Math.sin(time * 1.4 + ph)]), 0.05 * Math.sin(time * 1.8 + ph * 1.3));
+      if (dv) {
+        const m = (v) => Math.max(-0.16, Math.min(0.16, -v * 0.08));
+        spec = add3(spec, [m(dv.x), m(dv.y), m(dv.z)]);
+        spec = { ...spec, fingers: [spec.fingers[0] - dv.x * 0.2, spec.fingers[1] - dv.y * 0.2, spec.fingers[2] - dv.z * 0.2] };
+      }
+      const h = this.hands[side];
+      this._place(h, spec, side === "L");
+      this.keepClear(h);
     }
     // The sign of the expression it is going to pops in with a little overshoot; the one it is leaving shrinks away.
     const toSign = EXPRESSIONS[to]?.sign, fromSign = from !== to ? EXPRESSIONS[from]?.sign : undefined;

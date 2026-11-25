@@ -25,7 +25,8 @@ const GLOW: React.CSSProperties = {
 
 /**
  * Our character (version 3), drawn live as a real 3D model (src/lib/character3d.js) in the Home picture. It faces the
- * visitor with a happy smile and its rainbow ring always turning; its eyes open and follow the pointer. Poked, it is
+ * visitor with a happy smile and its rainbow ring always turning; its eyes open and follow the pointer. It waves hello
+ * when it comes alive, and its hands float gently at its sides, below the ring. Poked, it is
  * surprised (hands to its cheeks, "!!") and its little screen says what we do; a click elsewhere on the first screen
  * turns it that way for a wink and a finger gun as a fog of colour sprays toward the click; left alone it thinks, a
  * finger on its chin ("?"). A pool of coloured light sits on the ground below it. As the visitor scrolls through the
@@ -151,7 +152,7 @@ export function HeroCharacter({ className }: { className?: string }) {
     async function start() {
       if (stop) return;
       if (!reduce) fillRush();
-      const { createStage, loadCharacter } = await import("@/lib/character3d");
+      const { createStage, loadCharacter, hand } = await import("@/lib/character3d");
       if (stop) return;
       let st: ReturnType<typeof createStage>;
       try { st = createStage(cv); } catch { return; }
@@ -161,7 +162,8 @@ export function HeroCharacter({ className }: { className?: string }) {
       const gl = st.gl;
 
       let size = 0;
-      const fit = () => { const w = Math.round(cv.clientWidth); if (!w || w === size) return; size = w; gl.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2)); gl.setSize(w, w, false); };
+      // As sharp as the screen (up to 3 pixels a point, at most 1200 across), so its edges stay clean on phones.
+      const fit = () => { const w = Math.round(cv.clientWidth); if (!w || w === size) return; size = w; gl.setPixelRatio(Math.min(window.devicePixelRatio || 1, 3, 1200 / w)); gl.setSize(w, w, false); };
       window.addEventListener("resize", fit);
       cleanup = () => { window.removeEventListener("resize", fit); gl.dispose(); };
 
@@ -169,6 +171,8 @@ export function HeroCharacter({ className }: { className?: string }) {
       const AWAY = 1.2;                                                      // turned side-on to fly off to the right, so its back (where the trail comes from) is on the left
       let yaw = 0, yawV = 0, pitch = 0, pitchV = 0, lean = [0, 0], grow = 0, flyX = 0, ring = 0, blinkAt = 2, blinkTo = 0, prev = performance.now();
       let face = { from: "happy", to: "happy", at: -1e9 };
+      // It waves hello when it first comes alive.
+      const helloAt = performance.now() + 300;
       const frame = (now: number) => {
         if (stop) return;
         const dt = Math.min(0.05, (now - prev) / 1000); prev = now; const t = now / 1000;
@@ -211,10 +215,14 @@ export function HeroCharacter({ className }: { className?: string }) {
         gw.style.transform = `translateY(${(-bob).toFixed(1)}px) scale(${(1 + lift * 0.6).toFixed(3)})`;
         for (const r of rush) r.style.opacity = (clamp((v - 0.05) / 0.5, 0, 1) * 0.16).toFixed(3);
         fit();
+        // Its hands float gently, wave hello at first, and trail behind it as it flies off.
+        const hi = (now - helloAt) / 1000, wave = reduce || hi < 0 || hi > 1.7 ? 0 : clamp(Math.min(hi / 0.25, (1.7 - hi) / 0.3), 0, 1);
         ch.pose({
           yaw, pitch, roll: -lean[0] * 0.08 * (1 - away) - away * 0.1, look: [lean[0] * (1 - away), -lean[1] * (1 - away)],
           from: face.from, to: face.to, t: ft, blink: t < blinkTo ? 1 : 0, ring,
           sign: clamp((now - face.at - 150) / 450, 0, 1),
+          time: reduce ? 0 : t, hands: wave > 0 ? { R: hand("wave", "R", hi) } : undefined, handsMix: wave,
+          drift: away > 0.1 && v > 0.05 ? [v * 1.2, 0] : undefined,
         });
         st.render();
         raf = requestAnimationFrame(frame);
