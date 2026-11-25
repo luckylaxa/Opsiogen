@@ -21,9 +21,6 @@
 //   handsMix           0..1: how far they have taken over (default 1)
 //   time               seconds, for the hands' gentle float (they never hang quite still)
 //   drift: [x, y]      which way it is moving on screen, about -1..1 each: its hands trail behind
-//   squash: { s, dir, at }  for big moves (the owner, 25 Nov: "character don't have to be solid, on big action you
-//                      can make it flexible"): s > 1 stretches it along dir (on screen: x right, y up), s < 1 squashes
-//                      it; it keeps its volume, and `at` ([x, y] in its own units, [0, -1] the bottom of its body) stays put
 // Whatever the pose, a hand never goes into the ring, the body, the visor or an ear: it is pushed clear (keepClear).
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -389,20 +386,10 @@ export class Character {
   /**
    * Sets the whole state (see the top of this file); anything left out takes its resting value.
    * @param {{ yaw?: number, pitch?: number, roll?: number, look?: number[], from?: string, to?: string, t?: number, blink?: number,
-   *   ring?: number, sign?: number, hands?: { R?: any, L?: any }, handsMix?: number, time?: number, drift?: number[],
-   *   squash?: { s: number, dir?: number[], at?: number[] } }} [state]
+   *   ring?: number, sign?: number, hands?: { R?: any, L?: any }, handsMix?: number, time?: number, drift?: number[] }} [state]
    */
-  pose({ yaw = 0, pitch = 0, roll = 0, look = [0, 0], from = "happy", to = from, t = 1, blink = 0, ring = 0, sign = 0, hands, handsMix = 1, time = 0, drift, squash } = {}) {
+  pose({ yaw = 0, pitch = 0, roll = 0, look = [0, 0], from = "happy", to = from, t = 1, blink = 0, ring = 0, sign = 0, hands, handsMix = 1, time = 0, drift } = {}) {
     this.pivot.rotation.set(pitch, yaw, roll);
-    // Squash and stretch: the whole character, along a line on screen, keeping its volume, about a point that stays put.
-    const g = this.group; g.matrixAutoUpdate = false;
-    if (squash && Math.abs(squash.s - 1) > 1e-3) {
-      const s = Math.max(0.5, Math.min(1.6, squash.s)), q = 1 / Math.sqrt(s), d = squash.dir ?? [0, 1], l = Math.hypot(d[0], d[1]) || 1;
-      const dx = d[0] / l, dy = d[1] / l, a = q + (s - q) * dx * dx, b = (s - q) * dx * dy, c = q + (s - q) * dy * dy;
-      const [ax, ay] = squash.at ?? [0, 0];
-      g.matrix.set(a, b, 0, ax - (a * ax + b * ay), b, c, 0, ay - (b * ax + c * ay), 0, 0, q, 0, 0, 0, 0, 1);
-    } else g.matrix.identity();
-    g.matrixWorldNeedsUpdate = true;
     this.ring.quaternion.copy(this.ring0).multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), ring));
     // The face changes halfway, while the hands are on their way.
     const k = ease(t), e = EXPRESSIONS[t < 0.5 ? from : to] ?? EXPRESSIONS.happy;
