@@ -813,15 +813,38 @@ html[data-mega-open] .site-header {
 
 /* Solid buttons (dark and light, the dock's Let's talk) carry a thin ring of the logo's spectrum around their own
    square shape (Lucky, 21 Nov). The fill comes from --btn-fill, so hover states change the fill and keep the ring.
-   The spectrum stays a line, never a fill. Unlayered, so it wins over the border utilities. */
+   The spectrum stays a line, never a fill (Lucky, 25 Nov: a phone showed the whole button in the spectrum): the fill
+   is a plain colour and the ring is its own layer, a 2px band cut out with a mask, so no browser can lose the fill.
+   The border rule is unlayered, so it wins over the border utilities; position stays a component default, so a
+   button placed with a utility keeps its place. */
+@layer components {
+  .btn-ring {
+    position: relative;
+    isolation: isolate;
+  }
+}
 .btn-ring {
   border: 2px solid transparent;
-  background:
-    linear-gradient(var(--btn-fill), var(--btn-fill)) padding-box,
-    var(--gradient-brand) border-box;
+  background: var(--btn-fill, #0a090d) padding-box;
+}
+.btn-ring::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  padding: 2px;
+  border-radius: inherit;
+  background: var(--gradient-brand) border-box;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
 }
 @media (forced-colors: active) {
   .btn-ring {
     border-color: ButtonText;
+  }
+  .btn-ring::before {
+    display: none;
   }
 }
