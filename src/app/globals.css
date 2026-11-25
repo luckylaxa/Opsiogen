@@ -817,6 +817,80 @@ html[data-mega-open] .site-header {
   78.75%, 100% { opacity: 0; }
 }
 
+/*
+ * Custom cursor (design system; see components/motion/Cursor.tsx; back since 25 Nov). The dot
+ * and ring invert what is under them; the View disc is solid.
+ */
+html.has-cursor,
+html.has-cursor * {
+  cursor: none !important;
+}
+.cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 900;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  transition: opacity 0.18s ease;
+}
+.cursor[data-hidden] {
+  opacity: 0;
+}
+.cursor[data-state="view"] {
+  mix-blend-mode: normal;
+}
+.cursor__dot {
+  --s: 10px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: var(--s);
+  height: var(--h, var(--s));
+  margin: calc(var(--h, var(--s)) / -2) 0 0 calc(var(--s) / -2);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: #ffffff;
+  transition:
+    width 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+    margin 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    scale 0.18s ease;
+}
+.cursor[data-pressed] .cursor__dot {
+  scale: 0.85;
+}
+.cursor[data-state="link"] .cursor__dot {
+  --s: 56px;
+  background: transparent;
+  border-color: #ffffff;
+}
+.cursor[data-state="view"] .cursor__dot {
+  --s: 104px;
+  background: #f8f6f8;
+  box-shadow: 0 0 0 1px rgb(10 9 13 / 0.12);
+}
+.cursor[data-state="text"] .cursor__dot {
+  --s: 3px;
+  --h: 28px;
+  border-radius: 2px;
+}
+.cursor__label {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: #0a090d;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+.cursor[data-state="view"] .cursor__label {
+  opacity: 1;
+}
+
 @keyframes step-in {
   from {
     opacity: 0;

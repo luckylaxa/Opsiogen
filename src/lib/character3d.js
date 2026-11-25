@@ -256,6 +256,7 @@ export class Character {
       if (n === "lowSeamGlow") m.renderOrder = 2;
     });
     dress(body); dress(glove);
+    this.crispSeam(body);
 
     // The faces: one picture, cut into one texture per face; the visor maps a face across its width.
     this.faces = {};
@@ -320,6 +321,38 @@ export class Character {
       s.position.copy(v3(SIGN_AT[k])); s.scale.setScalar(0); s.renderOrder = 3; this.group.add(s); this.signs[k] = s;
     }
     this.pose({});
+  }
+
+  /**
+   * The cut round its bottom, crisp (Lucky, 25 Nov: "bottom part looks blurry and its not crisp and sharp like our
+   * previous character bottom"). No soft halo round the line; the lit line raised into the mouth of the cut, so its
+   * colours fill the cut with clean edges; and the shell shaded as the true sphere it is (the cut had left ragged
+   * shading along its edges). The model's points are packed small numbers, so the line is moved by its transform,
+   * never by rewriting its points.
+   */
+  crispSeam(body) {
+    body.updateMatrixWorld(true);
+    const centre = this.pivot.localToWorld(new THREE.Vector3());          // the body is a ball of radius 1 round this
+    body.getObjectByName("LowSeamGlow")?.removeFromParent();
+    const seam = body.getObjectByName("LowSeam");
+    if (seam) {
+      const c = seam.parent.worldToLocal(centre.clone()), k = 1.009;      // its middle just reaches the surface
+      seam.position.sub(c).multiplyScalar(k).add(c); seam.scale.multiplyScalar(k);
+    }
+    const toPivot = new THREE.Matrix4(), toLocal = new THREE.Matrix3(), p = new THREE.Vector3(), n = new THREE.Vector3();
+    const inv = new THREE.Matrix4().copy(this.pivot.matrixWorld).invert();
+    for (const name of ["Sphere", "Sphere_2"]) {                           // the shell and its bottom panel
+      const m = body.getObjectByName(name);
+      if (!m?.isMesh) continue;
+      toPivot.multiplyMatrices(inv, m.matrixWorld); toLocal.setFromMatrix4(toPivot).transpose();
+      const pos = m.geometry.attributes.position, nor = m.geometry.attributes.normal;
+      for (let i = 0; i < pos.count; i++) {
+        p.fromBufferAttribute(pos, i).applyMatrix4(toPivot);
+        if (Math.abs(p.length() - 1) > 0.02) continue;                   // only points on the ball itself
+        n.copy(p).applyMatrix3(toLocal).normalize(); nor.setXYZ(i, n.x, n.y, n.z);
+      }
+      nor.needsUpdate = true;
+    }
   }
 
   /** Puts it on a stage. The visor gets its own, much dimmer copy of the studio's reflection (a material only dims a
