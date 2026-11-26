@@ -25,13 +25,13 @@ export const SETTINGS: SiteSettings = {
   email: null,
   phone: null,
   location: null,
-  // Placeholders until the real profiles are added in Studio → Site settings → Social links.
+  // Our profiles (the owner, 26 Nov). Studio → Site settings → Social links overrides these once filled in.
   socialLinks: [
-    { _key: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/" },
-    { _key: "instagram", label: "Instagram", href: "https://www.instagram.com/" },
-    { _key: "facebook", label: "Facebook", href: "https://www.facebook.com/" },
-    { _key: "x", label: "X", href: "https://x.com/" },
-    { _key: "youtube", label: "YouTube", href: "https://www.youtube.com/" },
+    { _key: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/company/fineartdesignagency" },
+    { _key: "instagram", label: "Instagram", href: "https://www.instagram.com/fineartdesignagency/" },
+    { _key: "facebook", label: "Facebook", href: "https://www.facebook.com/fineartdesignagency/" },
+    { _key: "x", label: "X", href: "https://x.com/fineartagency" },
+    { _key: "youtube", label: "YouTube", href: "https://www.youtube.com/@fineartdesignagency" },
   ],
   menu: [
     { _key: "work", label: "Work", href: "/work" },

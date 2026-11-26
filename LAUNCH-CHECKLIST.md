@@ -101,7 +101,10 @@ the CDN serves files to Canada, the US and Europe). The domain, **opsiogen.com**
       DNS record) and submitted https://opsiogen.com/sitemap.xml. Bing, same day: its import from Search Console found no sites
       (it can't import a Domain property), so the site was added by hand, verified through GoDaddy (Bing's DNS auto
       verification adds one CNAME record; keep it) and the sitemap submitted.
-- [ ] Replace the placeholder social links (e.g. `https://www.linkedin.com/`) in Studio → Settings with the real Opsiogen profiles.
+- [x] Replace the placeholder social links (e.g. `https://www.linkedin.com/`) in Studio → Settings with the real Opsiogen profiles.
+      26 November: the owner's five profiles (LinkedIn, Instagram, Facebook, X, YouTube) are the site's links
+      (`SETTINGS.socialLinks` in `src/content/seed-data.ts`; Studio's Social links stay empty, so the site uses these).
+      They still carry the old agency's handles: update them when the profiles move to Opsiogen names.
 - [ ] Get backlinks: client sites, directories, guest articles, press.
 - [ ] Author bio: only if a blog is added. Each post then needs an author.
 - [ ] Optional: show breadcrumbs on the page. They're already in the structured data.
