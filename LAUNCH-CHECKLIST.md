@@ -72,6 +72,10 @@ the CDN serves files to Canada, the US and Europe). The domain, **opsiogen.com**
       https://opsiogen.com; https:// still fails while GoDaddy issues its forwarding certificate (re-check scheduled). Inner
       pages (e.g. /services, /work) answer 404: GoDaddy's forwarding only redirects the bare domain. To catch every old
       page: (A) DevOps points the three names at our Hostinger server and we redirect every path, or (B) Cloudflare.
+      The owner chose A the same day: fineartdesign.agency and healthcare.fineartdesign.agency are parked domains on the
+      Hostinger site, and `next.config.mjs` sends every path on the three names to https://opsiogen.com/ (301). Waiting on
+      DevOps to delete the forwarding and set A @ (same IP as opsiogen.com), CNAME www → fineartdesign.agency, CNAME
+      healthcare → opsiogen.com; then install SSL for the parked domains in Hostinger and test.
 - [x] Clean-up after the move (the owner), 26 November: `https://opsiogen.vercel.app` is gone from Sanity's CORS origins
       (left: `https://opsiogen.com` and `http://localhost:3000`). Google lists one app password for contact@opsiogen.com,
       "Opsiogen Website", made that day for Hostinger; Vercel's older one no longer exists. The older Sanity token stays:
