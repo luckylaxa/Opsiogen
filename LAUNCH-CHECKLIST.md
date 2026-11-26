@@ -87,7 +87,9 @@ the CDN serves files to Canada, the US and Europe). The domain, **opsiogen.com**
 
 ## SEO (from the checklist video)
 
-- [ ] Add the site to Google Search Console and submit `/sitemap.xml`. Bing Webmaster Tools can import it from Search Console.
+- [x] Add the site to Google Search Console and submit `/sitemap.xml`. Bing Webmaster Tools can import it from Search Console.
+      Done 26 November: the owner added opsiogen.com as a Domain property (verified through the domain provider; keep that
+      DNS record) and submitted https://opsiogen.com/sitemap.xml. Bing (import from Search Console) is still optional.
 - [ ] Replace the placeholder social links (e.g. `https://www.linkedin.com/`) in Studio → Settings with the real Opsiogen profiles.
 - [ ] Get backlinks: client sites, directories, guest articles, press.
 - [ ] Author bio: only if a blog is added. Each post then needs an author.
