@@ -68,9 +68,10 @@ the CDN serves files to Canada, the US and Europe). The domain, **opsiogen.com**
       forward, no masking, of the domain, `www` and `healthcare` to `https://opsiogen.com`, everything to the home page (the
       owner's choice). The owner sent the request to Cabot's DevOps team on 26 November; email on that domain is not in
       use. Once they confirm, check all three addresses land on https://opsiogen.com with a valid certificate.
-- [ ] Clean-up after the move (the owner): in Sanity, remove `https://opsiogen.vercel.app` from the CORS origins and
-      delete the API token Vercel used; in Google (contact@opsiogen.com → Security → App passwords), remove the app
-      password Vercel used. Hostinger has its own new token and app password.
+- [x] Clean-up after the move (the owner), 26 November: `https://opsiogen.vercel.app` is gone from Sanity's CORS origins
+      (left: `https://opsiogen.com` and `http://localhost:3000`). Google lists one app password for contact@opsiogen.com,
+      "Opsiogen Website", made that day for Hostinger; Vercel's older one no longer exists. The older Sanity token stays:
+      the Seed Sanity action uses it (GitHub secret `SANITY_API_WRITE_TOKEN`).
 - [x] Security, 26 November: Hostinger's scan flagged 30 issues in the installed packages. The one the site uses,
       nodemailer, is now 10.6.1; Sanity is 6.25; Sanity's command-line tools pin old js-yaml, smol-toml and minimatch, lifted
       to their fixed releases with `overrides` in package.json. `npm audit` and Hostinger's install: 0 vulnerabilities.
