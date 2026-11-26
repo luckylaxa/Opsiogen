@@ -1,0 +1,58 @@
+# Builds the site for Hostinger (opsiogen.com). Hostinger's build servers can't run Next.js 16's compiler (their Linux
+# is older than it needs), so GitHub builds the site here, the same way the Quality check and Vercel do, and pushes the
+# finished site to the `hostinger` branch. Hostinger deploys that branch on every push: it installs the packages, runs
+# the `hostinger-build` script (nothing left to build) and starts the site with `next start`.
+# The settings that are not secret are below; the secrets (SMTP_PASS, SANITY_API_WRITE_TOKEN) are only read when the
+# site runs, and live in Hostinger's environment variables.
+name: Hostinger
+
+on:
+  push:
+    branches: [claude/admiring-einstein-4nf662]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hostinger
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SANITY_PROJECT_ID: 79m429dl
+      NEXT_PUBLIC_SANITY_DATASET: production
+      NEXT_PUBLIC_SANITY_API_VERSION: "2026-02-01"
+      NEXT_PUBLIC_SITE_URL: https://opsiogen.com
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build
+        run: npm run build
+      - name: The finished site
+        run: |
+          mkdir out
+          cp -r .next out/.next
+          rm -rf out/.next/cache
+          cp -r public out/public
+          cp package.json package-lock.json next.config.mjs out/
+          node -e '
+            const fs = require("fs"), p = JSON.parse(fs.readFileSync("out/package.json", "utf8"));
+            p.scripts = { start: "next start", "hostinger-build": "echo \"Built on GitHub; nothing to build here.\"" };
+            fs.writeFileSync("out/package.json", JSON.stringify(p, null, 2) + "\n");'
+      - name: Push it to the hostinger branch
+        run: |
+          # The commit is made in this checkout, so files GitHub already has (the pictures in public/) aren't sent again.
+          export GIT_INDEX_FILE="$RUNNER_TEMP/hostinger.index"
+          git --work-tree=out add -A
+          tree=$(git write-tree)
+          commit=$(git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit-tree "$tree" -m "Site built from ${GITHUB_SHA::7}: $(git log -1 --format=%s "$GITHUB_SHA")")
+          git push -f origin "$commit:refs/heads/hostinger"

@@ -1,11 +1,13 @@
-import type { NextConfig } from "next";
+// Plain JavaScript (not next.config.ts) so starting the site never has to compile it: Hostinger only starts the site,
+// built on GitHub (.github/workflows/hostinger.yml), and its servers can't run Next.js's compiler.
 
 /**
  * The live host, plus its www / non-www twin. Hosts that run the app behind a
  * reverse proxy (e.g. Hostinger) may not forward the public host, which would
  * make Next.js reject the contact form's server action as cross-origin.
+ * @returns {string[]}
  */
-function siteHosts(): string[] {
+function siteHosts() {
   try {
     const host = new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "").host;
     if (!host) return [];
@@ -31,7 +33,8 @@ const SECURITY_HEADERS = [
   ...(process.env.VERCEL ? [] : [{ key: "Strict-Transport-Security", value: "max-age=63072000" }]),
 ];
 
-const nextConfig: NextConfig = {
+/** @type {import("next").NextConfig} */
+const nextConfig = {
   poweredByHeader: false,
   experimental: {
     serverActions: { allowedOrigins: siteHosts() },

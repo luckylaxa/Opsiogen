@@ -21,13 +21,24 @@ Hosting: Hostinger **Unlimited** web hosting (Node.js web app), data centre **In
 the CDN serves files to Canada, the US and Europe). The domain, **opsiogen.com**, stays at **GoDaddy**; email stays on **Google Workspace**
 (3 addresses). The site's address is `https://opsiogen.com`, with `www.opsiogen.com` redirecting to it. Vercel's free plan is personal use only, so the Vercel copy is switched off once Hostinger is live.
 
-- [ ] Buy Hostinger Unlimited (48 months). In hPanel: Websites → Add website → Node.js web app → connect GitHub →
+- [x] Buy Hostinger Unlimited (48 months). In hPanel: Websites → Add website → Node.js web app → connect GitHub →
       `luckylaxa/Opsiogen`, branch `claude/admiring-einstein-4nf662` (or `main` once merged), Node 22.x, redeploy on push.
       Build `npm run build`, start `npm start`. One Hostinger plan connects to one GitHub account: keep hosted repos there.
+      Done 26 November: the plan (order 1010426709) is active; the website **opsiogen.com** was made through Hostinger's API
+      in the India (Mumbai) data centre (hosting account `u459929531`), and the owner linked GitHub in hPanel. The plan
+      cannot change a website's main domain later, so it was set up on opsiogen.com straight away instead of a temporary
+      address. Hostinger's own build failed: its build servers' Linux (glibc older than 2.29) can't run Next.js 16's
+      compiler. So GitHub builds the site (`.github/workflows/hostinger.yml`, on every push to the working branch, the same
+      build as the Quality check) and pushes the finished site to the `hostinger` branch; Hostinger deploys that branch on
+      every push (`npm install`, the `hostinger-build` script does nothing, then `next start`). `next.config.ts` became
+      `next.config.mjs` so starting the site needs no compiling.
 - [ ] Environment variables in Hostinger: `NEXT_PUBLIC_SANITY_PROJECT_ID` (79m429dl), `NEXT_PUBLIC_SANITY_DATASET`
       (production), `NEXT_PUBLIC_SANITY_API_VERSION` (2026-02-01), `ENQUIRY_TO_EMAIL` (contact@opsiogen.com), `NEXT_PUBLIC_SITE_URL` (the temporary
       hostingersite.com address first, then the live domain; the contact form needs it behind Hostinger's proxy), and a new
       `SANITY_API_WRITE_TOKEN` (sanity.io/manage → API → Tokens, Editor; Vercel keeps the old one hidden).
+      26 November: the six that are not secret are set (`NEXT_PUBLIC_SITE_URL` is `https://opsiogen.com` from the start,
+      and `SMTP_USER` is contact@opsiogen.com). The owner adds `SMTP_PASS` and `SANITY_API_WRITE_TOKEN` in hPanel. Hostinger's
+      API replaces the whole set at once, so after the owner's two are in, change variables in hPanel only.
 - [ ] Test on the temporary address before the domain moves (within Hostinger's 30-day refund): build fits the plan, every
       page in Chrome, Safari and Firefox, PageSpeed, security headers, a real test enquiry.
 - [ ] GoDaddy DNS: change only the website records, `@` (A record) and `www` (CNAME), to the values Hostinger shows under
