@@ -34,10 +34,10 @@ modern devices low and right, our own screens, and the owner's approval before s
 - Every `<img>` has `alt`: describe content images; `alt=""` only when decorative.
 
 ## Performance (PageSpeed 97+ mobile, 99+ desktop)
-- Images go through `Media` (`src/components/ui/Media.tsx`): CMS images come straight
-  from Sanity's CDN at the needed width, with their preview while loading. The one
-  `priority` image is served through the site's own address (`/_next/image`) instead, so a
-  phone does not wait on a second connection for it (PageSpeed, 17 Nov).
+- Images go through `Media` (`src/components/ui/Media.tsx`): CMS images, the `priority`
+  one included, come straight from Sanity's CDN at the needed width, with their preview
+  while loading. (On Vercel the main image came through `/_next/image`; on Hostinger, one
+  server in Mumbai that makes every size again after each deploy, Sanity's CDN is faster.)
   - `priority` on the page's main (LCP) image only. Everything below it is lazy
     (`lowPriority` for galleries): images loading alongside the main one slow it
     down on phones. Long galleries add `<LoadAhead>` (`src/components/media`), which

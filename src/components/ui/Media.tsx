@@ -25,10 +25,10 @@ const objectPosition = (img: Img) =>
   img.hotspot ? `${Math.round(img.hotspot.x * 100)}% ${Math.round(img.hotspot.y * 100)}%` : undefined;
 
 /**
- * next/image wrapper for CMS and placeholder images. CMS images come straight
- * from Sanity's CDN at the size each screen needs, except the page's main
- * (`priority`) image, which the site serves itself; until one arrives, the box
- * shows one flat colour taken from the image's tiny preview (never a blur).
+ * next/image wrapper for CMS and placeholder images. CMS images, the page's main
+ * (`priority`) image included, come straight from Sanity's CDN at the size each
+ * screen needs; until one arrives, the box shows one flat colour taken from the
+ * image's tiny preview (never a blur).
  */
 export function Media({ image, sizes, className, priority, eager, lowPriority, fill = true, phone, phoneBelow = 640 }: Props) {
   const alt = image.alt || "";
@@ -49,10 +49,11 @@ export function Media({ image, sizes, className, priority, eager, lowPriority, f
       src,
       alt,
       sizes,
-      // The page's main image comes through the site's own address, on the connection the page
-      // already has open: a first connection to the image CDN costs a slow phone about half a
-      // second. Every other image comes straight from the CDN.
-      loader: priority ? undefined : loaderFor(src),
+      // Straight from Sanity's CDN, the main image too: it is near every visitor and keeps its copies,
+      // while our one server (Hostinger, Mumbai) would make each size again after every deploy. (On
+      // Vercel, until 26 Nov, the main image came through the site's own address instead.) The layout
+      // preconnects to the CDN, so the connection is open by the time the image is asked for.
+      loader: loaderFor(src),
       ...(fill ? { fill: true } : { width: image.width, height: image.height }),
       ...load,
     }).props;
