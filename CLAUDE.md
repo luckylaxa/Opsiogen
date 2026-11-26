@@ -71,6 +71,8 @@ Every push to the working branch goes live by itself, in about 5 minutes.
    (add mode); Studio edits show on the site within about 10 seconds.
 4. Environment variables live in hPanel (Websites → opsiogen.com → Environment
    variables). The API replaces the whole set, so change them in hPanel only.
+5. Hostinger stops a Node app after 5 minutes without visitors; a Hostinger cron job
+   (every 4 minutes, `curl` of the home page) keeps it awake so no visitor waits for it.
 The old Vercel copy (opsiogen.vercel.app) is paused: don't deploy there.
 
 ## Full checks (layout, image or speed changes)
