@@ -17,6 +17,9 @@ function siteHosts() {
   }
 }
 
+/** The old agency domain and its subdomains, sent on to the home page (see `redirects` below; 26 Nov 2026). */
+const OLD_HOSTS = ["fineartdesign.agency", "www.fineartdesign.agency", "healthcare.fineartdesign.agency"];
+
 /**
  * Sent with every response: other sites can't frame ours (clickjacking), browsers
  * don't guess file types, links to other sites carry only our domain, and the
@@ -55,11 +58,20 @@ const nextConfig = {
     },
   },
   // One address for the site: the www / non-www twin of the live host sends visitors
-  // (and search engines) on to the live host, keeping the path.
+  // (and search engines) on to the live host, keeping the path. The old agency domain also points
+  // at this server (a parked domain on Hostinger): every page on it goes to our home page for good.
   async redirects() {
     const [host, twin] = siteHosts();
     if (!host || !twin) return [];
-    return [{ source: "/:path*", has: [{ type: "host", value: twin }], destination: `https://${host}/:path*`, permanent: true }];
+    return [
+      ...OLD_HOSTS.map((value) => ({
+        source: "/:path*",
+        has: [{ type: "host", value }],
+        destination: `https://${host}/`,
+        statusCode: 301,
+      })),
+      { source: "/:path*", has: [{ type: "host", value: twin }], destination: `https://${host}/:path*`, permanent: true },
+    ];
   },
   async headers() {
     return [
