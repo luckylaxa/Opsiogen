@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { getPosts, getSettings } from "@/lib/data";
+import { FEATURES } from "@/lib/features";
 import { buildMetadata } from "@/lib/metadata";
 import { blogSchema, breadcrumbSchema } from "@/lib/schema";
 import { BLOG } from "@/content/blog";
@@ -11,6 +13,7 @@ import { CallToAction } from "@/components/sections/CallToAction";
 export const revalidate = 10;
 
 export async function generateMetadata(): Promise<Metadata> {
+  if (!FEATURES.blog) return {};
   const settings = await getSettings();
   return buildMetadata({
     title: BLOG.label,
@@ -23,6 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /** The blog: published posts only (demo posts show on /blog/preview). Linked from the footer. */
 export default async function BlogPage() {
+  if (!FEATURES.blog) notFound();
   const [posts, settings] = await Promise.all([getPosts(), getSettings()]);
   return (
     <>

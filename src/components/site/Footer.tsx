@@ -3,6 +3,7 @@ import type { LinkItem, ServiceRef, SiteSettings } from "@/lib/types";
 import { GROUP_LABELS } from "@/lib/utils";
 import { Logo } from "./Logo";
 import { SocialLinks } from "./SocialLinks";
+import { FEATURES } from "@/lib/features";
 
 const GROUPS = ["build", "grow", "create"] as const;
 const linkClass = "link-accent text-base font-medium";
@@ -33,10 +34,13 @@ export function Footer({ settings, services }: { settings: SiteSettings; service
         aria-label="Footer"
         className="mt-[clamp(40px,calc(2.7vw+30px),82px)] grid grid-cols-2 gap-x-gap gap-y-[clamp(32px,2.6vw,48px)] md:grid-cols-4"
       >
-        {/* The blog is linked from the footer only, not the header or menu. */}
+        {/* The blog is linked from the footer only, not the header or menu (and not at all while it is switched off). */}
         <Column
           title="Menu"
-          items={[...settings.menu.filter((m) => m.href !== "/blog"), { _key: "blog", label: "Blog", href: "/blog" }]}
+          items={[
+            ...settings.menu.filter((m) => m.href !== "/blog"),
+            ...(FEATURES.blog ? [{ _key: "blog", label: "Blog", href: "/blog" }] : []),
+          ]}
         />
         {groups.map(({ group, items }) => (
           <Column

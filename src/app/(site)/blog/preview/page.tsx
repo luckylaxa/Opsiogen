@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { getPosts, getSettings } from "@/lib/data";
+import { FEATURES } from "@/lib/features";
 import { BlogIndex } from "@/components/blog/BlogIndex";
 import { Block } from "@/components/sections/SectionRenderer";
 import { CallToAction } from "@/components/sections/CallToAction";
@@ -14,6 +16,7 @@ export const metadata: Metadata = {
 
 /** The blog with demo posts included, to see how the layout looks with more posts. */
 export default async function BlogPreviewPage() {
+  if (!FEATURES.blog) notFound();
   const [posts, settings] = await Promise.all([getPosts({ includeDemo: true }), getSettings()]);
   return (
     <>

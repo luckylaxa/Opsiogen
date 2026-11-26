@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getSitemapData } from "@/lib/data";
 import { siteUrl } from "@/lib/utils";
+import { FEATURES } from "@/lib/features";
 
 export const revalidate = 3600;
 
@@ -18,7 +19,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...pages.map((p) => entry(p.slug === "home" ? "/" : `/${p.slug}`, p._updatedAt, p.slug === "home" ? 1 : 0.8)),
     ...services.map((s) => entry(`/services/${s.slug}`, s._updatedAt)),
     ...projects.map((p) => entry(`/work/${p.slug}`, p._updatedAt)),
-    entry("/blog", posts[0]?._updatedAt, 0.8),
-    ...posts.map((p) => entry(`/blog/${p.slug}`, p._updatedAt, 0.6)),
+    ...(FEATURES.blog
+      ? [entry("/blog", posts[0]?._updatedAt, 0.8), ...posts.map((p) => entry(`/blog/${p.slug}`, p._updatedAt, 0.6))]
+      : []),
   ];
 }

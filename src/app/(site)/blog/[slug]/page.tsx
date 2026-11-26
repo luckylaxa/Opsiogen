@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getPost, getPosts, getSettings } from "@/lib/data";
+import { FEATURES } from "@/lib/features";
 import { buildMetadata } from "@/lib/metadata";
 import { breadcrumbSchema, postSchema } from "@/lib/schema";
 import { BLOG } from "@/content/blog";
@@ -18,11 +19,13 @@ export const revalidate = 10;
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
+  if (!FEATURES.blog) return [];
   const posts = await getPosts({ includeDemo: true });
   return posts.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): Promise<Metadata> {
+  if (!FEATURES.blog) return {};
   const { slug } = await params;
   const [post, settings] = await Promise.all([getPost(slug), getSettings()]);
   if (!post) return {};
@@ -46,6 +49,7 @@ export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): P
  * who wrote it, more posts and the call to action.
  */
 export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
+  if (!FEATURES.blog) notFound();
   const { slug } = await params;
   const [post, settings] = await Promise.all([getPost(slug), getSettings()]);
   if (!post) notFound();

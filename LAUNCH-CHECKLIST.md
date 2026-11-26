@@ -102,7 +102,7 @@ the CDN serves files to Canada, the US and Europe). The domain, **opsiogen.com**
 
 - [x] Afthab Tours still uses sample images, which search engines treat as thin pages. Send its Figma link or hide it until it's ready. Done since: the case study now shows our brand work for Afthab Tours (Instagram posts and stories, Meta ads, LinkedIn pages and the brand film); checked live 26 November.
 - [x] Case-study mockups for BigTapp and Cabot show a "Webflow" tag (a tool name) inside the images; edit the Figma frames if it should go. Checked 26 November: text recognition over all 126 images on the live BigTapp and Cabot Solutions pages finds no "Webflow" (it reads small words such as "workflow"), so the tag is gone.
-- [ ] Blog: the four demo posts show only on /blog/preview. Delete them in Studio (Blog) when they're no longer needed, or untick Demo on one to publish it after rewriting it.
+- [x] Blog: the four demo posts show only on /blog/preview. Delete them in Studio (Blog) when they're no longer needed, or untick Demo on one to publish it after rewriting it. 26 November, the owner's call: the whole blog is switched off for now (`FEATURES.blog` in `src/lib/features.ts`), so /blog, its post and /blog/preview answer 404, the footer link and sitemap entries are gone, and the code, Studio type and posts stay for later.
 
 ## Home hero (decision pending, 17 November 2026)
 

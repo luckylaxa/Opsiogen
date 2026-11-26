@@ -53,6 +53,9 @@ modern devices low and right, our own screens, and the owner's approval before s
 - The audit holds first-load JavaScript to 225 KB compressed per page (about 200 KB today).
 
 ## Blog
+- **Switched off since 26 Nov 2026** (`FEATURES.blog` in `src/lib/features.ts`): /blog, its posts and
+  /blog/preview answer 404, with no footer link and no sitemap entries. The code and the posts stay;
+  set it to `true` to bring the blog back. The rules below apply once it is on again.
 - Posts are Studio documents (`post`); starter posts live in `src/content/blog.ts`.
 - `/blog` is linked from the footer only, never the header or menu.
 - Posts marked Demo show only on `/blog/preview` (noindex, not in the sitemap).
