@@ -45,6 +45,14 @@ const full=(src,pos)=>{const P=(window.PIECES||{})[src];
 const type=(c,lines,size=140,align='center')=>{bg(c);const box=el('div','abs',f,{inset:'0',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:align==='center'?'center':'flex-start',padding:'0 150px',gap:'6px'});
   for(const parts of lines){const l=el('div','',box,{fontSize:size+'px',letterSpacing:'-.035em',lineHeight:'1.05',whiteSpace:'nowrap'});for(const [t,w,col] of parts){const s=el('span','',l,{fontWeight:w,color:col});s.textContent=t}}return box};
 const word=(t,c,ink=COAL)=>{bg(c);const w=el('div','word',f,{color:ink});w.textContent=t};
+// One big word (cut 22; Lucky, 26 Nov: "Replace these stock videos with meaning big text ... Big text have to be connected
+// with our showreel video"): what the work gives the client, two per chapter, in the chapter's colour on coal and as
+// large as the frame takes (at most max px; Outfit Bold, as every title). Each letter is its own box so it can move on
+// its own; the still shows the word whole.
+const bigWord=(t,c,max=430)=>{bg(COAL);const b=el('div','big',f,{position:'absolute',left:'0',top:'0',width:'1920px',height:'1080px',display:'flex',alignItems:'center',
+    justifyContent:'center',fontWeight:700,letterSpacing:'-.045em',lineHeight:1,color:c,whiteSpace:'nowrap',fontSize:max+'px'});
+  for(const ch of t){const s=el('span','ltr',b,{display:'inline-block'});s.textContent=ch}
+  LAYOUT.push(()=>{const w=[...b.children].reduce((a,s)=>a+s.getBoundingClientRect().width,0);b.style.fontSize=Math.min(max,max*1700/w)+'px'})};
 const phone=(src,x,y,w,rot=0,parent=f)=>{const p=el('div','phone',parent,{left:x+'px',top:y+'px',width:w+'px',transform:`rotate(${rot}deg)`});img(src,p);return p};
 const browser=(src,x,y,w,parent=f)=>{const b=el('div','browser',parent,{left:x+'px',top:y+'px',width:w+'px'});const bar=el('div','bar',b);for(let i=0;i<3;i++)el('i','',bar);img(src,b);return b};
 const card=(src,x,y,w,h,rot=0,rad=18)=>{const c=el('div','card',f,{left:x+'px',top:y+'px',width:w+'px',transform:`rotate(${rot}deg)`,borderRadius:rad+'px'});const i=img(src,c,{height:'auto',objectFit:'contain'});return c};
@@ -110,93 +118,78 @@ const brandRows=()=>{bg(AQUA);
 const caption=(t,c=PAPER)=>{const d=el('div','abs',f,{left:'90px',bottom:'80px',fontSize:'64px',fontWeight:500,color:c,letterSpacing:'-.03em',lineHeight:1.05});d.innerHTML=t};
 
 const SHOTS=[
-['Open', 'Opening line', ()=>type(COAL,[[['You bring the ',700,PAPER],['idea.',700,AQUA]]],150)],
-...(SHARE?[['Open', 'Brands already did', ()=>brandRows()]]:[]),
-['Open', 'Stock: she points at our character (Adobe Stock 488563452)', ()=>full(S+'stock/stills/point.jpg')],
-['Open', 'We take it from here, the character', ()=>{type(COAL,[[['We take it ',700,PAPER],['from here.',700,PAPER]]],130);img(A+'ch-front.png',f,{position:'absolute',width:'330px',left:'795px',top:'90px'})}],
-['Burst', 'Three apps, three projects', ()=>{bg(LIME);phone(A+'mf-m1.jpg',330,150,400,-4);phone(A+'omg-08.jpg',760,110,400,0);phone(A+'va-app.jpg',1190,150,400,4)}],
-['Burst', 'Grid of the work, reshuffles twice', ()=>wall(['Oh My Glam: shade','Vaelo: site','Service artwork: product','Website 1','Vaelo: billboard','Torvi','Website 3','Service artwork: social','Service artwork: print'],3,12,
+['Open', 'Opening line', ()=>type(COAL,[[['You bring the ',700,PAPER],['idea.',700,AQUA]]],150),0],
+...(SHARE?[['Open', 'Brands already did', ()=>brandRows(),1]]:[]),
+['Open', 'Stock: she points at our character (Adobe Stock 488563452)', ()=>full(S+'stock/stills/point.jpg'),2],
+['Open', 'We take it from here, the character', ()=>{type(COAL,[[['We take it ',700,PAPER],['from here.',700,PAPER]]],130);img(A+'ch-front.png',f,{position:'absolute',width:'330px',left:'795px',top:'90px'})},3],
+['Burst', 'Three apps, three projects', ()=>{bg(LIME);phone(A+'mf-m1.jpg',330,150,400,-4);phone(A+'omg-08.jpg',760,110,400,0);phone(A+'m-carlton.jpg',1190,181,400,4)},4],
+['Burst', 'Grid of the work, reshuffles twice', ()=>wall(['Oh My Glam: try-on','Vaelo: site','Service artwork: product','Website 1','Vaelo: billboard','Torvi','Website 3','Service artwork: social','Service artwork: print'],3,12,
   [['Campaigns','Brand: duo, Norsecom','Brand: tiles, out of home','SandLogic: guideline pages','Oh My Glam: row','Website: Carlton Noble, Travel','Product screen: Meetingful','Print: posters','Service artwork: AI automation'],
-   ['Vaelo: front','Product duo','Website: BigTapp, platform','SandLogic: social','Brand: tiles, mixed','Print: packaging','Oh My Glam: try-on','Product screen: Surgo','Service artwork: video']])],
-['Burst', 'Vaelo, the car', ()=>full(A+'va-hero.jpg')],
-['Brand', 'Chapter word', ()=>word('We brand it.',ORANGE)],
-['Brand', 'Stock: the win (Adobe Stock 480737977)', ()=>full(S+'stock/stills/man-cheer.jpg')],
-['Brand', 'Service artwork: brand', ()=>full(A+'z-page-brand.jpg')],
-['Brand', 'Life: the after-work ride (Adobe Stock 405010525)', ()=>full(S+'stock/stills/life-girl-bike.jpg')],
-['Brand', 'Torvi: site, identity, guidelines, ads', ()=>{bg('#1d1f24');const g=24,w=(1920-3*g)/2,h=(1080-3*g)/2;[['crop-tv-rollout',0],['crop-tv-strategy',1],['crop-tv-guidelines',2],['crop-tv-assets',3]].forEach(([k,i])=>fit(A+k+'.jpg',g+(i%2)*(w+g),g+Math.floor(i/2)*(h+g),w,h))}],
-['Brand', 'Brand: tiles, mixed pieces', ()=>tiles(['sl-14','nc-08','sl-15','nc-07'],ORANGE)],
-['Brand', 'Vaelo: billboard, badge, brand, poster', ()=>{bg('#0e3d2b');card(A+'va-billboard.jpg',90,90,1140);card(A+'va-badge.jpg',90,690,535);card(A+'va-brand.jpg',695,690,535);card(A+'va-poster.jpg',1290,120,560)}],
-['Brand', 'Brand: duo, Norsecom HQ and Rohde & Schwarz booth', ()=>duo('nc-12','rs-07',VIOLET)],
-['Brand', 'SandLogic: guideline pages', ()=>{bg('#0f1120');const g=20,w=(1920-3*g)/2,h=w*9/16,t=(1080-2*h-g)/2;[['slg-logo1',0],['slg-colours',1],['slg-gradient',2],['slp-system',3]].forEach(([k,i])=>card(A+k+'.jpg',g+(i%2)*(w+g),t+Math.floor(i/2)*(h+g),w,0,0,12))}],
-['Brand', 'SandLogic: brochure', ()=>full(A+'z-slp-brochure.jpg')],
-['Brand', 'Brand: wall across projects', ()=>mosaic([['sl-05','rs-16','nc-11'],['nc-13','sl-07','rs-03'],['rs-15','nc-02','sl-09'],['nc-15','rs-08','nc-04']],'#0b0b10',{rot:-9,cw:520,mid:200})],
-['Brand', 'Service artwork: print', ()=>full(A+'z-print-booth.jpg')],
-['Brand', 'Print: packaging', ()=>full(A+'z-t-print-packaging.jpg')],
-['Brand', 'Brand: tiles, out of home', ()=>tiles(['rs-09','nc-14','sl-08'],PINK)],
-['Brand', 'SandLogic: mobile web', ()=>full(A+'z-slp-mobile.jpg')],
-['Brand', 'SandLogic: social grid', ()=>full(A+'z-slp-social.jpg')],
-['Brand', 'Vaelo: post and story', ()=>{bg('#0e3d2b');card(A+'va-post.jpg',159,40,1000,0,0,14);card(A+'va-story.jpg',1199,40,562,0,0,14)}],
-['Brand', 'Stock: a big laugh (Adobe Stock 249372459)', ()=>full(S+'stock/stills/woman-laugh.jpg')],
-['Brand', 'Brand: duo, SandLogic stage and Rohde & Schwarz keynote', ()=>duo('sl-06','rs-17',SUN)],
-['Brand', 'Print: posters', ()=>full(A+'h-t-print-posters.jpg')],
-['Brand', 'Print: stationery', ()=>full(A+'h-t-print-stationery.jpg')],
-['Brand', 'Brand: row of merchandise and print', ()=>row(['sl-16','nc-09','sl-17','nc-10','sl-18','nc-05','nc-01','nc-06'],'#141418',{rot:-4,h:620,rad:24})],
-['Brand', 'Life: the open road (Adobe Stock 191180958)', ()=>full(S+'stock/stills/life-drive.jpg')],
-['Brand', 'Vaelo: front-view poster', ()=>{bg('#0e3d2b');fit(A+'va-poster.jpg',80,60,1760,960)}],
-['Brand', 'Vaelo: autonomous', ()=>{bg('#0e3d2b');fit(A+'va-auto.jpg',80,80,1760,920)}],
-['Design', 'Chapter word', ()=>word('We design it.',VIOLET)],
-['Design', 'Stock: a confident smile (Adobe Stock 490354049)', ()=>full(S+'stock/stills/woman-blue.jpg')],
-['Design', 'Stock: her smile, then the app (Pixabay 208770, 4.5-6.0 s)', ()=>full(S+'stock/stills/design.jpg')],
-['Design', 'Oh My Glam: row of screens', ()=>row(['omg-01','omg-19','omg-33','omg-10','omg-11','omg-12','omg-35','omg-13'],'#141418',{rot:-4,h:820})],
-['Design', 'Product screen: Meetingful', ()=>screen1('scr-meetingful-5')],
-['Design', 'Life: family time (Adobe Stock 294857367)', ()=>full(S+'stock/stills/life-family.jpg')],
-['Design', 'Product duo: RxLive and Care Connect', ()=>duo('scr-rxlive-1','scr-care-connect-1','#101016',{w:880,h:560,g:60,dy:120})],
-['Design', 'Product screens: wall across projects', ()=>mosaic([['scr-meetingful-2','scr-rxlive-3','scr-care-connect-4','scr-surgo-health-3'],['scr-rxlive-6','scr-surgo-health-8','scr-meetingful-7','scr-care-connect-8'],['scr-care-connect-2','scr-meetingful-9','scr-surgo-health-5','scr-rxlive-9'],['scr-surgo-health-1','scr-care-connect-6','scr-rxlive-2','scr-meetingful-4']],'#101016',{rot:-8})],
-['Design', 'Product screen: Surgo', ()=>screen1('scr-surgo-health-3')],
-['Design', 'Service artwork: product design', ()=>full(A+'z-page-pd.jpg')],
-['Design', 'Service artwork: MVPs and apps', ()=>full(A+'z-page-mvp.jpg')],
-['Design', 'MVPs: booking, shop, shipments', ()=>full(A+'svc-mvp.jpg')],
-['Design', 'Service artwork: AI automation', ()=>full(A+'z-page-automation.jpg')],
-['Design', 'AI automation: approvals, assistant, invoices', ()=>full(A+'svc-auto-1.jpg')],
-['Design', 'AI automation: contract review, reporting', ()=>full(A+'svc-auto-2.jpg')],
-['Design', 'Oh My Glam: shade finder', ()=>{bg(PINK);phone(A+'omg-02.jpg',380,140,400,-6);phone(A+'omg-09.jpg',760,90,420,0);phone(A+'omg-16.jpg',1160,140,400,6)}],
-['Design', 'Product design: prototype', ()=>full(A+'h-t-pd-prototype.jpg')],
-['Design', 'Oh My Glam: try-on', ()=>{bg(SUN);phone(A+'omg-03.jpg',380,140,400,-6);phone(A+'omg-04.jpg',760,90,420,0);phone(A+'omg-05.jpg',1160,140,400,6)}],
-['Build', 'Chapter word', ()=>word('We build it.',AQUA)],
-['Build', 'Stock: laughing at the laptop (Pexels 5137353, 9.2-10.7 s)', ()=>full(S+'stock/stills/build.jpg')],
-['Build', 'Website 1: BigTapp', ()=>{bg('#0b1640');browser(A+'d-bigtapp.jpg',130,84,1350);phone(A+'m-bigtapp.jpg',1410,204,380,0)}],
-['Build', 'Website 2: Engel & Völkers', ()=>full(A+'s-ev-2.jpg')],
-['Build', 'Website 3: Carlton Noble', ()=>full(A+'s-carlton-12.jpg')],
-['Build', 'Website 5: Sifio', ()=>{bg('#e1eade');browser(A+'d-sifio.jpg',130,84,1350);phone(A+'m-sifio.jpg',1410,204,380,0)}],
-['Build', 'Vaelo: site and app', ()=>{bg('#0e3d2b');browser(A+'va-web.jpg',130,84,1350);phone(A+'va-app.jpg',1410,204,380,0)}],
-['Build', 'Life: the getaway (Adobe Stock 150778364)', ()=>full(S+'stock/stills/life-beach.jpg')],
-['Build', 'Website: Engel & Völkers, Mykonos', ()=>full(A+'s-ev-3.jpg')],
-['Build', 'Websites: wall across projects', ()=>mosaic([['scr-carlton-noble-2','scr-engel-volkers-3','scr-bigtapp-6','scr-sifio-health-5'],['scr-engel-volkers-7','scr-bigtapp-2','scr-carlton-noble-6','scr-sifio-health-9'],['scr-bigtapp-10','scr-carlton-noble-12','scr-engel-volkers-10','scr-sifio-health-2'],['scr-carlton-noble-4','scr-sifio-health-11','scr-bigtapp-13','scr-engel-volkers-13']],'#0d1117',{rot:-9})],
-['Build', 'Website: Engel & Völkers, Portugal', ()=>full(A+'s-ev-8.jpg')],
-['Build', 'Website: Carlton Noble, Travel House', ()=>full(A+'s-carlton-2.jpg')],
-['Build', 'Carlton Noble: collage of pages', ()=>full(A+'col-carlton.jpg')],
-['Build', 'Website: BigTapp, platform features', ()=>full(A+'s-bigtapp-10.jpg')],
-['Build', 'Website: Sifio, SurgiTwin', ()=>full(A+'s-sifioweb-6.jpg')],
-['Launch', 'Chapter word', ()=>word('We launch it.',SUN)],
-['Launch', 'Life: free on the road (Adobe Stock 329117728)', ()=>full(S+'stock/stills/life-jeep.jpg')],
-['Launch', 'Campaigns: bikes and beauty', ()=>{bg('#1d1c22');const h=540,g=16,ks=[['crop-tv-assets',2.164],['t-video-ads',4/3]];const ws=ks.map(([k,r])=>h*r);let x=(1920-ws.reduce((a,b)=>a+b)-g*(ks.length-1))/2;ks.forEach(([k],n)=>{card(A+k+'.jpg',x,(1080-h)/2,ws[n],0,0,14);x+=ws[n]+g})}],
-['Launch', 'Service artwork: social', ()=>full(A+'z-page-social.jpg')],
-['Launch', 'Social: calendar, ads, reporting, email', ()=>full(A+'svc-social.jpg')],
-['Launch', 'Service artwork: video', ()=>full(A+'z-page-video.jpg')],
-['Launch', 'Service artwork: digital marketing', ()=>full(A+'z-page-digital.jpg')],
-['Launch', 'Creative subscription: deck, motion, search', ()=>full(A+'svc-sub.jpg')],
-['Launch', 'Video: AI video', ()=>full(A+'h-t-video-ai.jpg')],
-['Launch', 'Video: motion', ()=>full(A+'h-t-video-motion.jpg')],
-['Launch', 'Stock: the high five (Adobe Stock 577275631)', ()=>full(S+'stock/stills/high-five.jpg')],
-['Launch', 'Wall of the work, zooms out', ()=>wall(['Product screen: Meetingful','Service artwork: MVP','Website 2','Torvi','Service artwork: video','Product duo','Website 5','Service artwork: digital','Product screen: Surgo'],3)],
-['Close', 'Stock: two people laughing (Pexels 4053012, 4.8-6.3 s)', ()=>full(S+'stock/stills/close.jpg')],
-['Close', 'Fast word: Brand', ()=>word('Brand.',ORANGE)],
-['Close', 'Fast word: Design', ()=>word('Design.',VIOLET)],
-['Close', 'Fast word: Build', ()=>word('Build.',AQUA)],
-['Close', 'Fast word: Launch', ()=>word('Launch.',SUN)],
-['Close', 'The spine, typed', ()=>type(COAL,[[['Your idea. ',700,PAPER]],[['Branded. ',700,ORANGE],['Designed. ',700,VIOLET]],[['Built. ',700,AQUA],['Launched.',700,SUN]]],128,'left')],
-['Close', 'One partner', ()=>type(COAL,[[['One partner.',700,PAPER]],[['Every digital need.',700,AQUA]]],140)],
-['Close', 'Logo, character, call', ()=>{bg(COAL);img(A+'ch-front.png',f,{position:'absolute',width:'260px',left:'830px',top:'150px'});logoSvg(f,560,470,800);const t=el('div','abs',f,{left:0,right:0,top:'700px',textAlign:'center',fontSize:'64px',fontWeight:700,color:PAPER,letterSpacing:'-.03em'});t.innerHTML='Let’s make <b style="font-weight:700">yours.</b>'}],
+   ['Print: duo','Product duo','Website: BigTapp, platform','SandLogic: social','Brand: tiles, mixed','Print: packaging','Product design: prototype','Product screen: Surgo','Service artwork: video']]),5],
+['Burst', 'Vaelo, the car', ()=>full(A+'va-hero.jpg'),6],
+['Brand', 'Chapter word', ()=>word('We brand it.',ORANGE),7],
+['Brand', 'Word: Recognition.', ()=>bigWord('Recognition.',ORANGE),8],
+['Brand', 'Service artwork: brand', ()=>full(A+'z-page-brand.jpg'),9],
+['Brand', 'Life: the after-work ride (Adobe Stock 405010525)', ()=>full(S+'stock/stills/life-girl-bike.jpg'),10],
+['Brand', 'Torvi: site, identity, guidelines, ads', ()=>{bg('#1d1f24');const g=24,w=(1920-3*g)/2,h=(1080-3*g)/2;[['crop-tv-rollout',0],['crop-tv-strategy',1],['crop-tv-guidelines',2],['crop-tv-assets',3]].forEach(([k,i])=>fit(A+k+'.jpg',g+(i%2)*(w+g),g+Math.floor(i/2)*(h+g),w,h))},11],
+['Brand', 'Brand: tiles, mixed pieces', ()=>tiles(['sl-14','nc-08','sl-15','nc-07'],ORANGE),12],
+['Brand', 'Vaelo: billboard, badge, brand, poster', ()=>{bg('#0e3d2b');card(A+'va-billboard.jpg',90,90,1140);card(A+'va-badge.jpg',90,690,535);card(A+'va-brand.jpg',695,690,535);card(A+'va-poster.jpg',1290,120,560)},13],
+['Brand', 'Brand: duo, Norsecom HQ and Rohde & Schwarz booth', ()=>duo('nc-12','rs-07',VIOLET),14],
+['Brand', 'SandLogic: guideline pages', ()=>{bg('#0f1120');const g=20,w=(1920-3*g)/2,h=w*9/16,t=(1080-2*h-g)/2;[['slg-logo1',0],['slg-colours',1],['slg-gradient',2],['slp-system',3]].forEach(([k,i])=>card(A+k+'.jpg',g+(i%2)*(w+g),t+Math.floor(i/2)*(h+g),w,0,0,12))},15],
+['Brand', 'Brand: wall across projects', ()=>mosaic([['sl-05','rs-16','nc-11'],['nc-13','sl-07','rs-03'],['rs-15','nc-02','sl-09'],['nc-15','rs-08','nc-04']],'#0b0b10',{rot:-9,cw:520,mid:200}),17],
+['Brand', 'Service artwork: print', ()=>full(A+'z-print-booth.jpg'),18],
+['Brand', 'Print: packaging', ()=>full(A+'z-t-print-packaging.jpg'),19],
+['Brand', 'Brand: tiles, out of home', ()=>tiles(['rs-09','nc-14','sl-08'],PINK),20],
+['Brand', 'SandLogic: social grid', ()=>full(A+'z-slp-social.jpg'),22],
+['Brand', 'Stock: a big laugh (Adobe Stock 249372459)', ()=>full(S+'stock/stills/woman-laugh.jpg'),24],
+['Brand', 'Print: posters', ()=>full(A+'h-t-print-posters.jpg'),26],
+['Brand', 'Print: stationery', ()=>full(A+'h-t-print-stationery.jpg'),27],
+['Brand', 'Brand: row of merchandise and print', ()=>row(['sl-16','nc-09','sl-17','nc-10','sl-18','nc-05','nc-01','nc-06'],'#141418',{rot:-4,h:620,rad:24}),28],
+['Brand', 'Word: Trust.', ()=>bigWord('Trust.',ORANGE),29],
+['Brand', 'Print: duo, Rohde & Schwarz brochure and SandLogic trifold', ()=>duo('rs-23','sl-12',BLUE),30],
+['Design', 'Chapter word', ()=>word('We design it.',VIOLET),32],
+['Design', 'Word: Adoption.', ()=>bigWord('Adoption.',VIOLET),33],
+['Design', 'Oh My Glam: row of screens', ()=>row(['omg-01','omg-19','omg-33','omg-10','omg-11','omg-12','omg-35','omg-13'],'#141418',{rot:-4,h:820}),35],
+['Design', 'Product screen: Meetingful', ()=>screen1('scr-meetingful-5'),36],
+['Design', 'Word: Clarity.', ()=>bigWord('Clarity.',VIOLET),37],
+['Design', 'Product duo: RxLive and Care Connect', ()=>duo('scr-rxlive-1','scr-care-connect-1','#101016',{w:880,h:560,g:60,dy:120}),38],
+['Design', 'Product screens: wall across projects', ()=>mosaic([['scr-meetingful-2','scr-rxlive-3','scr-care-connect-4','scr-surgo-health-2'],['scr-rxlive-6','scr-surgo-health-8','scr-meetingful-7','scr-care-connect-8'],['scr-care-connect-2','scr-meetingful-9','scr-surgo-health-5','scr-rxlive-9'],['scr-surgo-health-1','scr-care-connect-6','scr-rxlive-2','scr-meetingful-4']],'#101016',{rot:-8}),39],
+['Design', 'Product screen: Surgo', ()=>screen1('scr-surgo-health-3'),40],
+['Design', 'Service artwork: product design', ()=>full(A+'z-page-pd.jpg'),41],
+['Design', 'Service artwork: MVPs and apps', ()=>full(A+'z-page-mvp.jpg'),42],
+['Design', 'Service artwork: AI automation', ()=>full(A+'z-page-automation.jpg'),44],
+['Design', 'AI automation: approvals, assistant, invoices', ()=>full(A+'svc-auto-1.jpg'),45],
+['Design', 'Product design: prototype', ()=>full(A+'h-t-pd-prototype.jpg'),48],
+['Design', 'Oh My Glam: try-on', ()=>{bg(SUN);phone(A+'omg-03.jpg',380,140,400,-6);phone(A+'omg-04.jpg',760,90,420,0);phone(A+'omg-05.jpg',1160,140,400,6)},49],
+['Build', 'Chapter word', ()=>word('We build it.',AQUA),50],
+['Build', 'Word: Scale.', ()=>bigWord('Scale.',AQUA),51],
+['Build', 'Website 1: BigTapp', ()=>{bg('#0b1640');browser(A+'d-bigtapp.jpg',130,84,1350);phone(A+'m-bigtapp.jpg',1410,204,380,0)},52],
+['Build', 'Website 2: Engel & Völkers', ()=>full(A+'s-ev-2.jpg'),53],
+['Build', 'Website 3: Carlton Noble', ()=>full(A+'s-carlton-12.jpg'),54],
+['Build', 'Website 5: Sifio', ()=>{bg('#e1eade');browser(A+'d-sifio.jpg',130,84,1350);phone(A+'m-sifio.jpg',1410,204,380,0)},55],
+['Build', 'Vaelo: site and app', ()=>{bg('#0e3d2b');browser(A+'va-web.jpg',130,84,1350);phone(A+'va-app.jpg',1410,204,380,0)},56],
+['Build', 'Word: Customers.', ()=>bigWord('Customers.',AQUA),57],
+['Build', 'Website: Engel & Völkers, Mykonos', ()=>full(A+'s-ev-3.jpg'),58],
+['Build', 'Websites: wall across projects', ()=>mosaic([['scr-carlton-noble-5','scr-engel-volkers-11','scr-bigtapp-6','scr-sifio-health-5'],['scr-engel-volkers-7','scr-bigtapp-2','scr-carlton-noble-6','scr-sifio-health-9'],['scr-bigtapp-11','scr-carlton-noble-13','scr-engel-volkers-10','scr-sifio-health-2'],['scr-carlton-noble-4','scr-sifio-health-11','scr-bigtapp-13','scr-engel-volkers-13']],'#0d1117',{rot:-9}),59],
+['Build', 'Website: Carlton Noble, Travel House', ()=>full(A+'s-carlton-2.jpg'),61],
+['Build', 'Website: BigTapp, platform features', ()=>full(A+'s-bigtapp-10.jpg'),63],
+['Build', 'Website: Sifio, SurgiTwin', ()=>full(A+'s-sifioweb-6.jpg'),64],
+['Launch', 'Chapter word', ()=>word('We launch it.',SUN),65],
+['Launch', 'Word: Reach.', ()=>bigWord('Reach.',SUN),66],
+['Launch', 'Campaigns: ads and beauty', ()=>{bg('#1d1c22');const h=540,g=16,ks=[['crop-t-subscription-ads',1201/1102],['t-video-ads',4/3]];const ws=ks.map(([k,r])=>h*r);let x=(1920-ws.reduce((a,b)=>a+b)-g*(ks.length-1))/2;ks.forEach(([k],n)=>{card(A+k+'.jpg',x,(1080-h)/2,ws[n],0,0,14);x+=ws[n]+g})},67],
+['Launch', 'Service artwork: social', ()=>full(A+'z-page-social.jpg'),68],
+['Launch', 'Service artwork: video', ()=>full(A+'z-page-video.jpg'),70],
+['Launch', 'Service artwork: digital marketing', ()=>full(A+'z-page-digital.jpg'),71],
+['Launch', 'Creative subscription: deck, motion, search', ()=>full(A+'svc-sub.jpg'),72],
+['Launch', 'Video: AI video', ()=>full(A+'h-t-video-ai.jpg'),73],
+['Launch', 'Word: Growth.', ()=>bigWord('Growth.',SUN),75],
+['Launch', 'Wall of the work, zooms out', ()=>wall(['Product screen: Meetingful','Service artwork: MVP','Website 2','Torvi','Service artwork: video','Product duo','Website 5','Service artwork: digital','Product screen: Surgo'],3),76],
+['Close', 'Fast word: Brand', ()=>word('Brand.',ORANGE),78],
+['Close', 'Fast word: Design', ()=>word('Design.',VIOLET),79],
+['Close', 'Fast word: Build', ()=>word('Build.',AQUA),80],
+['Close', 'Fast word: Launch', ()=>word('Launch.',SUN),81],
+['Close', 'One partner, the character', ()=>type(COAL,[[['One partner.',700,PAPER]],[['Every digital need.',700,AQUA]]],128,'left'),82],
+['Close', 'Logo, character, call', ()=>{bg(COAL);img(A+'ch-front.png',f,{position:'absolute',width:'260px',left:'830px',top:'150px'});logoSvg(f,560,470,800);const t=el('div','abs',f,{left:0,right:0,top:'700px',textAlign:'center',fontSize:'64px',fontWeight:700,color:PAPER,letterSpacing:'-.03em'});t.innerHTML='Let’s make <b style="font-weight:700">yours.</b>'},84],
 ];
 window.SHOTS=SHOTS.map(([sec,name])=>({sec,name}));
 const n=parseInt(location.hash.slice(1).split('|')[0]||'0');SHOTS[n][2]();
@@ -212,7 +205,7 @@ const BEAT=60/140,clamp=p=>Math.min(1,Math.max(0,p)),ease=p=>1-Math.pow(1-clamp(
 const LOGO_IN=4*BEAT;   // the logo shot's fly-through before the last hit (film.py gives the shot 5 more beats)
 const io=p=>{p=clamp(p);return p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2};
 const pop=p=>{p=clamp(p);const c=2.5;return 1+(c+1)*Math.pow(p-1,3)+c*Math.pow(p-1,2)};
-const IN=.2,NAME=SHOTS[n][1],HASH=location.hash.split('|'),MOTION=HASH[3]==='anim',ALPHA=MOTION&&HASH[4]==='alpha';
+const IN=.2,V=SHOTS[n][3]??n,NAME=SHOTS[n][1],HASH=location.hash.split('|'),MOTION=HASH[3]==='anim',ALPHA=MOTION&&HASH[4]==='alpha';
 const UNDER=decodeURIComponent(HASH[2]||'');
 let under=null;
 if(MOTION&&UNDER){under=document.createElement('img');under.src='file://'+UNDER;Object.assign(under.style,{position:'absolute',left:0,top:0,width:'1920px',height:'1080px',display:'none'});document.body.insertBefore(under,f)}
@@ -295,7 +288,7 @@ window.anim=()=>{};
 if(MOTION)(()=>{
   const AN=[],late=[],add=fn=>AN.push(fn),T=NAME,base=e=>e.style.transform||'';
   if(ALPHA){for(const e of [document.documentElement,document.body,f])e.style.background='transparent';[...f.children].forEach(c=>{c.style.visibility='hidden'})}
-  const ball=ALPHA||/^(We take it|Grid|Chapter word|Fast word|The spine|Logo)/.test(T)?makeBall():null;
+  const ball=ALPHA||/^(We take it|Grid|Chapter word|Fast word|One partner|Logo|Word: (Recognition|Trust|Adoption|Scale|Growth))/.test(T)?makeBall():null;
   // Words: each becomes its own box so it can arrive on its own.
   const words=[],tn=[],wk=document.createTreeWalker(f,NodeFilter.SHOW_TEXT);
   while(wk.nextNode())if(wk.currentNode.textContent.trim())tn.push(wk.currentNode);
@@ -342,16 +335,107 @@ if(MOTION)(()=>{
       const out=t=>{const q=clamp(t/BEAT);return{x:p.x+700*q,y:Y-(Y+D)*(1-Math.pow(1-q,2))}};
       add(t=>{const hands=HT(t,hk);if(last){const q=clamp(t/BEAT),o=out(t);ball.at(o.x,o.y,D,{rot:rock(t,side)+50*q,hands,v:vel(out,t)});return}
         const q=path(t);ball.at(q.x,q.y,D,{...q,hands,v:vel(path,t)})})})}
-  else if(T.startsWith('The spine')){const wt=words.map((s,i)=>i<2?i*.05-.1:(1+1.5*(i-2))*BEAT/2);words.forEach((s,i)=>rise(s,wt[i],80,.16));
-    // It drops in beside the lines and watches each word arrive (a nod each time), thinking, a finger on its chin, then
-    // turns to us with a wink and a finger gun.
+  else if(T.startsWith('One partner')){const wt=words.map((s,i)=>i<2?i*.05-.1:(2+(i-2))*BEAT/2);words.forEach((s,i)=>rise(s,wt[i],80,.16));
+    // The closing line (cut 22; Lucky: "For video you can use One partner. Every digital need."), in the place and with
+    // the acting of the line it replaces: it drops in beside the lines, thinks (a finger on its chin) as "One partner."
+    // arrives, points at the words of "Every digital need." as they come, then turns to us with a wink, a finger gun and
+    // a thumbs up, and bobs there until the logo.
     late.push(()=>{const R=Math.max(...words.map(s=>s.getBoundingClientRect().right)),D=Math.min(260,(1920-R)*.6),X=(R+1920)/2,Y=600,path=hops([[.14,X,Y]],0,0,D);
-      add(t=>{const p=path(t);let k=-1;wt.forEach((w,i)=>{if(t>=w)k=i});const nod=k>1?rock(t-wt[k],-1,7):0,line=k<2?0:k<4?1:2;
-        const pose=t<.14||t>=1.4?'front':line<2?'upleft':'down';
-        // It drops in arms up, lands, thinks (a finger on its chin) as the first words type, then points at each of the
-        // last ones as it arrives, and turns to us with a wink, a finger gun and a thumbs up.
-        ball.at(p.x,p.y,D,{rot:p.rot+nod,pose,mirror:pose==='down',ex:exAt(t,[.24,'thinking'],[wt[4]-.02,'neutral'],[1.36,'wink']),floor:Y+D/2,v:vel(path,t),
-          hands:HT(t,[[0,'cheer','cheer'],[.14,'balance','balance'],[.24,'rest','ex:thinking'],[wt[4]-.02,PT([0,.08,1]),'rest'],[wt[5]-.02,PT([.3,0,1]),'rest'],[1.36,'thumbsup','ex:wink']])})})})}
+      add(t=>{const p=path(t);let k=-1;wt.forEach((w,i)=>{if(t>=w)k=i});const nod=k>1?rock(t-wt[k],-1,7):0,line=k<2?0:1;
+        const pose=t<.14||t>=1.4?'front':line<1?'upleft':'down',bob=t>1.6?6*(1-Math.cos((t-1.6)*7)):0;
+        ball.at(p.x,p.y-bob,D,{rot:p.rot+nod,pose,mirror:pose==='down',ex:exAt(t,[.24,'thinking'],[wt[2]-.02,'neutral'],[1.36,'wink']),floor:Y+D/2,v:vel(path,t),
+          hands:HT(t,[[0,'cheer','cheer'],[.14,'balance','balance'],[.24,'rest','ex:thinking'],[wt[2]-.02,PT([0,.08,1]),'rest'],[wt[4]-.02,PT([.3,0,1]),'rest'],[1.36,'thumbsup','ex:wink']])})})})}
+  else if(T.startsWith('Word:')){
+    // Cut 22 (Lucky, 26 Nov): in place of the stock clips, big words "connected with our showreel video". Each one moves
+    // the way it means; the character plays with five of them; at the end the camera rushes on into the next shot at the
+    // point that shot's entrance (ENTER) starts from.
+    const big=f.querySelector('.big'),L=[...big.querySelectorAll('.ltr')],WD=T.slice(6);
+    const lt=i=>{const s=L[i],cs=getComputedStyle(s);cv.font=`${cs.fontWeight} ${cs.fontSize} Outfit`;const m=cv.measureText(s.textContent.trim());
+      const p=document.createElement('span');Object.assign(p.style,{display:'inline-block',width:'0',height:'0'});s.appendChild(p);const by=p.getBoundingClientRect().top;p.remove();
+      const r=s.getBoundingClientRect();return{x:(r.left+r.right)/2,top:by-m.actualBoundingBoxAscent,base:by,mid:by-m.actualBoundingBoxAscent/2}};
+    const rush=(X,Y,dur=.14,k=4)=>add((t,d)=>{const q=clamp((t-(d-dur))/dur);if(q<=0)return;f.style.transformOrigin=`${X}px ${Y}px`;f.style.transform=`scale(${1+(k-1)*q*q*q})`;f.style.filter=`blur(${10*clamp(q*2-1)}px)`});
+    const punch=(t0=0)=>add(t=>{const q=ease((t-t0)/.1);big.style.transform=`scale(${1.12-.12*q})`;big.style.opacity=q});
+    if(WD==='Recognition.')late.push(()=>{const P=L.map((s,i)=>lt(i)),mi=P.reduce((b,p,i)=>Math.abs(p.x-960)<Math.abs(P[b].x-960)?i:b,0),X=P[mi].x,D=210,Y=Math.min(...P.map(p=>p.top))-D/2+6;
+      console.log('ENTER Recognition.',Math.round(X),Math.round(Y));
+      // It falls in from the chapter line, lands on the middle of the word and the light runs out from under it through
+      // the letters (recognised); then it jumps for joy, as it did beside the man who won. The next shot opens out of its lens.
+      punch();L.forEach((s,i)=>{const t0=.214+Math.abs(i-mi)*.035;add(t=>{const q=clamp((t-t0)/.08);s.style.opacity=.16+.84*q;s.style.transform=t<t0?'':`scale(${1+.18*(1-pop((t-t0)/.16))})`})});
+      const path=hops([.214,.429,.643,.857].map(t=>[t,X,Y]),90,0,D,{turn:[0,0,360,0]});
+      add(t=>{const p=path(t);ball.at(p.x,p.y,D,{...p,pose:t>.3?'upleft':'front',ex:exAt(t,[.24,'wink']),v:vel(path,t),
+        hands:HT(t,[[0,'cheer','cheer'],[.214,'balance','balance'],[.3,'cheer','cheer'],[.429,'balance','balance'],[.643,'balance','balance'],[.7,'pump','cheer']])})})});
+    if(WD==='Trust.')late.push(()=>{const P=L.map((s,i)=>lt(i)),u=2,X=P[u].x,D=200,Y=P[u].top-D/2+4;
+      // The word drops in heavy and lands with a thud; the character drops onto it, then lets itself fall back onto the
+      // word (a trust fall) and the word holds it: a wink, a thumbs up.
+      big.style.transformOrigin='50% 62%';
+      add(t=>{const q=clamp(t/.16),dt=t-.16,shake=dt>0?14*Math.exp(-dt*22)*Math.sin(dt*70):0;
+        big.style.transform=`translateY(${-900*(1-q*q)+shake}px) scaleY(${1-.5*stamp(dt)-.3*stamp(t-.64)})`});
+      const path=hops([[.3,X,Y]],0,.12,D,{fall:0});
+      add(t=>{const p=path(t);if(p.off)return ball.hide();const q=clamp((t-.44)/.2),back=q*q,dt=t-.64,lie=dt>0?rock(dt,-1,6):0;
+        ball.at(p.x-70*back,p.y-.32*D*back+(dt>0?30*stamp(dt):0),D,{rot:p.rot-95*back+lie,ex:exAt(t,[.46,'surprised'],[.7,'wink']),v:vel(path,t),
+          hands:HT(t,[[0,'cheer','cheer'],[.3,'balance','balance'],[.44,'cheer','cheer'],[.66,'rest','thumbsup']])})});
+      rush(960,540)});
+    if(WD==='Adoption.')late.push(()=>{const P=L.map((s,i)=>lt(i)),D=150,tap=i=>.26+i*.085,hov=Math.min(...P.map(p=>p.top))-D/2-18,o=6,OX=P[o].x,OY=P[o].mid;
+      console.log('ENTER Adoption.',Math.round(OX),Math.round(OY));
+      // It taps the letters in one by one, like a finger on an app (each tap leaves a ripple), gives a thumbs up and a
+      // wink, and the camera dives into the last 'o', onto the app.
+      L.forEach((s,i)=>{s.style.opacity=0;s.style.transformOrigin='50% 100%';add(t=>{const q=pop((t-tap(i))/.16);s.style.opacity=t<tap(i)?0:1;s.style.transform=t<tap(i)?'':`scale(${.35+.65*q})`})});
+      P.forEach((p,i)=>{const r=el('div','',f,{position:'absolute',border:'7px solid '+PAPER,borderRadius:'50%',zIndex:6,opacity:0});
+        add(t=>{const q=clamp((t-tap(i))/.3),R=24+150*ease(q);Object.assign(r.style,{left:p.x-R+'px',top:p.mid-R+'px',width:2*R+'px',height:2*R+'px',opacity:q>0&&q<1?.85*(1-q):0})})});
+      const xs=P.map(p=>p.x),path=t=>{if(t<tap(0)){const q=ease(t/tap(0));return{x:xs[0]-240*(1-q),y:hov-330*(1-q)}}
+        const k=Math.min(xs.length-1,Math.floor((t-tap(0))/.085)),q=clamp((t-tap(k))/.085),x=k<xs.length-1?xs[k]+(xs[k+1]-xs[k])*io(q):xs[k];return{x,y:hov-16*Math.sin(Math.PI*q)}};
+      add(t=>{const tt=Math.min(t,1.02),p=path(tt);ball.at(p.x,p.y,D,{rot:t<1.02?6:rock(t-1.02,1,8),pose:t<1.0?'down':'front',ex:exAt(t,[1.0,'wink']),v:vel(path,tt),
+        hands:HT(t,[[0,'cheer','cheer'],[.2,PT([0,-1,.3]),'rest'],[1.0,'thumbsup','ex:wink']])})});
+      rush(OX,OY,.16)});
+    if(WD==='Clarity.'){const rnd=k=>{const x=Math.sin(k*12.9898+78.233)*43758.5453;return x-Math.floor(x)};
+      // Scattered letters snap into one clear word, a click, and the camera dives into it, onto the health apps.
+      L.forEach((s,i)=>{const dx=(rnd(i+1)-.5)*1500,dy=(rnd(i+11)-.5)*760,r=(rnd(i+21)-.5)*220,sc=.45+rnd(i+31)*1.2,t0=.04+i*.025;
+        add(t=>{const q=pop((t-t0)/.3);s.style.transform=`translate(${dx*(1-q)}px,${dy*(1-q)}px) rotate(${r*(1-q)}deg) scale(${sc+(1-sc)*q})`;s.style.opacity=clamp(t/.06)})});
+      add(t=>{const dt=t-.44,k=dt>0?6*Math.exp(-dt*25)*Math.sin(dt*80):0;big.style.transform=`translateX(${k}px)`});
+      rush(960,540)}
+    if(WD==='Scale.'){
+      // The word grows out of a small browser window until it fills the screen (the window opens out past the edges), the
+      // first website showing through its letters, with our character riding on top; then into the site.
+      const win=el('div','',f,{position:'absolute',left:'960px',top:'540px',width:'0',height:'0'});
+      const br=el('div','',win,{position:'absolute',left:'-1250px',top:'-720px',width:'2500px',height:'1440px',background:'#16151a',borderRadius:'48px'});
+      const bar=el('div','',br,{height:'96px',display:'flex',alignItems:'center',gap:'22px',padding:'0 44px'});for(let i=0;i<3;i++)el('i','',bar,{display:'block',width:'28px',height:'28px',borderRadius:'50%',background:'#3a393e'});
+      win.appendChild(big);Object.assign(big.style,{left:'-960px',top:'-540px'});f.style.background=COAL;
+      const site=big.cloneNode(true);Object.assign(site.style,{backgroundImage:`url(${A}d-bigtapp.jpg)`,backgroundSize:'cover',backgroundPosition:'50% 30%',WebkitBackgroundClip:'text',backgroundClip:'text',color:'transparent',opacity:0});win.appendChild(site);
+      const sc=t=>.3+.7*io(clamp((t-.06)/.46));
+      add(t=>{win.style.transform=`scale(${sc(t)})`;site.style.opacity=clamp((t-.6)/.12)});
+      late.push(()=>{const P=L.map((s,i)=>lt(i)),a=P[1];console.log('ENTER Scale.',Math.round(a.x),Math.round(a.mid));
+        add(t=>{const k=sc(t),D=230*k,X=960+(a.x-960)*k,Y=540+(a.top-540)*k-D/2+4*k,q=clamp((t-.02)/.12),y=t<.14?-D+(Y+D)*q*q:Y;
+          ball.at(X,y,D,{rot:t<.14?0:rock(t-.14,1,8)+3*Math.sin(t*9),ex:exAt(t,[.5,'wink']),hands:HT(t,[[0,'cheer','cheer'],[.14,'balance','balance'],[.6,'cheer','balance']])})});
+        rush(a.x,a.mid)})}
+    if(WD==='Customers.'){
+      // The letters stream in from both sides, like people arriving; then the property site's coast photo (the next
+      // shot, where it sits in that shot) shows through them and the camera dives in.
+      L.forEach((s,i)=>{const side=i%2?1:-1,t0=.02+i*.03;add(t=>{const q=pop((t-t0)/.24);s.style.transform=`translateX(${side*(1300+i*40)*(1-q)}px)`;s.style.opacity=t<t0?0:1})});
+      late.push(()=>{const P=L.map((s,i)=>lt(i)),o=P[4];console.log('ENTER Customers.',Math.round(o.x),Math.round(o.mid));
+        // the photo sits at 275..1645 x 465..1020 on the page: 1.285 times, its left edge at 80 and its middle band on the word
+        const pic=big.cloneNode(true);Object.assign(pic.style,{backgroundImage:`url(${A}s-ev-3.jpg)`,backgroundSize:'2467px 1388px',backgroundPosition:'-273px -373px',
+          WebkitBackgroundClip:'text',backgroundClip:'text',color:'transparent',opacity:0});f.appendChild(pic);
+        add(t=>{pic.style.opacity=clamp((t-.46)/.14)});rush(o.x,o.mid,.15)})}
+    if(WD==='Reach.'){
+      // The word, then copies of it in post, story, banner and billboard sizes fly out around it (a campaign going out
+      // everywhere) while it steps back among them; then the camera whips across, onto the campaigns.
+      const F=[[300,300,-600,-270,PINK],[210,372,610,-250,BLUE],[560,150,-560,300,LIME],[460,210,560,320,ORANGE],[240,240,-790,40,VIOLET],[200,356,800,20,AQUA],[360,124,0,-390,PAPER],[360,124,0,400,PINK]];
+      const cps=F.map(([w,h,x,y,c])=>{const b=el('div','',f,{position:'absolute',left:960-w/2+'px',top:540-h/2+'px',width:w+'px',height:h+'px',background:c,borderRadius:'18px',display:'flex',alignItems:'center',justifyContent:'center',
+        fontWeight:700,letterSpacing:'-.04em',color:COAL,fontSize:Math.min(h*.4,w*.26)+'px',zIndex:1,opacity:0});b.textContent='Reach.';return b});
+      big.style.zIndex=2;
+      add(t=>{const q=ease(t/.1),k=io(clamp((t-.12)/.22));big.style.transform=`scale(${(1.25-.25*q)*(1-.42*k)})`;big.style.opacity=q});
+      cps.forEach((b,j)=>{const [w,h,x,y]=F[j],t0=.14+j*.035;add(t=>{const q=pop((t-t0)/.2);b.style.opacity=t<t0?0:1;b.style.transform=`translate(${x*q}px,${y*q}px) scale(${.2+.8*q}) rotate(${(1-q)*(j%2?14:-14)}deg)`})});
+      add((t,d)=>{const q=clamp((t-(d-.14))/.14);if(q<=0)return;f.style.transform=`translateX(${760*q*q}px)`;f.style.filter=`blur(${14*q}px)`})}
+    if(WD==='Growth.')late.push(()=>{const STEP=58,n=L.length,P=L.map((s,i)=>lt(i)),D=170,off=i=>STEP*(n-1)/2-i*STEP;
+      // The letters rise like a chart going up and the character climbs them like stairs, cheering at the top; a white
+      // flash, and the wall of the work opens out of it.
+      L.forEach((s,i)=>{const t0=.06+i*.05;add(t=>{const q=pop((t-t0)/.22);s.style.transform=`translateY(${STEP*(n-1)/2+(off(i)-STEP*(n-1)/2)*q}px)`})});
+      const steps=[0,1,2,3,4,5].map((i,j)=>[.22+j*.14,P[i].x,P[i].top+off(i)-D/2+4]),last=steps[steps.length-1],keys=steps.concat([[last[0]+.18,last[1],last[2]]]);
+      console.log('ENTER Growth.',Math.round(last[1]),Math.round(last[2]));
+      const path=hops(keys,60,.08,D,{fall:-20});
+      add(t=>{const p=path(t);if(p.off)return ball.hide();const top=t>=last[0];ball.at(p.x,p.y,D,{...p,pose:top?'front':'upright',ex:exAt(t,[last[0],'wink']),v:vel(path,t),
+        hands:HT(t,top?[[last[0],'cheer','cheer'],[last[0]+.18,'pump','cheer']]:[[0,'cheer','cheer'],[.22,'balance','balance']])})});
+      const wf=el('div','',f,{position:'absolute',left:'0',top:'0',width:'1920px',height:'1080px',background:'#fff',opacity:0,zIndex:20});add((t,d)=>{wf.style.opacity=clamp((t-(d-.12))/(.12-1/30))})});
+  }
   else if(T==='Brands already did'){
     // Aqua grows out of the full stop of "idea.". The opening line goes on (Lucky, 19 Nov: the lines were not
     // connected; one sentence across the opening): "Like brands before you." builds word by word, centred on its own;
@@ -365,7 +449,6 @@ if(MOTION)(()=>{
       words.forEach((s,i)=>{if(i===1)return;const t0=.2+(i?i-1:0)*.12,side=i?-1:1;
         add(t=>{const q=ease((t-t0)/.22),m=io((t-G)/.26);s.style.opacity=q;s.style.transform=`translate(${side*w1/2*(1-m)}px,${(1-q)*16}px)`})});
       add(t=>{const q=ease((t-G-.14)/.24);words[1].style.opacity=q;words[1].style.transform=`translateY(${(1-q)*30}px)`})})}
-  else if(T==='One partner')words.forEach((s,i)=>rise(s,i<2?i*.05-.06:BEAT+(i-2)*.05,80,.18));
   else if(T.startsWith('Logo')){
     // Lucky (19 Nov): no hold on the big logo; it pulls back the whole time, from large to its own size on the last
     // hit. The character starts close to us, facing us, turns half round (away from us), then jets into the O, slow at
@@ -434,15 +517,15 @@ if(MOTION)(()=>{
   if(T.startsWith('Three apps')&&showUnder())add(t=>{f.style.clipPath=`circle(${ease(t/.26)*1110}px at 50% 50%)`});
   phones.forEach((e,i)=>{const b=base(e);let dx=0,dy=760,dl=[.05,0,.1][i]??i*.05,dr=[[-18,6],[0,-14],[18,6]][i]||[0,0],r0=[-16,12,18][i]??0;
     if(browsers.length){dx=0;dy=900;dl=.07;dr=[0,-14];r0=10}
-    else if(n%3===2&&!T.startsWith('Three apps')){dx=1500+i*320;dy=i%2?220:-220;dl=i*.03;r0=i%2?10:-10}   // cut 5's row: in from the right as a row
-    else if(n%2){dx=i===1?0:(i?900:-900);dy=i===1?-900:0;dl=[0,.05,0][i]??0}
+    else if(V%3===2&&!T.startsWith('Three apps')){dx=1500+i*320;dy=i%2?220:-220;dl=i*.03;r0=i%2?10:-10}   // cut 5's row: in from the right as a row
+    else if(V%2){dx=i===1?0:(i?900:-900);dy=i===1?-900:0;dl=[0,.05,0][i]??0}
     add((t,d)=>{const q=pop((t-dl)/IN),k=t/d;e.style.transform=`translate(${(1-q)*dx+dr[0]*k}px,${(1-q)*dy+dr[1]*k}px) rotate(${(1-q)*r0}deg) ${b}`});
     if(T.startsWith('Three apps')){const ov=el('div','',e,{position:'absolute',inset:'13px',borderRadius:'52px',background:'#0b0b0e'});const t0=.3+i*.07;add(t=>{ov.style.opacity=1-clamp((t-t0)/.08)})}});
   // Browsers: rise (or slide in) and drift up against the phone.
   browsers.forEach(e=>{const b=base(e);add((t,d)=>{const q=pop(t/IN),k=t/d;e.style.transform=`translate(${(1-q)*-900}px,${-14*k}px) rotate(${(1-q)*-6}deg) scale(${.94+.06*q}) ${b}`})});
   // Pairs of cards: three patterns in turn, then they drift apart.
   const cards=[...f.querySelectorAll('.card')],pairs=cards.filter(e=>e.classList.contains('pair'));
-  if(pairs.length===2){const k=n%3;pairs.forEach((e,i)=>{const b=base(e),from=k===0?[i?560:-560,0]:k===1?[0,i?-460:460]:[0,240],s0=k===2?.82:1,dl=i*.06,dr=i?18:-18;
+  if(pairs.length===2){const k=V%3;pairs.forEach((e,i)=>{const b=base(e),from=k===0?[i?560:-560,0]:k===1?[0,i?-460:460]:[0,240],s0=k===2?.82:1,dl=i*.06,dr=i?18:-18;
     add((t,d)=>{const q=pop((t-dl)/IN),kk=t/d;e.style.transform=`translate(${(1-q)*from[0]+dr*kk}px,${(1-q)*from[1]}px) rotate(${(1-q)*(i?9:-9)*(k===2?-1:1)}deg) scale(${s0+(1-s0)*q}) ${b}`;if(k===2)e.style.opacity=clamp((t-dl)/.08)})})}
   // Cut 5's tiles: they fly in from above and below in turn. Cut 5's duo: one from the left, the other from the right
   // and below, then they drift apart.
@@ -474,7 +557,7 @@ if(MOTION)(()=>{
   // Pieces of a flat-colour image: a row springs up one after another; a single piece takes one of three entrances.
   const pcs=[...f.querySelectorAll('.piece')];
   if(pcs.length>1)pcs.forEach((e,i)=>{const dy=i%2?-460:460,dl=i*.05,dr=(i-(pcs.length-1)/2)*8;add((t,d)=>{const q=pop((t-dl)/IN),k=t/d;e.style.transform=`translate(${dr*k}px,${(1-q)*dy}px) rotate(${(1-q)*(i%2?-7:7)}deg) scale(${.94+.06*q})`})});
-  if(pcs.length===1){const e=pcs[0],k=n%3;add((t,d)=>{const q=pop(t/IN),kk=t/d;
+  if(pcs.length===1){const e=pcs[0],k=V%3;add((t,d)=>{const q=pop(t/IN),kk=t/d;
     e.style.transform=k===0?`translateY(${(1-q)*380}px) rotate(${(1-q)*4}deg) scale(${(.9+.1*q)*(1+.025*kk)})`:k===1?`scale(${(1.2-.2*ease(t/.26))*(1+.02*kk)})`:`translateX(${(1-q)*640}px) scale(${1+.02*kk})`})}
   // Cut 5's walls: the columns slide past one another. Cut 5's rows: the row slides across, each piece popping up or
   // down into place.
@@ -488,9 +571,10 @@ if(MOTION)(()=>{
   // people to the work without text): it lands out of the camera's rush, big and soft to sharp (push, about a point
   // of the work: the app, the coast photo), comes in from the side the camera whipped to (whip), opens out of the
   // white of the high five from the hands (flash), or out of our character's lens over the clip's last frame (lens).
-  const ENTER={'488563452':['push',960,254],'480737977':['lens',1720,300],'405010525':['whip',1],'249372459':['push',570,490],'191180958':['push',960,600],
-    'Pixabay 208770':['push',960,540],'294857367':['push',490,480],'5137353':['push',805,464],'150778364':['push',980,750],'329117728':['whip',-1],
-    '577275631':['flash',840,270],'4053012':['push',960,540]};
+  // Cut 22: the clips that stay keep theirs; each big word hands over the same way, from where its own rush ends.
+  const ENTER={'488563452':['push',960,254],'405010525':['whip',1],'249372459':['push',570,490],
+    'Word: Recognition.':['lens',1046,323],'Word: Trust.':['push',960,540],'Word: Adoption.':['push',1386,588],'Word: Clarity.':['push',960,540],
+    'Word: Scale.':['push',748,592],'Word: Customers.':['push',873,582],'Word: Reach.':['whip',-1],'Word: Growth.':['flash',1499,186]};
   const prevName=n?SHOTS[n-1][1]:'',ENT=(Object.entries(ENTER).find(([k])=>prevName.includes(k))||[])[1];
   if(ENT){const [kind,X,Y]=ENT;
     // Once landed it lets go of the frame, so a move of the shot's own (the dive into the character's eye) can follow.
@@ -502,7 +586,7 @@ if(MOTION)(()=>{
     if(kind==='lens'&&showUnder())add(t=>{f.style.clipPath=`circle(${ease(t/.3)*2300}px at ${X}px ${Y}px)`})}
   // Full frames take turns. Wipe, lens and push reveal it over the last frame of the shot before.
   const cover=f.querySelector('img.cover');
-  if(cover){const mode=ENT?'hold':(under?['zoom','wipe','hold','iris','zoom','push']:['zoom','hold'])[n%(under?6:2)];
+  if(cover){const mode=ENT?'hold':(under?['zoom','wipe','hold','iris','zoom','push']:['zoom','hold'])[V%(under?6:2)];
     if(mode==='zoom')add((t,d)=>{cover.style.transform=`scale(${(1+.32*(1-ease(t/.28)))*(1+.02*t/d)})`});
     if(mode==='hold')add((t,d)=>{cover.style.transform=`scale(${1.06-.06*io(t/d)})`});
     if(mode==='wipe'){showUnder();add((t,d)=>{f.style.clipPath=`inset(0 ${(1-ease(t/.24))*100}% 0 0)`;cover.style.transform=`scale(${1.05-.05*io(t/d)})`})}

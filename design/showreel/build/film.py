@@ -12,12 +12,9 @@ FR, OUT = os.path.abspath(sys.argv[1]), os.path.abspath(sys.argv[2])
 HERE = os.path.dirname(os.path.abspath(__file__)); ST = os.path.join(HERE, "../raw/stock/")
 BPM, FPS = 140, 30; BEAT = 60 / BPM
 # Stock: a word from the shot's name -> (file, in point in seconds). The green-screen clip is keyed onto our violet.
-STOCK = {"488563452": ("as-488563452.mov", 1.2), "480737977": ("as-480737977.mov", 13.6), "405010525": ("as-405010525.mov", 3.0),
-         "249372459": ("as-249372459.mov", 5.6), "191180958": ("as-191180958.mov", 3.4), "490354049": ("as-490354049.mov", 3.0),
-         "Pixabay 208770": ("208770_large.mp4", 4.6), "294857367": ("as-294857367.mov", 7.0), "Pexels 5137353": ("5137353-uhd_3840_2160_30fps.mp4", 9.4),
-         "150778364": ("as-150778364.mov", 4.0), "329117728": ("as-329117728.mov", 10.0), "577275631": ("as-577275631.mov", 3.2),
-         "Pexels 4053012": ("4053012-uhd_3840_2160_25fps.mp4", 5.0)}
-OVER = ("488563452", "480737977", "490354049")  # stock clips the character joins
+# Cut 22: three clips stay (Lucky, 26 Nov: "change only what I asked"); the other ten became big words in frames.html.
+STOCK = {"488563452": ("as-488563452.mov", 1.2), "405010525": ("as-405010525.mov", 3.0), "249372459": ("as-249372459.mov", 5.6)}
+OVER = ("488563452",)  # the stock clip the character joins
 MULTI = ("Grid of", "collage", "tiles", "wall across", "row of", "Torvi: site", "billboard, badge", "guideline pages", "Three apps")
 def beats(n):
     if n == "Opening line": return 3
@@ -25,8 +22,9 @@ def beats(n):
     if n.startswith("We take it"): return 2
     if n == "Chapter word": return 2
     if n.startswith("Fast word"): return 1
-    if n.startswith("The spine"): return 4
-    if n == "One partner": return 2
+    if n.startswith("One partner"): return 4   # the closing line, in the place (and time) of the line it replaced
+    if n in ("Word: Adoption.", "Word: Growth."): return 3   # two clips' worth (Adoption), and the climb (Growth)
+    if n.startswith("Word:"): return 2
     if n.startswith("Logo"): return 9    # 4 beats flying through the O (frames.html LOGO_IN), then 5 (the film within a minute)
     if n.startswith("Wall of"): return 3   # the closing wall pulls back into the grid (cut 5's tilted wall)
     if n == "Website: Engel & Völkers, Mykonos": return 2   # the beach lands on its coast photo: give it time
@@ -38,7 +36,7 @@ def beats(n):
 shots = json.load(open(os.path.join(FR, "shots.json")))
 B = [beats(s["name"]) for s in shots]
 logo = len(shots) - 1
-while sum(B[:logo]) % 4 != 3: B[logo - 2] += 1   # the last hit (4 beats into the logo) falls 3 beats past a bar line (see track.py)
+while sum(B[:logo]) % 4 != 3: B[logo - 1] += 1   # the last hit (4 beats into the logo) falls 3 beats past a bar line (see track.py); the closing line takes the time
 start = [sum(B[:i]) for i in range(len(B) + 1)]
 fr = lambda b: round(b * BEAT * FPS)
 N = [fr(start[i + 1]) - fr(start[i]) for i in range(len(shots))]

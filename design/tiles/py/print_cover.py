@@ -1,18 +1,18 @@
 """The print page's cover (26 Nov, the owner: "fill it. no need blue background"): the exhibition stand photo filling
-the cover (2:1 desktop, 4:3 phone) with no blue panel, and the gap in "Industr ial" on the back wall closed.
-Usage: python3 print_cover.py design/tiles/out/figma-print/ai/vantara-booth-model.png OUT_DIR
-(the same gap on the events tiles was closed in place in tile-events.jpg and tile-events-phone.jpg)"""
-import sys
+the cover (2:1 desktop, 4:3 phone) with no blue panel. Since 26 Nov it is BigTapp's stand (booth_bigtapp.py).
+Usage: python3 print_cover.py design/tiles/out/figma-print/ai/bigtapp-booth-model.png OUT_DIR
+(The old Vantara photo had a gap in "Industr ial" on the back wall, closed in step 1; BigTapp's wall has new lines.)"""
+import os, sys
 import numpy as np
 from PIL import Image, ImageFilter
 SRC, OUT = sys.argv[1], sys.argv[2]
 im = np.asarray(Image.open(SRC).convert('RGB')).copy()
 H, W = im.shape[:2]
-# 1. the headline's first line: "Industr ial automation," -> close the extra 4 px between r and i
-y0, y1, xg, end, d = 232, 272, 770, 1030, 4
-im[y0:y1, xg:end - d] = im[y0:y1, xg + d:end]
+# 1. the Vantara headline's first line: "Industr ial automation," -> close the extra 4 px between r and i
+if 'vantara' in os.path.basename(SRC):
+    y0, y1, xg, end, d = 232, 272, 770, 1030, 4
+    im[y0:y1, xg:end - d] = im[y0:y1, xg + d:end]
 fixed = Image.fromarray(im)
-fixed.save(f'{OUT}/vantara-booth-model-fixed.png')
 # 2. desktop, 2:1: keep the sign's top (y 11) to below the shoes (~680); the photo is a little too narrow for that, so
 #    the hall at the far left and right is stretched outward (the stand itself is untouched)
 top, bottom = 9, 681

@@ -324,6 +324,35 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   character's new bottom: one flat cut across the ball, tilted back 20 degrees, with the light inside it. The film
   draws the shared character module, so it matches the loader and Home. Out: `out/opsiogen-showreel-v21.mp4`, now on
   the site, with a new poster.
+- **Cut 22 (26 Nov), big words instead of stock.** Lucky's list, after "change only what I asked. Don't touch other":
+  - **The ten stock clips he sent became big words** ("meaning big text ... connected with our showreel video"), our own
+    words, never the reference's (shareable, clickable, memorable, impactful, conceptual): two per chapter, what each
+    service gives the client. Brand: Recognition., Trust. Design: Adoption. (both smiling clips), Clarity. Build: Scale.,
+    Customers. Launch: Reach., Growth. The two at the table went (the wall leads straight into the fast words).
+  - **Each word moves the way it means** (frames.html 'Word:'). Recognition lights up from under the character as it
+    jumps for joy. Trust drops in heavy and the character falls back onto it. Adoption's letters are tapped in with
+    ripples. Clarity's letters snap together from scattered. Scale grows out of a browser window with the character
+    riding on top. Customers' letters stream in from both sides, then fill with the next site's coast photo. Reach sends
+    copies out in post, story and billboard sizes. Growth's letters rise like a chart, and the character climbs them.
+    Each hands over to the next shot (ENTER): the lens, a dive into a letter, a whip, or a white flash.
+  - **Kept:** the pointing woman, the cyclist and the grey-studio laugh (he had not sent those), the opening, the chapter
+    lines, the fast words, the logo ending and the music.
+  - **Vaelo:** the three shots he flagged as repeats are out. The test-drive flow and the post and story are cut. The
+    "Quiet. Then gone." poster became real print work: a Rohde & Schwarz brochure and a SandLogic trifold. The rest of
+    Vaelo stays.
+  - **No repeats:** the Vaelo app in the opening trio became Carlton Noble's app. The Torvi ads in the campaigns gave way
+    to the subscription ads. One Surgo screen in the product wall was swapped, and four pages in the website wall that
+    also show alone were replaced. The opening grid and the closing wall stay as the preview and the recap.
+  - **The booth is BigTapp's** (design/tiles/py/booth_bigtapp.py).
+  - **The close:** the "Your idea. Branded..." shot now says "One partner. Every digital need.", with the same place,
+    timing and acting (it takes the beat that keeps the logo on the bar). The short "One partner" shot after it went.
+  - **Shorter:** Lucky: "Reduce time only that make sense". The repeats came out: the second event-photo pair, the
+    SandLogic brochure and phone, the second MVP frame, the third AI automation frame, the Oh My Glam shade finder, the
+    third Engel & Völkers page and Carlton Noble shot, the second social frame and the third video frame.
+  - **The result:** 70 shots, 124 beats, 53.1 s. Every shot keeps its own entrance from cut 21 (V, its place then).
+    Every service still has a shot.
+  - **Order:** the stills went to Figma page "04 · Cut 22 (for approval)". The words in motion are
+    `out/words-preview.mp4` (`build/words_preview.py STILLS OUT`), for approval before the full render.
 - The logo keeps its own shape; only at the very end (cut 11, as Lucky asked) is it shown larger, then settles at
   its own size. Otherwise it only fades in. Nothing else is shown larger than its own size.
 
