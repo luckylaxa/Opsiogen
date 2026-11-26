@@ -68,6 +68,10 @@ the CDN serves files to Canada, the US and Europe). The domain, **opsiogen.com**
       forward, no masking, of the domain, `www` and `healthcare` to `https://opsiogen.com`, everything to the home page (the
       owner's choice). The owner sent the request to Cabot's DevOps team on 26 November; email on that domain is not in
       use. Once they confirm, check all three addresses land on https://opsiogen.com with a valid certificate.
+      26 November, after DevOps set it up (they say 1 to 48 hours to settle): over http all three answer 301 to
+      https://opsiogen.com; https:// still fails while GoDaddy issues its forwarding certificate (re-check scheduled). Inner
+      pages (e.g. /services, /work) answer 404: GoDaddy's forwarding only redirects the bare domain. To catch every old
+      page: (A) DevOps points the three names at our Hostinger server and we redirect every path, or (B) Cloudflare.
 - [x] Clean-up after the move (the owner), 26 November: `https://opsiogen.vercel.app` is gone from Sanity's CORS origins
       (left: `https://opsiogen.com` and `http://localhost:3000`). Google lists one app password for contact@opsiogen.com,
       "Opsiogen Website", made that day for Hostinger; Vercel's older one no longer exists. The older Sanity token stays:
