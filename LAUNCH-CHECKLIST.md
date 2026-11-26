@@ -12,8 +12,8 @@ Tick items as they are done.
 - [x] Phone speed on Home since the first-visit character intro went live (19 November): pagespeed.web.dev on 20 November (the owner's run, a first visit with the intro): phone 98, desktop 98; accessibility, best practices and SEO 100. Lighthouse in the test environment gave 97 to 99 (50 before that day's fixes). Desktop is a point under the 99 goal: what is left is the intro covering the first screen while it plays; repeat visits skip it.
 - [x] Firefox (20 November): Firefox 160 from Mozilla's own package source (the owner allowed `packages.mozilla.org` in the test environment). Every page at phone, tablet and desktop widths (102 page loads) and the click-through checks: all fine. Fixed on the way: a case study's website address wrapped mid-word on phones ("cabotsolutions.co / m"); it now breaks before the ending ("cabotsolutions / .com").
 - [x] Windows (20 November): Edge on Windows uses Chrome's engine, so the Chrome tests cover it; on top of that every page was checked with Windows-style scrollbars (which take page width) at 1280x720, 1366x768, 1536x864 and 1920x1080 (136 page loads, all fine), and in Windows High Contrast mode, where the client logos vanished (fixed: they now draw in the system text colour). Internet Explorer is retired by Microsoft (June 2022; Windows opens Edge instead) and is not supported, like most modern sites.
-- [ ] On Hostinger, send HSTS (`Strict-Transport-Security: max-age=63072000`) from the server or proxy. Vercel adds it by itself; the other security headers are in `next.config.ts` and go wherever the site runs.
-- [ ] On Hostinger, check the main images still load fast: they now come through the site's own image service (`/_next/image`), which Vercel caches worldwide and a single server does not.
+- [x] On Hostinger, send HSTS (`Strict-Transport-Security: max-age=63072000`) from the server or proxy. Vercel adds it by itself; the other security headers are in `next.config.mjs` and go wherever the site runs. Checked live 26 November: HSTS and the other five headers are sent.
+- [ ] On Hostinger, check the main images still load fast: they now come through the site's own image service (`/_next/image`), which Vercel caches worldwide and a single server does not. 26 November: it works on Hostinger (AVIF, made by the server and kept after the first request); PageSpeed on the live address still to run.
 
 ## Going live: the plan agreed on 20 November 2026
 
@@ -36,22 +36,31 @@ the CDN serves files to Canada, the US and Europe). The domain, **opsiogen.com**
       `hostinger-build` script copies Hostinger's `.env` into the server's folder. First good deploy 26 November (server
       glibc 2.28, Next.js 16.4.6 ready). Hostinger's runner (`lsnode`) stops the server after 5 minutes without visitors
       and starts it again on the next one.
-- [ ] Environment variables in Hostinger: `NEXT_PUBLIC_SANITY_PROJECT_ID` (79m429dl), `NEXT_PUBLIC_SANITY_DATASET`
+- [x] Environment variables in Hostinger: `NEXT_PUBLIC_SANITY_PROJECT_ID` (79m429dl), `NEXT_PUBLIC_SANITY_DATASET`
       (production), `NEXT_PUBLIC_SANITY_API_VERSION` (2026-02-01), `ENQUIRY_TO_EMAIL` (contact@opsiogen.com), `NEXT_PUBLIC_SITE_URL` (the temporary
       hostingersite.com address first, then the live domain; the contact form needs it behind Hostinger's proxy), and a new
       `SANITY_API_WRITE_TOKEN` (sanity.io/manage → API → Tokens, Editor; Vercel keeps the old one hidden).
       26 November: the six that are not secret are set (`NEXT_PUBLIC_SITE_URL` is `https://opsiogen.com` from the start,
       and `SMTP_USER` is contact@opsiogen.com). The owner adds `SMTP_PASS` and `SANITY_API_WRITE_TOKEN` in hPanel. Hostinger's
       API replaces the whole set at once, so after the owner's two are in, change variables in hPanel only.
+      Done 26 November: all eight are set (the owner added the two secrets in hPanel and redeployed).
 - [ ] Test on the temporary address before the domain moves (within Hostinger's 30-day refund): build fits the plan, every
       page in Chrome, Safari and Firefox, PageSpeed, security headers, a real test enquiry.
-- [ ] GoDaddy DNS: change only the website records, `@` (A record) and `www` (CNAME), to the values Hostinger shows under
+      The site was set up on opsiogen.com itself (no temporary address), so it was tested right after the move, 26 November:
+      `npm run audit` on https://opsiogen.com passed (32 pages, 32 internal links, 208 KB of JavaScript up front), the
+      security headers are sent, `/.env` is refused (403), and a test enquiry through the live form got the thank-you
+      screen in about 4 seconds with no error in Hostinger's log (named "Website test (Hostinger)", to delete in the
+      Studio). Still to do: PageSpeed on the live address.
+- [x] GoDaddy DNS: change only the website records, `@` (A record) and `www` (CNAME), to the values Hostinger shows under
       Connect domain. Do **not** change the nameservers and do not touch the MX, SPF, DKIM or verification records:
       they keep Google Workspace email working. Remove any GoDaddy forwarding or parked page on `@`.
-- [ ] Set `NEXT_PUBLIC_SITE_URL` to `https://opsiogen.com`, redeploy. Canonicals, the sitemap, robots.txt and the structured
-      data all use it. Redirect the www or non-www twin to it.
-- [ ] Add the live address in Sanity → API → CORS origins with **Allow credentials** ticked, so `/studio` can sign in.
-- [ ] Check `/sitemap.xml` and `/robots.txt` on the live domain show the live address; send HSTS from Hostinger.
+      Done 26 November: the owner changed the `@` A record from GoDaddy's "WebsiteBuilder Site" to the IP Hostinger shows
+      under Connect domain → Connect via DNS records; `www` was already a CNAME to opsiogen.com; nothing else changed.
+      Hostinger's free lifetime SSL became active the same morning (it renews itself), with its HTTP-to-HTTPS redirect on.
+- [x] Set `NEXT_PUBLIC_SITE_URL` to `https://opsiogen.com`, redeploy. Canonicals, the sitemap, robots.txt and the structured
+      data all use it. Redirect the www or non-www twin to it. (Set from the start; `www.opsiogen.com` answers 308 to it.)
+- [x] Add the live address in Sanity → API → CORS origins with **Allow credentials** ticked, so `/studio` can sign in. (26 November)
+- [x] Check `/sitemap.xml` and `/robots.txt` on the live domain show the live address; send HSTS from Hostinger. (26 November)
 - [ ] Switch off the Vercel copy (opsiogen.vercel.app) so Google sees one site.
 
 ## Contact form
