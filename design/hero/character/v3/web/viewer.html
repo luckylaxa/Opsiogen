@@ -14,7 +14,9 @@ const q = new URLSearchParams(location.search), size = +(q.get('size') || 640), 
 c.width = c.height = size;
 const stage = createStage(c, { distance: dist, keep: true });
 stage.gl.setSize(size, size, false);
-window.ready = loadCharacter({ model: '/public/home/character.glb', faces: '/public/home/faces.webp' }).then((ch) => {
+// ?model=full: the showreel's fuller model, with more hand shapes (thumbs up, fist, hold)
+const model = q.get('model') === 'full' ? '/design/hero/character/v3/web/character-full.glb' : '/public/home/character.glb';
+window.ready = loadCharacter({ model, faces: '/public/home/faces.webp' }).then((ch) => {
   ch.attach(stage); window.ch = ch;
   window.shot = (state) => { ch.pose(state); stage.render(); return c.toDataURL('image/png'); };
   return true;
