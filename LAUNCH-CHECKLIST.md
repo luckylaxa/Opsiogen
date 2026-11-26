@@ -84,7 +84,7 @@ the CDN serves files to Canada, the US and Europe). The domain, **opsiogen.com**
       At the move, add both to Hostinger too. Done 26 November (a new app password): test enquiries through the live
       form on Hostinger arrived (the owner confirmed), also after the nodemailer upgrade.
 - [x] Enquiries go to contact@opsiogen.com (Google Workspace), decided 20 November; set in Vercel and as the code's default.
-- [x] Send a test enquiry from the live site (20 November; five test enquiries named "Website test…" to delete in the Studio).
+- [x] Send a test enquiry from the live site (20 November; five test enquiries named "Website test…" to delete in the Studio). 26 November: the owner deleted all the test enquiries in the Studio; the list is empty.
 
 ## SEO (from the checklist video)
 
