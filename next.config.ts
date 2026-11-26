@@ -18,8 +18,9 @@ function siteHosts(): string[] {
 /**
  * Sent with every response: other sites can't frame ours (clickjacking), browsers
  * don't guess file types, links to other sites carry only our domain, and the
- * camera, microphone and location stay off. Vercel adds HSTS on its own; the
- * Hostinger move needs it set there (LAUNCH-CHECKLIST.md).
+ * camera, microphone and location stay off. Browsers are told to use only HTTPS
+ * from now on (HSTS): Vercel adds that on its own, so it is sent from here
+ * everywhere else (Hostinger).
  */
 const SECURITY_HEADERS = [
   { key: "X-Content-Type-Options", value: "nosniff" },
@@ -27,6 +28,7 @@ const SECURITY_HEADERS = [
   { key: "Content-Security-Policy", value: "frame-ancestors 'self'; base-uri 'self'; object-src 'none'" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), browsing-topics=()" },
+  ...(process.env.VERCEL ? [] : [{ key: "Strict-Transport-Security", value: "max-age=63072000" }]),
 ];
 
 const nextConfig: NextConfig = {
@@ -45,6 +47,13 @@ const nextConfig: NextConfig = {
         as: "*.css",
       },
     },
+  },
+  // One address for the site: the www / non-www twin of the live host sends visitors
+  // (and search engines) on to the live host, keeping the path.
+  async redirects() {
+    const [host, twin] = siteHosts();
+    if (!host || !twin) return [];
+    return [{ source: "/:path*", has: [{ type: "host", value: twin }], destination: `https://${host}/:path*`, permanent: true }];
   },
   async headers() {
     return [
