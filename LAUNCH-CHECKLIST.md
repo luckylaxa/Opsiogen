@@ -30,8 +30,12 @@ the CDN serves files to Canada, the US and Europe). The domain, **opsiogen.com**
       address. Hostinger's own build failed: its build servers' Linux (glibc older than 2.29) can't run Next.js 16's
       compiler. So GitHub builds the site (`.github/workflows/hostinger.yml`, on every push to the working branch, the same
       build as the Quality check) and pushes the finished site to the `hostinger` branch; Hostinger deploys that branch on
-      every push (`npm install`, the `hostinger-build` script does nothing, then `next start`). `next.config.ts` became
-      `next.config.mjs` so starting the site needs no compiling.
+      every push. `next.config.ts` became `next.config.mjs` so starting the site needs no compiling.
+      Hostinger only runs a Next.js site as the self-contained server (`output: "standalone"`, `.next/standalone/server.js`),
+      so the workflow builds that (`NEXT_OUTPUT=standalone`), with `public` and `.next/static` copied in beside it; the
+      `hostinger-build` script copies Hostinger's `.env` into the server's folder. First good deploy 26 November (server
+      glibc 2.28, Next.js 16.4.6 ready). Hostinger's runner (`lsnode`) stops the server after 5 minutes without visitors
+      and starts it again on the next one.
 - [ ] Environment variables in Hostinger: `NEXT_PUBLIC_SANITY_PROJECT_ID` (79m429dl), `NEXT_PUBLIC_SANITY_DATASET`
       (production), `NEXT_PUBLIC_SANITY_API_VERSION` (2026-02-01), `ENQUIRY_TO_EMAIL` (contact@opsiogen.com), `NEXT_PUBLIC_SITE_URL` (the temporary
       hostingersite.com address first, then the live domain; the contact form needs it behind Hostinger's proxy), and a new
