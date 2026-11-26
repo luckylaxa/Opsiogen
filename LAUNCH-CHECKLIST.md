@@ -1,6 +1,6 @@
 # Launch checklist: what's still pending
 
-Last updated: 20 November 2026. Ask "what's pending" and Claude reads this file.
+Last updated: 26 November 2026. Ask "what's pending" and Claude reads this file.
 Tick items as they are done.
 
 ## Before moving to Hostinger (the site is a staging site until then)
@@ -61,14 +61,26 @@ the CDN serves files to Canada, the US and Europe). The domain, **opsiogen.com**
       data all use it. Redirect the www or non-www twin to it. (Set from the start; `www.opsiogen.com` answers 308 to it.)
 - [x] Add the live address in Sanity → API → CORS origins with **Allow credentials** ticked, so `/studio` can sign in. (26 November)
 - [x] Check `/sitemap.xml` and `/robots.txt` on the live domain show the live address; send HSTS from Hostinger. (26 November)
-- [ ] Switch off the Vercel copy (opsiogen.vercel.app) so Google sees one site.
+- [x] Switch off the Vercel copy (opsiogen.vercel.app) so Google sees one site. 26 November, with the owner's OK: the Vercel
+      project is paused, so opsiogen.vercel.app answers 503 "deployment paused". It can be unpaused, or deleted, in Vercel.
+- [ ] The old agency domain, fineartdesign.agency (in Cabot's account), forwards to the new site: a permanent (301)
+      forward, no masking, of the domain, `www` and `healthcare` to `https://opsiogen.com`, everything to the home page (the
+      owner's choice). The owner sent the request to Cabot's DevOps team on 26 November; email on that domain is not in
+      use. Once they confirm, check all three addresses land on https://opsiogen.com with a valid certificate.
+- [ ] Clean-up after the move (the owner): in Sanity, remove `https://opsiogen.vercel.app` from the CORS origins and
+      delete the API token Vercel used; in Google (contact@opsiogen.com → Security → App passwords), remove the app
+      password Vercel used. Hostinger has its own new token and app password.
+- [x] Security, 26 November: Hostinger's scan flagged 30 issues in the installed packages. The one the site uses,
+      nodemailer, is now 10.6.1; Sanity is 6.25; Sanity's command-line tools pin old js-yaml, smol-toml and minimatch, lifted
+      to their fixed releases with `overrides` in package.json. `npm audit` and Hostinger's install: 0 vulnerabilities.
 
 ## Contact form
 
 - [x] Enquiry emails go out through our own Google Workspace mailbox (decided 20 November: no other email service, no DNS
       changes). Working since 20 November: 2-Step Verification on for contact@opsiogen.com, its app password is
       `SMTP_PASS` in Vercel, `SMTP_USER` is `contact@opsiogen.com`; the test enquiry arrived in the Inbox.
-      At the move, add both to Hostinger too.
+      At the move, add both to Hostinger too. Done 26 November (a new app password): test enquiries through the live
+      form on Hostinger arrived (the owner confirmed), also after the nodemailer upgrade.
 - [x] Enquiries go to contact@opsiogen.com (Google Workspace), decided 20 November; set in Vercel and as the code's default.
 - [x] Send a test enquiry from the live site (20 November; five test enquiries named "Website test…" to delete in the Studio).
 
@@ -118,7 +130,8 @@ the CDN serves files to Canada, the US and Europe). The domain, **opsiogen.com**
 ## Restore points
 
 To go back to one of these, ask Claude to "restore the site to the <date> restore point". Two ways, both keep later work in history:
-the code is put back from the commit and redeployed, or the listed Vercel deployment is promoted again (instant).
+the code is put back from the commit and pushed, and Hostinger deploys it. (Until 26 November the listed Vercel deployment
+could also be promoted again; the Vercel project is now paused, so the Vercel column is history.)
 Text and images edited in the Studio are not part of a restore point; the starter content in `src/content` is.
 
 | Date | What it is | Commit | Vercel deployment |

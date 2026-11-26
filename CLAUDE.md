@@ -59,19 +59,24 @@ modern devices low and right, our own screens, and the owner's approval before s
 - Every post: a 16:10 cover with alt text, an excerpt of 50 to 160 characters, a
   category, and h2 headings (they make the contents list). Same copy rules as above.
 
-## Staging mode (now)
-opsiogen.vercel.app is a staging site: every change goes live straight away.
+## Live site: opsiogen.com on Hostinger (since 26 November 2026)
+Every push to the working branch goes live by itself, in about 5 minutes.
 1. `npm run typecheck`, commit and push.
-2. Deploy at once through the Vercel API: redeploy the latest production deployment
-   with `withLatestCommit: true`, target production. Pushes don't deploy by themselves
-   (`vercel.json` turns off git deployments, since GitHub's notices arrived late and
-   out of order and rebuilt older commits over newer ones).
+2. The **Hostinger** GitHub action (`.github/workflows/hostinger.yml`) builds the site
+   (`output: "standalone"`) and pushes it to the `hostinger` branch; Hostinger deploys
+   that branch on its own. Hostinger's servers can't build Next.js 16, so never point
+   Hostinger at the source branch. Follow a deploy with the Hostinger connector
+   (`hosting_get-deployment`, runtime logs with `hosting_nodejs_runtime-logs`).
 3. Content and images in `src/content` go live through the **Seed Sanity** action
    (add mode); Studio edits show on the site within about 10 seconds.
-The full checks below wait for the move to Hostinger (see LAUNCH-CHECKLIST.md).
+4. Environment variables live in hPanel (Websites → opsiogen.com → Environment
+   variables). The API replaces the whole set, so change them in hPanel only.
+The old Vercel copy (opsiogen.vercel.app) is paused: don't deploy there.
 
-## Before going live on Hostinger
+## Full checks (layout, image or speed changes)
 1. `npm run lint` and `npm run typecheck`.
-2. `npm run build`, `npm start`, then `npm run audit` in another terminal.
+2. `npm run build`, `npm start`, then `npm run audit` in another terminal; after the
+   deploy, `npm run audit -- https://opsiogen.com` (in a sandbox behind a proxy, run it
+   with `NODE_USE_ENV_PROXY=1`).
 3. For layout or image changes, run Lighthouse on mobile and desktop for the
    changed page, and check phone (390px) and desktop (1440px) widths.
