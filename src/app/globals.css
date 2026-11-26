@@ -825,6 +825,12 @@ html.has-cursor,
 html.has-cursor * {
   cursor: none !important;
 }
+/* Full screen (the showreel's full view) shows above the page, where the custom cursor can't draw, so the normal
+   pointer comes back there. */
+html.has-cursor :fullscreen,
+html.has-cursor :fullscreen * {
+  cursor: auto !important;
+}
 .cursor {
   position: fixed;
   left: 0;
