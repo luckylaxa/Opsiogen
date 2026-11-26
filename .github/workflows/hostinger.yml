@@ -1,9 +1,11 @@
 # Builds the site for Hostinger (opsiogen.com). Hostinger's build servers can't run Next.js 16's compiler (their Linux
 # is older than it needs), so GitHub builds the site here, the same way the Quality check and Vercel do, and pushes the
 # finished site to the `hostinger` branch. Hostinger deploys that branch on every push: it installs the packages, runs
-# the `hostinger-build` script (nothing left to build) and starts the site with `next start`.
+# the `hostinger-build` script (nothing left to build) and starts the self-contained server Next.js builds for it
+# (.next/standalone/server.js, which has its own copy of the packages it needs).
 # The settings that are not secret are below; the secrets (SMTP_PASS, SANITY_API_WRITE_TOKEN) are only read when the
-# site runs, and live in Hostinger's environment variables.
+# site runs, and live in Hostinger's environment variables. Hostinger writes those to a .env file before the build
+# step, and `next build` would copy it into the server's folder; `hostinger-build` does that copy instead.
 name: Hostinger
 
 on:
@@ -27,6 +29,7 @@ jobs:
       NEXT_PUBLIC_SANITY_API_VERSION: "2026-02-01"
       NEXT_PUBLIC_SITE_URL: https://opsiogen.com
       NEXT_TELEMETRY_DISABLED: "1"
+      NEXT_OUTPUT: standalone
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -38,14 +41,21 @@ jobs:
         run: npm run build
       - name: The finished site
         run: |
+          test -f .next/standalone/server.js
           mkdir out
           cp -r .next out/.next
           rm -rf out/.next/cache
+          # the server's folder also needs the pictures and the browser files (Next.js leaves those to the host)
+          cp -r public out/.next/standalone/public
+          cp -r .next/static out/.next/standalone/.next/static
           cp -r public out/public
           cp package.json package-lock.json next.config.mjs out/
           node -e '
             const fs = require("fs"), p = JSON.parse(fs.readFileSync("out/package.json", "utf8"));
-            p.scripts = { start: "next start", "hostinger-build": "echo \"Built on GitHub; nothing to build here.\"" };
+            p.scripts = {
+              start: "node .next/standalone/server.js",
+              "hostinger-build": "if [ -f .env ]; then cp .env .next/standalone/.env; fi; node -e \"console.log(\\\"Built on GitHub; nothing to build here. glibc\\\", process.report.getReport().header.glibcVersionRuntime)\"",
+            };
             fs.writeFileSync("out/package.json", JSON.stringify(p, null, 2) + "\n");'
       - name: Push it to the hostinger branch
         run: |

@@ -35,6 +35,9 @@ const SECURITY_HEADERS = [
 
 /** @type {import("next").NextConfig} */
 const nextConfig = {
+  // Hostinger runs Next.js sites as the self-contained server Next.js builds with `output: "standalone"`
+  // (.next/standalone/server.js). The Hostinger workflow turns it on; Vercel and the Quality check build as before.
+  ...(process.env.NEXT_OUTPUT === "standalone" ? { output: "standalone" } : {}),
   poweredByHeader: false,
   experimental: {
     serverActions: { allowedOrigins: siteHosts() },
