@@ -343,7 +343,10 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
   - **No repeats:** the Vaelo app in the opening trio became Carlton Noble's app. The Torvi ads in the campaigns gave way
     to the subscription ads. One Surgo screen in the product wall was swapped, and four pages in the website wall that
     also show alone were replaced. The opening grid and the closing wall stay as the preview and the recap.
-  - **The booth is BigTapp's** (design/tiles/py/booth_bigtapp.py).
+  - **The booth is BigTapp's real one**: Lucky's file "BigTapp AI — Exhibition Booth Backdrop (SFF 2026)", our SFF 2026
+    backdrop "Building the AI-First FSI". Its blue mockup is the print page cover and the film's booth shot, and its white
+    mockup is in the Events tile (design/tiles/py/bigtapp_booth.py). An edited Vantara stand was tried first; Lucky: "Text is
+    not properly aligned", then he sent this work.
   - **The close:** the "Your idea. Branded..." shot now says "One partner. Every digital need.", with the same place,
     timing and acting (it takes the beat that keeps the logo on the bar). The short "One partner" shot after it went.
   - **Shorter:** Lucky: "Reduce time only that make sense". The repeats came out: the second event-photo pair, the
