@@ -49,8 +49,8 @@ export function SiteSearch({
     const q = query.trim().toLowerCase();
     if (!q) {
       return [
-        ...items.filter((i) => i.kind === "work").slice(0, SUGGESTED),
         ...items.filter((i) => i.kind === "service").slice(0, SUGGESTED),
+        ...items.filter((i) => i.kind === "work").slice(0, SUGGESTED),
       ];
     }
     const words = q.split(/\s+/);
@@ -67,7 +67,8 @@ export function SiteSearch({
       .map((r) => r.item);
   }, [items, query]);
 
-  const groups = (["work", "service"] as const)
+  // Services first, then work (the owner, 26 Nov), both in the suggestions and in typed results.
+  const groups = (["service", "work"] as const)
     .map((kind) => ({ kind, list: results.filter((r) => r.kind === kind) }))
     .filter((g) => g.list.length > 0);
   const flat = groups.flatMap((g) => g.list);
