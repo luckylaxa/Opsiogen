@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { ShowreelSection, Video } from "@/lib/types";
 import { Media } from "@/components/ui/Media";
 import { afterPageLoad } from "@/lib/afterLoad";
@@ -20,6 +20,9 @@ type FullscreenVideo = HTMLVideoElement & {
   webkitEnterFullscreen?: () => void;
 };
 
+/** Thresholds for the on-screen check: every 5% of the card. */
+const STEPS = Array.from({ length: 21 }, (_, i) => i / 20);
+
 /**
  * The big video card: a muted loop that plays while it is on screen, over
  * its poster image, with the label and line in the bottom corner and a
@@ -27,6 +30,9 @@ type FullscreenVideo = HTMLVideoElement & {
  * button, and always starts muted, and a full-view button that fills the
  * screen with the film and its sound. Visitors who prefer less motion see the
  * poster until they press play. 16:9 on every screen, so a film is never cut.
+ * It pauses as soon as less than half of it is on screen (moving on to the next
+ * section), while the tab is in the background, and when the page is left, so
+ * its sound never carries on behind the visitor; back in view, it carries on.
  */
 export function Showreel({
   section,
@@ -49,38 +55,64 @@ export function Showreel({
   const [full, setFull] = useState(false);
   // Set when the visitor pauses (or, with reduced motion, until they press play).
   const held = useRef(false);
-  const inView = useRef(false);
+  // Near: within 200px of the screen, so the file can start loading. Showing: at least half of the card on screen
+  // (or half the screen, when the card is taller than it), in a tab that is in front.
+  const near = useRef(false);
+  const showing = useRef(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!video || !el) return;
     held.current = prefersReducedMotion();
     let cancel = () => {};
-    const io = new IntersectionObserver(
+    const sync = () => {
+      if (!showing.current || document.hidden) el.pause();
+      else if (!held.current && el.getAttribute("src")) el.play().catch(() => {});
+    };
+    const load = new IntersectionObserver(
       ([entry]) => {
-        inView.current = entry.isIntersecting;
-        if (!entry.isIntersecting) el.pause();
-        else if (!el.getAttribute("src")) {
+        near.current = entry.isIntersecting;
+        if (entry.isIntersecting && !el.getAttribute("src")) {
           // Let the page's main image finish before the video starts downloading.
           cancel();
           cancel = afterPageLoad(() => {
-            if (inView.current) setSrc(chooseSrc(el, video, videoWebm));
+            if (near.current) setSrc(chooseSrc(el, video, videoWebm));
           });
-        } else if (!held.current) el.play().catch(() => {});
+        }
       },
       { rootMargin: "200px 0px" },
     );
-    io.observe(el);
+    const view = new IntersectionObserver(
+      ([entry]) => {
+        const screen = entry.rootBounds?.height ?? window.innerHeight;
+        const half = Math.min(entry.boundingClientRect.height, screen) / 2;
+        showing.current = entry.isIntersecting && entry.intersectionRect.height >= half;
+        sync();
+      },
+      { threshold: STEPS },
+    );
+    load.observe(el);
+    view.observe(el);
+    document.addEventListener("visibilitychange", sync);
     return () => {
       cancel();
-      io.disconnect();
+      load.disconnect();
+      view.disconnect();
+      document.removeEventListener("visibilitychange", sync);
     };
   }, [video, videoWebm]);
+
+  // Leaving the page stops the film at once, sound and all (and if the page is only hidden, not unmounted, it is
+  // paused there too).
+  useLayoutEffect(() => {
+    const el = ref.current;
+    return () => el?.pause();
+  }, []);
 
   // Start as soon as the file is attached, while the card is on screen.
   useEffect(() => {
     const el = ref.current;
-    if (src && el && inView.current && !held.current) el.play().catch(() => {});
+    if (src && el && showing.current && !document.hidden && !held.current) el.play().catch(() => {});
   }, [src]);
 
   const toggle = () => {
@@ -177,7 +209,12 @@ export function Showreel({
               setPlaying(true);
               setStarted(true);
             }}
-            onPause={() => setPlaying(false)}
+            onPause={() => {
+              setPlaying(false);
+              // A pause while it is in full view of the visitor is theirs (the full-view controls, a headset button):
+              // it stays paused until they press play, rather than starting again the next time it comes into view.
+              if (showing.current && !document.hidden) held.current = true;
+            }}
           />
         )}
         <div
