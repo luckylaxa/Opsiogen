@@ -100,8 +100,8 @@ the CDN serves files to Canada, the US and Europe). The domain, **opsiogen.com**
 
 - [x] Privacy Policy (/privacy): the real policy replaced the placeholder on 20 November, approved by the owner (Opsiogen Pvt Ltd, Kochi, Kerala, India; contact@opsiogen.com). Update it if visitor statistics or any cookies are added later. It lives in Studio (Pages → Privacy Policy) and in `src/content/seed-data.ts`.
 
-- [ ] Afthab Tours still uses sample images, which search engines treat as thin pages. Send its Figma link or hide it until it's ready.
-- [ ] Case-study mockups for BigTapp and Cabot show a "Webflow" tag (a tool name) inside the images; edit the Figma frames if it should go.
+- [x] Afthab Tours still uses sample images, which search engines treat as thin pages. Send its Figma link or hide it until it's ready. Done since: the case study now shows our brand work for Afthab Tours (Instagram posts and stories, Meta ads, LinkedIn pages and the brand film); checked live 26 November.
+- [x] Case-study mockups for BigTapp and Cabot show a "Webflow" tag (a tool name) inside the images; edit the Figma frames if it should go. Checked 26 November: text recognition over all 126 images on the live BigTapp and Cabot Solutions pages finds no "Webflow" (it reads small words such as "workflow"), so the tag is gone.
 - [ ] Blog: the four demo posts show only on /blog/preview. Delete them in Studio (Blog) when they're no longer needed, or untick Demo on one to publish it after rewriting it.
 
 ## Home hero (decision pending, 17 November 2026)
