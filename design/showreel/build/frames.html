@@ -458,11 +458,18 @@ if(MOTION)(()=>{
           WebkitBackgroundClip:'text',backgroundClip:'text',color:'transparent',opacity:0});f.appendChild(pic);
         add(t=>{pic.style.opacity=clamp((t-.46)/.14)});rush(o.x,o.mid,.15)})}
     if(WD==='Reach.'){
-      // The word, then copies of it in post, story, banner and billboard sizes fly out around it (a campaign going out
-      // everywhere) while it steps back among them; then the camera whips across, onto the campaigns.
+      // The word, then a campaign going out everywhere: post, story, banner and billboard sizes fly out around it while
+      // it steps back among them, each saying where the work reaches, in its own format (owner, 27 Nov: the text round
+      // it "should be different with meaningful way (how reach related)"; no platform names); then the camera whips
+      // across, onto the campaigns.
       const F=[[300,300,-600,-270,PINK],[210,372,610,-250,BLUE],[560,150,-560,300,LIME],[460,210,560,320,ORANGE],[240,240,-790,40,VIOLET],[200,356,800,20,AQUA],[360,124,0,-390,PAPER],[360,124,0,400,PINK]];
-      const cps=F.map(([w,h,x,y,c])=>{const b=el('div','',f,{position:'absolute',left:960-w/2+'px',top:540-h/2+'px',width:w+'px',height:h+'px',background:c,borderRadius:'18px',display:'flex',alignItems:'center',justifyContent:'center',
-        fontWeight:700,letterSpacing:'-.04em',color:COAL,fontSize:Math.min(h*.4,w*.26)+'px',zIndex:1,opacity:0});b.textContent='Reach.';return b});
+      const TXT=['Every feed.','Every story.','Every inbox.','Every street.','Every market.','Every screen.','Every search.','Every scroll.'];
+      const cps=F.map(([w,h,x,y,c],j)=>{const tall=w<h*1.8,lines=tall?TXT[j].split(' '):[TXT[j]];   // posts and stories on two lines, banners on one
+        cv.font='700 100px Outfit';const em=Math.max(...lines.map(l=>cv.measureText(l).width/100-.04*l.length));
+        const fs=Math.min(w*.8/em,tall?h*.3:h*.38);
+        const b=el('div','',f,{position:'absolute',left:960-w/2+'px',top:540-h/2+'px',width:w+'px',height:h+'px',background:c,borderRadius:'18px',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
+          fontWeight:700,letterSpacing:'-.04em',lineHeight:1.02,textAlign:'center',color:COAL,fontSize:fs+'px',zIndex:1,opacity:0});
+        lines.forEach(l=>{el('div','',b,{whiteSpace:'nowrap'}).textContent=l});return b});
       big.style.zIndex=2;
       add(t=>{const q=ease(t/.1),k=io(clamp((t-.12)/.22));big.style.transform=`scale(${(1.25-.25*q)*(1-.42*k)})`;big.style.opacity=q});
       cps.forEach((b,j)=>{const [w,h,x,y]=F[j],t0=.14+j*.035;add(t=>{const q=pop((t-t0)/.2);b.style.opacity=t<t0?0:1;b.style.transform=`translate(${x*q}px,${y*q}px) scale(${.2+.8*q}) rotate(${(1-q)*(j%2?14:-14)}deg)`})});
