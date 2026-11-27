@@ -16,6 +16,9 @@ came first). So on both mockups:
   mascot;
 - a real QR code for BigTapp's site (https://www.bigtapp.ai/, the address printed on the stand) is printed on the
   card, square on the backdrop's plane.
+And the counter (owner, 27 Nov: logo "not Center", "keep this table straight like other image"): on the blue mockup
+it is turned straight like the white one's, its logo at the centre of its front; the white one's laptop loses its
+maker's logo (bigtapp_counter.py).
 The camera: level (the backdrop's verticals stay vertical), its horizon and the backdrop's vanishing point measured on
 each photo from the backdrop's top and bottom edges, a plausible focal length, and the backdrop 2.5 m tall.
 Usage: python3 design/tiles/py/bigtapp_booth.py [OUT_DIR]   (OUT_DIR: write the page images there instead of public/,
@@ -25,6 +28,7 @@ import numpy as np
 import cv2
 import segno
 from PIL import Image, ImageDraw, ImageFilter
+from bigtapp_counter import straight_counter, unbrand_laptop
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../..'))
 AI = os.path.join(ROOT, 'design/tiles/out/figma-print/ai')
@@ -133,6 +137,8 @@ blue_cam = Cam(533.6, 4041.6, 1300, 202, 739)
 white_cam = Cam(536.2, 5613.0, 1300, 167, 734.5)
 blue = Image.open(os.path.join(AI, 'bigtapp-sff-booth-blue.png')).convert('RGB')
 white = Image.open(os.path.join(AI, 'bigtapp-sff-booth-white.png')).convert('RGB')
+blue = straight_counter(blue, white, blue_cam)               # the counter straight, logo centred, as on the white one
+white = unbrand_laptop(white)                                # no maker's logo on the laptop
 blue = qr_card(blue, blue_cam, [(1164.75, 361.25), (1218.5, 364.4), (1218.5, 425.0), (1164.75, 423.5)])
 white = qr_card(white, white_cam, [(1124.0, 340.1), (1184.75, 342.0), (1184.75, 405.1), (1124.0, 404.25)])
 blue = tv_on_stand(blue, blue_cam, [(1234, 334.2), (1400, 346.5), (1400, 463.0), (1234, 458.5)], 1312, 'blue')
@@ -142,8 +148,9 @@ sharpen = lambda im: im.filter(ImageFilter.UnsharpMask(radius=1.2, percent=55, t
 save = lambda im, path, q: (im.save(path, 'JPEG', quality=q, optimize=True, progressive=True), print('wrote', os.path.relpath(path, ROOT)))
 os.makedirs(OUT, exist_ok=True)
 
-# The cover. 2:1 from the 3:2 photo: the band from the headline's wall down past the counter's logo.
-save(sharpen(blue.crop((0, 100, 1536, 868)).resize((2400, 1200), Image.LANCZOS)), os.path.join(OUT, 'page.jpg'), 86)
+# The cover. 2:1 from the 3:2 photo: the band from the headline's wall down past the counter's logo (16 px lower
+# since the counter turned straight, so its logo keeps clear of the bottom edge).
+save(sharpen(blue.crop((0, 116, 1536, 884)).resize((2400, 1200), Image.LANCZOS)), os.path.join(OUT, 'page.jpg'), 86)
 # 4:3 for phones: the full height, the stand in the middle.
 save(sharpen(blue.crop((77, 0, 1442, 1024)).resize((1600, 1200), Image.LANCZOS)), os.path.join(OUT, 'page-phone.jpg'), 86)
 
