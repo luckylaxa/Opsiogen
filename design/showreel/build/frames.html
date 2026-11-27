@@ -133,6 +133,11 @@ const drawIllo=name=>{const D=window.DRAWS[name],NS='http://www.w3.org/2000/svg'
   D.shapes.forEach(([c,d,a])=>{const p=document.createElementNS(NS,'path');p.setAttribute('d',d);p.setAttribute('fill',c);p.setAttribute('fill-rule','evenodd');
     fills.appendChild(p);if(a>=700){const l=document.createElementNS(NS,'path');l.setAttribute('d',d);lines.appendChild(l)}});
   img(D.img,f,{position:'absolute',left:0,top:0,width:'1920px',height:'1080px'},'draw-img')};
+// Shot 20 (owner, 27 Nov: "18 sec collage is not Center and no movements"): its three out-of-home pieces framed round
+// their ads (cut23.py) and centred as a group, each card in its own proportion, all one height. In the film they fly in
+// as the tiles did, then keep moving: a slow push into each ad while the cards drift apart.
+const ooh=(items,c,h=600,gap=40)=>{bg(c);const ws=items.map(([k,r])=>h*r),tot=ws.reduce((a,b)=>a+b)+gap*(items.length-1);let x=(1920-tot)/2;
+  items.forEach(([k,r],i)=>{const b=el('div','card ooh',f,{left:x+'px',top:(1080-h)/2+'px',width:ws[i]+'px',height:h+'px',borderRadius:'20px'});img(A+k+'.jpg',b);x+=ws[i]+gap})};
 // Two pieces, one high on the left and one low on the right; in the film one comes from the left, the other from
 // the right and below.
 const duo=(a,b,c,o={})=>{bg(c);const w=o.w||700,h=o.h||w,g=o.g||80,dy=o.dy??100,x0=(1920-2*w-g)/2;
@@ -198,7 +203,7 @@ const SHOTS=[
 ['Brand', 'Brand: wall across projects', ()=>mosaic([['sl-05','rs-16','nc-11'],['nc-13','sl-07','rs-03'],['rs-15','nc-02','sl-09'],['nc-15','rs-08','nc-04']],'#0b0b10',{rot:-9,cw:520,mid:200}),17],
 ['Brand', 'Service artwork: print', ()=>full(A+'z-print-booth.jpg'),18],
 ['Brand', 'Print: packaging', ()=>full(A+'z-t-print-packaging.jpg'),19],
-['Brand', 'Brand: tiles, out of home', ()=>tiles(['rs-09','nc-14','sl-08'],PINK),20],
+['Brand', 'Brand: tiles, out of home', ()=>ooh([['rs-09',4/3],['nc-14',2/3],['sl-08',2/3]],PINK),20],
 ['Brand', 'SandLogic: social grid', ()=>full(A+'z-slp-social-black.jpg'),22],
 ['Brand', 'Brand: a brand being built (illustration)', ()=>illo(),24],
 ['Brand', 'Print: posters', ()=>full(A+'h-t-print-posters.jpg'),26],
@@ -598,10 +603,12 @@ if(MOTION)(()=>{
   // Cut 5's tiles: they fly in from above and below in turn. Cut 5's duo: one from the left, the other from the right
   // and below, then they drift apart.
   cards.filter(e=>e.classList.contains('tile5')).forEach((e,i)=>add((t,d)=>{const q=pop((t-i*.045)/IN),k=t/d;e.style.transform=`translateY(${(1-q)*(i%2?-420:420)}px) rotate(${(1-q)*(i%2?7:-7)}deg) scale(${1+.02*k})`}));
+  cards.filter(e=>e.classList.contains('ooh')).forEach((e,i)=>{const im=e.querySelector('img'),s=i%2?-1:1;add((t,d)=>{const q=pop((t-i*.05)/IN),k=io(t/d);
+    e.style.transform=`translate(${(i-1)*14*k}px,${(1-q)*s*-440+s*16*k}px) rotate(${(1-q)*s*-7}deg)`;im.style.transform=`scale(${1.02+.12*k})`})});
   cards.filter(e=>e.classList.contains('duo')).forEach((e,i)=>add((t,d)=>{const q=pop((t-i*.07)/IN),k=t/d;
     e.style.transform=i?`translate(${(1-q)*600+k*24}px,${(1-q)*160+k*10}px) rotate(${(1-q)*8}deg)`:`translate(${(1-q)*-500-k*24}px,${-k*14}px) rotate(${(1-q)*-8}deg)`}));
   // Other cards and fitted pieces: each from its nearest edge, one after another, then they drift outward.
-  const rest=cards.filter(e=>!['pair','tile','tile5','duo'].some(c=>e.classList.contains(c)));
+  const rest=cards.filter(e=>!['pair','tile','tile5','duo','ooh'].some(c=>e.classList.contains(c)));
   if(rest.length>=4)late.push(()=>{const rs=rest.map(e=>e.getBoundingClientRect());   // cut 5's tilted wall: it straightens into place
     rest.forEach((e,i)=>{const r=rs[i],b=base(e),side=r.left+r.width/2<960?1:-1;e.style.transformOrigin=`${960-r.left}px ${540-r.top}px`;
       add((t,d)=>{const q=pop((t-i*.03)/(IN*1.4)),k=t/d;e.style.transform=`rotate(${-9*(1-q)}deg) scale(${1+.22*(1-q)+.02*k}) translateY(${(1-q)*side*260}px) ${b}`})})});

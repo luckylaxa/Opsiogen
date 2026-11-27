@@ -47,9 +47,14 @@ save(Image.fromarray(t), 'nc-sleeve.jpg')
 
 # Shots 15 and 20: the earlier tiles, made as build/assets.py makes them (from raw/clean, the case studies' designs).
 CLEAN = os.path.join(HERE, '..', 'raw', 'clean')
+# Shot 20's three are framed round their ads (owner, 27 Nov: "18 sec collage is not Center"): the billboard in a 4:3
+# card, the bus shelter's poster and the subway wall's ad in 2:3 cards (the subway ad meets the photo's edge, so it
+# fills its card instead).
+FRAME = {'rs-09': (182, 105, 1342, 975), 'nc-14': (822, 307, 1462, 1267), 'sl-08': (1026, 315, 1526, 1065)}
 for key, src in (('rs-07', 'rohde-schwarz_rs-7-wide.jpg'), ('rs-09', 'rohde-schwarz_rs-9-wide.jpg'),
                  ('nc-14', 'norsecom_norsecom-14-wide.jpg'), ('sl-08', 'sandlogic_sandlogic-8-wide.jpg')):
     im = Image.open(os.path.join(CLEAN, src)).convert('RGB')
+    if key in FRAME: im = im.crop(FRAME[key])
     if im.width > 1600: im = im.resize((1600, round(im.height * 1600 / im.width)), Image.LANCZOS)
     im.save(os.path.join(A, key + '.jpg'), quality=88); print('a/' + key + '.jpg', im.size, '(earlier tile)')
 
