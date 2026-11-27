@@ -108,8 +108,96 @@ def screen():
     place(photo, out, cov, box)
     return photo, (712, 0, 3168, 2456)       # the screen, the pillars and the people walking under it
 
+def interp(img, known, sigmas=(4, 10, 24, 60, 140, 320, 700)):
+    """Each unknown pixel from the known ones round it, nearest first (normalized convolution, finer to coarser; the
+    coarse passes run on a 1/8 image so their weights never vanish)."""
+    out, done = img.astype(np.float64), known.copy()
+    k = known.astype(np.float64)
+    for s in sigmas:
+        if s < 100:
+            w = cv2.GaussianBlur(k, (0, 0), s); est = cv2.GaussianBlur(out * k[..., None], (0, 0), s) / np.maximum(w, 1e-9)[..., None]
+        else:
+            f = 8; sm = lambda a: cv2.resize(a, (a.shape[1] // f, a.shape[0] // f), interpolation=cv2.INTER_AREA)
+            ws = cv2.GaussianBlur(sm(k), (0, 0), s / f); es = cv2.GaussianBlur(sm(out * k[..., None]), (0, 0), s / f)
+            up = lambda a: cv2.resize(a, (img.shape[1], img.shape[0]), interpolation=cv2.INTER_LINEAR)
+            w = up(ws); est = up(es) / np.maximum(w, 1e-12)[..., None]
+        ok = ~done & ((w > .15) | (s == sigmas[-1]))
+        out[ok] = est[ok]; done |= ok
+    return out.astype(np.float32)
+
+def unbrand(photo, box, thr=28):
+    """Text and logos on a pale board inside box, painted out with the board round them."""
+    x0, y0, x1, y1 = box
+    region = np.clip(photo[y0:y1, x0:x1], 0, 255).astype(np.uint8)
+    hsv = cv2.cvtColor(region, cv2.COLOR_RGB2HSV)
+    board = np.percentile(luma(region.astype(np.float32)), 85)
+    ink = ((board - luma(region.astype(np.float32)) > thr) | (hsv[..., 1] > 70)).astype(np.uint8)
+    ink = cv2.dilate(ink, np.ones((5, 5), np.uint8))
+    photo[y0:y1, x0:x1] = cv2.inpaint(region, ink, 7, cv2.INPAINT_TELEA).astype(np.float32) + grain(region.shape, 2.5) * ink[..., None]
+
+def booth():
+    """The Rohde & Schwarz stand (27 Nov, the owner: "Replace this one also", the AI booth "Make ideas real."): a real
+    trade-fair photo of a stand's outer wall, a white band lit by four arm spotlights over a printed panel. The panel
+    gets our artwork (art/bp.png, at the panel's own proportions: the wall measured in the photo's perspective) under the
+    band's own light, and the band gets the R&S logo in navy where the stand's logo was. Other companies' names in the
+    photo (the brochure counter, a stand behind) are painted out."""
+    photo = np.asarray(Image.open(os.path.join(H, 'photos/booth-wall-mE_36BQ6oeg.jpg')).convert('RGB')).astype(np.float32)
+    for b in ((664, 1366, 720, 1504), (597, 1508, 717, 1559), (595, 1562, 717, 1609), (506, 1815, 598, 2032)):
+        unbrand(photo, b)
+    wall = np.float32([(1430.2, 513.8), (2863.8, -221.0), (2877.0, 2903.8), (1426.0, 2385.0)])
+    panel = [(1460.8, 1190.7), (2782.2, 905.8), (2803.7, 2753.2), (1458.0, 2319.8)]
+    h, w = photo.shape[:2]
+    inwall = np.zeros((h, w), np.uint8); cv2.fillPoly(inwall, [np.round(wall).astype(np.int32)], 1)
+    inpan = np.zeros((h, w), np.uint8); cv2.fillPoly(inpan, [np.round(np.float32(panel)).astype(np.int32)], 1)
+    near_pan = cv2.dilate(inpan, np.ones((25, 25), np.uint8)).astype(bool)
+    # the wall's top edge, to keep the spotlights and their arms out of every mask
+    top = lambda x: wall[0][1] + (wall[1][1] - wall[0][1]) * (x - wall[0][0]) / (wall[1][0] - wall[0][0])
+    yy, xx = np.mgrid[0:h, 0:w]
+    below_lamps = yy > top(xx) + 200
+    hsv = cv2.cvtColor(np.clip(photo, 0, 255).astype(np.uint8), cv2.COLOR_RGB2HSV)
+    lum = luma(photo); sat = hsv[..., 1]
+    # the wall's own coordinates: u right, v down, its left edge 1 tall (a level camera of a phone's focal length)
+    uv = np.float32([(0, 0), (.843, -.025), (.847, .975), (-.004, 1.0)])
+    Hw = cv2.getPerspectiveTransform(uv, wall)
+    area = lambda u0, v0, u1, v1: cv2.perspectiveTransform(np.float32([[(u0, v0), (u1, v0), (u1, v1), (u0, v1)]]), Hw)[0]
+    old = np.zeros((h, w), np.uint8); cv2.fillPoly(old, [np.round(area(.08, .1, .77, .315)).astype(np.int32)], 1)
+    band = inwall.astype(bool) & ~near_pan & below_lamps
+    # the stand's old logo: darker than the wall round it (a closing takes the letters out of the wall's shading) or red
+    k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (71, 71))
+    bgrgb = np.dstack([cv2.morphologyEx(photo[..., c], cv2.MORPH_CLOSE, k) for c in range(3)])
+    ink = old.astype(bool) & band & (((luma(bgrgb) - lum) > 16) | (sat > 45))
+    ink = cv2.dilate(ink.astype(np.uint8), np.ones((7, 7), np.uint8)).astype(bool) & band
+    white = inwall.astype(bool) & ~near_pan & ~ink & below_lamps & (lum > 90) & (sat < 50)
+    L = lin(photo)
+    L[ink] = lin(cv2.GaussianBlur(bgrgb, (0, 0), 4))[ink]                      # the wall as it is round the letters
+    wallw = interp(L, white | ink)                                             # the lit white wall everywhere on it
+    # the R&S logo on the band, in navy ink, through the wall's perspective
+    logo = Image.open(os.path.join(H, 'art/rs-logo-wall.png'))
+    lw = .52; lh = lw * logo.height / logo.width; u0, v0 = .425 - lw / 2, .205 - lh / 2
+    rect = np.float32([(u0, v0), (u0 + lw, v0), (u0 + lw, v0 + lh), (u0, v0 + lh)])
+    dst = cv2.perspectiveTransform(rect[None], Hw)[0]
+    ss = 3; big = np.asarray(logo.resize((logo.width * 3, logo.height * 3), Image.LANCZOS)).astype(np.float32)
+    x0, y0 = np.floor(dst.min(0)).astype(int) - 2; x1, y1 = np.ceil(dst.max(0)).astype(int) + 2
+    M = cv2.getPerspectiveTransform(np.float32([[0, 0], [big.shape[1], 0], [big.shape[1], big.shape[0]], [0, big.shape[0]]]), ((dst - [x0, y0]) * ss).astype(np.float32))
+    warped = cv2.warpPerspective(big, M, ((x1 - x0) * ss, (y1 - y0) * ss), flags=cv2.INTER_LINEAR)
+    warped = cv2.resize(warped, (x1 - x0, y1 - y0), interpolation=cv2.INTER_AREA)
+    al = (warped[..., 3:] / 255) * .97
+    navy = lin(warped[..., :3])
+    L[y0:y1, x0:x1] = L[y0:y1, x0:x1] * (1 - al) + L[y0:y1, x0:x1] * navy * al
+    # the panel: the artwork as the print, lit by the light that falls on the white wall at each point
+    rgb, cov, box = warp(os.path.join(H, 'art/bp.png'), panel)
+    bx0, by0, bx1, by1 = box
+    a = lin(rgb); Wl = wallw[by0:by1, bx0:bx1]
+    pan = Wl * (.018 + .97 * a)
+    L[by0:by1, bx0:bx1] = L[by0:by1, bx0:bx1] * (1 - cov[..., None]) + pan * cov[..., None]
+    out = srgb(L).astype(np.float32)
+    changed = ink.copy(); changed[by0:by1, bx0:bx1] |= cov > .01; changed[y0:y1, x0:x1] |= al[..., 0] > .01
+    soft = cv2.GaussianBlur(out, (0, 0), .7)
+    out = np.where(changed[..., None], soft + grain(out.shape, 3.2), photo)
+    return out, (270, 330, 2870, 2930)       # the wall, the stand behind it with people, the stools and the floor
+
 for name, fn, tile in (('rohde-schwarz-billboard', billboard, 'rs-09.jpg'), ('norsecom-bus-shelter', shelter, 'nc-14.jpg'),
-                       ('sandlogic-screen', screen, 'sl-08.jpg')):
+                       ('sandlogic-screen', screen, 'sl-08.jpg'), ('rohde-schwarz-booth', booth, 'rs-07.jpg')):
     photo, (cx0, cy0, cx1, cy1) = fn()
     im = Image.fromarray(np.clip(photo, 0, 255).astype(np.uint8))
     im.save(os.path.join(OUT, name + '.jpg'), quality=93)

@@ -1,8 +1,8 @@
-// Renders the three artworks in art/ooh.html to art/rs.png, art/nc.png, art/sl.png. Usage: node render.cjs
+// Renders the artworks in art/ooh.html to art/rs.png, nc.png, sl.png and bp.png. Usage: node render.cjs
 const { chromium } = require('playwright');
 const path = require('path');
 const ART = path.join(__dirname, 'art');
-const jobs = [['rs', 2460, 1000, 1], ['nc', 1404, 2000, 1], ['sl', 2030, 1150, 2]];
+const jobs = [['rs', 2460, 1000, 1], ['nc', 1404, 2000, 1], ['sl', 2030, 1150, 2], ['bp', 3160, 2400, 1]];
 (async () => {
   const browser = await chromium.launch({ args: ['--allow-file-access-from-files'] });
   for (const [a, w, h, s] of jobs) {

@@ -43,3 +43,11 @@ for _ in range(40):
     pts.append([int(x), int(y), float(g[y, x])]); cv2.circle(g, (int(x), int(y)), 170, 0, -1)
 open(os.path.join(ART, 'earth-lights.js'), 'w').write('window.LIGHTS = ' + json.dumps({'size': e.size, 'lights': pts}) + ';\n')   # a script, as file:// pages can't fetch
 print('lights', pts[:12])
+
+# Rohde & Schwarz for the booth wall: the wordmark and the diamond in navy ink, without the "Make ideas real" line
+# (the panel below says it big). Rows 120-180 of the lockup hold that line, left of the diamond (x < 590).
+w = np.asarray(Image.open(logo('rohde-schwarz.png')).convert('RGBA')).copy()
+w[120:, :590, 3] = 0
+w[..., :3] = (10, 31, 68)
+ys, xs = np.nonzero(w[..., 3] > 0)
+Image.fromarray(w[ys.min():ys.max() + 1, xs.min():xs.max() + 1]).save(os.path.join(ART, 'rs-logo-wall.png'))
