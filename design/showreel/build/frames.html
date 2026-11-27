@@ -23,6 +23,7 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#0a090d;font-fam
 <script src="a/screens.js"></script>
 <script src="a/logo.js"></script>
 <script src="a/draw-bag.js"></script>
+<script src="a/draw-ai.js"></script>
 <script type="importmap">{"imports":{"three":"../../../node_modules/three/build/three.module.js","three/addons/":"../../../node_modules/three/examples/jsm/","three/examples/jsm/":"../../../node_modules/three/examples/jsm/"}}</script>
 <script>
 const COAL='#0a090d',PAPER='#f8f6f8',PINK='#ff4f9b',VIOLET='#a98bff',AQUA='#5cf2e6',BLUE='#3f7bff',ORANGE='#ff8a3c',SUN='#ffd75e',LIME='#d8ff3e';
@@ -222,6 +223,9 @@ const SHOTS=[
 ['Design', 'Product duo: RxLive and Care Connect', ()=>duo('scr-rxlive-1','scr-care-connect-1','#101016',{w:880,h:560,g:60,dy:120}),38],
 ['Design', 'Product screens: wall across projects', ()=>mosaic([['scr-meetingful-2','scr-rxlive-3','scr-care-connect-4','scr-surgo-health-2'],['scr-rxlive-6','scr-surgo-health-8','scr-meetingful-7','scr-care-connect-8'],['scr-care-connect-2','scr-meetingful-9','scr-surgo-health-5','scr-rxlive-9'],['scr-surgo-health-1','scr-care-connect-6','scr-rxlive-2','scr-meetingful-4']],'#101016',{rot:-8}),39],
 ['Design', 'Product screen: Surgo', ()=>screen1('scr-surgo-health-3'),40],
+// Between the product screens, an AI drawing (owner, 27 Nov: "here we can place some ui drawings", then "this
+// should be ai related. No more human brainstorming"): an AI network sends UI pieces and ideas into a phone.
+['Design', 'Illustration: AI builds the app, drawn', ()=>drawIllo('ai'),41],
 ['Design', 'Service artwork: product design', ()=>full(A+'z-page-pd.jpg'),41],
 ['Design', 'Service artwork: MVPs and apps', ()=>full(A+'z-page-mvp.jpg'),42],
 ['Design', 'Service artwork: AI automation', ()=>full(A+'z-page-automation.jpg'),44],
