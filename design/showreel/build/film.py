@@ -29,7 +29,8 @@ def beats(n):
     if n.startswith("Logo"): return 9    # 4 beats flying through the O (frames.html LOGO_IN), then 5 (the film within a minute)
     if n.startswith("Wall of"): return 3   # the closing wall pulls back into the grid (cut 5's tilted wall)
     if n == "Website: Cabot Solutions": return 2   # it lands out of the word before: give it time
-    if n.startswith("Brand: a brand being built"): return 5   # drawn fast (owner, 27 Nov): the bulb lights up by 1.25 s of its 2.1 s
+    if n.startswith("Brand: a brand being built"): return 4   # drawn fast (owner, 27 Nov): the bulb lights up by 1.25 s of its 1.7 s
+    if n == "SandLogic: social grid": return 2   # now a sliding wall like the brand wall's (owner, 27 Nov): its time, the beat the drawing after it gave
     if n.startswith("Illustration:"): return 4   # a filler drawing: outlines, colours, then the picture by 1.15 s
     if n == "Websites: wall across projects": return 1      # ...and the wall after it takes one beat less
     if "488563452" in n: return 3   # she points, our character pops up there, she turns to look at it

@@ -208,7 +208,10 @@ const SHOTS=[
 ['Brand', 'Service artwork: print', ()=>full(A+'z-print-booth.jpg'),18],
 ['Brand', 'Print: packaging', ()=>full(A+'z-t-print-packaging.jpg'),19],
 ['Brand', 'Brand: tiles, out of home', ()=>ooh([['rs-09',4/3],['nc-14',2/3],['sl-08',2/3]],PINK),20],
-['Brand', 'SandLogic: social grid', ()=>full(A+'z-slp-social-black.jpg'),22],
+// Shot 21 (owner, 27 Nov: "Animate this like collage animation. Also first mockup should be horizontally Center"):
+// the twelve SandLogic posts (cut23.py) as a wall like the brand wall's, centred, its columns sliding past one
+// another, on SandLogic black (#0B0A12, the owner's pick for this shot), where the dark posts show only their type.
+['Brand', 'SandLogic: social grid', ()=>mosaic([['slp-post-sovereign','slp-post-3x','slp-post-shakti'],['slp-post-any-model','slp-post-leakage','slp-post-not-another'],['slp-post-not-cloud','slp-post-21','slp-post-sovereignty'],['slp-post-krsna','slp-post-73','slp-post-lingo']],'#0b0a12',{rot:-9,cw:480,rad:31,mid:100}),22],
 ['Brand', 'Brand: a brand being built (illustration)', ()=>illo(),24],
 ['Brand', 'Print: posters', ()=>full(A+'h-t-print-posters.jpg'),26],
 ['Brand', 'Print: stationery', ()=>full(A+'h-t-print-stationery-cabot.jpg'),27],

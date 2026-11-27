@@ -18,7 +18,7 @@ Usage: python3 cut23.py"""
 import os
 import numpy as np
 import cv2
-from PIL import Image
+from PIL import Image, ImageFilter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 RAW = os.path.join(HERE, '..', 'raw', 'cut23')
@@ -73,3 +73,27 @@ from PIL import ImageDraw
 mask = Image.new('L', (w * 4, h * 4), 0); ImageDraw.Draw(mask).rounded_rectangle((0, 0, w * 4 - 1, h * 4 - 1), 24, fill=255)
 canvas.paste(src.resize((w, h), Image.LANCZOS), (x0, y0), mask.resize((w, h), Image.LANCZOS))
 save(canvas, 's-cabot.jpg')
+
+# Shot 21 (owner, 27 Nov: "Animate this like collage animation. Also first mockup should be horizontally Center"): the
+# twelve SandLogic posts as cards for a moving wall like the brand wall (frames.html mosaic), not the one still grid. No
+# file holds the posts one by one (the Figma frames are flat images too), so they are cut from the case study's social
+# page (raw/sl/p-social.png, the sharpest copy): posts 310 px wide, 20 apart from x 310, corners rounded 20 px. Its
+# middle row is whole (y 270-680); the top row shows the lower 250 px of its posts and the bottom row the upper 380 px,
+# and those parts read as whole posts, so the wall mixes three card heights like a collage. Outside each post's rounded
+# corners the page's blurred photo shows: it is painted over from the post's own edge, and the wall rounds the cards.
+SOC = np.asarray(Image.open(os.path.join(HERE, '..', 'raw', 'sl', 'p-social.png')).convert('RGB'))
+ROWS = {'t': (0, 250, -160), 'm': (270, 680, 0), 'b': (700, 1080, 0)}   # crop y0, y1, the post's top within the crop
+POSTS = [('t', 0, 'not-another'), ('t', 1, 'sovereign'), ('t', 2, 'not-cloud'), ('t', 3, 'krsna'),
+         ('m', 0, '3x'), ('m', 1, 'any-model'), ('m', 2, 'sovereignty'), ('m', 3, '73'),
+         ('b', 0, 'leakage'), ('b', 1, 'lingo'), ('b', 2, '21'), ('b', 3, 'shakti')]
+for row, c, name in POSTS:
+    y0, y1, top = ROWS[row]; x0 = 310 + 330 * c
+    t = SOC[y0:y1, x0:x0 + 310].copy(); h = t.shape[0]
+    big = np.zeros((h + 400, 310), np.uint8)   # the whole post (410 tall), drawn 200 px down so its off-crop part fits
+    cv2.rectangle(big, (20, 200 + top + 1), (289, 200 + top + 408), 255, -1); cv2.rectangle(big, (1, 200 + top + 20), (308, 200 + top + 389), 255, -1)
+    for cx, cy in ((20, top + 20), (289, top + 20), (20, top + 389), (289, top + 389)):
+        cv2.circle(big, (cx, 200 + cy), 19, 255, -1)
+    out = (big[200:200 + h] == 0).astype(np.uint8)
+    t = cv2.inpaint(t, out, 4, cv2.INPAINT_TELEA) if out.any() else t
+    im = Image.fromarray(t).resize((620, h * 2), Image.LANCZOS).filter(ImageFilter.UnsharpMask(1.2, 45, 2))
+    save(im, 'slp-post-' + name + '.jpg')
