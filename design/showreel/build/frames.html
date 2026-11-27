@@ -490,10 +490,10 @@ if(MOTION)(()=>{
       win.appendChild(big);Object.assign(big.style,{left:'-960px',top:'-540px'});f.style.background=COAL;
       const site=big.cloneNode(true);Object.assign(site.style,{backgroundImage:`url(${A}d-bigtapp.jpg)`,backgroundSize:'cover',backgroundPosition:'50% 30%',WebkitBackgroundClip:'text',backgroundClip:'text',color:'transparent',opacity:0});win.appendChild(site);
       const sc=t=>.3+.7*io(clamp((t-.06)/.46));
-      add(t=>{win.style.transform=`scale(${sc(t)})`;site.style.opacity=clamp((t-.6)/.12)});
+      add((t,d)=>{win.style.transform=`scale(${sc(t)})`;site.style.opacity=clamp((t-(d-.36))/.12)});   // the line reads plain until a third of a second before the dive (owner, 27 Nov: registering time)
       late.push(()=>{const P=L.map((s,i)=>lt(i)),l1=P.filter(p=>Math.abs(p.base-P[0].base)<5).length,a=P.slice(0,l1).reduce((b,p)=>Math.abs(p.x-960)<Math.abs(b.x-960)?p:b);console.log('ENTER Scale.',Math.round(a.x),Math.round(a.mid));
-        add(t=>{const k=sc(t),D=230*k,X=960+(a.x-960)*k,Y=540+(a.top-540)*k-D/2+4*k,q=clamp((t-.02)/.12),y=t<.14?-D+(Y+D)*q*q:Y;
-          ball.at(X,y,D,{rot:t<.14?0:rock(t-.14,1,8)+3*Math.sin(t*9),ex:exAt(t,[.5,'wink']),hands:HT(t,[[0,'cheer','cheer'],[.14,'balance','balance'],[.6,'cheer','balance']])})});
+        add((t,d)=>{const k=sc(t),D=230*k,X=960+(a.x-960)*k,Y=540+(a.top-540)*k-D/2+4*k,q=clamp((t-.02)/.12),y=t<.14?-D+(Y+D)*q*q:Y;
+          ball.at(X,y,D,{rot:t<.14?0:rock(t-.14,1,8)+3*Math.sin(t*9),ex:exAt(t,[.5,'wink']),hands:HT(t,[[0,'cheer','cheer'],[.14,'balance','balance'],[d-.43,'cheer','balance']])})});
         rush(a.x,a.mid)})}
     if(WD==='Conversions.')late.push(()=>{const P=L.map((s,i)=>lt(i)),o=P[18];
       console.log('ENTER Conversions.',Math.round(o.x),Math.round(o.mid));

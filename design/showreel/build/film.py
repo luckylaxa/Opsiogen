@@ -25,6 +25,7 @@ def beats(n):
     if n.startswith("One partner"): return 4   # the closing line, in the place (and time) of the line it replaced
     if n in ("Word: Adoption.", "Word: Growth."): return 3   # two clips' worth (Adoption), and the climb (Growth)
     if n == "Word: Reach.": return 4   # its eight cards one by one, a card every 0.16 s (owner, 27 Nov)
+    if n == "Word: Scale.": return 3   # owner, 27 Nov: "Add registering time for so it's scales with you."
     if n.startswith("Word:"): return 2
     if n.startswith("Logo"): return 9    # 4 beats flying through the O (frames.html LOGO_IN), then 5 (the film within a minute)
     if n.startswith("Wall of"): return 3   # the closing wall pulls back into the grid (cut 5's tilted wall)
@@ -32,6 +33,7 @@ def beats(n):
     if n == "Website: Cabot Solutions": return 2   # it lands out of the word before: give it time
     if n.startswith("Brand: a brand being built"): return 4   # drawn fast (owner, 27 Nov): the bulb lights up by 1.25 s of its 1.7 s
     if n == "SandLogic: social grid": return 2   # its columns slide like the brand wall's (owner, 27 Nov): its time, the beat the drawing after it gave
+    if n.startswith("Line: Your idea, taking shape"): return 3   # gives its fourth beat to "So it scales with you."; its words are up by 0.84 s
     if n.startswith("Line:"): return 4   # "Your idea, ..." in the drawings' places (owner, 27 Nov), word by word as the opening line
     if n == "Websites: wall across projects": return 1      # ...and the wall after it takes one beat less
     if "488563452" in n: return 3   # she points, our character pops up there, she turns to look at it
