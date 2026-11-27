@@ -76,6 +76,10 @@ the CDN serves files to Canada, the US and Europe). The domain, **opsiogen.com**
       Hostinger site, and `next.config.mjs` sends every path on the three names to https://opsiogen.com/ (301). Waiting on
       DevOps to delete the forwarding and set A @ (same IP as opsiogen.com), CNAME www → fineartdesign.agency, CNAME
       healthcare → opsiogen.com; then install SSL for the parked domains in Hostinger and test.
+      Re-checked 26 November 22:20 UTC and 27 November 01:30 UTC: https:// on all three names (and /services) still
+      fails, with the connection dropped before the secure handshake finishes. So DevOps haven't finished the DNS change,
+      or GoDaddy's forwarding certificate was never issued. Our side is ready (both parked domains are on the Hostinger
+      site). Next: the owner asks DevOps to confirm the three records above are in place and the forwarding is deleted.
 - [x] Clean-up after the move (the owner), 26 November: `https://opsiogen.vercel.app` is gone from Sanity's CORS origins
       (left: `https://opsiogen.com` and `http://localhost:3000`). Google lists one app password for contact@opsiogen.com,
       "Opsiogen Website", made that day for Hostinger; Vercel's older one no longer exists. The older Sanity token stays:
