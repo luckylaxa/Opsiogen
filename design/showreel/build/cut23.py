@@ -51,11 +51,13 @@ CLEAN = os.path.join(HERE, '..', 'raw', 'clean')
 # card, the bus shelter's poster and the subway wall's ad in 2:3 cards (the subway ad meets the photo's edge, so it
 # fills its card instead).
 FRAME = {'rs-09': (182, 105, 1342, 975), 'nc-14': (822, 307, 1462, 1267), 'sl-08': (1026, 315, 1526, 1065)}
-# Shot 13's last two tiles (owner, 27 Nov: "Replace white T-shirt and laptop mockups. We don't need repeating"): Cabot's
-# tote and Rohde & Schwarz's business cards, so the four tiles are four brands and four kinds of piece.
+# Shot 13's tiles (owner, 27 Nov: "Replace white T-shirt and laptop mockups. We don't need repeating", then "Replace with
+# better works or mockups. We can't compromise"): three bigger tiles of our strongest brand pieces not used elsewhere in
+# the film: Rohde & Schwarz's report, SandLogic's logo system, Cabot's clinic posters.
 for key, src in (('rs-07', 'rohde-schwarz_rs-7-wide.jpg'), ('rs-09', 'rohde-schwarz_rs-9-wide.jpg'),
                  ('nc-14', 'norsecom_norsecom-14-wide.jpg'), ('sl-08', 'sandlogic_sandlogic-8-wide.jpg'),
-                 ('cb-10', 'cabot-solutions_cabotbrand-10-wide.jpg'), ('rs-11', 'rohde-schwarz_rs-11-wide.jpg')):
+                 ('rs-01', 'rohde-schwarz_rs-1-wide.jpg'), ('sl-02', 'sandlogic_sandlogic-2-wide.jpg'),
+                 ('cb-03', 'cabot-solutions_cabotbrand-3-wide.jpg')):
     im = Image.open(os.path.join(CLEAN, src)).convert('RGB')
     if key in FRAME: im = im.crop(FRAME[key])
     if im.width > 1600: im = im.resize((1600, round(im.height * 1600 / im.width)), Image.LANCZOS)

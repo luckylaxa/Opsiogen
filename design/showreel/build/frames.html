@@ -22,8 +22,6 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#0a090d;font-fam
 <script src="a/pieces.js"></script>
 <script src="a/screens.js"></script>
 <script src="a/logo.js"></script>
-<script src="a/draw-bag.js"></script>
-<script src="a/draw-ai.js"></script>
 <script type="importmap">{"imports":{"three":"../../../node_modules/three/build/three.module.js","three/addons/":"../../../node_modules/three/examples/jsm/","three/examples/jsm/":"../../../node_modules/three/examples/jsm/"}}</script>
 <script>
 const COAL='#0a090d',PAPER='#f8f6f8',PINK='#ff4f9b',VIOLET='#a98bff',AQUA='#5cf2e6',BLUE='#3f7bff',ORANGE='#ff8a3c',SUN='#ffd75e',LIME='#d8ff3e';
@@ -51,10 +49,14 @@ const word=(t,c,ink=COAL)=>{bg(c);const w=el('div','word',f,{color:ink});w.textC
 // with our showreel video"): what the work gives the client, two per chapter, in the chapter's colour on coal and as
 // large as the frame takes (at most max px; Outfit Bold, as every title). Each letter is its own box so it can move on
 // its own; the still shows the word whole.
-const bigWord=(t,c,max=430)=>{bg(COAL);const b=el('div','big',f,{position:'absolute',left:'0',top:'0',width:'1920px',height:'1080px',display:'flex',alignItems:'center',
+// Owner, 27 Nov ("It should be like story. Well connected with users. No random text"; then, to the lines below, "Now it
+// make sense"): each word became a short line that finishes its chapter's line ("We brand it." "So people remember
+// you."); '|' breaks a line in two. The shots keep their names (Word: ...), their timing and their moves.
+const bigWord=(t,c,max=430)=>{bg(COAL);const b=el('div','big',f,{position:'absolute',left:'0',top:'0',width:'1920px',height:'1080px',display:'flex',flexDirection:'column',alignItems:'center',
     justifyContent:'center',fontWeight:700,letterSpacing:'-.045em',lineHeight:1,color:c,whiteSpace:'nowrap',fontSize:max+'px'});
-  for(const ch of t){const s=el('span','ltr',b,{display:'inline-block'});s.textContent=ch}
-  LAYOUT.push(()=>{const w=[...b.children].reduce((a,s)=>a+s.getBoundingClientRect().width,0);b.style.fontSize=Math.min(max,max*1700/w)+'px'})};
+  const rows=t.split('|').map(line=>{const r=el('div','bl',b,{whiteSpace:'nowrap'});
+    for(const ch of line){const s=el('span',ch===' '?'sp':'ltr',r,{display:'inline-block'});s.textContent=ch===' '?'\u00a0':ch}return r});
+  LAYOUT.push(()=>{const w=Math.max(...rows.map(r=>[...r.children].reduce((a,s)=>a+s.getBoundingClientRect().width,0)));b.style.fontSize=Math.min(max,max*1700/w)+'px'})};
 const phone=(src,x,y,w,rot=0,parent=f)=>{const p=el('div','phone',parent,{left:x+'px',top:y+'px',width:w+'px',transform:`rotate(${rot}deg)`});img(src,p);return p};
 const browser=(src,x,y,w,parent=f)=>{const b=el('div','browser',parent,{left:x+'px',top:y+'px',width:w+'px'});const bar=el('div','bar',b);for(let i=0;i<3;i++)el('i','',bar);img(src,b);return b};
 const card=(src,x,y,w,h,rot=0,rad=18)=>{const c=el('div','card',f,{left:x+'px',top:y+'px',width:w+'px',transform:`rotate(${rot}deg)`,borderRadius:rad+'px'});const i=img(src,c,{height:'auto',objectFit:'contain'});return c};
@@ -199,11 +201,11 @@ const SHOTS=[
    ['Print: duo','Product duo','Website: BigTapp, platform','SandLogic: social','Brand: tiles, mixed','Print: packaging','Product design: prototype','Product screen: Surgo','Service artwork: video']]),5],
 ['Burst', 'Vaelo, the car', ()=>full(A+'va-hero.jpg'),6],
 ['Brand', 'Chapter word', ()=>word('We brand it.',ORANGE),7],
-['Brand', 'Word: Recognition.', ()=>bigWord('Recognition.',ORANGE),8],
+['Brand', 'Word: Recognition.', ()=>bigWord('So people|remember you.',ORANGE,300),8],
 ['Brand', 'Service artwork: brand', ()=>full(A+'z-page-brand.jpg'),9],
 ['Brand', 'Life: the after-work ride (Adobe Stock 405010525)', ()=>full(S+'stock/stills/life-girl-bike.jpg'),10],
 ['Brand', 'Torvi: site, identity, guidelines, ads', ()=>{bg('#1d1f24');const g=24,w=(1920-3*g)/2,h=(1080-3*g)/2;[['crop-tv-rollout',0],['crop-tv-strategy',1],['crop-tv-guidelines',2],['crop-tv-assets',3]].forEach(([k,i])=>fit(A+k+'.jpg',g+(i%2)*(w+g),g+Math.floor(i/2)*(h+g),w,h))},11],
-['Brand', 'Brand: tiles, mixed pieces', ()=>tiles(['sl-14','nc-08','cb-10','rs-11'],ORANGE),12],
+['Brand', 'Brand: tiles, mixed pieces', ()=>tiles(['rs-01','sl-02','cb-03'],ORANGE),12],
 // Shot 14 (owner, 27 Nov: "Can you replace mockup 14 sec car mockups with some of our other work", then "Don't use
 // LinkedIn mockups ... no white space ... Put top designs only"): Afthab Tours, our client not yet in the film, in
 // place of the Vaelo cars (afthab.py): its tall National Day poster, five travel posts and its "One tap away" brand post, each to its own edge.
@@ -223,20 +225,19 @@ const SHOTS=[
 ['Brand', 'Print: posters', ()=>full(A+'h-t-print-posters.jpg'),26],
 ['Brand', 'Print: stationery', ()=>full(A+'h-t-print-stationery-cabot.jpg'),27],
 ['Brand', 'Brand: row of merchandise and print', ()=>row(['sl-16','nc-09','sl-17','nc-10','sl-18','nc-05','nc-01','nc-06'],'#141418',{rot:-4,h:620,rad:24}),28],
-['Brand', 'Word: Trust.', ()=>bigWord('Trust.',ORANGE),29],
+['Brand', 'Word: Trust.', ()=>bigWord('Trusted at|first sight.',ORANGE,300),29],
 ['Brand', 'Print: duo, Rohde & Schwarz brochure and SandLogic trifold', ()=>duo('rs-23','sl-12',BLUE),30],
 ['Design', 'Chapter word', ()=>word('We design it.',VIOLET),32],
-['Design', 'Word: Adoption.', ()=>bigWord('Adoption.',VIOLET),33],
+['Design', 'Word: Adoption.', ()=>bigWord('So people use it.',VIOLET,300),33],
 ['Design', 'Oh My Glam: row of screens', ()=>row(['omg-01','omg-19','omg-33','omg-10','omg-11','omg-12','omg-35','omg-13'],'#141418',{rot:-4,h:820}),35],
 ['Design', 'Product screen: Meetingful', ()=>screen1('scr-meetingful-5'),36],
-['Design', 'Word: Clarity.', ()=>bigWord('Clarity.',VIOLET),37],
+['Design', 'Word: Clarity.', ()=>bigWord('Clear on|every screen.',VIOLET,300),37],
 ['Design', 'Product duo: RxLive and Care Connect', ()=>duo('scr-rxlive-1','scr-care-connect-1','#101016',{w:880,h:560,g:60,dy:120}),38],
 ['Design', 'Product screens: wall across projects', ()=>mosaic([['scr-meetingful-2','scr-rxlive-3','scr-care-connect-4','scr-surgo-health-2'],['scr-rxlive-6','scr-surgo-health-8','scr-meetingful-7','scr-care-connect-8'],['scr-care-connect-2','scr-meetingful-9','scr-surgo-health-5','scr-rxlive-9'],['scr-surgo-health-1','scr-care-connect-6','scr-rxlive-2','scr-meetingful-4']],'#101016',{rot:-8}),39],
 ['Design', 'Product screen: Surgo', ()=>screen1('scr-surgo-health-3'),40],
-// Between the product screens, an AI drawing (owner, 27 Nov: "here we can place some ui drawings", then "this
-// should be ai related. No more human brainstorming", and "very minimal no fantasy"): a prompt field with a
-// sparkle and a send button, one dotted line, one phone with a plain app screen (ai-min.html, our own drawing).
-['Design', 'Illustration: AI, a prompt becomes the app, drawn', ()=>drawIllo('ai'),41],
+// The idea comes back as it takes shape, then once it is out (owner, 27 Nov: the drawings, "No sync. Replace with text";
+// the lines as the opening line, "idea" in aqua, so they call back to "You bring the idea.").
+['Design', 'Line: Your idea, taking shape.', ()=>type(COAL,[[['Your ',700,PAPER],['idea,',700,AQUA]],[['taking shape.',700,PAPER]]],150),41],
 ['Design', 'Service artwork: product design', ()=>full(A+'z-page-pd.jpg'),41],
 ['Design', 'Service artwork: MVPs and apps', ()=>full(A+'z-page-mvp.jpg'),42],
 ['Design', 'Service artwork: AI automation', ()=>full(A+'z-page-automation.jpg'),44],
@@ -244,30 +245,28 @@ const SHOTS=[
 ['Design', 'Product design: prototype', ()=>full(A+'h-t-pd-prototype.jpg'),48],
 ['Design', 'Oh My Glam: try-on', ()=>{bg(SUN);phone(A+'omg-03.jpg',380,140,400,-6);phone(A+'omg-04.jpg',760,90,420,0);phone(A+'omg-05.jpg',1160,140,400,6)},49],
 ['Build', 'Chapter word', ()=>word('We build it.',AQUA),50],
-['Build', 'Word: Scale.', ()=>bigWord('Scale.',AQUA),51],
+['Build', 'Word: Scale.', ()=>bigWord('So it scales|with you.',AQUA,300),51],
 ['Build', 'Website 1: BigTapp', ()=>{bg('#0b1640');browser(A+'d-bigtapp.jpg',130,84,1350);phone(A+'m-bigtapp.jpg',1410,204,380,0)},52],
 ['Build', 'Website 2: Engel & Völkers', ()=>full(A+'s-ev-2.jpg'),53],
 ['Build', 'Website 3: Carlton Noble', ()=>full(A+'s-carlton-12.jpg'),54],
 ['Build', 'Website 5: Sifio', ()=>{bg('#e1eade');browser(A+'d-sifio.jpg',130,84,1350);phone(A+'m-sifio.jpg',1410,204,380,0)},55],
 ['Build', 'Website: Care Connect', ()=>full(A+'s-care-connect.jpg'),56],
-['Build', 'Word: Conversions.', ()=>bigWord('Conversions.',AQUA),57],
+['Build', 'Word: Conversions.', ()=>bigWord('Visitors become|customers.',AQUA,300),57],
 ['Build', 'Website: Cabot Solutions', ()=>full(A+'s-cabot.jpg'),58],
 ['Build', 'Websites: wall across projects', ()=>mosaic([['scr-carlton-noble-5','scr-engel-volkers-11','scr-bigtapp-6','scr-sifio-health-5'],['scr-engel-volkers-7','scr-bigtapp-2','scr-carlton-noble-6','scr-sifio-health-9'],['scr-bigtapp-11','scr-carlton-noble-13','scr-engel-volkers-10','scr-sifio-health-2'],['scr-carlton-noble-4','scr-sifio-health-11','scr-bigtapp-13','scr-engel-volkers-13']],'#0d1117',{rot:-9}),59],
 ['Build', 'Website: Carlton Noble, Travel House', ()=>full(A+'s-carlton-2.jpg'),61],
 ['Build', 'Website: BigTapp, platform features', ()=>full(A+'s-bigtapp-10.jpg'),63],
 ['Build', 'Website: Sifio, SurgiTwin', ()=>full(A+'s-sifioweb-6.jpg'),64],
 ['Launch', 'Chapter word', ()=>word('We launch it.',SUN),65],
-['Launch', 'Word: Reach.', ()=>bigWord('Reach.',SUN),66],
+['Launch', 'Word: Reach.', ()=>bigWord('So the right|people see it.',SUN,300),66],
 ['Launch', 'Campaigns: ads and beauty', ()=>{bg('#1d1c22');const h=540,g=16,ks=[['crop-t-subscription-ads',1201/1102],['t-video-ads',4/3]];const ws=ks.map(([k,r])=>h*r);let x=(1920-ws.reduce((a,b)=>a+b)-g*(ks.length-1))/2;ks.forEach(([k],n)=>{card(A+k+'.jpg',x,(1080-h)/2,ws[n],0,0,14);x+=ws[n]+g})},67],
-// The bag drawing (owner, 27 Nov: "This illustrator is not is proper place. Inbtween the ui animations"): after Rouge
-// Club's photo ads, its own brand, in place of between the product screens.
-['Launch', 'Illustration: Rouge Club, drawn', ()=>drawIllo('bag',{src:'../raw/drawings/bag-mark-rouge-club.png',cx:624,cy:550,w:280}),66],
+['Launch', 'Line: Your idea, out in the world.', ()=>type(COAL,[[['Your ',700,PAPER],['idea,',700,AQUA]],[['out in the world.',700,PAPER]]],150),66],
 ['Launch', 'Service artwork: social', ()=>full(A+'z-page-social.jpg'),68],
 ['Launch', 'Service artwork: video', ()=>full(A+'z-page-video.jpg'),70],
 ['Launch', 'Service artwork: digital marketing', ()=>full(A+'z-page-digital.jpg'),71],
 ['Launch', 'Creative subscription: deck, motion, search', ()=>full(A+'svc-sub-c23.jpg'),72],
 ['Launch', 'Video: AI video', ()=>full(A+'h-t-video-ai.jpg'),73],
-['Launch', 'Word: Growth.', ()=>bigWord('Growth.',SUN),75],
+['Launch', 'Word: Growth.', ()=>bigWord('And watch it grow.',SUN,300),75],
 ['Launch', 'Wall of the work, zooms out', ()=>wall(['Product screen: Meetingful','Service artwork: MVP','Website 2','Torvi','Service artwork: video','Product duo','Website 5','Service artwork: digital','Product screen: Surgo'],3),76],
 ['Close', 'Fast word: Brand', ()=>word('Brand.',ORANGE),78],
 ['Close', 'Fast word: Design', ()=>word('Design.',VIOLET),79],
@@ -388,7 +387,7 @@ if(MOTION)(()=>{
     const r=s.getBoundingClientRect();return{x:(r.left+r.right)/2,y:by-m.actualBoundingBoxAscent}};
   const still=f.querySelector('img[src*="ch-front"]');if(still&&ball)still.style.display='none';
   // Text shots, and the character's part in them.
-  if(T==='Opening line')words.forEach((s,i)=>rise(s,.04+i*BEAT/2,60,.16));
+  if(T==='Opening line'||T.startsWith('Line:'))words.forEach((s,i)=>rise(s,.04+i*BEAT/2,60,.16));
   else if(T.startsWith('We take it')){words.forEach((s,i)=>rise(s,i*.05-.04));
     // It lands above the line, blinks, and the camera dives into its eye.
     const k=330/720,X=795+359.5*k,Y=90+357*k,D=497*k,LX=X,LY=Y,path=hops([[BEAT/4,X,Y]],0,0,D);
@@ -440,11 +439,11 @@ if(MOTION)(()=>{
       const r=s.getBoundingClientRect();return{x:(r.left+r.right)/2,top:by-m.actualBoundingBoxAscent,base:by,mid:by-m.actualBoundingBoxAscent/2}};
     const rush=(X,Y,dur=.14,k=4)=>add((t,d)=>{const q=clamp((t-(d-dur))/dur);if(q<=0)return;f.style.transformOrigin=`${X}px ${Y}px`;f.style.transform=`scale(${1+(k-1)*q*q*q})`;f.style.filter=`blur(${10*clamp(q*2-1)}px)`});
     const punch=(t0=0)=>add(t=>{const q=ease((t-t0)/.1);big.style.transform=`scale(${1.12-.12*q})`;big.style.opacity=q});
-    if(WD==='Recognition.')late.push(()=>{const P=L.map((s,i)=>lt(i)),mi=P.reduce((b,p,i)=>Math.abs(p.x-960)<Math.abs(P[b].x-960)?i:b,0),X=P[mi].x,D=210,Y=Math.min(...P.map(p=>p.top))-D/2+6;
+    if(WD==='Recognition.')late.push(()=>{const P=L.map((s,i)=>lt(i)),l1=P.filter(p=>Math.abs(p.base-P[0].base)<5).length,mi=P.slice(0,l1).reduce((b,p,i)=>Math.abs(p.x-960)<Math.abs(P[b].x-960)?i:b,0),X=P[mi].x,D=210,Y=Math.min(...P.slice(0,l1).map(p=>p.top))-D/2+6;
       console.log('ENTER Recognition.',Math.round(X),Math.round(Y));
       // It falls in from the chapter line, lands on the middle of the word and the light runs out from under it through
       // the letters (recognised); then it jumps for joy, as it did beside the man who won. The next shot opens out of its lens.
-      punch();L.forEach((s,i)=>{const t0=.214+Math.abs(i-mi)*.035;add(t=>{const q=clamp((t-t0)/.08);s.style.opacity=.16+.84*q;s.style.transform=t<t0?'':`scale(${1+.18*(1-pop((t-t0)/.16))})`})});
+      punch();L.forEach((s,i)=>{const t0=.214+Math.hypot(P[i].x-X,P[i].mid-P[mi].mid)/3800;add(t=>{const q=clamp((t-t0)/.08);s.style.opacity=.16+.84*q;s.style.transform=t<t0?'':`scale(${1+.18*(1-pop((t-t0)/.16))})`})});
       const path=hops([.214,.429,.643,.857].map(t=>[t,X,Y]),90,0,D,{turn:[0,0,360,0]});
       add(t=>{const p=path(t);ball.at(p.x,p.y,D,{...p,pose:t>.3?'upleft':'front',ex:exAt(t,[.24,'wink']),v:vel(path,t),
         hands:HT(t,[[0,'cheer','cheer'],[.214,'balance','balance'],[.3,'cheer','cheer'],[.429,'balance','balance'],[.643,'balance','balance'],[.7,'pump','cheer']])})})});
@@ -459,23 +458,23 @@ if(MOTION)(()=>{
         ball.at(p.x-70*back,p.y-.32*D*back+(dt>0?30*stamp(dt):0),D,{rot:p.rot-95*back+lie,ex:exAt(t,[.46,'surprised'],[.7,'wink']),v:vel(path,t),
           hands:HT(t,[[0,'cheer','cheer'],[.3,'balance','balance'],[.44,'cheer','cheer'],[.66,'rest','thumbsup']])})});
       rush(960,540)});
-    if(WD==='Adoption.')late.push(()=>{const P=L.map((s,i)=>lt(i)),D=150,tap=i=>.26+i*.085,hov=Math.min(...P.map(p=>p.top))-D/2-18,o=6,OX=P[o].x,OY=P[o].mid;
+    if(WD==='Adoption.')late.push(()=>{const P=L.map((s,i)=>lt(i)),D=150,stp=Math.min(.085,.62/(P.length-1)),tap=i=>.26+i*stp,hov=Math.min(...P.map(p=>p.top))-D/2-18,o=4,OX=P[o].x,OY=P[o].mid;
       console.log('ENTER Adoption.',Math.round(OX),Math.round(OY));
       // It taps the letters in one by one, like a finger on an app (each tap leaves a ripple), gives a thumbs up and a
-      // wink, and the camera dives into the last 'o', onto the app.
+      // wink, and the camera dives into the 'o' of "people", onto the app.
       L.forEach((s,i)=>{s.style.opacity=0;s.style.transformOrigin='50% 100%';add(t=>{const q=pop((t-tap(i))/.16);s.style.opacity=t<tap(i)?0:1;s.style.transform=t<tap(i)?'':`scale(${.35+.65*q})`})});
       P.forEach((p,i)=>{const r=el('div','',f,{position:'absolute',border:'7px solid '+PAPER,borderRadius:'50%',zIndex:6,opacity:0});
         add(t=>{const q=clamp((t-tap(i))/.3),R=24+150*ease(q);Object.assign(r.style,{left:p.x-R+'px',top:p.mid-R+'px',width:2*R+'px',height:2*R+'px',opacity:q>0&&q<1?.85*(1-q):0})})});
       const xs=P.map(p=>p.x),path=t=>{if(t<tap(0)){const q=ease(t/tap(0));return{x:xs[0]-240*(1-q),y:hov-330*(1-q)}}
-        const k=Math.min(xs.length-1,Math.floor((t-tap(0))/.085)),q=clamp((t-tap(k))/.085),x=k<xs.length-1?xs[k]+(xs[k+1]-xs[k])*io(q):xs[k];return{x,y:hov-16*Math.sin(Math.PI*q)}};
+        const k=Math.min(xs.length-1,Math.floor((t-tap(0))/stp)),q=clamp((t-tap(k))/stp),x=k<xs.length-1?xs[k]+(xs[k+1]-xs[k])*io(q):xs[k];return{x,y:hov-16*Math.sin(Math.PI*q)}};
       add(t=>{const tt=Math.min(t,1.02),p=path(tt);ball.at(p.x,p.y,D,{rot:t<1.02?6:rock(t-1.02,1,8),pose:t<1.0?'down':'front',ex:exAt(t,[1.0,'wink']),v:vel(path,tt),
         hands:HT(t,[[0,'cheer','cheer'],[.2,PT([0,-1,.3]),'rest'],[1.0,'thumbsup','ex:wink']])})});
       rush(OX,OY,.16)});
     if(WD==='Clarity.'){const rnd=k=>{const x=Math.sin(k*12.9898+78.233)*43758.5453;return x-Math.floor(x)};
       // Scattered letters snap into one clear word, a click, and the camera dives into it, onto the health apps.
-      L.forEach((s,i)=>{const dx=(rnd(i+1)-.5)*1500,dy=(rnd(i+11)-.5)*760,r=(rnd(i+21)-.5)*220,sc=.45+rnd(i+31)*1.2,t0=.04+i*.025;
+      L.forEach((s,i)=>{const dx=(rnd(i+1)-.5)*1500,dy=(rnd(i+11)-.5)*760,r=(rnd(i+21)-.5)*220,sc=.45+rnd(i+31)*1.2,t0=.04+i*Math.min(.025,.2/(L.length-1));
         add(t=>{const q=pop((t-t0)/.3);s.style.transform=`translate(${dx*(1-q)}px,${dy*(1-q)}px) rotate(${r*(1-q)}deg) scale(${sc+(1-sc)*q})`;s.style.opacity=clamp(t/.06)})});
-      add(t=>{const dt=t-.44,k=dt>0?6*Math.exp(-dt*25)*Math.sin(dt*80):0;big.style.transform=`translateX(${k}px)`});
+      add(t=>{const dt=t-.5,k=dt>0?6*Math.exp(-dt*25)*Math.sin(dt*80):0;big.style.transform=`translateX(${k}px)`});
       rush(960,540)}
     if(WD==='Scale.'){
       // The word grows out of a small browser window until it fills the screen (the window opens out past the edges), the
@@ -487,18 +486,18 @@ if(MOTION)(()=>{
       const site=big.cloneNode(true);Object.assign(site.style,{backgroundImage:`url(${A}d-bigtapp.jpg)`,backgroundSize:'cover',backgroundPosition:'50% 30%',WebkitBackgroundClip:'text',backgroundClip:'text',color:'transparent',opacity:0});win.appendChild(site);
       const sc=t=>.3+.7*io(clamp((t-.06)/.46));
       add(t=>{win.style.transform=`scale(${sc(t)})`;site.style.opacity=clamp((t-.6)/.12)});
-      late.push(()=>{const P=L.map((s,i)=>lt(i)),a=P[1];console.log('ENTER Scale.',Math.round(a.x),Math.round(a.mid));
+      late.push(()=>{const P=L.map((s,i)=>lt(i)),l1=P.filter(p=>Math.abs(p.base-P[0].base)<5).length,a=P.slice(0,l1).reduce((b,p)=>Math.abs(p.x-960)<Math.abs(b.x-960)?p:b);console.log('ENTER Scale.',Math.round(a.x),Math.round(a.mid));
         add(t=>{const k=sc(t),D=230*k,X=960+(a.x-960)*k,Y=540+(a.top-540)*k-D/2+4*k,q=clamp((t-.02)/.12),y=t<.14?-D+(Y+D)*q*q:Y;
           ball.at(X,y,D,{rot:t<.14?0:rock(t-.14,1,8)+3*Math.sin(t*9),ex:exAt(t,[.5,'wink']),hands:HT(t,[[0,'cheer','cheer'],[.14,'balance','balance'],[.6,'cheer','balance']])})});
         rush(a.x,a.mid)})}
-    if(WD==='Conversions.')late.push(()=>{const P=L.map((s,i)=>lt(i)),o=P[8];
+    if(WD==='Conversions.')late.push(()=>{const P=L.map((s,i)=>lt(i)),o=P[18];
       console.log('ENTER Conversions.',Math.round(o.x),Math.round(o.mid));
       // Owner, 27 Nov ("What you mean by customers?"): the word is what a website brings, so Conversions. (was
       // Customers., which could read as "our customers"). The letters arrive faint, visitors, and turn solid one by one
       // as they convert; then they turn Cabot's blue and the camera dives through the second 'o', onto Cabot's
       // site (the next shot).
       const pic=big.cloneNode(true);Object.assign(pic.style,{background:'#3380f5',WebkitBackgroundClip:'text',backgroundClip:'text',color:'transparent',opacity:0});f.appendChild(pic);
-      L.forEach((s,i)=>{const t0=.02+i*.012,tf=.1+i*.028;s.style.transformOrigin='50% 60%';
+      L.forEach((s,i)=>{const t0=.02+i*.012,tf=.1+i*Math.min(.028,.4/(L.length-1));s.style.transformOrigin='50% 60%';
         add(t=>{const q=ease((t-t0)/.12),on=t>=tf,k=on?pop((t-tf)/.16):0;s.style.opacity=t<t0?0:1;s.style.color=on?AQUA:'rgb(92 242 230 / .2)';s.style.transform=`translateY(${(1-q)*50}px) scale(${on?1+.16*(1-k):1})`})});
       add(t=>{pic.style.opacity=clamp((t-.5)/.12)});rush(o.x,o.mid,.15)});
     if(WD==='Reach.'){
@@ -520,11 +519,11 @@ if(MOTION)(()=>{
       // a card every 0.16 s, left and right in turn, the newest on top.
       cps.forEach((b,j)=>{const [w,h,x,y]=F[j],t0=.2+j*.16;b.style.zIndex=3+j;add(t=>{const q=pop((t-t0)/.16);b.style.opacity=t<t0?0:1;b.style.transform=`translate(${x*q}px,${y*q}px) scale(${.2+.8*q}) rotate(${(1-q)*(j%2?14:-14)}deg)`})});
       add((t,d)=>{const q=clamp((t-(d-.14))/.14);if(q<=0)return;f.style.transform=`translateX(${760*q*q}px)`;f.style.filter=`blur(${14*q}px)`})}
-    if(WD==='Growth.')late.push(()=>{const STEP=58,n=L.length,P=L.map((s,i)=>lt(i)),D=170,off=i=>STEP*(n-1)/2-i*STEP;
-      // The letters rise like a chart going up and the character climbs them like stairs, cheering at the top; a white
-      // flash, and the wall of the work opens out of it.
-      L.forEach((s,i)=>{const t0=.06+i*.05;add(t=>{const q=pop((t-t0)/.22);s.style.transform=`translateY(${STEP*(n-1)/2+(off(i)-STEP*(n-1)/2)*q}px)`})});
-      const steps=[0,1,2,3,4,5].map((i,j)=>[.22+j*.14,P[i].x,P[i].top+off(i)-D/2+4]),last=steps[steps.length-1],keys=steps.concat([[last[0]+.18,last[1],last[2]]]);
+    if(WD==='Growth.')late.push(()=>{const n=L.length,g0=n-5,STEP=40,P=L.map((s,i)=>lt(i)),D=170,off=j=>-j*STEP;
+      // "And watch it grow.": the letters of "grow." rise like a chart going up and the character climbs them like
+      // stairs, cheering at the top; a white flash, and the wall of the work opens out of it.
+      punch();L.slice(g0).forEach((s,j)=>{const t0=.06+j*.05;add(t=>{const q=pop((t-t0)/.22);s.style.transform=`translateY(${off(j)*q}px)`})});
+      const steps=[0,1,2,3].map(j=>[.22+j*.2,P[g0+j].x,P[g0+j].top+off(j)-D/2+4]),last=steps[steps.length-1],keys=steps.concat([[last[0]+.18,last[1],last[2]]]);
       console.log('ENTER Growth.',Math.round(last[1]),Math.round(last[2]));
       const path=hops(keys,60,.08,D,{fall:-20});
       add(t=>{const p=path(t);if(p.off)return ball.hide();const top=t>=last[0];ball.at(p.x,p.y,D,{...p,pose:top?'front':'upright',ex:exAt(t,[last[0],'wink']),v:vel(path,t),
@@ -721,8 +720,8 @@ if(MOTION)(()=>{
   // white of the high five from the hands (flash), or out of our character's lens over the clip's last frame (lens).
   // Cut 22: the clips that stay keep theirs; each big word hands over the same way, from where its own rush ends.
   const ENTER={'488563452':['push',960,254],'405010525':['whip',1],
-    'Word: Recognition.':['lens',1046,323],'Word: Trust.':['push',960,540],'Word: Adoption.':['push',1386,588],'Word: Clarity.':['push',960,540],
-    'Word: Scale.':['push',748,592],'Word: Conversions.':['push',1355,577],'Word: Reach.':['whip',-1],'Word: Growth.':['flash',1499,186]};
+    'Word: Recognition.':['lens',955,212],'Word: Trust.':['push',960,540],'Word: Adoption.':['push',763,571],'Word: Clarity.':['push',960,540],
+    'Word: Scale.':['push',929,426],'Word: Conversions.':['push',873,696],'Word: Reach.':['whip',-1],'Word: Growth.':['flash',1675,313]};
   const prevName=n?SHOTS[n-1][1]:'',ENT=(Object.entries(ENTER).find(([k])=>prevName.includes(k))||[])[1];
   if(ENT){const [kind,X,Y]=ENT;
     // Once landed it lets go of the frame, so a move of the shot's own (the dive into the character's eye) can follow.
