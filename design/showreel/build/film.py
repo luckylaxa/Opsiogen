@@ -15,7 +15,7 @@ BPM, FPS = 140, 30; BEAT = 60 / BPM
 # Cut 22: three clips stay (Lucky, 26 Nov: "change only what I asked"); the other ten became big words in frames.html.
 STOCK = {"488563452": ("as-488563452.mov", 1.2), "405010525": ("as-405010525.mov", 3.0)}   # cut 23: the big laugh became a brand being built
 OVER = ("488563452",)  # the stock clip the character joins
-MULTI = ("Grid of", "collage", "tiles", "wall across", "row of", "Torvi: site", "billboard, badge", "guideline pages", "Three apps")
+MULTI = ("Grid of", "collage", "tiles", "wall across", "row of", "Torvi: site", "Afthab Tours:", "guideline pages", "Three apps")
 def beats(n):
     if n == "Opening line": return 3
     if n == "Brands already did": return 8   # the opening logo beat (frames.html ?share)

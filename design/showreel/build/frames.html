@@ -179,7 +179,7 @@ const SHOTS=[
 ['Open', 'Stock: she points at our character (Adobe Stock 488563452)', ()=>full(S+'stock/stills/point.jpg'),2],
 ['Open', 'We take it from here, the character', ()=>{type(COAL,[[['We take it ',700,PAPER],['from here.',700,PAPER]]],130);img(A+'ch-front.png',f,{position:'absolute',width:'330px',left:'795px',top:'90px'})},3],
 ['Burst', 'Three apps, three projects', ()=>{bg(LIME);phone(A+'mf-m1.jpg',330,150,400,-4);phone(A+'omg-08.jpg',760,110,400,0);phone(A+'m-carlton.jpg',1190,181,400,4)},4],
-['Burst', 'Grid of the work, reshuffles twice', ()=>wall(['Oh My Glam: try-on','Website: Care Connect','Service artwork: product','Website 1','Vaelo: billboard','Torvi','Website 3','Service artwork: social','Service artwork: print'],3,12,
+['Burst', 'Grid of the work, reshuffles twice', ()=>wall(['Oh My Glam: try-on','Website: Care Connect','Service artwork: product','Website 1','Afthab Tours','Torvi','Website 3','Service artwork: social','Service artwork: print'],3,12,
   [['Campaigns','Brand: duo, Norsecom','Brand: tiles, out of home','SandLogic: guideline pages','Oh My Glam: row','Website: Carlton Noble, Travel','Product screen: Meetingful','Print: posters','Service artwork: AI automation'],
    ['Print: duo','Product duo','Website: BigTapp, platform','SandLogic: social','Brand: tiles, mixed','Print: packaging','Product design: prototype','Product screen: Surgo','Service artwork: video']]),5],
 ['Burst', 'Vaelo, the car', ()=>full(A+'va-hero.jpg'),6],
@@ -189,7 +189,10 @@ const SHOTS=[
 ['Brand', 'Life: the after-work ride (Adobe Stock 405010525)', ()=>full(S+'stock/stills/life-girl-bike.jpg'),10],
 ['Brand', 'Torvi: site, identity, guidelines, ads', ()=>{bg('#1d1f24');const g=24,w=(1920-3*g)/2,h=(1080-3*g)/2;[['crop-tv-rollout',0],['crop-tv-strategy',1],['crop-tv-guidelines',2],['crop-tv-assets',3]].forEach(([k,i])=>fit(A+k+'.jpg',g+(i%2)*(w+g),g+Math.floor(i/2)*(h+g),w,h))},11],
 ['Brand', 'Brand: tiles, mixed pieces', ()=>tiles(['sl-14','nc-08','sl-15','nc-sleeve'],ORANGE),12],
-['Brand', 'Vaelo: billboard, badge, brand, poster', ()=>{bg('#0e3d2b');card(A+'va-billboard.jpg',90,90,1140);card(A+'va-badge.jpg',90,690,535);card(A+'va-brand.jpg',695,690,535);card(A+'va-poster.jpg',1290,120,560)},13],
+// Shot 14 (owner, 27 Nov: "Can you replace mockup 14 sec car mockups with some of our other work"): Afthab Tours, our
+// client not yet in the film, in place of the Vaelo cars (afthab.py): its wall of posts, National Day posters,
+// offsite cards and the tall poster, on a deep navy; the cards move as the Vaelo ones did.
+['Brand', 'Afthab Tours: posts, National Day, offsite, poster', ()=>{bg('#0d2236');card(A+'af-wall.jpg',124,90,1100);card(A+'af-national-day.jpg',124,670,530);card(A+'af-offsite.jpg',694,670,530);card(A+'af-poster.jpg',1264,90,532)},13],
 ['Brand', 'Brand: duo, Norsecom HQ and Rohde & Schwarz booth', ()=>duo('nc-12','rs-07',VIOLET),14],
 ['Brand', 'SandLogic: guideline pages', ()=>{bg('#0f1120');const g=20,w=(1920-3*g)/2,h=w*9/16,t=(1080-2*h-g)/2;[['slg-logo1',0],['slg-colours',1],['slg-gradient',2],['slp-system',3]].forEach(([k,i])=>card(A+k+'.jpg',g+(i%2)*(w+g),t+Math.floor(i/2)*(h+g),w,0,0,12))},15],
 ['Brand', 'Brand: wall across projects', ()=>mosaic([['sl-05','rs-16','nc-11'],['nc-13','sl-07','rs-03'],['rs-15','nc-02','sl-09'],['nc-15','rs-08','nc-04']],'#0b0b10',{rot:-9,cw:520,mid:200}),17],
