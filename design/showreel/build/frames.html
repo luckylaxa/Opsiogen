@@ -131,10 +131,10 @@ const IDEA={C:{bg:'#eee8ff',dot:'#d5c9fb',coal:'#0a090d',paper:'#f8f6f8',violet:
 IDEA.rr=(x0,y0,x1,y1,r)=>{const P=[],k=10,arc=(cx,cy,a0)=>{for(let i=0;i<=k;i++){const a=(a0+90*i/k)*Math.PI/180;P.push([cx+r*Math.cos(a),cy+r*Math.sin(a)])}};
   arc(x0+r,y0+r,180);arc(x1-r,y0+r,270);arc(x1-r,y1-r,0);arc(x0+r,y1-r,90);return P};
 IDEA.circ=(cx,cy,r)=>Array.from({length:48},(_,i)=>{const a=(-90+i*7.5)*Math.PI/180;return[cx+r*Math.cos(a),cy+r*Math.sin(a)]});
-// ti: when its colour goes on (in order); line: [colour, width, opacity] for the ones that end as lines
+// ti: when its colour goes on, at once, in order (the screen first, so no half-seen white greys the black); line: [colour, width, opacity] for the ones that end as lines
 IDEA.EL=[
-  {k:'body',sh:IDEA.rr(-200,-410,200,410,64),c:1,fill:'coal',ink:1,ti:0,sh1:1},
-  {k:'screen',sh:IDEA.rr(-186,-396,186,396,52),c:1,fill:'paper',ink:0,ti:1},
+  {k:'body',sh:IDEA.rr(-200,-410,200,410,64),c:1,fill:'coal',ink:1,ti:1,sh1:1},
+  {k:'screen',sh:IDEA.rr(-186,-396,186,396,52),c:1,fill:'paper',ink:0,ti:0},
   {k:'island',sh:IDEA.rr(-58,-386,58,-356,15),c:1,fill:'coal',ink:1,ti:2},
   {k:'head',sh:IDEA.rr(-160,-346,160,-242,28),c:1,fill:'violet',ink:1,ti:3},
   {k:'ava',sh:IDEA.circ(-108,-294,30),c:1,fill:'pink',ink:1,ti:4},
@@ -217,7 +217,7 @@ IDEA.set=s=>{const g=IDEA.g,C=IDEA.C,N=IDEA.NOTE,P=IDEA.PH,K=IDEA.SK,cl=p=>Math.
   // the copy that lifts off the note and becomes the product, along an arc, straightening as it goes
   const m=s.m,bob=s.t>1.15?7*Math.sin((s.t-1.15)*4.4)*cl((s.t-1.15)/.3):0;
   const fT={x:lerp(sT.x,P.x,m),y:lerp(sT.y,P.y,m)-150*Math.sin(Math.PI*m)+bob,r:lerp(sT.r,P.r,m),s:lerp(sT.s,1,m)},wk=Math.pow(1-m,1.6);
-  E.forEach(e=>{const ft=.84+e.ti*.02,fq=cl((s.ft-ft)/.07),fp=pop((s.ft-ft)/.2);
+  E.forEach(e=>{const ft=.84+e.ti*.02,fq=s.ft>=ft?1:0,fp=pop((s.ft-ft)/.2);
     if(e.fe){const Q=IDEA.clean(e.sh,fT);e.fe.setAttribute('d',IDEA.d(Q,1));const c=IDEA.clean([[e.cx,e.cy]],fT)[0];
       e.fe.setAttribute('transform',`translate(${c[0]} ${c[1]}) scale(${.9+.1*fp}) translate(${-c[0]} ${-c[1]})`);e.fe.setAttribute('opacity',fq);
       if(e.k==='img')g.clip.setAttribute('d',IDEA.d(Q,1))}
