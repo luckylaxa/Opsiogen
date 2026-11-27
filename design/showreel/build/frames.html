@@ -211,7 +211,7 @@ const SHOTS=[
 ['Build', 'Website 5: Sifio', ()=>{bg('#e1eade');browser(A+'d-sifio.jpg',130,84,1350);phone(A+'m-sifio.jpg',1410,204,380,0)},55],
 ['Build', 'Website: Care Connect', ()=>full(A+'s-care-connect.jpg'),56],
 ['Build', 'Word: Customers.', ()=>bigWord('Customers.',AQUA),57],
-['Build', 'Website: Surgo Health, the index', ()=>full(A+'s-surgo.jpg'),58],
+['Build', 'Website: Cabot Solutions', ()=>full(A+'s-cabot.jpg'),58],
 ['Build', 'Websites: wall across projects', ()=>mosaic([['scr-carlton-noble-5','scr-engel-volkers-11','scr-bigtapp-6','scr-sifio-health-5'],['scr-engel-volkers-7','scr-bigtapp-2','scr-carlton-noble-6','scr-sifio-health-9'],['scr-bigtapp-11','scr-carlton-noble-13','scr-engel-volkers-10','scr-sifio-health-2'],['scr-carlton-noble-4','scr-sifio-health-11','scr-bigtapp-13','scr-engel-volkers-13']],'#0d1117',{rot:-9}),59],
 ['Build', 'Website: Carlton Noble, Travel House', ()=>full(A+'s-carlton-2.jpg'),61],
 ['Build', 'Website: BigTapp, platform features', ()=>full(A+'s-bigtapp-10.jpg'),63],
@@ -449,12 +449,11 @@ if(MOTION)(()=>{
           ball.at(X,y,D,{rot:t<.14?0:rock(t-.14,1,8)+3*Math.sin(t*9),ex:exAt(t,[.5,'wink']),hands:HT(t,[[0,'cheer','cheer'],[.14,'balance','balance'],[.6,'cheer','balance']])})});
         rush(a.x,a.mid)})}
     if(WD==='Customers.'){
-      // The letters stream in from both sides, like people arriving; then the next shot's county map (Surgo Health's
-      // index, where it sits in that shot) shows through them and the camera dives in.
+      // The letters stream in from both sides, like people arriving; then they turn Cabot's blue and the camera dives
+      // in, onto Cabot's site (the next shot).
       L.forEach((s,i)=>{const side=i%2?1:-1,t0=.02+i*.03;add(t=>{const q=pop((t-t0)/.24);s.style.transform=`translateX(${side*(1300+i*40)*(1-q)}px)`;s.style.opacity=t<t0?0:1})});
       late.push(()=>{const P=L.map((s,i)=>lt(i)),o=P[4];console.log('ENTER Customers.',Math.round(o.x),Math.round(o.mid));
-        // the map at 1.285 times (as the coast photo before it), its dark counties from Texas to Alabama on the word
-        const pic=big.cloneNode(true);Object.assign(pic.style,{backgroundImage:`url(${A}s-surgo.jpg)`,backgroundSize:'2467px 1388px',backgroundPosition:'-364px -180px',
+        const pic=big.cloneNode(true);Object.assign(pic.style,{background:'#3380f5',
           WebkitBackgroundClip:'text',backgroundClip:'text',color:'transparent',opacity:0});f.appendChild(pic);
         add(t=>{pic.style.opacity=clamp((t-.46)/.14)});rush(o.x,o.mid,.15)})}
     if(WD==='Reach.'){

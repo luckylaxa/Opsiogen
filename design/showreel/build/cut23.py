@@ -6,7 +6,9 @@ design/showreel/raw/cut23; this puts them into build/a under new names, so nothi
 - 21 SandLogic social grid: option B, on SandLogic black #0B0A12 (the owner's pick);
 - 24 Print stationery: the same mockup in Cabot's colours, with the Cabot logo and Cabot's own copy;
 - 48 Build: the Care Connect home page in the same mockup as the other sites (was Vaelo's site and app);
-- 50 Website: Surgo Health's index page (was the second Engel & Völkers site);
+- 50 Website: Cabot Solutions' home page in the same mockup (was the second Engel & Völkers site; Surgo Health's
+  index page from the Figma page repeated shot 35's Surgo screen, owner, 27 Nov: "Repeated"; Cabot's is the one
+  website of ours not yet in the film);
 - 61 Creative subscription: an RxLive deck slide, a Care Connect story ad and a Surgo Health search ad.
 Shot 22 (a brand being built, in motion) is drawn in frames.html from the Figma layers. Shots 15 and 20 keep
 their earlier tiles: the R&S booth the owner approved (rs-07) and the out-of-home ads (rs-09, nc-14, sl-08; owner,
@@ -27,7 +29,6 @@ rgb = lambda f: Image.open(os.path.join(RAW, f)).convert('RGB')
 save(rgb('21-slp-social-black.png'), 'z-slp-social-black.jpg')
 save(rgb('24-stationery-cabot.png'), 'h-t-print-stationery-cabot.jpg')
 save(rgb('48-site-care-connect.png'), 's-care-connect.jpg')
-save(rgb('50-site-surgo.png'), 's-surgo.jpg')
 save(rgb('61-subscription-deck-story-search.png'), 'svc-sub-c23.jpg')
 
 # The sleeve tile: the frame's right tile, its rounded corners filled from the tile so no orange shows at their edge.
@@ -51,3 +52,16 @@ for key, src in (('rs-07', 'rohde-schwarz_rs-7-wide.jpg'), ('rs-09', 'rohde-schw
     im = Image.open(os.path.join(CLEAN, src)).convert('RGB')
     if im.width > 1600: im = im.resize((1600, round(im.height * 1600 / im.width)), Image.LANCZOS)
     im.save(os.path.join(A, key + '.jpg'), quality=88); print('a/' + key + '.jpg', im.size, '(earlier tile)')
+
+# Shot 50: Cabot's home page on the site mockup (screen 1450 px wide from x 235, corners rounded 6 px, on #1c1b19, as
+# the other site shots), from its clean export (raw/clean) without its grey frame (18 px at the top, 20 at the left,
+# 27 at the right, measured; it showed as a light strip at the screen's edge), down to the white band under its hero:
+# below it the page shows other companies' logos, which our images never do.
+src = Image.open(os.path.join(CLEAN, 'cabot-solutions_cabot-1-wide.jpg')).convert('RGB')
+src = src.crop((20, 18, src.width - 27, 1046))   # the hero; not the row of other companies' logos below it
+w = 1450; h = round(src.height * w / src.width); x0, y0 = 235, (1080 - h) // 2
+canvas = Image.new('RGB', (1920, 1080), (28, 27, 25))
+from PIL import ImageDraw
+mask = Image.new('L', (w * 4, h * 4), 0); ImageDraw.Draw(mask).rounded_rectangle((0, 0, w * 4 - 1, h * 4 - 1), 24, fill=255)
+canvas.paste(src.resize((w, h), Image.LANCZOS), (x0, y0), mask.resize((w, h), Image.LANCZOS))
+save(canvas, 's-cabot.jpg')
