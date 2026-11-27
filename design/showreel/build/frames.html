@@ -214,7 +214,7 @@ const SHOTS=[
 ['Brand', 'Brand: wall across projects', ()=>mosaic([['sl-05','rs-16','nc-11'],['nc-13','sl-07','rs-03'],['rs-15','nc-02','sl-09'],['nc-15','rs-08','nc-04']],'#0b0b10',{rot:-9,cw:520,mid:200}),17],
 ['Brand', 'Service artwork: print', ()=>full(A+'z-print-booth.jpg'),18],
 ['Brand', 'Print: packaging', ()=>full(A+'z-t-print-packaging.jpg'),19],
-['Brand', 'Brand: tiles, out of home', ()=>ooh([['rs-09',4/3],['nc-14',2/3],['sl-08',2/3]],PINK),20],
+['Brand', 'Brand: tiles, out of home', ()=>ooh([['rs-09',4/3],['nc-14',3/4],['sl-08',3/4]],PINK),20],
 // Shot 21 (owner, 27 Nov: "Animate this like collage animation. Also first mockup should be horizontally Center", then
 // "This should be straight animation without changing the angle. Only use animation reference for our straight mockup"):
 // the straight grid of the twelve SandLogic posts as in the mockup (cut23.py: its four columns, the top and bottom rows
@@ -629,7 +629,7 @@ if(MOTION)(()=>{
   // and below, then they drift apart.
   cards.filter(e=>e.classList.contains('tile5')).forEach((e,i)=>add((t,d)=>{const q=pop((t-i*.045)/IN),k=t/d;e.style.transform=`translateY(${(1-q)*(i%2?-420:420)}px) rotate(${(1-q)*(i%2?7:-7)}deg) scale(${1+.02*k})`}));
   cards.filter(e=>e.classList.contains('ooh')).forEach((e,i)=>{const im=e.querySelector('img'),s=i%2?-1:1;add((t,d)=>{const q=pop((t-i*.05)/IN),k=io(t/d);
-    e.style.transform=`translate(${(i-1)*14*k}px,${(1-q)*s*-440+s*16*k}px) rotate(${(1-q)*s*-7}deg)`;im.style.transform=`scale(${1.02+.12*k})`})});
+    e.style.transform=`translate(${(i-1)*14*k}px,${(1-q)*s*-440+s*16*k}px) rotate(${(1-q)*s*-7}deg)`;im.style.transform=`scale(${1+.03*k})`})});
   cards.filter(e=>e.classList.contains('duo')).forEach((e,i)=>add((t,d)=>{const q=pop((t-i*.07)/IN),k=t/d;
     e.style.transform=i?`translate(${(1-q)*600+k*24}px,${(1-q)*160+k*10}px) rotate(${(1-q)*8}deg)`:`translate(${(1-q)*-500-k*24}px,${-k*14}px) rotate(${(1-q)*-8}deg)`}));
   // Other cards and fitted pieces: each from its nearest edge, one after another, then they drift outward.

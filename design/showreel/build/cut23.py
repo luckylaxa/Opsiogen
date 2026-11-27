@@ -47,10 +47,10 @@ save(Image.fromarray(t), 'nc-sleeve.jpg')
 
 # Shots 15 and 20: the earlier tiles, made as build/assets.py makes them (from raw/clean, the case studies' designs).
 CLEAN = os.path.join(HERE, '..', 'raw', 'clean')
-# Shot 20's three are framed round their ads (owner, 27 Nov: "18 sec collage is not Center"): the billboard in a 4:3
-# card, the bus shelter's poster and the subway wall's ad in 2:3 cards (the subway ad meets the photo's edge, so it
-# fills its card instead).
-FRAME = {'rs-09': (182, 105, 1342, 975), 'nc-14': (822, 307, 1462, 1267), 'sl-08': (1026, 315, 1526, 1065)}
+# Shot 20's three show each mockup whole (owner, 27 Nov: "18 sec collage is not Center", then "Over zoomed and not able
+# to understand the mockup"): the billboard over the evening road in a 4:3 card, the bus shelter in the rain and the
+# subway corridor with its wall ad in 3:4 cards.
+FRAME = {'rs-09': (0, 140, 1526, 1285), 'nc-14': (376, 0, 1526, 1529), 'sl-08': (379, 0, 1526, 1529)}
 # Shot 13's tiles (owner, 27 Nov: "Replace white T-shirt and laptop mockups. We don't need repeating", then "Replace with
 # better works or mockups. We can't compromise"): three bigger tiles of our strongest brand pieces not used elsewhere in
 # the film: Rohde & Schwarz's report, SandLogic's logo system, Cabot's clinic posters.
