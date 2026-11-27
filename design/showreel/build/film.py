@@ -28,7 +28,7 @@ def beats(n):
     if n.startswith("Logo"): return 9    # 4 beats flying through the O (frames.html LOGO_IN), then 5 (the film within a minute)
     if n.startswith("Wall of"): return 3   # the closing wall pulls back into the grid (cut 5's tilted wall)
     if n == "Website: Surgo Health, the index": return 2   # the county map lands from the word before: give it time
-    if n.startswith("Brand: a brand being built"): return 7   # the owner's 3 seconds: the mark drawn, swatches, type (cut 23)
+    if n.startswith("Brand: a brand being built"): return 5   # drawn fast (owner, 27 Nov): the bulb lights up by 1.25 s of its 2.1 s
     if n == "Websites: wall across projects": return 1      # ...and the wall after it takes one beat less
     if "488563452" in n: return 3   # she points, our character pops up there, she turns to look at it
     if n.startswith(("Stock", "Life")): return 2

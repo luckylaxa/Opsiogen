@@ -77,15 +77,20 @@ const LAYOUT=[];
 // Square pieces in a row; in the film they fly in from above and below in turn.
 const tiles=(keys,c,o={})=>{bg(c);const n=keys.length,gap=o.gap||40,h=o.h||Math.min(560,(1920-200-gap*(n-1))/n),x0=(1920-(n*h+(n-1)*gap))/2;
   keys.forEach((k,i)=>{const b=el('div','card tile5',f,{left:x0+i*(h+gap)+'px',top:(1080-h)/2+'px',width:h+'px',height:h+'px',borderRadius:(o.rad??20)+'px'});img(A+k+'.jpg',b)})};
-// Cut 23, shot 22 (the owner's design, Figma N0FMCGKpSEZ0PVBoQDCVdc page 05, frame 81:5; no client brand): a brand
-// being built. A mark drawn with a pen on a fine grid, colour swatches fanned out, a type card, all drawn from the
-// Figma layers so they stay sharp (Figma turns anticlockwise about the top left corner: CSS gets the angle negated).
-// In the film the pen draws the mark along its stroke and the anchors and handles pop in as it passes, the swatches
-// fan out from behind one another and the type card flips up (motion block below).
-const IL={path:'M 500 200 C 500 360 360 500 180 500 C 70 500 0 420 0 300 C 0 120 140 20 300 20 C 420 20 500 90 500 200 Z',
+// Cut 23, shot 22: a brand being built (the owner's frame, Figma N0FMCGKpSEZ0PVBoQDCVdc page 05, frame 81:5; no
+// client brand): colour swatches fanned out, a type card, and a pen drawing an icon on a fine grid. The owner on the
+// first take (27 Nov): "This should be fast drawing and it should draw some logo or some creative icon", so the pen
+// draws a lightbulb (the idea of the film's first line), quickly, and it lights up in the palette's lime with rays round
+// it, the lime card lifting as its colour goes on; the construction lines then fade, leaving a clean icon. Drawn as
+// vectors so it stays sharp (Figma turns anticlockwise about the top left corner: CSS gets the angle negated). The
+// still is the finished icon; the film draws it (motion block below).
+const IL={glass:'M 198 372 C 198 330 110 300 110 215 C 110 132 177 65 260 65 C 343 65 410 132 410 215 C 410 300 322 330 322 372 Z',
+  base:[[205,397,315,397],[214,424,306,424],[236,450,284,450]],
+  filament:'M 230 372 L 230 318 L 245 282 L 260 318 L 275 282 L 290 318 L 290 372',
+  rays:[-150,-118,-90,-62,-30],
   sw:[['#7A6ED6',60,14],['#D8FF3E',118,5],['#FF6B4A',176,-5],['#F8F6F8',234,-14]],
-  anchors:[[0,300,'#fff'],[300,20,'#7a6ed6'],[500,200,'#7a6ed6'],[180,500,'#fff']],
-  handles:[[300,20,140,20],[300,20,420,20],[500,200,500,90],[500,200,500,360]]};
+  anchors:[[198,372,'#fff'],[110,215,'#fff'],[260,65,'#7a6ed6'],[410,215,'#7a6ed6'],[322,372,'#fff']],
+  handles:[[110,215,110,300],[110,215,110,132],[260,65,177,65],[260,65,343,65],[410,215,410,132],[410,215,410,300]]};
 const illo=()=>{bg('#0a090d');const NS='http://www.w3.org/2000/svg';
   const S=(tag,at,p)=>{const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);p.appendChild(e);return e};
   const grid=S('svg',{width:1920,height:1080,viewBox:'0 0 1920 1080',class:'il-grid'},f);Object.assign(grid.style,{position:'absolute',left:0,top:0});
@@ -93,15 +98,22 @@ const illo=()=>{bg('#0a090d');const NS='http://www.w3.org/2000/svg';
   for(let y=120;y<1080;y+=120)S('line',{x1:0,y1:y+.5,x2:1920,y2:y+.5,stroke:'#fff','stroke-opacity':.05},grid);
   IL.sw.forEach(([c,x,r])=>{const d=el('div','il-sw',f,{position:'absolute',left:170+x+'px',top:'410px',width:'220px',height:'300px',boxSizing:'border-box',
       background:'rgb(23 22 28)',border:'1.5px solid rgb(255 255 255 / .08)',borderRadius:'22px',transformOrigin:'0 0',transform:`rotate(${-r}deg)`});
-    d.dataset.x=x;d.dataset.r=r;
+    d.dataset.x=x;d.dataset.r=r;d.dataset.c=c;
     el('div','',d,{position:'absolute',left:'14.5px',top:'14.5px',width:'188px',height:'196px',borderRadius:'12px',background:c});
     const t=el('div','',d,{position:'absolute',left:'16.5px',top:'234.5px',font:'500 22px/28px Outfit',color:'rgb(255 255 255 / .85)',whiteSpace:'nowrap'});t.textContent=c});
   const m=S('svg',{width:520,height:520,viewBox:'0 0 520 520',class:'il-mark'},f);Object.assign(m.style,{position:'absolute',left:'700px',top:'270px',overflow:'visible'});
-  S('path',{d:IL.path,fill:'none',stroke:'#fff','stroke-width':7,class:'il-path'},m);
-  IL.handles.forEach(([ax,ay,hx,hy])=>{const g=S('g',{class:'il-h','data-ax':ax,'data-ay':ay},m);
+  const gr=S('radialGradient',{id:'il-glow'},S('defs',{},m));S('stop',{offset:'0','stop-color':'#d8ff3e','stop-opacity':.42},gr);S('stop',{offset:'1','stop-color':'#d8ff3e','stop-opacity':0},gr);
+  S('circle',{cx:260,cy:215,r:250,fill:'url(#il-glow)',class:'il-glow'},m);
+  S('path',{d:IL.glass,fill:'#d8ff3e',stroke:'none',class:'il-fill'},m);
+  S('path',{d:IL.filament,fill:'none',stroke:'#0a090d','stroke-width':7,'stroke-linejoin':'round','stroke-linecap':'round',class:'il-fil'},m);
+  S('path',{d:IL.glass,fill:'none',stroke:'#fff','stroke-width':7,class:'il-path'},m);
+  IL.base.forEach(([x1,y1,x2,y2])=>S('line',{x1,y1,x2,y2,stroke:'#fff','stroke-width':16,'stroke-linecap':'round',class:'il-base'},m));
+  IL.rays.forEach(a=>{const c=Math.cos(a*Math.PI/180),s=Math.sin(a*Math.PI/180);
+    S('line',{x1:260+182*c,y1:215+182*s,x2:260+224*c,y2:215+224*s,stroke:'#d8ff3e','stroke-width':11,'stroke-linecap':'round',class:'il-ray'},m)});
+  IL.handles.forEach(([ax,ay,hx,hy])=>{const g=S('g',{class:'il-h','data-ax':ax,'data-ay':ay,opacity:0},m);
     S('line',{x1:ax,y1:ay,x2:hx,y2:hy,stroke:'#7a6ed6','stroke-width':2.5},g);S('circle',{cx:hx,cy:hy,r:7.5,fill:'#0a090d',stroke:'#7a6ed6','stroke-width':3},g)});
-  IL.anchors.forEach(([x,y,c])=>S('rect',{x:x-10.5,y:y-10.5,width:21,height:21,fill:c,stroke:'#fff','stroke-width':3,class:'il-a','data-x':x,'data-y':y},m));
-  const pen=S('g',{class:'il-pen',transform:'translate(512 212)'},m);
+  IL.anchors.forEach(([x,y,c])=>S('rect',{x:x-10.5,y:y-10.5,width:21,height:21,fill:c,stroke:'#fff','stroke-width':3,class:'il-a','data-x':x,'data-y':y,opacity:0},m));
+  const pen=S('g',{class:'il-pen',transform:'translate(560 470)',opacity:0},m);
   S('path',{d:'M 0 0 L 34 12 L 22 22 L 12 34 L 0 0 Z M 22 22 L 52 52',fill:'#d8ff3e',stroke:'#d8ff3e','stroke-width':4,'stroke-linejoin':'round'},pen);
   const tc=el('div','il-type',f,{position:'absolute',left:'1360px',top:'320px',width:'380px',height:'440px',transformOrigin:'0 0',transform:'rotate(4deg)'});
   const fl=el('div','il-flip',tc,{position:'absolute',inset:'0',boxSizing:'border-box',background:'rgb(23 22 28)',border:'1.5px solid rgb(255 255 255 / .08)',borderRadius:'26px',transformOrigin:'50% 100%'});
@@ -572,31 +584,45 @@ if(MOTION)(()=>{
       let fx=0,fy=200;if(!single){if(Math.abs(cx)/960>Math.abs(cy)/540){fx=Math.sign(cx||1)*520;fy=0}else{fx=0;fy=Math.sign(cy||1)*460}}
       const s0=single?.84:.94,dl=i*.05,dx=cx/len*14,dy=cy/len*14;
       add((t,d)=>{const q=pop((t-dl)/IN),k=t/d;e.style.transform=`translate(${(1-q)*fx+dx*k}px,${(1-q)*fy+dy*k}px) rotate(${(1-q)*(single?5:i%2?8:-8)}deg) scale(${(s0+(1-s0)*q)*(single?1+.03*k:1)}) ${b}`})})});
-  // Cut 23, shot 22: the pen draws the mark along its stroke (it starts and ends at the right-hand anchor, where it
-  // rests in the design), each anchor pops in as the pen reaches it and its handles spring out of it; the swatches fan
-  // out from behind the front one; the type card flips up off the table. All settled by 1.6 s of its 3 s.
+  // Cut 23, shot 22: fast. The swatches fan out and the type card flips up while the pen draws the bulb in half a
+  // second (each anchor pops in as it passes, its handles spring out), then its base in three strokes; the bulb lights
+  // up lime (the lime card lifts as its colour goes on), the filament and the rays follow, the construction fades and
+  // the pen leaves. All settled by 1.25 s of its 2.1 s.
   if(T.startsWith('Brand: a brand being built')){
-    const sw=[...f.querySelectorAll('.il-sw')],flip=f.querySelector('.il-flip'),path=f.querySelector('.il-path'),pen=f.querySelector('.il-pen'),
-      an=[...f.querySelectorAll('.il-a')],hs=[...f.querySelectorAll('.il-h')],grid=f.querySelector('.il-grid');
-    const L=path.getTotalLength(),T0=.15,T1=1.45,qAt=t=>io((t-T0)/(T1-T0));
+    const Q=s=>f.querySelector(s),QA=s=>[...f.querySelectorAll(s)];
+    const sw=QA('.il-sw'),flip=Q('.il-flip'),path=Q('.il-path'),fill=Q('.il-fill'),fil=Q('.il-fil'),glow=Q('.il-glow'),pen=Q('.il-pen'),grid=Q('.il-grid');
+    const an=QA('.il-a'),hs=QA('.il-h'),bars=QA('.il-base'),rays=QA('.il-ray');
+    const L=path.getTotalLength(),FL=fil.getTotalLength(),G0=.1,G1=.58,qAt=t=>io((t-G0)/(G1-G0));
     const near=(x,y)=>{let best=0,bd=1e9;for(let k=0;k<=800;k++){const p=path.getPointAtLength(L*k/800),dd=(p.x-x)**2+(p.y-y)**2;if(dd<bd){bd=dd;best=k/800}}return best};
-    const tOf=q=>{let lo=T0,hi=T1;for(let k=0;k<40;k++){const md=(lo+hi)/2;if(qAt(md)<q)lo=md;else hi=md}return hi};
-    const ta=an.map(a=>{const q=near(+a.dataset.x,+a.dataset.y);return tOf(q<.01?.999:q)});   // the start anchor is set as the loop closes
-    const ha=hs.map(h=>an.findIndex(a=>a.dataset.x===h.dataset.ax&&a.dataset.y===h.dataset.ay));
-    path.style.strokeDasharray=`${L} ${L}`;
+    const tOf=q=>{let lo=G0,hi=G1;for(let k=0;k<40;k++){const md=(lo+hi)/2;if(qAt(md)<q)lo=md;else hi=md}return hi};
+    const ta=an.map(a=>tOf(near(+a.dataset.x,+a.dataset.y))),ha=hs.map(h=>an.findIndex(a=>a.dataset.x===h.dataset.ax&&a.dataset.y===h.dataset.ay));
+    const B=bars.map((b,i)=>({x1:+b.getAttribute('x1'),y1:+b.getAttribute('y1'),x2:+b.getAttribute('x2'),y2:+b.getAttribute('y2'),t0:.6+i*.065,len:+b.getAttribute('x2')-b.getAttribute('x1')}));
+    path.style.strokeDasharray=`${L} ${L}`;fil.style.strokeDasharray=`${FL} ${FL}`;
+    bars.forEach((b,i)=>{b.style.strokeDasharray=`${B[i].len+.01} 1000`});
     an.forEach(a=>{a.style.transformBox='fill-box';a.style.transformOrigin='center'});
     hs.forEach(h=>{h.style.transformBox='view-box';h.style.transformOrigin=`${h.dataset.ax}px ${h.dataset.ay}px`});
-    const front=sw[sw.length-1],fx=+front.dataset.x,fr=+front.dataset.r;
-    add((t,d)=>{const q=clamp(qAt(t)),p=path.getPointAtLength(L*q);
-      grid.style.opacity=clamp(t/.15);
-      path.style.strokeDashoffset=L*(1-q);path.style.visibility=t<T0?'hidden':'visible';
-      pen.setAttribute('transform',`translate(${p.x+12} ${p.y+12}) scale(${t<T0-.08?0:pop((t-T0+.08)/.18)})`);
-      an.forEach((a,i)=>{a.style.transform=`scale(${t<ta[i]?0:pop((t-ta[i])/.18)})`});
-      hs.forEach((h,i)=>{const t0=ta[ha[i]]+.05;h.style.transform=`scale(${t<t0?0:pop((t-t0)/.24)})`});
-      sw.forEach((e,i)=>{const x=+e.dataset.x,r=+e.dataset.r,k=pop((t-.32-(sw.length-1-i)*.05)/.38),s0=pop((t-.08)/.2);
-        e.style.opacity=t<.08?0:1;
-        e.style.transform=`translate(${(fx-x)*(1-k)}px,0) rotate(${-(r+(fr-r)*(1-k))}deg) scale(${.86+.14*s0})`});
-      const kf=pop((t-.55)/.42);flip.style.visibility=t<.55?'hidden':'visible';flip.style.transform=`perspective(1400px) rotateX(${(1-kf)*88}deg)`;
+    rays.forEach(r=>{r.style.transformBox='view-box';r.style.transformOrigin='260px 215px'});
+    const front=sw[sw.length-1],fx=+front.dataset.x,fr=+front.dataset.r,lime=sw.findIndex(e=>e.dataset.c==='#D8FF3E');
+    // where the pen is: along the bulb, then along each bar of the base, then off to the right and away
+    const penAt=t=>{if(t<=G1){const p=path.getPointAtLength(L*clamp(qAt(t)));return[p.x,p.y]}
+      for(let i=B.length-1;i>=0;i--)if(t>=B[i].t0){const q=clamp((t-B[i].t0)/.055);if(q<1||i===B.length-1&&t<B[i].t0+.08)return[B[i].x1+(B[i].x2-B[i].x1)*q,B[i].y1];
+        const k=ease((t-B[i].t0-.08)/.28);return[B[i].x2+(560-B[i].x2)*k,B[i].y1+(470-B[i].y1)*k]}
+      const k=(t-G1)/(B[0].t0-G1),p=path.getPointAtLength(0);return[p.x+(B[0].x1-p.x)*k,p.y+(B[0].y1-p.y)*k]};
+    add((t,d)=>{grid.style.opacity=clamp(t/.08);
+      const q=clamp(qAt(t));path.style.strokeDashoffset=L*(1-q);path.style.visibility=t<G0?'hidden':'visible';
+      bars.forEach((b,i)=>{b.style.strokeDashoffset=(B[i].len+.01)*(1-clamp((t-B[i].t0)/.055));b.style.visibility=t<B[i].t0?'hidden':'visible'});
+      const [px,py]=penAt(t),pv=t<G0-.06?0:t<.95?pop((t-G0+.06)/.14):1-clamp((t-.95)/.18);
+      pen.setAttribute('transform',`translate(${px+6} ${py+6}) scale(${Math.max(pv,0)})`);pen.setAttribute('opacity',t<G0-.06?0:1-clamp((t-1)/.14));
+      const fade=1-clamp((t-1.0)/.2);
+      an.forEach((a,i)=>{a.setAttribute('opacity',t<ta[i]?0:fade);a.style.transform=`scale(${t<ta[i]?0:pop((t-ta[i])/.14)})`});
+      hs.forEach((h,i)=>{const t0=ta[ha[i]]+.03;h.setAttribute('opacity',t<t0?0:fade);h.style.transform=`scale(${t<t0?0:pop((t-t0)/.18)})`});
+      const lit=clamp((t-.8)/.12);fill.setAttribute('opacity',lit);glow.setAttribute('opacity',lit*(t<1.3?1:.86+.14*Math.cos((t-1.3)*7)));
+      fil.style.strokeDashoffset=FL*(1-clamp((t-.86)/.12));fil.style.visibility=t<.86?'hidden':'visible';
+      rays.forEach((r,i)=>{const k=pop((t-.92-i*.025)/.16);r.style.transform=`scale(${t<.92+i*.025?0:.6+.4*k})`;r.setAttribute('opacity',t<.92+i*.025?0:clamp(k))});
+      sw.forEach((e,i)=>{const x=+e.dataset.x,r=+e.dataset.r,k=pop((t-.12-(sw.length-1-i)*.035)/.26),s0=pop((t-.04)/.14),lift=i===lime?-26*Math.sin(Math.PI*clamp((t-.76)/.34)):0;
+        e.style.opacity=t<.04?0:1;
+        e.style.transform=`translate(${(fx-x)*(1-k)}px,${lift}px) rotate(${-(r+(fr-r)*(1-k))}deg) scale(${.86+.14*s0})`});
+      const kf=pop((t-.12)/.28);flip.style.visibility=t<.12?'hidden':'visible';flip.style.transform=`perspective(1400px) rotateX(${(1-kf)*88}deg)`;
       f.style.transformOrigin='960px 540px';f.style.transform=`scale(${1+.015*t/d})`})}
   // Walls. The burst grid drops in and reshuffles on the eighth; then the character zips through the middle and the
   // work changes again in its wake. The closing wall zooms out from its middle tile.
