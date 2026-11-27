@@ -8,7 +8,9 @@ design/showreel/raw/cut23; this puts them into build/a under new names, so nothi
 - 48 Build: the Care Connect home page in the same mockup as the other sites (was Vaelo's site and app);
 - 50 Website: Surgo Health's index page (was the second Engel & Völkers site);
 - 61 Creative subscription: an RxLive deck slide, a Care Connect story ad and a Surgo Health search ad.
-Shot 22 (a brand being built, in motion) is drawn in frames.html from the Figma layers; 15 and 20 stay as they are.
+Shot 22 (a brand being built, in motion) is drawn in frames.html from the Figma layers. Shots 15 and 20 keep
+their earlier tiles: the R&S booth the owner approved (rs-07) and the out-of-home ads (rs-09, nc-14, sl-08; owner,
+27 Nov: "Use previous version" over the real-photo tries of design/tiles/ooh, which had been written over them).
 Then run pieces.py, so the new flat-background images move in pieces like the ones they replace.
 Usage: python3 cut23.py"""
 import os
@@ -41,3 +43,11 @@ for cx, cy in ((r, r), (399 - r, r), (r, 399 - r), (399 - r, 399 - r)):
     cv2.circle(rr, (cx, cy), r - inset, 255, -1)
 t = cv2.inpaint(t, (rr == 0).astype(np.uint8), 4, cv2.INPAINT_TELEA)
 save(Image.fromarray(t), 'nc-sleeve.jpg')
+
+# Shots 15 and 20: the earlier tiles, made as build/assets.py makes them (from raw/clean, the case studies' designs).
+CLEAN = os.path.join(HERE, '..', 'raw', 'clean')
+for key, src in (('rs-07', 'rohde-schwarz_rs-7-wide.jpg'), ('rs-09', 'rohde-schwarz_rs-9-wide.jpg'),
+                 ('nc-14', 'norsecom_norsecom-14-wide.jpg'), ('sl-08', 'sandlogic_sandlogic-8-wide.jpg')):
+    im = Image.open(os.path.join(CLEAN, src)).convert('RGB')
+    if im.width > 1600: im = im.resize((1600, round(im.height * 1600 / im.width)), Image.LANCZOS)
+    im.save(os.path.join(A, key + '.jpg'), quality=88); print('a/' + key + '.jpg', im.size, '(earlier tile)')

@@ -203,5 +203,5 @@ for name, fn, tile in (('rohde-schwarz-billboard', billboard, 'rs-09.jpg'), ('no
     im.save(os.path.join(OUT, name + '.jpg'), quality=93)
     sq = im.crop((cx0, cy0, cx1, cy1)).resize((1526, 1529), Image.LANCZOS)
     sq.save(os.path.join(OUT, name + '-square.jpg'), quality=93)
-    if os.path.isdir(TILES): sq.save(os.path.join(TILES, tile), quality=93)
+    # Not written into the showreel's build any more: the owner kept the earlier tiles (27 Nov, "Use previous version").
     print('wrote', name, im.size, '-> tile', tile)
