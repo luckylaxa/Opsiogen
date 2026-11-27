@@ -1,0 +1,92 @@
+<!doctype html>
+<!-- A TV on a floor stand, rendered in 3D for the BigTapp booth photos (design/tiles/py/bigtapp_booth.py): the camera
+     matches the photo's own (level, its horizon and the backdrop's vanishing point, measured on the photo), the stand
+     stands in front of the backdrop on the floor, and only the TV, the stand and their soft shadows are drawn, on a
+     clear background, for the script to lay over the photo. render.cjs loads this page and calls renderBooth(params). -->
+<html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:transparent}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"/three/build/three.module.js","three/addons/":"/three/examples/jsm/"}}</script>
+</head><body>
+<script type="module">
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+window.renderBooth = async (P) => {
+  const S = P.scale, W = P.W, H = P.H;
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+  renderer.setPixelRatio(1); renderer.setSize(W * S, H * S, false);
+  renderer.setClearColor(0x000000, 0);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.NeutralToneMapping; renderer.toneMappingExposure = P.exposure;
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.VSMShadowMap;
+  document.body.appendChild(renderer.domElement);
+
+  const scene = new THREE.Scene();
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  scene.environmentIntensity = P.env;
+
+  // the photo's camera: at the origin, looking down -Z, its principal point at (cx, cy) on the W x H photo
+  const Wf = 2 * Math.max(P.cx, W - P.cx), Hf = 2 * Math.max(P.cy, H - P.cy);
+  const cam = new THREE.PerspectiveCamera(2 * Math.atan(Hf / 2 / P.f) * 180 / Math.PI, Wf / Hf, 0.05, 200);
+  cam.setViewOffset(Wf, Hf, Wf / 2 - P.cx, Hf / 2 - P.cy, W, H);
+  cam.position.set(0, 0, 0); cam.lookAt(0, 0, -1); cam.updateProjectionMatrix();
+
+  // the backdrop's own axes: d along it, up, n out of it toward the camera; P0 a point where it meets the floor
+  const v = (a) => new THREE.Vector3(...a);
+  const P0 = v(P.P0), d = v(P.d), up = new THREE.Vector3(0, 1, 0), n = v(P.n);
+  const at = (a, y, z) => P0.clone().addScaledVector(d, a).addScaledVector(up, y).addScaledVector(n, z);
+  const stand = new THREE.Group();                 // local x along the backdrop, y up from the floor, z toward the camera
+  stand.matrixAutoUpdate = false;
+  stand.matrix.makeBasis(d, up, n).setPosition(at(P.a, 0, 0));
+  scene.add(stand);
+
+  const metal = new THREE.MeshStandardMaterial({ color: 0x1b1c20, roughness: 0.42, metalness: 0.75 });
+  const plate = new THREE.MeshStandardMaterial({ color: 0x101013, roughness: 0.6, metalness: 0.5 });   // matte black steel
+  const body = new THREE.MeshPhysicalMaterial({ color: 0x0c0c0f, roughness: 0.34, metalness: 0.15, clearcoat: 0.7, clearcoatRoughness: 0.22 });
+  const add = (geo, mat, x, y, z, shadow = true) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = shadow; m.receiveShadow = true; stand.add(m); return m; };
+
+  const T = P.tv, B = P.base, C = P.pole;
+  add(new RoundedBoxGeometry(B.w, B.t, B.d, 4, Math.min(.012, B.t / 2.2)), plate, 0, B.t / 2, B.z);              // the base plate
+  add(new THREE.BoxGeometry(C.w, T.y - B.t, C.d), metal, 0, B.t + (T.y - B.t) / 2, C.z);                          // the column
+  add(new THREE.BoxGeometry(C.w * 2.4, C.w * 1.6, .02), metal, 0, T.y, T.z - T.depth - .045);                      // the mount
+  add(new THREE.BoxGeometry(T.w * .6, T.h * .55, .04), body, 0, T.y - T.h * .04, T.z - T.depth - .02);            // the TV's back
+  add(new RoundedBoxGeometry(T.w, T.h, T.depth, 4, .006), body, 0, T.y, T.z - T.depth / 2);                        // the TV, its bezel
+
+  // the screen: BigTapp's Beeonix AI page, lit from behind, under glossy glass
+  const tex = await new THREE.TextureLoader().loadAsync(P.screen);
+  tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+  const sw = T.w - 2 * T.bezel, sh = T.h - T.bezel - T.chin;
+  const ta = tex.image.width / tex.image.height, sa = sw / sh;
+  if (ta > sa) { tex.repeat.set(sa / ta, 1); tex.offset.set((1 - sa / ta) / 2, 0); } else { tex.repeat.set(1, ta / sa); tex.offset.set(0, (1 - ta / sa) / 2); }
+  const glass = new THREE.MeshPhysicalMaterial({ color: 0x000000, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: P.glow,
+                                                roughness: .08, metalness: 0, clearcoat: 1, clearcoatRoughness: .04 });
+  add(new THREE.PlaneGeometry(sw, sh), glass, 0, T.y + (T.chin - T.bezel) / 2, T.z + .0008, false);
+
+  // soft shadows only, on the floor and on the backdrop
+  const catcher = (geo, op, x, y, z, rx) => { const m = new THREE.Mesh(geo, new THREE.ShadowMaterial({ opacity: op })); m.position.set(x, y, z); m.rotation.x = rx; m.receiveShadow = true; stand.add(m); };
+  catcher(new THREE.PlaneGeometry(8, 8), P.floorShadow, 0, .0004, 2, -Math.PI / 2);
+  catcher(new THREE.PlaneGeometry(8, 5), P.wallShadow, 0, 2.5, .002, 0);
+  // and a touch of contact shade right under the plate
+  const cv = document.createElement('canvas'); cv.width = cv.height = 256; const g = cv.getContext('2d');
+  const rg = g.createRadialGradient(128, 128, 20, 128, 128, 128); rg.addColorStop(0, 'rgba(0,0,0,1)'); rg.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = rg; g.fillRect(0, 0, 256, 256);
+  const ct = new THREE.CanvasTexture(cv);
+  const contact = new THREE.Mesh(new THREE.PlaneGeometry(B.w * 1.35, B.d * 1.5), new THREE.MeshBasicMaterial({ map: ct, transparent: true, opacity: P.contact, depthWrite: false }));
+  contact.rotation.x = -Math.PI / 2; contact.position.set(0, .0008, B.z); stand.add(contact);
+
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8a8a, P.hemi));
+  const sun = new THREE.DirectionalLight(0xffffff, P.key);
+  sun.position.copy(at(P.a + P.light[0], P.light[1], P.light[2])); sun.target.position.copy(at(P.a, T.y * .6, T.z * .5));
+  sun.castShadow = true; sun.shadow.mapSize.set(P.map, P.map);   // a coarse map and a wide blur: the soft shadow of a hall's lights
+  Object.assign(sun.shadow.camera, { left: -3, right: 3, top: 3, bottom: -3, near: .5, far: 30 });
+  sun.shadow.radius = P.blur; sun.shadow.blurSamples = 25; sun.shadow.bias = -.0004;
+  scene.add(sun, sun.target);
+
+  renderer.render(scene, cam);
+  return renderer.domElement.toDataURL('image/png');
+};
+window.ready = true;
+</script>
+</body></html>
