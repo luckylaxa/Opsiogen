@@ -119,126 +119,126 @@ const illo=()=>{bg('#0a090d');const NS='http://www.w3.org/2000/svg';
   const fl=el('div','il-flip',tc,{position:'absolute',inset:'0',boxSizing:'border-box',background:'rgb(23 22 28)',border:'1.5px solid rgb(255 255 255 / .08)',borderRadius:'26px',transformOrigin:'50% 100%'});
   [['Aa',34,40,'700 210px/265px Outfit','#fff'],['Outfit',40,300,'600 34px/43px Outfit','#fff'],['Bold · SemiBold · Regular',40,350,'400 22px/28px Outfit','rgb(255 255 255 / .6)']]
     .forEach(([txt,x,y,font,color])=>{const t=el('div','',fl,{position:'absolute',left:x-1.5+'px',top:y-1.5+'px',font,color,whiteSpace:'nowrap'});t.textContent=txt})};
-// Cut 23c, shot 36, in the middle of the film among the Design chapter's product screens (owner, 27 Nov: "Can you add
-// one more illustration in between", with three frames of a flat animation as the reference for its colour fill): our
-// own scene in that fill: flat colours, lime printed a little off every shape, a hard black shadow on a warm white
-// floor, ink doodles. A hand presses a big button and the product's screens pop out of it (no figures on them: we make
-// no claims). Vectors; TAP.set(state) poses it, the still is its last pose and the film moves it (TAP.at).
-const TAP={C:{floor:'#f1efe9',grey:'#c9c4bb',greyL:'#ddd9d0',coral:'#ff5a43',coralD:'#d9402d',ink:'#0a090d',blue:'#3f7bff',blueD:'#2a5fd6',lime:'#d8ff3e',white:'#ffffff',side:'#d6d0c5'},
-  BTN:[1000,790],R:[236,76],SIDE:66,HOLE:[166,54],CAP:[148,48],H:[80,22],OFF:[-9,-8],HS:1.2,HL:262*1.2};
-const tapScene=(f)=>{const C=TAP.C,NS='http://www.w3.org/2000/svg';
+// Cut 23c, shot 36, among the Design chapter's product screens (owner, 27 Nov: "Can you add one more illustration in
+// between"; the first take, a hand pressing a button drawn in the reference's style, followed the reference too
+// closely: "Don't copy same ... New approach"). Our own idea, the film's first line in a picture: an idea scribbled on
+// a sticky note lifts off it, straightens into a wireframe and becomes a finished app as our colours go on; a note that
+// it's done and a heart pop out. On a design canvas (lilac, a dot grid), in our palette: flat fills, soft shadows, no
+// outlines. Vectors: IDEA.set(state) poses it, the still is its last pose, the film moves it (IDEA.at).
+const IDEA={C:{bg:'#eee8ff',dot:'#d5c9fb',coal:'#0a090d',paper:'#f8f6f8',violet:'#a98bff',pink:'#ff4f9b',aqua:'#5cf2e6',blue:'#3f7bff',sun:'#ffd75e',glue:'#f7cc4a',flap:'#ffe797',lime:'#d8ff3e',white:'#ffffff'},
+  NOTE:{x:520,y:580,r:-6},PH:{x:1250,y:540,r:4},SK:{x:-50,y:4,s:.44},INK:4.2};
+// shapes, in the phone's own coordinates (400 x 820 about its centre)
+IDEA.rr=(x0,y0,x1,y1,r)=>{const P=[],k=10,arc=(cx,cy,a0)=>{for(let i=0;i<=k;i++){const a=(a0+90*i/k)*Math.PI/180;P.push([cx+r*Math.cos(a),cy+r*Math.sin(a)])}};
+  arc(x0+r,y0+r,180);arc(x1-r,y0+r,270);arc(x1-r,y1-r,0);arc(x0+r,y1-r,90);return P};
+IDEA.circ=(cx,cy,r)=>Array.from({length:48},(_,i)=>{const a=(-90+i*7.5)*Math.PI/180;return[cx+r*Math.cos(a),cy+r*Math.sin(a)]});
+// ti: when its colour goes on (in order); line: [colour, width, opacity] for the ones that end as lines
+IDEA.EL=[
+  {k:'body',sh:IDEA.rr(-200,-410,200,410,64),c:1,fill:'coal',ink:1,ti:0,sh1:1},
+  {k:'screen',sh:IDEA.rr(-186,-396,186,396,52),c:1,fill:'paper',ink:0,ti:1},
+  {k:'island',sh:IDEA.rr(-58,-386,58,-356,15),c:1,fill:'coal',ink:1,ti:2},
+  {k:'head',sh:IDEA.rr(-160,-346,160,-242,28),c:1,fill:'violet',ink:1,ti:3},
+  {k:'ava',sh:IDEA.circ(-108,-294,30),c:1,fill:'pink',ink:1,ti:4},
+  {k:'hb1',sh:[[-58,-310],[112,-310]],c:0,line:['white',14,1],ink:1,ti:4},
+  {k:'hb2',sh:[[-58,-278],[44,-278]],c:0,line:['white',12,.72],ink:1,ti:4},
+  {k:'img',sh:IDEA.rr(-160,-220,160,-24,28),c:1,fill:'aqua',ink:1,ti:5},
+  {k:'sun',sh:IDEA.circ(92,-158,24),c:1,fill:'sun',ink:1,ti:6,clip:1},
+  {k:'mtn',sh:[[-180,0],[-180,-70],[-100,-140],[-40,-84],[10,-122],[86,-52],[180,-98],[180,0]],ink:[1,7],c:1,fill:'blue',ti:6,clip:1},
+  {k:'chart',sh:[[-150,150],[-92,98],[-34,120],[24,48],[84,74],[150,10]],c:0,line:['blue',10,1],ink:1,ti:7},
+  {k:'cdot',sh:IDEA.circ(150,10,13),c:1,fill:'pink',ink:0,ti:8},
+  {k:'tb1',sh:[[-160,206],[40,206]],c:0,line:['coal',16,.92],ink:1,ti:8},
+  {k:'tb2',sh:[[-160,242],[-24,242]],c:0,line:['coal',12,.42],ink:1,ti:9},
+  {k:'btn',sh:IDEA.rr(-160,288,160,352,32),c:1,fill:'lime',ink:1,ti:10},
+  {k:'bt',sh:[[-52,320],[52,320]],c:0,line:['coal',12,1],ink:0,ti:11},
+  {k:'home',sh:[[-58,376],[58,376]],c:0,line:['coal',8,.85],ink:0,ti:11}];
+// even points along a shape, with their normals
+IDEA.res=(P,closed,N)=>{const Q=closed?P.concat([P[0]]):P,L=[0];for(let i=1;i<Q.length;i++)L.push(L[i-1]+Math.hypot(Q[i][0]-Q[i-1][0],Q[i][1]-Q[i-1][1]));
+  const T=L[L.length-1],at=s=>{let d=((s%1)+1)%1*T;if(!closed)d=Math.min(T,Math.max(0,s*T));let i=1;while(i<L.length-1&&L[i]<d)i++;const u=(d-L[i-1])/((L[i]-L[i-1])||1);return[Q[i-1][0]+(Q[i][0]-Q[i-1][0])*u,Q[i-1][1]+(Q[i][1]-Q[i-1][1])*u]};
+  return{at,T}};
+IDEA.rnd=(s=>()=>(s=(s*16807)%2147483647)/2147483647)(91);
+// each shape as the sketch draws it: a hand's wobble, a little off its place and angle, closed ones overshooting their start
+IDEA.prep=()=>IDEA.EL.forEach((e,j)=>{const R=IDEA.rnd,P=e.ink&&e.ink.length?e.sh.slice(e.ink[0],e.ink[1]):e.sh,closed=e.c&&!(e.ink&&e.ink.length);
+  const r=IDEA.res(P,closed,0),N=Math.max(24,Math.round(r.T/5)),ov=closed?.07:0,f1=closed?2+Math.floor(R()*2):1+R()*1.5,f2=closed?5+Math.floor(R()*3):3+R()*3,p1=R()*6.3,p2=R()*6.3;
+  const cx=P.reduce((a,p)=>a+p[0],0)/P.length,cy=P.reduce((a,p)=>a+p[1],0)/P.length,A=e.k==='body'?9:/^(hb|tb)/.test(e.k)?5:6,wf=/^(hb|tb)/.test(e.k)?5:0;
+  e.cx=cx;e.cy=cy;e.jr=(R()-.5)*5;e.jx=(R()-.5)*10;e.jy=(R()-.5)*10;
+  e.pts=[];for(let i=0;i<=N;i++){const s=(1+ov)*i/N,p=r.at(s),q=r.at(s+.002),dx=q[0]-p[0],dy=q[1]-p[1],l=Math.hypot(dx,dy)||1,nx=dy/l,ny=-dx/l;
+    let w=A*(Math.sin(6.283*f1*s+p1)*.62+Math.sin(6.283*f2*s+p2)*.38);if(wf)w=A*Math.sin(6.283*wf*s*r.T/170+p1);if(s>1)w+=A*2.4*(s-1)/ov;
+    e.pts.push([p[0],p[1],nx*w,ny*w])}});
+// a shape's points on screen: sketch (wobble k) placed by transform T {x,y,r,s}
+IDEA.place=(e,T,k)=>{const a=T.r*Math.PI/180,ca=Math.cos(a),sa=Math.sin(a),ja=e.jr*k*Math.PI/180,cj=Math.cos(ja),sj=Math.sin(ja);
+  return e.pts.map(([x,y,wx,wy])=>{let px=x+wx*k-e.cx,py=y+wy*k-e.cy;[px,py]=[px*cj-py*sj,px*sj+py*cj];px+=e.cx+e.jx*k;py+=e.cy+e.jy*k;
+    return[T.x+T.s*(px*ca-py*sa),T.y+T.s*(px*sa+py*ca)]})};
+IDEA.clean=(P,T)=>{const a=T.r*Math.PI/180,ca=Math.cos(a),sa=Math.sin(a);return P.map(([x,y])=>[T.x+T.s*(x*ca-y*sa),T.y+T.s*(x*sa+y*ca)])};
+IDEA.d=(P,z)=>P.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ')+(z?' Z':'');
+const ideaScene=f=>{const C=IDEA.C,NS='http://www.w3.org/2000/svg';if(!IDEA.EL[0].pts)IDEA.prep();
   const S=(tag,at,p)=>{const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);p.appendChild(e);return e};
-  const svg=S('svg',{width:1920,height:1080,viewBox:'0 0 1920 1080',class:'tap'},f);Object.assign(svg.style,{position:'absolute',left:0,top:0,overflow:'visible'});
-  const cam=S('g',{},svg),g={};
-  g.shadow=S('path',{fill:C.ink},cam);
-  g.cards=S('g',{},cam);
-  // the button: lime print, side, white top, the dark hole, the coral cap
-  g.baseLime=S('path',{fill:C.lime},cam);g.baseSide=S('path',{fill:C.side},cam);
-  g.baseTop=S('ellipse',{fill:C.white},cam);g.hole=S('ellipse',{fill:C.ink},cam);
-  g.capLime=S('path',{fill:C.lime},cam);g.capSide=S('path',{fill:C.coralD},cam);g.capTop=S('ellipse',{fill:C.coral},cam);
-  g.hi=S('path',{fill:'none',stroke:C.white,'stroke-width':11,'stroke-linecap':'round'},cam);g.hiDot=S('circle',{r:6.5,fill:C.white},cam);
-  // the arm: sleeve (lime print, blue, the dark inside of the cuff), the arm in one bend, the hand
-  g.sleeveLime=S('path',{fill:'none',stroke:C.lime,'stroke-width':150,'stroke-linecap':'butt'},cam);
-  g.sleeve=S('path',{fill:'none',stroke:C.blue,'stroke-width':150,'stroke-linecap':'butt'},cam);
-  g.cuff=S('ellipse',{fill:C.ink},cam);
-  g.armLime=S('path',{fill:'none',stroke:C.lime,'stroke-width':66,'stroke-linecap':'round'},cam);
-  g.arm=S('path',{fill:'none',stroke:C.grey,'stroke-width':66,'stroke-linecap':'round'},cam);
-  g.patch=S('path',{fill:C.greyL},cam);g.splash=S('path',{fill:C.lime},cam);
-  const hand=()=>`<path d="M -34 0 C -40 30 -58 66 -60 100 L -60 112 C -40 128 50 128 66 112 C 70 76 50 30 34 0 Z"/>`+   // back of the hand
-    `<path d="M -16 108 C -18 152 70 158 66 108 Z"/>`+                                                                   // the curled fingers
-    `<rect x="-60" y="86" width="44" height="176" rx="22"/>`+                                                            // the index finger
-    `<path d="M -36 40 C -70 58 -88 118 -78 150 C -70 170 -50 166 -46 150 C -42 124 -38 96 -24 76 Z"/>`;                   // the thumb
-  g.handLime=S('g',{fill:C.lime},cam);g.handLime.innerHTML=hand();
-  g.hand=S('g',{fill:C.grey},cam);g.hand.innerHTML=hand()+
-    `<path d="M -36 40 C -70 58 -88 118 -78 150 C -70 170 -50 166 -46 150 C -42 124 -38 96 -24 76 Z" fill="${C.greyL}"/>`+   // the thumb, lighter
-    `<rect x="-52" y="214" width="28" height="36" rx="12" fill="${C.greyL}"/>`+                                         // the nail
-    `<g fill="none" stroke="${C.ink}" stroke-width="3.5" stroke-linecap="round"><path d="M 14 118 C 15 128 16 136 16 142"/><path d="M 42 116 C 43 126 43 132 43 138"/>`+
-    `<path d="M -46 150 C -42 124 -38 96 -24 76"/><path d="M -60 132 C -58 146 -54 156 -48 160"/></g>`+
-    `<path d="M 4 22 C 24 18 40 30 42 48 C 28 44 12 38 4 22 Z" fill="${C.greyL}"/>`;
-  g.doodles=S('g',{fill:'none',stroke:C.ink,'stroke-width':4,'stroke-linecap':'round'},cam);
-  g.limeFx=S('g',{fill:C.lime},cam);
-  g.loop=S('path',{fill:'none',stroke:C.lime,'stroke-width':14,'stroke-linecap':'round'},cam);g.loopInk=S('path',{fill:'none',stroke:C.ink,'stroke-width':3.5,'stroke-linecap':'round'},cam);
-  g.dash=[0,1,2,3,4,5].map(()=>S('line',{stroke:C.ink,'stroke-width':5,'stroke-linecap':'round'},g.doodles));
-  g.star=TAP.STARS.map(()=>{const e=S('g',{},g.doodles);for(let k=0;k<3;k++)S('line',{x1:0,y1:-15,x2:0,y2:15,transform:`rotate(${k*60})`,'stroke-width':4.5},e);return e});
-  g.drop=[0,1,2,3].map(()=>S('circle',{fill:C.lime},g.limeFx));
-  TAP.g=g;TAP.svg=svg;TAP.cam=cam;TAP.S=S;
-  // three screens: coral, blue, lime, each a little product
-  const card=(fill,ink,acc,k)=>{const c=S('g',{},g.cards),W=232,H=292;
-    S('rect',{x:-W/2+TAP.OFF[0],y:-H/2+TAP.OFF[1],width:W,height:H,rx:26,fill:fill===C.lime?C.ink:C.lime},c);
-    S('rect',{x:-W/2,y:-H/2,width:W,height:H,rx:26,fill},c);
-    const u=S('g',{},c);
-    if(k===0){S('circle',{cx:-70,cy:-104,r:22,fill:ink},u);S('rect',{x:-36,y:-114,width:118,height:12,rx:6,fill:ink},u);S('rect',{x:-36,y:-94,width:70,height:10,rx:5,fill:ink,opacity:.7},u);
-      S('rect',{x:-92,y:-58,width:184,height:110,rx:16,fill:ink},u);S('path',{d:'M -92 30 L -40 -14 L -6 14 L 30 -22 L 92 34 L 92 36 C 92 45 85 52 76 52 L -76 52 C -85 52 -92 45 -92 36 Z',fill:C.coralD},u);
-      S('circle',{cx:52,cy:-26,r:14,fill:acc},u);S('rect',{x:-92,y:72,width:150,height:12,rx:6,fill:ink},u);S('rect',{x:-92,y:94,width:96,height:12,rx:6,fill:ink,opacity:.7},u);S('rect',{x:-92,y:116,width:110,height:0,rx:0,fill:ink},u)}
-    if(k===1){S('rect',{x:-92,y:-112,width:90,height:14,rx:7,fill:ink},u);[[0,34],[1,52],[2,46],[3,74],[4,96]].forEach(([j,hh])=>S('rect',{x:-92+j*40,y:-30-hh+40,width:24,height:hh,rx:6,fill:ink,opacity:.35},u));
-      S('polyline',{points:'-92,60 -56,30 -22,44 12,4 46,16 92,-28',fill:'none',stroke:ink,'stroke-width':8,'stroke-linecap':'round','stroke-linejoin':'round'},u);S('circle',{cx:92,cy:-28,r:12,fill:acc},u);
-      S('rect',{x:-92,y:90,width:184,height:40,rx:20,fill:acc},u);S('rect',{x:-50,y:104,width:100,height:12,rx:6,fill:C.ink},u)}
-    if(k===2){S('rect',{x:-92,y:-112,width:60,height:60,rx:16,fill:ink},u);S('rect',{x:-18,y:-108,width:110,height:14,rx:7,fill:ink},u);S('rect',{x:-18,y:-84,width:72,height:10,rx:5,fill:ink,opacity:.6},u);
-      for(let r=0;r<3;r++){S('circle',{cx:-78,cy:-14+r*48,r:14,fill:r===0?acc:'none',stroke:ink,'stroke-width':4},u);S('rect',{x:-50,y:-20+r*48,width:142-r*30,height:12,rx:6,fill:ink},u)}
-      S('rect',{x:-92,y:112,width:184,height:22,rx:11,fill:ink,opacity:.15},u);S('rect',{x:-92,y:112,width:120,height:22,rx:11,fill:ink},u)}
-    return c};
-  TAP.cards=[card(C.coral,C.white,C.lime,0),card(C.blue,C.white,C.lime,1),card(C.lime,C.ink,C.coral,2)];
-  TAP.END={fx:1018,fy:668,ang:18,cuff:[1500,120],h:TAP.H[0],cards:[1,1,1],burst:0,stars:[1,1,1],t:0,d:1};
-  TAP.set(TAP.END)};
-// where each screen ends up: on an arc up and to the left of the button
-TAP.SLOT=[[598,560,-20],[742,372,-9],[930,262,3]];
-TAP.STARS=[[408,330,1.1],[1120,176,.85],[1255,640,.75]];
-// The film: t seconds into a shot d long. The arm swings in, the finger presses the button, the screens pop out of it
-// and settle, floating; ink dashes, lime drops and a lime loop at the press, the stars pop and twinkle.
-TAP.at=(t,d)=>{const cl=p=>Math.min(1,Math.max(0,p)),eo=p=>1-Math.pow(1-cl(p),3),ei=p=>cl(p)*cl(p)*cl(p),
-    pop=p=>{p=cl(p);const c=2.2;return 1+(c+1)*Math.pow(p-1,3)+c*Math.pow(p-1,2)},mix=(a,b,q)=>a+(b-a)*q,E=TAP.END,[bx,by]=TAP.BTN;
-  const T1=.3,T2=.4,T3=.48,T4=.72,hover={fx:1010,fy:598,ang:21},press={fx:1003,fy:by-TAP.H[1]-2,ang:16};
-  let fx,fy,ang;
-  if(t<T1){const q=eo(t/T1),p0=[1780,-300],p1=[1180,250],p2=[hover.fx,hover.fy];
-    fx=(1-q)*(1-q)*p0[0]+2*q*(1-q)*p1[0]+q*q*p2[0];fy=(1-q)*(1-q)*p0[1]+2*q*(1-q)*p1[1]+q*q*p2[1];ang=mix(48,hover.ang,q)}
-  else if(t<T2){const q=ei((t-T1)/(T2-T1));fx=mix(hover.fx,press.fx,q);fy=mix(hover.fy,press.fy,q);ang=mix(hover.ang,press.ang,q)}
-  else if(t<T3){fx=press.fx;fy=press.fy;ang=press.ang}
-  else{const q=eo((t-T3)/(T4-T3));fx=mix(press.fx,E.fx,q);fy=mix(press.fy,E.fy,q);ang=mix(press.ang,E.ang,q)}
-  const bob=t>1?Math.sin((t-1)*5.2):0;fy+=bob*5*cl((t-1)/.3);
-  const sq=t<1.2?1:1,cuff=[mix(2150,E.cuff[0],eo(t/(T1+.08))),mix(-330,E.cuff[1],eo(t/(T1+.08)))];
-  let h=Math.min(TAP.H[0],Math.max(TAP.H[1],by-fy-2));if(t>=T3)h=Math.min(h,TAP.H[1]+(TAP.H[0]-TAP.H[1])*pop((t-T3)/.24));
-  return{fx,fy,ang,cuff,h,cards:[0,1,2].map(i=>t<T3+i*.06?0:pop((t-T3-i*.06)/.34)),burst:t<T2?0:cl((t-T2)/.34),stars:[0,1,2].map(i=>t<.5+i*.07?0:pop((t-.5-i*.07)/.2)),t,d}};
-TAP.ell=(cx,cy,rx,ry)=>`M ${cx-rx} ${cy} A ${rx} ${ry} 0 1 0 ${cx+rx} ${cy} A ${rx} ${ry} 0 1 0 ${cx-rx} ${cy} Z`;
-// the outline of a short cylinder: its top ellipse at cy-h, its bottom at cy
-TAP.cyl=(cx,cy,rx,ry,h)=>`M ${cx-rx} ${cy-h} L ${cx-rx} ${cy} A ${rx} ${ry} 0 0 0 ${cx+rx} ${cy} L ${cx+rx} ${cy-h} A ${rx} ${ry} 0 0 0 ${cx-rx} ${cy-h} Z`;
-// the hull of an ellipse and a copy of it moved by dx,dy: a hard shadow
-TAP.hull=(cx,cy,rx,ry,dx,dy)=>{const ux=dx/rx,uy=dy/ry,l=Math.hypot(ux,uy)||1,px=-uy/l,py=ux/l;
-  const a=[cx+px*rx,cy+py*ry],b=[cx-px*rx,cy-py*ry];
-  return `M ${a[0]} ${a[1]} L ${a[0]+dx} ${a[1]+dy} A ${rx} ${ry} 0 0 0 ${b[0]+dx} ${b[1]+dy} L ${b[0]} ${b[1]} A ${rx} ${ry} 0 0 0 ${a[0]} ${a[1]} Z`};
-TAP.set=s=>{const g=TAP.g,[bx,by]=TAP.BTN,[rx,ry]=TAP.R,[ox,oy]=TAP.OFF,h=s.h,cr=TAP.CAP,sq=1+.06*(1-(h-TAP.H[1])/(TAP.H[0]-TAP.H[1]));
-  const H=TAP.SIDE+h;g.shadow.setAttribute('d',TAP.hull(bx,by+TAP.SIDE,rx,ry,-H*2.9,H*1.15));
-  g.baseLime.setAttribute('d',TAP.cyl(bx+ox,by+TAP.SIDE+oy,rx,ry,TAP.SIDE));g.baseSide.setAttribute('d',TAP.cyl(bx,by+TAP.SIDE,rx,ry,TAP.SIDE));
-  for(const [e,c] of [[g.baseTop,[bx,by,rx,ry]],[g.hole,[bx,by+3,TAP.HOLE[0],TAP.HOLE[1]]]]){e.setAttribute('cx',c[0]);e.setAttribute('cy',c[1]);e.setAttribute('rx',c[2]);e.setAttribute('ry',c[3])}
-  const crx=cr[0]*sq,cry=cr[1]*sq;g.capLime.setAttribute('d',TAP.cyl(bx+ox,by+oy,crx,cry,h));g.capSide.setAttribute('d',TAP.cyl(bx,by,crx,cry,h));
-  g.capTop.setAttribute('cx',bx);g.capTop.setAttribute('cy',by-h);g.capTop.setAttribute('rx',crx);g.capTop.setAttribute('ry',cry);
-  const hx=bx-crx*.62,hy=by-h-cry*.28;g.hi.setAttribute('d',`M ${bx-crx*.78} ${by-h+cry*.05} A ${crx*.8} ${cry*.72} 0 0 1 ${bx-crx*.3} ${by-h-cry*.66}`);
-  g.hiDot.setAttribute('cx',bx-crx*.12);g.hiDot.setAttribute('cy',by-h-cry*.74);
-  // the arm: wrist from the fingertip back along the hand, the sleeve's cuff, one smooth bend between them
-  const a=s.ang*Math.PI/180,dx=-Math.sin(a),dy=Math.cos(a),wx=s.fx-TAP.HL*dx,wy=s.fy-TAP.HL*dy,[cx,cy]=s.cuff;
-  const sd=[1950-cx,-170-cy],sl=Math.hypot(...sd),su=[sd[0]/sl,sd[1]/sl];
-  const sleeve=`M ${cx+su[0]*900} ${cy+su[1]*900} L ${cx} ${cy}`;g.sleeve.setAttribute('d',sleeve);g.sleeveLime.setAttribute('d',sleeve);g.sleeveLime.setAttribute('transform',`translate(${ox} ${oy})`);
-  g.cuff.setAttribute('cx',cx);g.cuff.setAttribute('cy',cy);g.cuff.setAttribute('rx',75);g.cuff.setAttribute('ry',30);g.cuff.setAttribute('transform',`rotate(${Math.atan2(su[1],su[0])*180/Math.PI+90} ${cx} ${cy})`);
-  const arm=`M ${cx} ${cy} C ${cx-su[0]*170} ${cy-su[1]*170} ${wx-dx*190} ${wy-dy*190} ${wx} ${wy}`;g.arm.setAttribute('d',arm);g.armLime.setAttribute('d',arm);g.armLime.setAttribute('transform',`translate(${ox} ${oy})`);
-  const P=(q)=>g.arm.getPointAtLength(g.arm.getTotalLength()*q);
-  const p1=P(.3),p2=P(.62);g.patch.setAttribute('d',`M ${p1.x-20} ${p1.y-6} c 10 -14 32 -16 40 -4 c 6 10 -8 20 -20 18 c -12 -1 -24 -4 -20 -14 Z`);
-  g.splash.setAttribute('d',`M ${p2.x-12} ${p2.y+4} c -4 -16 14 -28 26 -20 c 10 6 4 14 12 18 c 8 4 2 16 -10 14 c -16 -2 -24 -2 -28 -12 Z`);
-  const ht=`translate(${wx} ${wy}) rotate(${s.ang}) scale(${TAP.HS})`;g.hand.setAttribute('transform',ht);g.handLime.setAttribute('transform',`translate(${ox} ${oy}) `+ht);
-  // the screens
-  TAP.cards.forEach((c,i)=>{const k=s.cards[i],[x,y,r]=TAP.SLOT[i],x0=bx,y0=by-h-10,q=Math.max(0,k);
-    const fl=s.t>1?6*Math.sin((s.t-1)*4.2+i*1.9)*Math.min(1,(s.t-1)/.3):0;
-    c.setAttribute('transform',`translate(${x0+(x-x0)*k} ${y0+(y-y0)*k-Math.sin(Math.PI*Math.min(1,q))*60+fl}) rotate(${r*k+fl*.25}) scale(${.15+.85*Math.min(1.2,q)})`);c.setAttribute('opacity',k<=0?0:1)});
-  const b=s.burst,e=1-Math.pow(1-b,3),PC=[bx+(s.fx-bx)*.9,by-h-6];
-  g.dash.forEach((l,i)=>{const a=[-178,-152,-126,-40,-15,8][i]*Math.PI/180,r0=70+80*e,r1=r0+40*(1-e);l.setAttribute('x1',PC[0]+Math.cos(a)*r0);l.setAttribute('y1',PC[1]+Math.sin(a)*r0*.8);
-    l.setAttribute('x2',PC[0]+Math.cos(a)*r1);l.setAttribute('y2',PC[1]+Math.sin(a)*r1*.8);l.setAttribute('opacity',b<=0?0:1-b*b)});
-  g.drop.forEach((c,i)=>{const a=[-150,-112,-64,-28][i]*Math.PI/180,r=40+150*e;c.setAttribute('cx',PC[0]+Math.cos(a)*r);c.setAttribute('cy',PC[1]+Math.sin(a)*r*.7+60*b*b);c.setAttribute('r',Math.max(0,11*(1-b*.7)));c.setAttribute('opacity',b<=0?0:1-b)});
-  // a ring round the cap as it goes down: drawn round its front from the back left, then wiped off along itself
-  const cy0=by-h+4,arc=(rx,ry)=>{let d='';for(let k=0;k<=40;k++){const th=(200-220*k/40)*Math.PI/180;d+=(k?' L ':'M ')+(bx+rx*Math.cos(th)).toFixed(1)+' '+(cy0-ry*Math.sin(th)).toFixed(1)}return d};
-  g.loop.setAttribute('d',arc(206,70));g.loopInk.setAttribute('d',arc(226,80));g.loopInk.removeAttribute('transform');
-  const on=Math.min(1,b/.35),off=Math.max(0,(b-.4)/.6);
-  for(const e2 of [g.loop,g.loopInk]){const L=e2.getTotalLength();e2.style.strokeDasharray=`${L} ${L}`;e2.style.strokeDashoffset=L*(1-on)-L*off;e2.setAttribute('opacity',b<=0||off>=1?0:1)}
-  g.star.forEach((e3,i)=>{const [x,y,sc]=TAP.STARS[i],k=s.stars[i],tw=s.t>1?1+.12*Math.sin((s.t-1)*9+i*2):1;e3.setAttribute('transform',`translate(${x} ${y}) rotate(${(1-Math.min(1,k))*-60}) scale(${sc*k*tw})`);e3.setAttribute('opacity',k<=0?0:1)});
-  const sh=s.burst>0&&s.burst<1?7*Math.exp(-s.burst*7)*Math.sin(s.burst*40):0,z=1+.035*(s.d?s.t/s.d:0);
-  TAP.cam.setAttribute('transform',`translate(${sh} ${sh*.6}) translate(960 560) scale(${z}) translate(-960 -560)`)};
+  const svg=S('svg',{width:1920,height:1080,viewBox:'0 0 1920 1080',class:'idea'},f);Object.assign(svg.style,{position:'absolute',left:0,top:0,overflow:'visible'});
+  const defs=S('defs',{},svg),pat=S('pattern',{id:'idea-dots',width:44,height:44,patternUnits:'userSpaceOnUse'},defs);S('circle',{cx:22,cy:22,r:2.4,fill:C.dot},pat);
+  const shf=(id,dy,sd,op)=>{const fl=S('filter',{id,x:'-40%',y:'-40%',width:'180%',height:'180%'},defs);S('feDropShadow',{dx:0,dy,stdDeviation:sd,'flood-color':'#2a1f5c','flood-opacity':op},fl)};
+  shf('idea-sh1',30,28,.22);shf('idea-sh2',16,16,.16);
+  const cp=S('clipPath',{id:'idea-img'},defs),g={clip:S('path',{},cp)};
+  S('rect',{width:1920,height:1080,fill:C.bg},svg);S('rect',{width:1920,height:1080,fill:'url(#idea-dots)'},svg);
+  g.cam=S('g',{},svg);
+  // the sticky note: paper, its glue band, the folded-up corner
+  g.note=S('g',{},g.cam);
+  S('path',{d:'M -232 -240 L 232 -240 Q 240 -240 240 -232 L 240 176 L 176 240 L -232 240 Q -240 240 -240 232 L -240 -232 Q -240 -240 -232 -240 Z',fill:C.sun,filter:'url(#idea-sh2)'},g.note);
+  S('path',{d:'M -240 -176 L -240 -232 Q -240 -240 -232 -240 L 232 -240 Q 240 -240 240 -232 L 240 -176 Z',fill:C.glue},g.note);
+  S('path',{d:'M 240 176 L 176 240 L 176 176 Z',fill:C.flap,filter:'url(#idea-sh2)'},g.note);
+  g.sketch=S('g',{fill:'none',stroke:C.coal,'stroke-width':IDEA.INK,'stroke-linecap':'round','stroke-linejoin':'round'},g.cam);
+  g.mark=S('g',{fill:'none',stroke:C.pink,'stroke-width':6,'stroke-linecap':'round','stroke-linejoin':'round'},g.cam);
+  g.loop=S('path',{},g.mark);g.arw=S('path',{},g.mark);
+  g.arrow=S('path',{fill:'none',stroke:C.coal,'stroke-width':5,'stroke-linecap':'round','stroke-linejoin':'round'},g.cam);
+  g.fills=S('g',{},g.cam);g.lines=S('g',{fill:'none','stroke-linecap':'round','stroke-linejoin':'round'},g.cam);g.ink=S('g',{fill:'none',stroke:C.coal,'stroke-linecap':'round','stroke-linejoin':'round'},g.cam);
+  IDEA.EL.forEach(e=>{if(e.ink)e.sk=S('path',{},g.sketch);
+    if(e.fill)e.fe=S('path',Object.assign({fill:C[e.fill]},e.clip?{'clip-path':'url(#idea-img)'}:{},e.sh1?{filter:'url(#idea-sh1)'}:{}),g.fills);
+    if(e.line)e.le=S('path',{},g.lines);if(e.ink&&!e.line)e.ie=S('path',{},g.ink)});
+  // what pops out once it is real: a note that it's done, and a heart
+  g.toast=S('g',{},g.cam);S('rect',{x:-150,y:-50,width:300,height:100,rx:26,fill:C.white,filter:'url(#idea-sh2)'},g.toast);
+  S('circle',{cx:-96,cy:0,r:28,fill:C.pink},g.toast);S('path',{d:'M -109 1 L -99 11 L -82 -9',fill:'none',stroke:C.white,'stroke-width':7,'stroke-linecap':'round','stroke-linejoin':'round'},g.toast);
+  S('rect',{x:-52,y:-18,width:150,height:14,rx:7,fill:C.coal},g.toast);S('rect',{x:-52,y:8,width:96,height:12,rx:6,fill:C.coal,opacity:.4},g.toast);
+  g.badge=S('g',{},g.cam);S('circle',{r:54,fill:C.lime,filter:'url(#idea-sh2)'},g.badge);
+  S('path',{d:'M 0 20 C -30 0 -30 -24 -14 -26 C -6 -27 -2 -22 0 -16 C 2 -22 6 -27 14 -26 C 30 -24 30 0 0 20 Z',fill:C.coal},g.badge);
+  IDEA.g=g;IDEA.set(IDEA.END)};
+IDEA.END={note:1,draw:1,m:1,ft:9,arrow:1,pop:[1,1],t:0,d:1};
+IDEA.set=s=>{const g=IDEA.g,C=IDEA.C,N=IDEA.NOTE,P=IDEA.PH,K=IDEA.SK,cl=p=>Math.min(1,Math.max(0,p)),pop=p=>{p=cl(p);const c=2.2;return 1+(c+1)*Math.pow(p-1,3)+c*Math.pow(p-1,2)};
+  const lerp=(a,b,q)=>a+(b-a)*q,mix=(a,b,q)=>{const h=c=>[1,3,5].map(i=>parseInt(c.slice(i,i+2),16)),A=h(a),B=h(b);return`rgb(${A.map((v,i)=>Math.round(v+(B[i]-v)*q)).join(',')})`};
+  // the note springs in; the sketch sits on it
+  const nk=s.note,nT={x:N.x-220*(1-nk),y:N.y+260*(1-nk),r:N.r-14*(1-nk),s:.7+.3*nk};
+  g.note.setAttribute('transform',`translate(${nT.x} ${nT.y}) rotate(${nT.r}) scale(${nT.s})`);g.note.setAttribute('opacity',nk<=0?0:1);
+  const na=nT.r*Math.PI/180,sT={x:nT.x+nT.s*(K.x*Math.cos(na)-K.y*Math.sin(na)),y:nT.y+nT.s*(K.x*Math.sin(na)+K.y*Math.cos(na)),r:nT.r,s:nT.s*K.s};
+  const E=IDEA.EL,ord=E.filter(e=>e.ink),n=ord.length;
+  ord.forEach((e,i)=>{const P2=IDEA.place(e,sT,1),q=cl((s.draw-i/n*.8)/.2);e.sk.setAttribute('d',IDEA.d(P2));const L=e.sk.getTotalLength();
+    e.sk.style.strokeDasharray=`${L} ${L}`;e.sk.style.strokeDashoffset=L*(1-q);e.sk.setAttribute('opacity',q<=0?0:1)});
+  // the pink marks on the note: a loop round the button and an arrow at it
+  const nm=(x,y)=>{const a=nT.r*Math.PI/180;return[nT.x+nT.s*(x*Math.cos(a)-y*Math.sin(a)),nT.y+nT.s*(x*Math.sin(a)+y*Math.cos(a))]};
+  const loop=[];for(let i=0;i<=60;i++){const a=(200-410*i/60)*Math.PI/180,w=1+.08*i/60;loop.push(nm(-50+96*w*Math.cos(a),146-26*w*Math.sin(a)-3*i/60))}
+  const arw=[nm(172,30),nm(178,90),nm(120,140),nm(62,148)].map((p,i,a)=>p),ad=`M ${arw[0][0]} ${arw[0][1]} C ${arw[1][0]} ${arw[1][1]} ${arw[2][0]} ${arw[2][1]} ${arw[3][0]} ${arw[3][1]}`;
+  const h1=nm(80,128),h2=nm(84,166);g.loop.setAttribute('d',IDEA.d(loop));g.arw.setAttribute('d',ad+` M ${h1[0]} ${h1[1]} L ${arw[3][0]} ${arw[3][1]} L ${h2[0]} ${h2[1]}`);
+  for(const [e,t0] of [[g.loop,.82],[g.arw,.9]]){const L=e.getTotalLength(),q=cl((s.draw-t0)/.12);e.style.strokeDasharray=`${L} ${L}`;e.style.strokeDashoffset=L*(1-q);e.setAttribute('opacity',q<=0?0:1)}
+  // the copy that lifts off the note and becomes the product, along an arc, straightening as it goes
+  const m=s.m,bob=s.t>1.15?7*Math.sin((s.t-1.15)*4.4)*cl((s.t-1.15)/.3):0;
+  const fT={x:lerp(sT.x,P.x,m),y:lerp(sT.y,P.y,m)-150*Math.sin(Math.PI*m)+bob,r:lerp(sT.r,P.r,m),s:lerp(sT.s,1,m)},wk=Math.pow(1-m,1.6);
+  E.forEach(e=>{const ft=.84+e.ti*.02,fq=cl((s.ft-ft)/.07),fp=pop((s.ft-ft)/.2);
+    if(e.fe){const Q=IDEA.clean(e.sh,fT);e.fe.setAttribute('d',IDEA.d(Q,1));const c=IDEA.clean([[e.cx,e.cy]],fT)[0];
+      e.fe.setAttribute('transform',`translate(${c[0]} ${c[1]}) scale(${.9+.1*fp}) translate(${-c[0]} ${-c[1]})`);e.fe.setAttribute('opacity',fq);
+      if(e.k==='img')g.clip.setAttribute('d',IDEA.d(Q,1))}
+    if(e.ink&&m>0){const Q=IDEA.place(e,fT,wk),fade=1-cl((s.ft-ft-.04)/.1);
+      if(e.ie){e.ie.setAttribute('d',IDEA.d(Q));e.ie.setAttribute('stroke-width',IDEA.INK+1.4*m);e.ie.setAttribute('opacity',fade)}
+      if(e.le){const [col,w,op]=e.line,k=cl((s.ft-ft)/.12);e.le.setAttribute('d',IDEA.d(Q));e.le.setAttribute('stroke',mix(C.coal,C[col],k));
+        e.le.setAttribute('stroke-width',lerp(IDEA.INK,w,Math.pow(m,2)));e.le.setAttribute('opacity',lerp(1,op,k))}}
+    else if(e.le){const [col,w,op]=e.line;e.le.setAttribute('d',IDEA.d(IDEA.clean(e.sh,fT)));e.le.setAttribute('stroke',C[col]);e.le.setAttribute('stroke-width',w);e.le.setAttribute('opacity',e.ink?0:op*fq)}
+    else if(e.ie)e.ie.setAttribute('opacity',0)});
+  // the arrow from the idea to the product, drawn as the copy flies
+  const A0=[792,360],A1=[996,250];const arr=[];for(let i=0;i<=40;i++){const u=i/40,x=lerp(A0[0],A1[0],u),y=lerp(A0[1],A1[1],u)-70*Math.sin(Math.PI*u)+2.5*Math.sin(u*19);arr.push([x,y])}
+  const ta=Math.atan2(arr[40][1]-arr[36][1],arr[40][0]-arr[36][0]),hd=a=>[A1[0]-30*Math.cos(ta+a),A1[1]-30*Math.sin(ta+a)];
+  const ah=[hd(.55),A1,hd(-.55)];g.arrow.setAttribute('d',IDEA.d(arr)+' M '+ah.map(p=>p.map(v=>v.toFixed(1)).join(' ')).join(' L '));
+  {const L=g.arrow.getTotalLength(),q=s.arrow;g.arrow.style.strokeDasharray=`${L} ${L}`;g.arrow.style.strokeDashoffset=L*(1-q);g.arrow.setAttribute('opacity',q<=0?0:1)}
+  // the pop-outs, in the phone's own coordinates
+  [[g.toast,[-318,40],-5,0],[g.badge,[214,-334],8,1]].forEach(([e,[x,y],r,i])=>{const k=s.pop[i],c=IDEA.clean([[x,y]],fT)[0],fl=s.t>1.2?5*Math.sin((s.t-1.2)*5+i*2):0;
+    e.setAttribute('transform',`translate(${c[0]} ${c[1]+fl}) rotate(${r+P.r+(1-Math.min(1,k))*(i?40:-20)}) scale(${Math.max(0,k)})`);e.setAttribute('opacity',k<=0?0:1)});
+  const z=1+.03*(s.d?s.t/s.d:0);g.cam.setAttribute('transform',`translate(960 540) scale(${z}) translate(-960 -540)`)};
+// the film: t seconds into a shot d long
+IDEA.at=(t,d)=>{const cl=p=>Math.min(1,Math.max(0,p)),io=p=>{p=cl(p);return p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2},pop=p=>{p=cl(p);const c=2.2;return 1+(c+1)*Math.pow(p-1,3)+c*Math.pow(p-1,2)};
+  return{note:pop((t+.05)/.22),draw:cl((t-.05)/.38),m:io((t-.46)/.4),ft:t,arrow:cl((t-.5)/.22),pop:[t<1?0:pop((t-1)/.24),t<1.08?0:pop((t-1.08)/.24)],t,d}};
 // Two pieces, one high on the left and one low on the right; in the film one comes from the left, the other from
 // the right and below.
 const duo=(a,b,c,o={})=>{bg(c);const w=o.w||700,h=o.h||w,g=o.g||80,dy=o.dy??100,x0=(1920-2*w-g)/2;
@@ -317,7 +317,7 @@ const SHOTS=[
 ['Design', 'Product duo: RxLive and Care Connect', ()=>duo('scr-rxlive-1','scr-care-connect-1','#101016',{w:880,h:560,g:60,dy:120}),38],
 ['Design', 'Product screens: wall across projects', ()=>mosaic([['scr-meetingful-2','scr-rxlive-3','scr-care-connect-4','scr-surgo-health-2'],['scr-rxlive-6','scr-surgo-health-8','scr-meetingful-7','scr-care-connect-8'],['scr-care-connect-2','scr-meetingful-9','scr-surgo-health-5','scr-rxlive-9'],['scr-surgo-health-1','scr-care-connect-6','scr-rxlive-2','scr-meetingful-4']],'#101016',{rot:-8}),39],
 ['Design', 'Product screen: Surgo', ()=>screen1('scr-surgo-health-3'),40],
-['Design', 'Design: one tap, the product pops out (illustration)', ()=>{bg(TAP.C.floor);tapScene(f)},40],
+['Design', 'Design: an idea becomes the product (illustration)', ()=>{bg(IDEA.C.bg);ideaScene(f)},40],
 ['Design', 'Service artwork: product design', ()=>full(A+'z-page-pd.jpg'),41],
 ['Design', 'Service artwork: MVPs and apps', ()=>full(A+'z-page-mvp.jpg'),42],
 ['Design', 'Service artwork: AI automation', ()=>full(A+'z-page-automation.jpg'),44],
@@ -715,8 +715,8 @@ if(MOTION)(()=>{
   // second (each anchor pops in as it passes, its handles spring out), then its base in three strokes; the bulb lights
   // up lime (the lime card lifts as its colour goes on), the filament and the rays follow, the construction fades and
   // the pen leaves. All settled by 1.25 s of its 2.1 s.
-  // Cut 23c, shot 36: the arm swings in, presses the button, the screens pop out and float (TAP.at).
-  if(T.startsWith('Design: one tap'))add((t,d)=>TAP.set(TAP.at(t,d)));
+  // Cut 23c, shot 36: the note slaps down, the sketch draws, lifts off and becomes the app; it's done (IDEA.at).
+  if(T.startsWith('Design: an idea'))add((t,d)=>IDEA.set(IDEA.at(t,d)));
   if(T.startsWith('Brand: a brand being built')){
     const Q=s=>f.querySelector(s),QA=s=>[...f.querySelectorAll(s)];
     const sw=QA('.il-sw'),flip=Q('.il-flip'),path=Q('.il-path'),fill=Q('.il-fill'),fil=Q('.il-fil'),glow=Q('.il-glow'),pen=Q('.il-pen'),grid=Q('.il-grid');
