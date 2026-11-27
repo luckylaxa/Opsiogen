@@ -1,16 +1,20 @@
-"""Shot 14 (owner, 27 Nov: "Can you replace mockup 14 sec car mockups with some of our other work"): the Vaelo car
-collage becomes Afthab Tours, our client whose work was not in the film yet. Four pieces cut from its case study's
-gallery (public/work/afthab-tours), below each image's caption: the tilted wall of its posts, two National Day posters,
-two of the offsite carousel's cards and the tall National Day poster. Written to build/a at the layout's proportions.
+"""Shot 14 (owner, 27 Nov: "Can you replace mockup 14 sec car mockups with some of our other work", then "Don't use
+LinkedIn mockups and right mockup no white space on right side of the image. Put top designs only"): the Vaelo car
+collage becomes Afthab Tours, our client whose work was not in the film yet, with its top designs only: the tall
+"Your National Day escape" poster and the six travel posters of the National Day campaign (Azerbaijan, Thailand,
+Almaty, Georgia and two National Day posts), each cut a few pixels inside its own edge from the case study's
+gallery (public/work/afthab-tours/afthab-4-wide.jpg), so no gallery background shows; the film rounds the corners.
 Usage: python3 afthab.py"""
 import os
 from PIL import Image
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-W = os.path.join(HERE, '..', '..', '..', 'public', 'work', 'afthab-tours')
-for out, src, box in (('af-wall.jpg', 'afthab-11-wide.jpg', (0, 160, 2400, 1360)),          # 2 : 1
-                      ('af-national-day.jpg', 'afthab-4-wide.jpg', (895, 130, 1875, 742)),   # 1.6 : 1, two posters
-                      ('af-offsite.jpg', 'afthab-7-wide.jpg', (800, 138, 1785, 754)),        # 1.6 : 1, two cards
-                      ('af-poster.jpg', 'afthab-4-wide.jpg', (75, 370, 715, 1471))):         # 0.581, the tall poster
-    im = Image.open(os.path.join(W, src)).convert('RGB').crop(box)
-    im.save(os.path.join(HERE, 'a', out), quality=92); print('a/' + out, im.size, round(im.width / im.height, 3))
+SRC = os.path.join(HERE, '..', '..', '..', 'public', 'work', 'afthab-tours', 'afthab-4-wide.jpg')
+INSET = 9   # inside each design's rounded corner
+boxes = {'af-national-day': (120, 392, 594, 1056),                        # x, y, w, h, measured on the gallery image
+         'af-azerbaijan': (932, 160, 448, 560), 'af-thailand': (1415, 160, 450, 560), 'af-almaty': (1900, 160, 448, 560),
+         'af-georgia': (932, 809, 448, 560), 'af-nd-list': (1415, 809, 450, 560), 'af-nd-couple': (1900, 809, 447, 560)}
+im = Image.open(SRC).convert('RGB')
+for name, (x, y, w, h) in boxes.items():
+    c = im.crop((x + INSET, y + INSET, x + w - INSET, y + h - INSET))
+    c.save(os.path.join(HERE, 'a', name + '.jpg'), quality=93); print('a/' + name + '.jpg', c.size, round(c.width / c.height, 3))
