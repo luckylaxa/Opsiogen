@@ -79,6 +79,8 @@ Every push to the working branch goes live by itself, in about 5 minutes.
 The old Vercel copy (opsiogen.vercel.app) is paused: don't deploy there.
 
 ## Full checks (layout, image or speed changes)
+Run these once heavy work or a major change is done, not after every small change
+(owner, 27 Nov 2026). `npm run typecheck` before each push still applies.
 1. `npm run lint` and `npm run typecheck`.
 2. `npm run build`, `npm start`, then `npm run audit` in another terminal; after the
    deploy, `npm run audit -- https://opsiogen.com` (in a sandbox behind a proxy, run it
