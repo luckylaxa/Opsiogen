@@ -354,6 +354,12 @@ our character intraction". Cut 7 keeps cut six's 103 shots, stock and music and 
     third Engel & Völkers page and Carlton Noble shot, the second social frame and the third video frame.
   - **The result:** 70 shots, 124 beats, 53.1 s. Every shot keeps its own entrance from cut 21 (V, its place then).
     Every service still has a shot.
+  - **Out of home (shot 20), 27 Nov:** Lucky: "It looks like ai generated. Can you replace the better mockups". The
+    billboard, bus shelter and corridor ad were AI scenes. Now they are real photos (Unsplash, free) with our artwork
+    on their blank panels, in the photo's own light and grain: the Rohde & Schwarz board on a roadside billboard at
+    sunset, the Norsecom poster in a bus shelter's light box at night, the SandLogic ad on a hanging concourse screen
+    (`design/tiles/ooh/`: art/ooh.html → render.cjs → comp.py, which also writes the film's rs-09, nc-14 and sl-08
+    tiles). The case-study pages still show the old ones until Lucky says to swap them there too.
   - **Order:** the stills went to Figma page "04 · Cut 22 (for approval)". The words in motion are
     `out/words-preview.mp4` (`build/words_preview.py STILLS OUT`), for approval before the full render.
 - The logo keeps its own shape; only at the very end (cut 11, as Lucky asked) is it shown larger, then settles at
