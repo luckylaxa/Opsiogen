@@ -496,7 +496,9 @@ if(MOTION)(()=>{
         lines.forEach(l=>{el('div','',b,{whiteSpace:'nowrap'}).textContent=l});return b});
       big.style.zIndex=2;
       add(t=>{const q=ease(t/.1),k=io(clamp((t-.12)/.22));big.style.transform=`scale(${(1.25-.25*q)*(1-.42*k)})`;big.style.opacity=q});
-      cps.forEach((b,j)=>{const [w,h,x,y]=F[j],t0=.14+j*.035;add(t=>{const q=pop((t-t0)/.2);b.style.opacity=t<t0?0:1;b.style.transform=`translate(${x*q}px,${y*q}px) scale(${.2+.8*q}) rotate(${(1-q)*(j%2?14:-14)}deg)`})});
+      // One by one, so each registers, but fast (owner, 27 Nov: "Show one by one to register (but it should be fast)"):
+      // a card every 0.16 s, left and right in turn, the newest on top.
+      cps.forEach((b,j)=>{const [w,h,x,y]=F[j],t0=.2+j*.16;b.style.zIndex=3+j;add(t=>{const q=pop((t-t0)/.16);b.style.opacity=t<t0?0:1;b.style.transform=`translate(${x*q}px,${y*q}px) scale(${.2+.8*q}) rotate(${(1-q)*(j%2?14:-14)}deg)`})});
       add((t,d)=>{const q=clamp((t-(d-.14))/.14);if(q<=0)return;f.style.transform=`translateX(${760*q*q}px)`;f.style.filter=`blur(${14*q}px)`})}
     if(WD==='Growth.')late.push(()=>{const STEP=58,n=L.length,P=L.map((s,i)=>lt(i)),D=170,off=i=>STEP*(n-1)/2-i*STEP;
       // The letters rise like a chart going up and the character climbs them like stairs, cheering at the top; a white

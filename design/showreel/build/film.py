@@ -24,6 +24,7 @@ def beats(n):
     if n.startswith("Fast word"): return 1
     if n.startswith("One partner"): return 4   # the closing line, in the place (and time) of the line it replaced
     if n in ("Word: Adoption.", "Word: Growth."): return 3   # two clips' worth (Adoption), and the climb (Growth)
+    if n == "Word: Reach.": return 4   # its eight cards one by one, a card every 0.16 s (owner, 27 Nov)
     if n.startswith("Word:"): return 2
     if n.startswith("Logo"): return 9    # 4 beats flying through the O (frames.html LOGO_IN), then 5 (the film within a minute)
     if n.startswith("Wall of"): return 3   # the closing wall pulls back into the grid (cut 5's tilted wall)
