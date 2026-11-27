@@ -22,7 +22,7 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#0a090d;font-fam
 <script src="a/pieces.js"></script>
 <script src="a/screens.js"></script>
 <script src="a/logo.js"></script>
-<script src="a/draw-rouge.js"></script>
+<script src="a/draw-bag.js"></script>
 <script type="importmap">{"imports":{"three":"../../../node_modules/three/build/three.module.js","three/addons/":"../../../node_modules/three/examples/jsm/","three/examples/jsm/":"../../../node_modules/three/examples/jsm/"}}</script>
 <script>
 const COAL='#0a090d',PAPER='#f8f6f8',PINK='#ff4f9b',VIOLET='#a98bff',AQUA='#5cf2e6',BLUE='#3f7bff',ORANGE='#ff8a3c',SUN='#ffd75e',LIME='#d8ff3e';
@@ -125,14 +125,17 @@ const illo=()=>{bg('#0a090d');const NS='http://www.w3.org/2000/svg';
 // illustrations drawn as the film plays. Its outlines go down in ink, quickly, the largest first; its flat colours go on
 // in the same order; then the picture itself comes through with its print grain. The shapes are the picture's own
 // (drawvec.py, a/draw-<name>.js); the still is the finished picture.
-const drawIllo=name=>{const D=window.DRAWS[name],NS='http://www.w3.org/2000/svg';bg(D.bg);
+const drawIllo=(name,mark)=>{const D=window.DRAWS[name],NS='http://www.w3.org/2000/svg';bg(D.bg);
   const svg=document.createElementNS(NS,'svg');svg.setAttribute('viewBox',`0 0 ${D.w} ${D.h}`);svg.setAttribute('class','draw');
   Object.assign(svg.style,{position:'absolute',left:0,top:0,width:'1920px',height:'1080px'});f.appendChild(svg);
   const G=at=>{const g=document.createElementNS(NS,'g');for(const k in at)g.setAttribute(k,at[k]);svg.appendChild(g);return g};
   const fills=G({}),lines=G({fill:'none',stroke:'#16121a','stroke-width':1.6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
   D.shapes.forEach(([c,d,a])=>{const p=document.createElementNS(NS,'path');p.setAttribute('d',d);p.setAttribute('fill',c);p.setAttribute('fill-rule','evenodd');
     fills.appendChild(p);if(a>=700){const l=document.createElementNS(NS,'path');l.setAttribute('d',d);lines.appendChild(l)}});
-  img(D.img,f,{position:'absolute',left:0,top:0,width:'1920px',height:'1080px'},'draw-img')};
+  img(D.img,f,{position:'absolute',left:0,top:0,width:'1920px',height:'1080px'},'draw-img');
+  // a brand name on it, as a hand-lettered name on a bag (owner, 27 Nov: "1 with some brand name"; mark.cjs)
+  if(mark){const k=1920/D.w,m=img(mark.src,f,{position:'absolute',left:(mark.cx-mark.w/2)*k+'px',width:mark.w*k+'px'},'draw-mark');
+    LAYOUT.push(()=>{m.style.top=mark.cy*k-mark.w*k*m.naturalHeight/m.naturalWidth/2+'px'})}};
 // Shot 20 (owner, 27 Nov: "18 sec collage is not Center and no movements"): its three out-of-home pieces framed round
 // their ads (cut23.py) and centred as a group, each card in its own proportion, all one height. In the film they fly in
 // as the tiles did, then keep moving: a slow push into each ad while the cards drift apart.
@@ -219,7 +222,7 @@ const SHOTS=[
 ['Design', 'Product duo: RxLive and Care Connect', ()=>duo('scr-rxlive-1','scr-care-connect-1','#101016',{w:880,h:560,g:60,dy:120}),38],
 ['Design', 'Product screens: wall across projects', ()=>mosaic([['scr-meetingful-2','scr-rxlive-3','scr-care-connect-4','scr-surgo-health-2'],['scr-rxlive-6','scr-surgo-health-8','scr-meetingful-7','scr-care-connect-8'],['scr-care-connect-2','scr-meetingful-9','scr-surgo-health-5','scr-rxlive-9'],['scr-surgo-health-1','scr-care-connect-6','scr-rxlive-2','scr-meetingful-4']],'#101016',{rot:-8}),39],
 ['Design', 'Product screen: Surgo', ()=>screen1('scr-surgo-health-3'),40],
-['Design', 'Illustration: Rouge Club, drawn', ()=>drawIllo('rouge'),41],
+['Design', 'Illustration: Rouge Club, drawn', ()=>drawIllo('bag',{src:'../raw/drawings/bag-mark-rouge-club.png',cx:624,cy:550,w:280}),41],
 ['Design', 'Service artwork: product design', ()=>full(A+'z-page-pd.jpg'),41],
 ['Design', 'Service artwork: MVPs and apps', ()=>full(A+'z-page-mvp.jpg'),42],
 ['Design', 'Service artwork: AI automation', ()=>full(A+'z-page-automation.jpg'),44],
@@ -630,6 +633,7 @@ if(MOTION)(()=>{
     lines.forEach((l,i)=>{const L=l.getTotalLength(),u=i/Math.max(1,n-1),t0=.02+.36*Math.pow(u,.85),dur=.16-.08*u;l.style.strokeDasharray=`${L} ${L}`;
       add(t=>{l.style.strokeDashoffset=L*(1-ease((t-t0)/dur));l.style.opacity=t<t0?0:1})});
     fills.forEach((p,i)=>{const t0=.42+.5*Math.pow(i/Math.max(1,m-1),.9);p.style.opacity=0;add(t=>{p.style.opacity=t>=t0?1:0})});
+    const mk=f.querySelector('img.draw-mark');if(mk)add(t=>{const q=io(clamp((t-1.0)/.3));mk.style.opacity=t<1.0?0:1;mk.style.clipPath=`inset(0 ${(1-q)*100}% 0 0)`});
     add((t,d)=>{gl.setAttribute('opacity',1-clamp((t-1.0)/.16));pic.style.opacity=clamp((t-1.0)/.16);f.style.transformOrigin='960px 540px';f.style.transform=`scale(${1+.03*t/d})`})}
   if(T.startsWith('Brand: a brand being built')){
     const Q=s=>f.querySelector(s),QA=s=>[...f.querySelectorAll(s)];
