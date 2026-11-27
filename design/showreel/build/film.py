@@ -15,7 +15,7 @@ BPM, FPS = 140, 30; BEAT = 60 / BPM
 # Cut 22: three clips stay (Lucky, 26 Nov: "change only what I asked"); the other ten became big words in frames.html.
 STOCK = {"488563452": ("as-488563452.mov", 1.2), "405010525": ("as-405010525.mov", 3.0)}   # cut 23: the big laugh became a brand being built
 OVER = ("488563452",)  # the stock clip the character joins
-MULTI = ("Grid of", "collage", "tiles", "wall across", "row of", "Torvi: site", "Afthab Tours:", "guideline pages", "Three apps")
+MULTI = ("Grid of", "collage", "tiles", "wall across", "row of", "Torvi: site", "guideline pages", "Three apps")
 def beats(n):
     if n == "Opening line": return 3
     if n == "Brands already did": return 8   # the opening logo beat (frames.html ?share)
@@ -28,6 +28,7 @@ def beats(n):
     if n.startswith("Word:"): return 2
     if n.startswith("Logo"): return 9    # 4 beats flying through the O (frames.html LOGO_IN), then 5 (the film within a minute)
     if n.startswith("Wall of"): return 3   # the closing wall pulls back into the grid (cut 5's tilted wall)
+    if n == "Brand: Rohde & Schwarz keynote": return 2   # in the place and time of the Afthab posters (owner, 27 Nov)
     if n == "Website: Cabot Solutions": return 2   # it lands out of the word before: give it time
     if n.startswith("Brand: a brand being built"): return 4   # drawn fast (owner, 27 Nov): the bulb lights up by 1.25 s of its 1.7 s
     if n == "SandLogic: social grid": return 2   # its columns slide like the brand wall's (owner, 27 Nov): its time, the beat the drawing after it gave

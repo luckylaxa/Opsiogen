@@ -92,3 +92,9 @@ for c in range(4):
         d.rounded_rectangle((4, y0 * 4 + 4, 310 * 4 - 5, y1 * 4 - 5), 19 * 4, fill=255)
     col = Image.composite(col, Image.new('RGB', col.size, (11, 10, 18)), m.resize((310, 1080), Image.LANCZOS))
     save(col.resize((620, 2160), Image.LANCZOS).filter(ImageFilter.UnsharpMask(1.2, 45, 2)), f'slp-col-{c}.jpg')
+
+# Shot 14 (owner, 27 Nov: "Afthab works look like ai feel. Replace afthab"): Rohde & Schwarz's keynote stage, from the
+# case study's square image (public/work, 1600 px, the largest copy), cut to the film's shape round the screen and the
+# speaker, the first heads of the audience at the bottom.
+ks = Image.open(os.path.join(HERE, '..', '..', '..', 'public', 'work', 'rohde-schwarz', 'rs-17.jpg')).convert('RGB')
+save(ks.crop((0, 330, 1600, 1230)).resize((1920, 1080), Image.LANCZOS).filter(ImageFilter.UnsharpMask(1.0, 35, 2)), 's-rs-keynote.jpg')
