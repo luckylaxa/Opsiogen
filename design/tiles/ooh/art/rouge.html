@@ -1,0 +1,44 @@
+<!doctype html><html><head><meta charset="utf-8">
+<!-- Rouge Club, the film's own lipstick brand (its campaign is in the showreel's "Campaigns" shot): its line "Red, but
+louder." as an illustrated ad (the owner, 27 Nov, with flat fashion illustrations as the reference: "We can do something
+similar illustrations for brands or ads ... show in different places"). The illustration (../../../showreel/raw/rouge)
+on its own flat pink, in each place's proportions: a roadside billboard (bb), a bus shelter's light box (sh), a
+concourse screen (sc) and the film's own frame (ad). Rendered by render-rouge.cjs; comp.py puts them in the photos. -->
+<style>
+@font-face{font-family:DMSerif;src:url(fonts/dm-serif-display-latin-400-normal.woff2)}
+@font-face{font-family:Outfit;font-weight:100 900;src:url(../../../../src/fonts/Outfit-Variable.woff2)}
+html,body{margin:0;background:#888}
+.rc{position:relative;overflow:hidden;background:#facbc8;color:#5c0a18}
+.lab{position:absolute;font-family:Outfit;font-weight:600;line-height:1;letter-spacing:.32em;white-space:nowrap}
+.h{position:absolute;font-family:DMSerif;font-weight:400;line-height:.98;letter-spacing:-.012em;white-space:nowrap}
+.h em{font-style:normal;color:#e3262f}
+.fig{position:absolute;overflow:hidden}
+.fig img{position:absolute;left:0;top:0;display:block}
+.cta{position:absolute;font-family:Outfit;font-weight:600;line-height:1;background:#5c0a18;color:#facbc8;border-radius:999px;display:flex;align-items:center;justify-content:center;white-space:nowrap}
+</style></head><body><div id="stage"></div>
+<script>
+// The figure: the illustration from x 200 to 1024 (she spans 239 to 984), its full height, her waist on the bottom edge.
+const SRC='../../../showreel/raw/rouge/rouge-club-illustration.png',CX=200,CW=824,CH=720;
+const L={
+  bb:{w:2460,h:1000,fig:{h:1000,right:110},text:{x:150,maxW:1130,lab:44,h1:215,gap:58},cta:null},
+  sh:{w:1404,h:2000,fig:{h:1210,cx:702},text:{x:110,maxW:1190,lab:40,h1:230,gap:52,top:150},cta:null},
+  sc:{w:2030,h:1150,fig:{h:1010,right:70},text:{x:130,maxW:720,lab:30,h1:150,gap:40},cta:{h:84,s:30,pad:46}},
+  ad:{w:1920,h:1080,fig:{h:960,right:80},text:{x:150,maxW:610,lab:28,h1:150,gap:38},cta:{h:76,s:27,pad:42}}};
+const a=new URLSearchParams(location.search).get('a'),c=L[a];
+const el=(t,cls,p,st={},html='')=>{const e=document.createElement(t);if(cls)e.className=cls;Object.assign(e.style,st);if(html)e.innerHTML=html;p.appendChild(e);return e};
+const rc=el('div','rc',document.getElementById('stage'),{width:c.w+'px',height:c.h+'px'});rc.id=a;
+const s=c.fig.h/CH,fw=CW*s,fl=c.fig.cx!=null?c.fig.cx-fw/2:c.w-c.fig.right-fw;
+const fig=el('div','fig',rc,{left:fl+'px',top:c.h-c.fig.h+'px',width:fw+'px',height:c.fig.h+'px'});
+const im=el('img','',fig,{width:1280*s+'px',height:CH*s+'px',left:-CX*s+'px'});im.src=SRC;
+const lab=el('div','lab',rc,{fontSize:c.text.lab+'px'},'ROUGE CLUB');
+const h=el('div','h',rc,{fontSize:c.text.h1+'px'},'Red,<br>but <em>louder.</em>');
+const cta=c.cta?el('div','cta',rc,{height:c.cta.h+'px',fontSize:c.cta.s+'px',padding:`0 ${c.cta.pad}px`},'Shop the shade'):null;
+Promise.all([document.fonts.ready,im.decode()]).then(()=>{
+  // the headline as large as fits its column; the block centred on the frame's height (or from its top on the shelter)
+  const w=h.getBoundingClientRect().width;if(w>c.text.maxW)h.style.fontSize=c.text.h1*c.text.maxW/w+'px';
+  const hh=h.getBoundingClientRect().height,lh=lab.getBoundingClientRect().height,ch=cta?c.cta.h+c.text.gap*1.3:0;
+  const tot=lh+c.text.gap+hh+ch,y0=c.text.top!=null?c.text.top:(c.h-tot)/2;
+  Object.assign(lab.style,{left:c.text.x+4+'px',top:y0+'px'});Object.assign(h.style,{left:c.text.x+'px',top:y0+lh+c.text.gap+'px'});
+  if(cta)Object.assign(cta.style,{left:c.text.x+4+'px',top:y0+lh+c.text.gap+hh+c.text.gap*1.3+'px'});
+  document.body.dataset.ready='1'});
+</script></body></html>

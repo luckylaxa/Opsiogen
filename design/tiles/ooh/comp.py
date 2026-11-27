@@ -48,7 +48,7 @@ def place(photo, rgb, cov, box):
     region = photo[y0:y1, x0:x1]
     photo[y0:y1, x0:x1] = region * (1 - cov[..., None]) + rgb * cov[..., None]
 
-def billboard():
+def billboard(art='rs.png'):
     photo = np.asarray(Image.open(os.path.join(H, 'photos/billboard-dusk-r2Pmvr_7Dec.jpg')).convert('RGB')).astype(np.float32)
     # the billboard company's name on the small sign on the pole, painted out with the sign's own dark face
     fx0, fy0, fx1, fy1 = 1144, 1600, 1273, 1645
@@ -57,7 +57,7 @@ def billboard():
     face = cv2.inpaint(np.clip(face, 0, 255).astype(np.uint8), text, 6, cv2.INPAINT_TELEA).astype(np.float32)
     photo[fy0:fy1, fx0:fx1] = np.where(text[..., None] > 0, face + grain(face.shape, 6.0), face)
     quad = [(793.0, 1078.1), (1634.3, 1067.8), (1637.9, 1414.4), (790.1, 1419.7)]
-    rgb, cov, box = warp(os.path.join(H, 'art/rs.png'), quad)
+    rgb, cov, box = warp(os.path.join(H, 'art', art), quad)
     x0, y0, x1, y1 = box
     paper = photo[y0:y1, x0:x1]
     L = luma(lin(paper)); inside = cov > .99
@@ -72,7 +72,7 @@ def billboard():
     place(photo, out, cov, box)
     return photo, (290, 860, 1830, 2400)     # the square: the board, the lamps above it, the pole, trees and the car
 
-def shelter():
+def shelter(art='nc.png'):
     photo = np.asarray(Image.open(os.path.join(H, 'photos/bus-shelter-night-csDVMvtsS50.jpg')).convert('RGB')).astype(np.float32)
     # the outdoor company's label on the frame, painted out with the frame on either side of it
     ya, yb, xa, xb = 1447, 1477, 1440, 1614
@@ -80,7 +80,7 @@ def shelter():
     left = photo[ya:yb, xa - 6:xa].mean(1, keepdims=True); right = photo[ya:yb, xb:xb + 6].mean(1, keepdims=True)
     photo[ya:yb, xa:xb] = left * (1 - t) + right * t + grain((yb - ya, xb - xa, 3), 3.0)
     quad = [(1134.2, 1477.9), (1879.9, 1476.3), (1886.0, 2548.3), (1128.3, 2548.9)]
-    rgb, cov, box = warp(os.path.join(H, 'art/nc.png'), quad)
+    rgb, cov, box = warp(os.path.join(H, 'art', art), quad)
     x0, y0, x1, y1 = box
     panel = photo[y0:y1, x0:x1]; inside = cov > .99
     L = luma(lin(panel)); Ls = cv2.GaussianBlur(L, (0, 0), 20); Ls = np.where(inside, Ls, np.percentile(L[inside], 95))
@@ -93,10 +93,10 @@ def shelter():
     place(photo, out, cov, box)
     return photo, (430, 1250, 2230, 3050)    # the panel, the shelter's frame, the wet street and the bench
 
-def screen():
+def screen(art='sl.png'):
     photo = np.asarray(Image.open(os.path.join(H, 'photos/concourse-screen-2a9IpjX5Kek.jpg')).convert('RGB')).astype(np.float32)
     quad = [(921.2, 281.5), (2958.3, 281.5), (2948.9, 1430.0), (926.1, 1432.9)]
-    rgb, cov, box = warp(os.path.join(H, 'art/sl.png'), quad, ss=2)
+    rgb, cov, box = warp(os.path.join(H, 'art', art), quad, ss=2)
     x0, y0, x1, y1 = box
     panel = photo[y0:y1, x0:x1]; inside = cov > .99
     L = luma(lin(panel)); Ls = cv2.GaussianBlur(L, (0, 0), 40); Ls = np.where(inside, Ls, np.percentile(L[inside], 95))
@@ -196,12 +196,13 @@ def booth():
     out = np.where(changed[..., None], soft + grain(out.shape, 3.2), photo)
     return out, (270, 330, 2870, 2930)       # the wall, the stand behind it with people, the stools and the floor
 
-for name, fn, tile in (('rohde-schwarz-billboard', billboard, 'rs-09.jpg'), ('norsecom-bus-shelter', shelter, 'nc-14.jpg'),
-                       ('sandlogic-screen', screen, 'sl-08.jpg'), ('rohde-schwarz-booth', booth, 'rs-07.jpg')):
-    photo, (cx0, cy0, cx1, cy1) = fn()
-    im = Image.fromarray(np.clip(photo, 0, 255).astype(np.uint8))
-    im.save(os.path.join(OUT, name + '.jpg'), quality=93)
-    sq = im.crop((cx0, cy0, cx1, cy1)).resize((1526, 1529), Image.LANCZOS)
-    sq.save(os.path.join(OUT, name + '-square.jpg'), quality=93)
-    # Not written into the showreel's build any more: the owner kept the earlier tiles (27 Nov, "Use previous version").
-    print('wrote', name, im.size, '-> tile', tile)
+if __name__ == '__main__':   # rouge.py borrows the places, with its own artwork
+  for name, fn, tile in (('rohde-schwarz-billboard', billboard, 'rs-09.jpg'), ('norsecom-bus-shelter', shelter, 'nc-14.jpg'),
+                         ('sandlogic-screen', screen, 'sl-08.jpg'), ('rohde-schwarz-booth', booth, 'rs-07.jpg')):
+      photo, (cx0, cy0, cx1, cy1) = fn()
+      im = Image.fromarray(np.clip(photo, 0, 255).astype(np.uint8))
+      im.save(os.path.join(OUT, name + '.jpg'), quality=93)
+      sq = im.crop((cx0, cy0, cx1, cy1)).resize((1526, 1529), Image.LANCZOS)
+      sq.save(os.path.join(OUT, name + '-square.jpg'), quality=93)
+      # Not written into the showreel's build any more: the owner kept the earlier tiles (27 Nov, "Use previous version").
+      print('wrote', name, im.size, '-> tile', tile)
