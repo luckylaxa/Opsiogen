@@ -13,7 +13,7 @@ HERE = os.path.dirname(os.path.abspath(__file__)); ST = os.path.join(HERE, "../r
 BPM, FPS = 140, 30; BEAT = 60 / BPM
 # Stock: a word from the shot's name -> (file, in point in seconds). The green-screen clip is keyed onto our violet.
 # Cut 22: three clips stay (Lucky, 26 Nov: "change only what I asked"); the other ten became big words in frames.html.
-STOCK = {"488563452": ("as-488563452.mov", 1.2), "405010525": ("as-405010525.mov", 3.0), "249372459": ("as-249372459.mov", 5.6)}
+STOCK = {"488563452": ("as-488563452.mov", 1.2), "405010525": ("as-405010525.mov", 3.0)}   # cut 23: the big laugh became a brand being built
 OVER = ("488563452",)  # the stock clip the character joins
 MULTI = ("Grid of", "collage", "tiles", "wall across", "row of", "Torvi: site", "billboard, badge", "guideline pages", "Three apps")
 def beats(n):
@@ -27,7 +27,8 @@ def beats(n):
     if n.startswith("Word:"): return 2
     if n.startswith("Logo"): return 9    # 4 beats flying through the O (frames.html LOGO_IN), then 5 (the film within a minute)
     if n.startswith("Wall of"): return 3   # the closing wall pulls back into the grid (cut 5's tilted wall)
-    if n == "Website: Engel & Völkers, Mykonos": return 2   # the beach lands on its coast photo: give it time
+    if n == "Website: Surgo Health, the index": return 2   # the county map lands from the word before: give it time
+    if n.startswith("Brand: a brand being built"): return 7   # the owner's 3 seconds: the mark drawn, swatches, type (cut 23)
     if n == "Websites: wall across projects": return 1      # ...and the wall after it takes one beat less
     if "488563452" in n: return 3   # she points, our character pops up there, she turns to look at it
     if n.startswith(("Stock", "Life")): return 2

@@ -77,6 +77,36 @@ const LAYOUT=[];
 // Square pieces in a row; in the film they fly in from above and below in turn.
 const tiles=(keys,c,o={})=>{bg(c);const n=keys.length,gap=o.gap||40,h=o.h||Math.min(560,(1920-200-gap*(n-1))/n),x0=(1920-(n*h+(n-1)*gap))/2;
   keys.forEach((k,i)=>{const b=el('div','card tile5',f,{left:x0+i*(h+gap)+'px',top:(1080-h)/2+'px',width:h+'px',height:h+'px',borderRadius:(o.rad??20)+'px'});img(A+k+'.jpg',b)})};
+// Cut 23, shot 22 (the owner's design, Figma N0FMCGKpSEZ0PVBoQDCVdc page 05, frame 81:5; no client brand): a brand
+// being built. A mark drawn with a pen on a fine grid, colour swatches fanned out, a type card, all drawn from the
+// Figma layers so they stay sharp (Figma turns anticlockwise about the top left corner: CSS gets the angle negated).
+// In the film the pen draws the mark along its stroke and the anchors and handles pop in as it passes, the swatches
+// fan out from behind one another and the type card flips up (motion block below).
+const IL={path:'M 500 200 C 500 360 360 500 180 500 C 70 500 0 420 0 300 C 0 120 140 20 300 20 C 420 20 500 90 500 200 Z',
+  sw:[['#7A6ED6',60,14],['#D8FF3E',118,5],['#FF6B4A',176,-5],['#F8F6F8',234,-14]],
+  anchors:[[0,300,'#fff'],[300,20,'#7a6ed6'],[500,200,'#7a6ed6'],[180,500,'#fff']],
+  handles:[[300,20,140,20],[300,20,420,20],[500,200,500,90],[500,200,500,360]]};
+const illo=()=>{bg('#0a090d');const NS='http://www.w3.org/2000/svg';
+  const S=(tag,at,p)=>{const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);p.appendChild(e);return e};
+  const grid=S('svg',{width:1920,height:1080,viewBox:'0 0 1920 1080',class:'il-grid'},f);Object.assign(grid.style,{position:'absolute',left:0,top:0});
+  for(let x=120;x<1920;x+=120)S('line',{x1:x+.5,y1:0,x2:x+.5,y2:1080,stroke:'#fff','stroke-opacity':.05},grid);
+  for(let y=120;y<1080;y+=120)S('line',{x1:0,y1:y+.5,x2:1920,y2:y+.5,stroke:'#fff','stroke-opacity':.05},grid);
+  IL.sw.forEach(([c,x,r])=>{const d=el('div','il-sw',f,{position:'absolute',left:170+x+'px',top:'410px',width:'220px',height:'300px',boxSizing:'border-box',
+      background:'rgb(23 22 28)',border:'1.5px solid rgb(255 255 255 / .08)',borderRadius:'22px',transformOrigin:'0 0',transform:`rotate(${-r}deg)`});
+    d.dataset.x=x;d.dataset.r=r;
+    el('div','',d,{position:'absolute',left:'14.5px',top:'14.5px',width:'188px',height:'196px',borderRadius:'12px',background:c});
+    const t=el('div','',d,{position:'absolute',left:'16.5px',top:'234.5px',font:'500 22px/28px Outfit',color:'rgb(255 255 255 / .85)',whiteSpace:'nowrap'});t.textContent=c});
+  const m=S('svg',{width:520,height:520,viewBox:'0 0 520 520',class:'il-mark'},f);Object.assign(m.style,{position:'absolute',left:'700px',top:'270px',overflow:'visible'});
+  S('path',{d:IL.path,fill:'none',stroke:'#fff','stroke-width':7,class:'il-path'},m);
+  IL.handles.forEach(([ax,ay,hx,hy])=>{const g=S('g',{class:'il-h','data-ax':ax,'data-ay':ay},m);
+    S('line',{x1:ax,y1:ay,x2:hx,y2:hy,stroke:'#7a6ed6','stroke-width':2.5},g);S('circle',{cx:hx,cy:hy,r:7.5,fill:'#0a090d',stroke:'#7a6ed6','stroke-width':3},g)});
+  IL.anchors.forEach(([x,y,c])=>S('rect',{x:x-10.5,y:y-10.5,width:21,height:21,fill:c,stroke:'#fff','stroke-width':3,class:'il-a','data-x':x,'data-y':y},m));
+  const pen=S('g',{class:'il-pen',transform:'translate(512 212)'},m);
+  S('path',{d:'M 0 0 L 34 12 L 22 22 L 12 34 L 0 0 Z M 22 22 L 52 52',fill:'#d8ff3e',stroke:'#d8ff3e','stroke-width':4,'stroke-linejoin':'round'},pen);
+  const tc=el('div','il-type',f,{position:'absolute',left:'1360px',top:'320px',width:'380px',height:'440px',transformOrigin:'0 0',transform:'rotate(4deg)'});
+  const fl=el('div','il-flip',tc,{position:'absolute',inset:'0',boxSizing:'border-box',background:'rgb(23 22 28)',border:'1.5px solid rgb(255 255 255 / .08)',borderRadius:'26px',transformOrigin:'50% 100%'});
+  [['Aa',34,40,'700 210px/265px Outfit','#fff'],['Outfit',40,300,'600 34px/43px Outfit','#fff'],['Bold · SemiBold · Regular',40,350,'400 22px/28px Outfit','rgb(255 255 255 / .6)']]
+    .forEach(([txt,x,y,font,color])=>{const t=el('div','',fl,{position:'absolute',left:x-1.5+'px',top:y-1.5+'px',font,color,whiteSpace:'nowrap'});t.textContent=txt})};
 // Two pieces, one high on the left and one low on the right; in the film one comes from the left, the other from
 // the right and below.
 const duo=(a,b,c,o={})=>{bg(c);const w=o.w||700,h=o.h||w,g=o.g||80,dy=o.dy??100,x0=(1920-2*w-g)/2;
@@ -123,7 +153,7 @@ const SHOTS=[
 ['Open', 'Stock: she points at our character (Adobe Stock 488563452)', ()=>full(S+'stock/stills/point.jpg'),2],
 ['Open', 'We take it from here, the character', ()=>{type(COAL,[[['We take it ',700,PAPER],['from here.',700,PAPER]]],130);img(A+'ch-front.png',f,{position:'absolute',width:'330px',left:'795px',top:'90px'})},3],
 ['Burst', 'Three apps, three projects', ()=>{bg(LIME);phone(A+'mf-m1.jpg',330,150,400,-4);phone(A+'omg-08.jpg',760,110,400,0);phone(A+'m-carlton.jpg',1190,181,400,4)},4],
-['Burst', 'Grid of the work, reshuffles twice', ()=>wall(['Oh My Glam: try-on','Vaelo: site','Service artwork: product','Website 1','Vaelo: billboard','Torvi','Website 3','Service artwork: social','Service artwork: print'],3,12,
+['Burst', 'Grid of the work, reshuffles twice', ()=>wall(['Oh My Glam: try-on','Website: Care Connect','Service artwork: product','Website 1','Vaelo: billboard','Torvi','Website 3','Service artwork: social','Service artwork: print'],3,12,
   [['Campaigns','Brand: duo, Norsecom','Brand: tiles, out of home','SandLogic: guideline pages','Oh My Glam: row','Website: Carlton Noble, Travel','Product screen: Meetingful','Print: posters','Service artwork: AI automation'],
    ['Print: duo','Product duo','Website: BigTapp, platform','SandLogic: social','Brand: tiles, mixed','Print: packaging','Product design: prototype','Product screen: Surgo','Service artwork: video']]),5],
 ['Burst', 'Vaelo, the car', ()=>full(A+'va-hero.jpg'),6],
@@ -132,7 +162,7 @@ const SHOTS=[
 ['Brand', 'Service artwork: brand', ()=>full(A+'z-page-brand.jpg'),9],
 ['Brand', 'Life: the after-work ride (Adobe Stock 405010525)', ()=>full(S+'stock/stills/life-girl-bike.jpg'),10],
 ['Brand', 'Torvi: site, identity, guidelines, ads', ()=>{bg('#1d1f24');const g=24,w=(1920-3*g)/2,h=(1080-3*g)/2;[['crop-tv-rollout',0],['crop-tv-strategy',1],['crop-tv-guidelines',2],['crop-tv-assets',3]].forEach(([k,i])=>fit(A+k+'.jpg',g+(i%2)*(w+g),g+Math.floor(i/2)*(h+g),w,h))},11],
-['Brand', 'Brand: tiles, mixed pieces', ()=>tiles(['sl-14','nc-08','sl-15','nc-07'],ORANGE),12],
+['Brand', 'Brand: tiles, mixed pieces', ()=>tiles(['sl-14','nc-08','sl-15','nc-sleeve'],ORANGE),12],
 ['Brand', 'Vaelo: billboard, badge, brand, poster', ()=>{bg('#0e3d2b');card(A+'va-billboard.jpg',90,90,1140);card(A+'va-badge.jpg',90,690,535);card(A+'va-brand.jpg',695,690,535);card(A+'va-poster.jpg',1290,120,560)},13],
 ['Brand', 'Brand: duo, Norsecom HQ and Rohde & Schwarz booth', ()=>duo('nc-12','rs-07',VIOLET),14],
 ['Brand', 'SandLogic: guideline pages', ()=>{bg('#0f1120');const g=20,w=(1920-3*g)/2,h=w*9/16,t=(1080-2*h-g)/2;[['slg-logo1',0],['slg-colours',1],['slg-gradient',2],['slp-system',3]].forEach(([k,i])=>card(A+k+'.jpg',g+(i%2)*(w+g),t+Math.floor(i/2)*(h+g),w,0,0,12))},15],
@@ -140,10 +170,10 @@ const SHOTS=[
 ['Brand', 'Service artwork: print', ()=>full(A+'z-print-booth.jpg'),18],
 ['Brand', 'Print: packaging', ()=>full(A+'z-t-print-packaging.jpg'),19],
 ['Brand', 'Brand: tiles, out of home', ()=>tiles(['rs-09','nc-14','sl-08'],PINK),20],
-['Brand', 'SandLogic: social grid', ()=>full(A+'z-slp-social.jpg'),22],
-['Brand', 'Stock: a big laugh (Adobe Stock 249372459)', ()=>full(S+'stock/stills/woman-laugh.jpg'),24],
+['Brand', 'SandLogic: social grid', ()=>full(A+'z-slp-social-black.jpg'),22],
+['Brand', 'Brand: a brand being built (illustration)', ()=>illo(),24],
 ['Brand', 'Print: posters', ()=>full(A+'h-t-print-posters.jpg'),26],
-['Brand', 'Print: stationery', ()=>full(A+'h-t-print-stationery.jpg'),27],
+['Brand', 'Print: stationery', ()=>full(A+'h-t-print-stationery-cabot.jpg'),27],
 ['Brand', 'Brand: row of merchandise and print', ()=>row(['sl-16','nc-09','sl-17','nc-10','sl-18','nc-05','nc-01','nc-06'],'#141418',{rot:-4,h:620,rad:24}),28],
 ['Brand', 'Word: Trust.', ()=>bigWord('Trust.',ORANGE),29],
 ['Brand', 'Print: duo, Rohde & Schwarz brochure and SandLogic trifold', ()=>duo('rs-23','sl-12',BLUE),30],
@@ -167,9 +197,9 @@ const SHOTS=[
 ['Build', 'Website 2: Engel & Völkers', ()=>full(A+'s-ev-2.jpg'),53],
 ['Build', 'Website 3: Carlton Noble', ()=>full(A+'s-carlton-12.jpg'),54],
 ['Build', 'Website 5: Sifio', ()=>{bg('#e1eade');browser(A+'d-sifio.jpg',130,84,1350);phone(A+'m-sifio.jpg',1410,204,380,0)},55],
-['Build', 'Vaelo: site and app', ()=>{bg('#0e3d2b');browser(A+'va-web.jpg',130,84,1350);phone(A+'va-app.jpg',1410,204,380,0)},56],
+['Build', 'Website: Care Connect', ()=>full(A+'s-care-connect.jpg'),56],
 ['Build', 'Word: Customers.', ()=>bigWord('Customers.',AQUA),57],
-['Build', 'Website: Engel & Völkers, Mykonos', ()=>full(A+'s-ev-3.jpg'),58],
+['Build', 'Website: Surgo Health, the index', ()=>full(A+'s-surgo.jpg'),58],
 ['Build', 'Websites: wall across projects', ()=>mosaic([['scr-carlton-noble-5','scr-engel-volkers-11','scr-bigtapp-6','scr-sifio-health-5'],['scr-engel-volkers-7','scr-bigtapp-2','scr-carlton-noble-6','scr-sifio-health-9'],['scr-bigtapp-11','scr-carlton-noble-13','scr-engel-volkers-10','scr-sifio-health-2'],['scr-carlton-noble-4','scr-sifio-health-11','scr-bigtapp-13','scr-engel-volkers-13']],'#0d1117',{rot:-9}),59],
 ['Build', 'Website: Carlton Noble, Travel House', ()=>full(A+'s-carlton-2.jpg'),61],
 ['Build', 'Website: BigTapp, platform features', ()=>full(A+'s-bigtapp-10.jpg'),63],
@@ -180,7 +210,7 @@ const SHOTS=[
 ['Launch', 'Service artwork: social', ()=>full(A+'z-page-social.jpg'),68],
 ['Launch', 'Service artwork: video', ()=>full(A+'z-page-video.jpg'),70],
 ['Launch', 'Service artwork: digital marketing', ()=>full(A+'z-page-digital.jpg'),71],
-['Launch', 'Creative subscription: deck, motion, search', ()=>full(A+'svc-sub.jpg'),72],
+['Launch', 'Creative subscription: deck, motion, search', ()=>full(A+'svc-sub-c23.jpg'),72],
 ['Launch', 'Video: AI video', ()=>full(A+'h-t-video-ai.jpg'),73],
 ['Launch', 'Word: Growth.', ()=>bigWord('Growth.',SUN),75],
 ['Launch', 'Wall of the work, zooms out', ()=>wall(['Product screen: Meetingful','Service artwork: MVP','Website 2','Torvi','Service artwork: video','Product duo','Website 5','Service artwork: digital','Product screen: Surgo'],3),76],
@@ -407,12 +437,12 @@ if(MOTION)(()=>{
           ball.at(X,y,D,{rot:t<.14?0:rock(t-.14,1,8)+3*Math.sin(t*9),ex:exAt(t,[.5,'wink']),hands:HT(t,[[0,'cheer','cheer'],[.14,'balance','balance'],[.6,'cheer','balance']])})});
         rush(a.x,a.mid)})}
     if(WD==='Customers.'){
-      // The letters stream in from both sides, like people arriving; then the property site's coast photo (the next
-      // shot, where it sits in that shot) shows through them and the camera dives in.
+      // The letters stream in from both sides, like people arriving; then the next shot's county map (Surgo Health's
+      // index, where it sits in that shot) shows through them and the camera dives in.
       L.forEach((s,i)=>{const side=i%2?1:-1,t0=.02+i*.03;add(t=>{const q=pop((t-t0)/.24);s.style.transform=`translateX(${side*(1300+i*40)*(1-q)}px)`;s.style.opacity=t<t0?0:1})});
       late.push(()=>{const P=L.map((s,i)=>lt(i)),o=P[4];console.log('ENTER Customers.',Math.round(o.x),Math.round(o.mid));
-        // the photo sits at 275..1645 x 465..1020 on the page: 1.285 times, its left edge at 80 and its middle band on the word
-        const pic=big.cloneNode(true);Object.assign(pic.style,{backgroundImage:`url(${A}s-ev-3.jpg)`,backgroundSize:'2467px 1388px',backgroundPosition:'-273px -373px',
+        // the map at 1.285 times (as the coast photo before it), its dark counties from Texas to Alabama on the word
+        const pic=big.cloneNode(true);Object.assign(pic.style,{backgroundImage:`url(${A}s-surgo.jpg)`,backgroundSize:'2467px 1388px',backgroundPosition:'-364px -180px',
           WebkitBackgroundClip:'text',backgroundClip:'text',color:'transparent',opacity:0});f.appendChild(pic);
         add(t=>{pic.style.opacity=clamp((t-.46)/.14)});rush(o.x,o.mid,.15)})}
     if(WD==='Reach.'){
@@ -542,6 +572,32 @@ if(MOTION)(()=>{
       let fx=0,fy=200;if(!single){if(Math.abs(cx)/960>Math.abs(cy)/540){fx=Math.sign(cx||1)*520;fy=0}else{fx=0;fy=Math.sign(cy||1)*460}}
       const s0=single?.84:.94,dl=i*.05,dx=cx/len*14,dy=cy/len*14;
       add((t,d)=>{const q=pop((t-dl)/IN),k=t/d;e.style.transform=`translate(${(1-q)*fx+dx*k}px,${(1-q)*fy+dy*k}px) rotate(${(1-q)*(single?5:i%2?8:-8)}deg) scale(${(s0+(1-s0)*q)*(single?1+.03*k:1)}) ${b}`})})});
+  // Cut 23, shot 22: the pen draws the mark along its stroke (it starts and ends at the right-hand anchor, where it
+  // rests in the design), each anchor pops in as the pen reaches it and its handles spring out of it; the swatches fan
+  // out from behind the front one; the type card flips up off the table. All settled by 1.6 s of its 3 s.
+  if(T.startsWith('Brand: a brand being built')){
+    const sw=[...f.querySelectorAll('.il-sw')],flip=f.querySelector('.il-flip'),path=f.querySelector('.il-path'),pen=f.querySelector('.il-pen'),
+      an=[...f.querySelectorAll('.il-a')],hs=[...f.querySelectorAll('.il-h')],grid=f.querySelector('.il-grid');
+    const L=path.getTotalLength(),T0=.15,T1=1.45,qAt=t=>io((t-T0)/(T1-T0));
+    const near=(x,y)=>{let best=0,bd=1e9;for(let k=0;k<=800;k++){const p=path.getPointAtLength(L*k/800),dd=(p.x-x)**2+(p.y-y)**2;if(dd<bd){bd=dd;best=k/800}}return best};
+    const tOf=q=>{let lo=T0,hi=T1;for(let k=0;k<40;k++){const md=(lo+hi)/2;if(qAt(md)<q)lo=md;else hi=md}return hi};
+    const ta=an.map(a=>{const q=near(+a.dataset.x,+a.dataset.y);return tOf(q<.01?.999:q)});   // the start anchor is set as the loop closes
+    const ha=hs.map(h=>an.findIndex(a=>a.dataset.x===h.dataset.ax&&a.dataset.y===h.dataset.ay));
+    path.style.strokeDasharray=`${L} ${L}`;
+    an.forEach(a=>{a.style.transformBox='fill-box';a.style.transformOrigin='center'});
+    hs.forEach(h=>{h.style.transformBox='view-box';h.style.transformOrigin=`${h.dataset.ax}px ${h.dataset.ay}px`});
+    const front=sw[sw.length-1],fx=+front.dataset.x,fr=+front.dataset.r;
+    add((t,d)=>{const q=clamp(qAt(t)),p=path.getPointAtLength(L*q);
+      grid.style.opacity=clamp(t/.15);
+      path.style.strokeDashoffset=L*(1-q);path.style.visibility=t<T0?'hidden':'visible';
+      pen.setAttribute('transform',`translate(${p.x+12} ${p.y+12}) scale(${t<T0-.08?0:pop((t-T0+.08)/.18)})`);
+      an.forEach((a,i)=>{a.style.transform=`scale(${t<ta[i]?0:pop((t-ta[i])/.18)})`});
+      hs.forEach((h,i)=>{const t0=ta[ha[i]]+.05;h.style.transform=`scale(${t<t0?0:pop((t-t0)/.24)})`});
+      sw.forEach((e,i)=>{const x=+e.dataset.x,r=+e.dataset.r,k=pop((t-.32-(sw.length-1-i)*.05)/.38),s0=pop((t-.08)/.2);
+        e.style.opacity=t<.08?0:1;
+        e.style.transform=`translate(${(fx-x)*(1-k)}px,0) rotate(${-(r+(fr-r)*(1-k))}deg) scale(${.86+.14*s0})`});
+      const kf=pop((t-.55)/.42);flip.style.visibility=t<.55?'hidden':'visible';flip.style.transform=`perspective(1400px) rotateX(${(1-kf)*88}deg)`;
+      f.style.transformOrigin='960px 540px';f.style.transform=`scale(${1+.015*t/d})`})}
   // Walls. The burst grid drops in and reshuffles on the eighth; then the character zips through the middle and the
   // work changes again in its wake. The closing wall zooms out from its middle tile.
   const tiles=cards.filter(e=>e.classList.contains('tile'));
@@ -572,7 +628,7 @@ if(MOTION)(()=>{
   // of the work: the app, the coast photo), comes in from the side the camera whipped to (whip), opens out of the
   // white of the high five from the hands (flash), or out of our character's lens over the clip's last frame (lens).
   // Cut 22: the clips that stay keep theirs; each big word hands over the same way, from where its own rush ends.
-  const ENTER={'488563452':['push',960,254],'405010525':['whip',1],'249372459':['push',570,490],
+  const ENTER={'488563452':['push',960,254],'405010525':['whip',1],
     'Word: Recognition.':['lens',1046,323],'Word: Trust.':['push',960,540],'Word: Adoption.':['push',1386,588],'Word: Clarity.':['push',960,540],
     'Word: Scale.':['push',748,592],'Word: Customers.':['push',873,582],'Word: Reach.':['whip',-1],'Word: Growth.':['flash',1499,186]};
   const prevName=n?SHOTS[n-1][1]:'',ENT=(Object.entries(ENTER).find(([k])=>prevName.includes(k))||[])[1];
