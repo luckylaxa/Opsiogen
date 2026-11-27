@@ -155,6 +155,12 @@ const mosaic=(cols,c,o={})=>{bg(c);const n=cols.length,gap=o.gap||26,cw=o.cw||52
     keys.concat(keys).forEach(k=>{const b=el('div','',col,{width:cw+'px',marginBottom:gap+'px',borderRadius:(o.rad||16)+'px',overflow:'hidden'});img(A+k+'.jpg',b,{display:'block',width:'100%',height:'auto'})});return col});
   if(o.mid!=null)cs.forEach(col=>{col.dataset.mid=o.mid});
   LAYOUT.push(()=>cs.forEach((col,i)=>{col.style.transform=`translateY(${mbase(col,i)}px)`}))};
+// A straight grid whose columns slide past one another (shot 21: the brand wall's motion without its tilt). Each column is
+// one image, centred on the frame; it moves o.amp in all, never far enough to show where its posts are cut.
+const strips=(keys,c,o={})=>{bg(c);const n=keys.length,w=o.w,gap=o.gap,x0=(1920-(n*w+(n-1)*gap))/2;
+  keys.forEach((k,i)=>{const s=el('div','scol',f,{position:'absolute',left:x0+i*(w+gap)+'px',top:'0',width:w+'px'});s.dataset.amp=o.amp;
+    img(A+k+'.jpg',s,{display:'block',width:'100%',height:'auto'})});
+  LAYOUT.push(()=>f.querySelectorAll('.scol').forEach(s=>{s.style.top=(1080-s.offsetHeight)/2+'px'}))};
 // Where a column of the wall sits: long columns a quarter up; short ones (o.mid) centred, so the slide never shows an end.
 const mbase=(col,i)=>(col.dataset.mid?-col.offsetHeight/2+(+col.dataset.mid):-col.offsetHeight/4-270)-(i%3)*90;
 // A row turned a little, sliding past.
@@ -208,10 +214,11 @@ const SHOTS=[
 ['Brand', 'Service artwork: print', ()=>full(A+'z-print-booth.jpg'),18],
 ['Brand', 'Print: packaging', ()=>full(A+'z-t-print-packaging.jpg'),19],
 ['Brand', 'Brand: tiles, out of home', ()=>ooh([['rs-09',4/3],['nc-14',2/3],['sl-08',2/3]],PINK),20],
-// Shot 21 (owner, 27 Nov: "Animate this like collage animation. Also first mockup should be horizontally Center"):
-// the twelve SandLogic posts (cut23.py) as a wall like the brand wall's, centred, its columns sliding past one
-// another, on SandLogic black (#0B0A12, the owner's pick for this shot), where the dark posts show only their type.
-['Brand', 'SandLogic: social grid', ()=>mosaic([['slp-post-sovereign','slp-post-3x','slp-post-shakti'],['slp-post-any-model','slp-post-leakage','slp-post-not-another'],['slp-post-not-cloud','slp-post-21','slp-post-sovereignty'],['slp-post-krsna','slp-post-73','slp-post-lingo']],'#0b0a12',{rot:-9,cw:480,rad:31,mid:100}),22],
+// Shot 21 (owner, 27 Nov: "Animate this like collage animation. Also first mockup should be horizontally Center", then
+// "This should be straight animation without changing the angle. Only use animation reference for our straight mockup"):
+// the straight grid of the twelve SandLogic posts as in the mockup (cut23.py: its four columns, the top and bottom rows
+// running off the edges), centred on SandLogic black, its columns sliding past one another like the brand wall's.
+['Brand', 'SandLogic: social grid', ()=>strips(['slp-col-0','slp-col-1','slp-col-2','slp-col-3'],'#0b0a12',{w:419,gap:27,amp:350}),22],
 ['Brand', 'Brand: a brand being built (illustration)', ()=>illo(),24],
 ['Brand', 'Print: posters', ()=>full(A+'h-t-print-posters.jpg'),26],
 ['Brand', 'Print: stationery', ()=>full(A+'h-t-print-stationery-cabot.jpg'),27],
@@ -702,6 +709,8 @@ if(MOTION)(()=>{
   // down into place.
   const mcols=[...f.querySelectorAll('.mcol')];
   if(mcols.length)late.push(()=>{const bs=mcols.map((c,i)=>mbase(c,i));add((t,d)=>{const p=t/d;mcols.forEach((c,i)=>{c.style.transform=`translateY(${bs[i]+(i%2?1:-1)*(p-.5)*900}px)`})})});
+  const scols=[...f.querySelectorAll('.scol')];
+  if(scols.length)add((t,d)=>{const p=t/d;scols.forEach((c,i)=>{c.style.transform=`translateY(${(i%2?1:-1)*(p-.5)*(+c.dataset.amp)}px)`})});
   const mrow=f.querySelector('.mrow');
   if(mrow){const rot=+mrow.dataset.rot||0,ph=[...mrow.children];late.push(()=>{const tw=mrow.scrollWidth;add((t,d)=>{const p=t/d;
     mrow.style.transform=`translateX(${60+(1920-tw-80)*io(p)}px) rotate(${rot}deg)`;
