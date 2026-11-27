@@ -222,7 +222,6 @@ const SHOTS=[
 ['Design', 'Product duo: RxLive and Care Connect', ()=>duo('scr-rxlive-1','scr-care-connect-1','#101016',{w:880,h:560,g:60,dy:120}),38],
 ['Design', 'Product screens: wall across projects', ()=>mosaic([['scr-meetingful-2','scr-rxlive-3','scr-care-connect-4','scr-surgo-health-2'],['scr-rxlive-6','scr-surgo-health-8','scr-meetingful-7','scr-care-connect-8'],['scr-care-connect-2','scr-meetingful-9','scr-surgo-health-5','scr-rxlive-9'],['scr-surgo-health-1','scr-care-connect-6','scr-rxlive-2','scr-meetingful-4']],'#101016',{rot:-8}),39],
 ['Design', 'Product screen: Surgo', ()=>screen1('scr-surgo-health-3'),40],
-['Design', 'Illustration: Rouge Club, drawn', ()=>drawIllo('bag',{src:'../raw/drawings/bag-mark-rouge-club.png',cx:624,cy:550,w:280}),41],
 ['Design', 'Service artwork: product design', ()=>full(A+'z-page-pd.jpg'),41],
 ['Design', 'Service artwork: MVPs and apps', ()=>full(A+'z-page-mvp.jpg'),42],
 ['Design', 'Service artwork: AI automation', ()=>full(A+'z-page-automation.jpg'),44],
@@ -245,6 +244,9 @@ const SHOTS=[
 ['Launch', 'Chapter word', ()=>word('We launch it.',SUN),65],
 ['Launch', 'Word: Reach.', ()=>bigWord('Reach.',SUN),66],
 ['Launch', 'Campaigns: ads and beauty', ()=>{bg('#1d1c22');const h=540,g=16,ks=[['crop-t-subscription-ads',1201/1102],['t-video-ads',4/3]];const ws=ks.map(([k,r])=>h*r);let x=(1920-ws.reduce((a,b)=>a+b)-g*(ks.length-1))/2;ks.forEach(([k],n)=>{card(A+k+'.jpg',x,(1080-h)/2,ws[n],0,0,14);x+=ws[n]+g})},67],
+// The bag drawing (owner, 27 Nov: "This illustrator is not is proper place. Inbtween the ui animations"): after Rouge
+// Club's photo ads, its own brand, in place of between the product screens.
+['Launch', 'Illustration: Rouge Club, drawn', ()=>drawIllo('bag',{src:'../raw/drawings/bag-mark-rouge-club.png',cx:624,cy:550,w:280}),66],
 ['Launch', 'Service artwork: social', ()=>full(A+'z-page-social.jpg'),68],
 ['Launch', 'Service artwork: video', ()=>full(A+'z-page-video.jpg'),70],
 ['Launch', 'Service artwork: digital marketing', ()=>full(A+'z-page-digital.jpg'),71],
