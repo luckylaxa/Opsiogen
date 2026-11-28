@@ -42,7 +42,7 @@ export const SETTINGS_QUERY = defineQuery(`*[_id == "siteSettings"][0]{
   dockButton{ label, href },
   cta{ heading, button{ label, href } },
   enquirySuccessMessage,
-  seo{ title, description, "image": image${IMG} }
+  seo{ title, description, "image": image${IMG}, googleVerification, bingVerification }
 }`);
 
 export const PAGE_QUERY = defineQuery(`*[_type == "page" && slug.current == $slug][0]{

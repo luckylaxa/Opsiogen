@@ -27,9 +27,17 @@ const outfit = localFont({
   display: "swap",
 });
 
+/** A verification code pasted in Studio, whole tag or just its content value. */
+const verificationCode = (value?: string | null) => {
+  const text = value?.trim();
+  return text ? (text.match(/content=["']([^"']+)["']/)?.[1] ?? text) : undefined;
+};
+
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();
   const image = settings.seo.image;
+  const google = verificationCode(settings.seo.googleVerification);
+  const bing = verificationCode(settings.seo.bingVerification);
   return {
     metadataBase: new URL(siteUrl()),
     title: { default: settings.seo.title, template: `%s | ${settings.siteTitle}` },
@@ -43,6 +51,9 @@ export async function generateMetadata(): Promise<Metadata> {
       images: image ? [{ url: image.url, width: image.width, height: image.height, alt: image.alt }] : undefined,
     },
     twitter: { card: "summary_large_image" },
+    ...((google || bing) && {
+      verification: { ...(google && { google }), ...(bing && { other: { "msvalidate.01": bing } }) },
+    }),
   };
 }
 

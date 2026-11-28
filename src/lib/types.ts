@@ -253,7 +253,14 @@ export type SiteSettings = {
   dockButton: LinkItem;
   cta: { heading: string; button: LinkItem };
   enquirySuccessMessage: string;
-  seo: { title: string; description: string; image?: Img | null };
+  seo: {
+    title: string;
+    description: string;
+    image?: Img | null;
+    /** Search engines' ownership codes (Studio → Site settings → SEO), shown as meta tags. */
+    googleVerification?: string | null;
+    bingVerification?: string | null;
+  };
 };
 
 /** Blog categories, in the order the filter shows them. */

@@ -109,6 +109,20 @@ export const siteSettings = defineType({
           options: { hotspot: true },
           fields: [altField],
         }),
+        defineField({
+          name: "googleVerification",
+          title: "Google Search Console code",
+          type: "string",
+          description:
+            "Search Console → Add property → URL prefix (https://opsiogen.com) → HTML tag. Paste the tag or just its code here, publish, wait a minute, then press Verify in Search Console.",
+        }),
+        defineField({
+          name: "bingVerification",
+          title: "Bing Webmaster Tools code",
+          type: "string",
+          description:
+            "Bing Webmaster Tools → Add site → HTML meta tag. Paste the tag or just its code here, publish, then press Verify. (Bing can also import the site from Search Console instead.)",
+        }),
       ],
     }),
   ],
