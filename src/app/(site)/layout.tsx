@@ -71,7 +71,7 @@ export default async function SiteLayout({ children, modal }: LayoutProps<"/">) 
         </noscript>
       </head>
       <body>
-        <JsonLd items={siteSchema(settings)} />
+        <JsonLd items={siteSchema(settings, services)} />
         <BrandGradientDefs />
         <IntroLoader />
         <MenuProvider>

@@ -1,3 +1,4 @@
+import logoOnLight from "@/assets/opsiogen-logo-on-light.png";
 import type { Faq, PostCard, Project, Service, SiteSettings } from "./types";
 import { isExternal, siteUrl } from "./utils";
 
@@ -10,8 +11,12 @@ type Thing = Record<string, unknown>;
 
 const abs = (path: string) => (isExternal(path) ? path : `${siteUrl()}${path.startsWith("/") ? path : `/${path}`}`);
 
-/** Opsiogen as an organisation, and the site itself, shown on every page. */
-export function siteSchema(settings: SiteSettings): Thing[] {
+/**
+ * Opsiogen as an organisation, and the site itself, shown on every page: who we are, our line, our logo (Studio's,
+ * else the wordmark), the services we offer and the topics we know, how to reach us and our profiles. Only what the
+ * site itself shows; no founder details.
+ */
+export function siteSchema(settings: SiteSettings, services: Service[] = []): Thing[] {
   const url = siteUrl();
   // Only real profile links: a bare https://www.linkedin.com/ is a placeholder.
   const sameAs = settings.socialLinks
@@ -23,10 +28,29 @@ export function siteSchema(settings: SiteSettings): Thing[] {
     name: settings.siteTitle,
     url,
     description: settings.seo.description,
-    ...(settings.logo?.url && { logo: settings.logo.url }),
+    slogan: settings.footerLine,
+    logo: abs(settings.logo?.url ?? logoOnLight.src),
+    ...(settings.seo.image?.url && { image: abs(settings.seo.image.url) }),
     ...(settings.email && { email: settings.email }),
     ...(settings.phone && { telephone: settings.phone }),
     ...(settings.location && { address: settings.location }),
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "sales",
+      url: abs("/contact"),
+      ...(settings.email && { email: settings.email }),
+      ...(settings.phone && { telephone: settings.phone }),
+    },
+    ...(services.length && {
+      knowsAbout: [...services].sort((a, b) => a.order - b.order).map((s) => s.name),
+      hasOfferCatalog: {
+        "@type": "OfferCatalog",
+        name: "Services",
+        itemListElement: [...services]
+          .sort((a, b) => a.order - b.order)
+          .map((s) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name: s.name, url: abs(`/services/${s.slug}`) } })),
+      },
+    }),
     ...(sameAs.length && { sameAs }),
   };
   const website: Thing = {
