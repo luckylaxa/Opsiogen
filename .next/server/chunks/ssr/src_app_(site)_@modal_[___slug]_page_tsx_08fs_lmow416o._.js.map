@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../../src/app/%28site%29/%40modal/%5B...slug%5D/page.tsx"],"sourcesContent":["/** Closes the project pop-up when any other page is opened from it. */\nexport default function NoModal() {\n  return null;\n}\n"],"names":["NoModal"],"mappings":"yDACe,SAASA,EACtB,OAAO,IACT"}

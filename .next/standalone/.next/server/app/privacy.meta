@@ -1,0 +1,55 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/(site)/layout,_N_T_/(site)/privacy/layout,_N_T_/(site)/privacy/page,_N_T_/privacy,sanity"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/!KHNpdGUp",
+    "/!KHNpdGUp/privacy/__PAGE__",
+    "/!KHNpdGUp/@modal/!KF9fU0xPVF9fKQ/$c$slug/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          },
+          "modal": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 32,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/c5009f6abe8c46c5e9e959d5df6355e303bca871ae180fb789e53e601d5e482d/$/privacy",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/(site)/privacy/page"
+    },
+    "isFallback": false
+  }
+}

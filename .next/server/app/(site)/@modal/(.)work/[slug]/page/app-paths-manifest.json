@@ -1,0 +1,3 @@
+{
+  "/(site)/@modal/(.)work/[slug]/page": "app/(site)/@modal/(.)work/[slug]/page.js"
+}

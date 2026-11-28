@@ -1,0 +1,14 @@
+3:"$Sreact.fragment"
+4:"/_next/static/chunks/421c_el12128q.js"
+5:I[897367,["$4"],"OutletBoundary"]
+6:"$Sreact.suspense"
+9:X
+2:[["children",{"s":"__DEFAULT__","d":{"r":["$","$3","c",{"children":[null,null,["$","$L5",null,{"children":["$","$6",null,{"name":"Next.MetadataOutlet","children":"$@7"}]}]]}],"p":"$@8","v":null,"s":"$9"}}]]
+1:[["children",{"s":"(site)","h":48,"c":"$Q2"}]]
+0:{"t":{"t":{"s":"","h":80,"c":"$Q1"}},"a":"$@a","u":"$@b","b":"t5KZs-TPWVss3mkkp-TUP"}
+7:null
+b:true
+9:300
+9:C
+a:0
+8:"$undefined"

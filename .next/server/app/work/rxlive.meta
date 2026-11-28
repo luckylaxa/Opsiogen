@@ -1,0 +1,60 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/(site)/layout,_N_T_/(site)/work/layout,_N_T_/(site)/work/[slug]/layout,_N_T_/(site)/work/[slug]/page,_N_T_/work/rxlive,sanity"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/!KHNpdGUp",
+    "/!KHNpdGUp/work/$d$slug/__PAGE__",
+    "/!KHNpdGUp/@modal/!KF9fU0xPVF9fKQ/$c$slug/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          },
+          "modal": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 32,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/b7400aa0fcf2f339142b2dd5d09e4e70e889029be550140da57ca6520ceacb1a/$/work/rxlive",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/(site)/work/[slug]/page"
+    },
+    "isFallback": false
+  }
+}

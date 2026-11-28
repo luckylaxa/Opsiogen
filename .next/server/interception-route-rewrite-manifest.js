@@ -1,0 +1,1 @@
+self.__INTERCEPTION_ROUTE_REWRITE_MANIFEST="[{\"source\":\"/work/:nxtPslug\",\"destination\":\"/(.)work/:nxtPslug\",\"has\":[{\"type\":\"header\",\"key\":\"next-url\",\"value\":\"/.*\"}],\"regex\":\"^/work/(?<nxtPslug>[^/]+?)(?:/)?$\"}]";

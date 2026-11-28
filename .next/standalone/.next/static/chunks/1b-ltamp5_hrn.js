@@ -1,0 +1,1 @@
+(globalThis.TURBOPACK||(globalThis.TURBOPACK=[])).push(["object"==typeof document?document.currentScript:void 0,511191,e=>{"use strict";e.S([891745,"BrowserClient,f",0,994218,"Scope,f",0,433330,"defaultStackParser,f",0,420183,"linkedErrorsIntegration,f",0,988531,"makeFetchTransport,f"])}]);

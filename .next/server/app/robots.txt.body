@@ -1,0 +1,6 @@
+User-Agent: *
+Allow: /
+Disallow: /studio
+Disallow: /studio/
+
+Sitemap: https://opsiogen.com/sitemap.xml

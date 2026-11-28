@@ -1,0 +1,34 @@
+3:"$Sreact.fragment"
+4:"/_next/static/chunks/421c_el12128q.js"
+5:I[339756,["$4"],"default"]
+6:I[837457,["$4"],"default"]
+b:"/_next/static/chunks/2hh2m4c2mbq1f.js"
+c:"/_next/static/chunks/0rsiwgagrxaxt.js"
+d:"/_next/static/chunks/1jjg_2tgnonz0.js"
+e:"/_next/static/chunks/0myhedi6q4eml.js"
+f:I[521222,["$b","$c","$d","$e"],"HeroGlow"]
+10:"$Sreact.suspense"
+11:I[214219,["$b","$c","$d","$e"],"ContactForm"]
+12:"ContactFormWithParams"
+13:I[214219,["$b","$c","$d","$e"],"$12"]
+14:I[897367,["$4"],"OutletBoundary"]
+17:"ViewportBoundary"
+18:I[897367,["$4"],"$17"]
+19:"MetadataBoundary"
+1a:I[897367,["$4"],"$19"]
+1b:I[27201,["$4"],"IconMark"]
+8:X
+8:C
+9:X
+a:[["children",{"s":"__PAGE__","h":160,"d":{"r":["$","$3","c",{"children":[[["$","section","hero",{"data-band":true,"children":["$","div",null,{"className":"-mt-[var(--header-h)] pt-[calc(var(--header-h)+clamp(64px,calc(3.14vw+52px),112px))] relative isolate bg-page pb-[clamp(40px,calc(2.3vw+31.4px),76px)]","children":["$undefined",["$","$Lf",null,{"short":true}],["$","div",null,{"className":"@container flex flex-col items-center px-gutter text-center","children":["$undefined",["$","h1",null,{"className":"text-giant giant-wrap w-full font-bold uppercase","style":{"fontSize":"min(var(--text-giant), calc(100cqw / 4.681))"},"children":["$","span",null,{"data-reveal-mask":true,"className":"reveal-mask","children":["$","span",null,{"children":["Start a ",["$","span",null,{"className":"text-gradient","children":"project."}],""]}]}]}],["$","p",null,{"className":"mt-[clamp(20px,calc(1.64vw+13.8px),45px)] max-w-[34ch] text-lead text-ink text-balance","children":"Tell us what you need. We’ll come back with a fixed price or the right plan."}],"$undefined"]}],"$undefined","$undefined"]}]}],["$","div","after",{"children":["$","section",null,{"aria-label":"Enquiry form","className":"mt-stack px-gutter","children":["$","div",null,{"className":"mx-auto max-w-[1100px]","children":[false,["$","$10",null,{"fallback":["$","$L11",null,{"needs":[{"value":"ai-websites","label":"AI Websites & Revamps"},{"value":"ai-product-design","label":"AI Product Design & Design Systems"},{"value":"ai-mvps-business-apps","label":"AI MVPs & Business Apps"},{"value":"ai-automation","label":"AI Automation"},{"value":"ai-social-media-marketing","label":"AI Social Media Marketing"},{"value":"digital-marketing","label":"Digital Marketing"},{"value":"ai-creative-subscription","label":"AI Creative Subscription"},{"value":"ai-print-collateral","label":"AI Print & Collateral Design"},{"value":"ai-brand-services","label":"AI Brand Services"},{"value":"ai-video-production","label":"AI Video Production"},{"value":"Monthly Digital Department plan","label":"Monthly Digital Department plan"},{"value":"Not sure yet","label":"Not sure yet"}],"sources":["Event or expo","Search","Referral","Social media","Other"]}],"children":["$","$L13",null,{"needs":"$a:0:1:d:r:props:children:0:1:props:children:props:children:props:children:1:props:fallback:props:needs","sources":"$a:0:1:d:r:props:children:0:1:props:children:props:children:props:children:1:props:fallback:props:sources"}]}]]}]}]}]],[["$","script","script-0",{"src":"/_next/static/chunks/1jjg_2tgnonz0.js","async":true}],["$","script","script-1",{"src":"/_next/static/chunks/0myhedi6q4eml.js","async":true}]],["$","$L14",null,{"children":["$","$10",null,{"name":"Next.MetadataOutlet","children":"$@15"}]}]]}],"p":"$@16","v":null,"s":"$9"}}]]
+2:[["children",{"s":"contact","h":64,"d":{"r":["$","$3","c",{"children":[null,["$","$L5",null,{"parallelRouterKey":"children","template":["$","$L6",null,{}]}]]}],"p":"$@7","v":"$8","s":"$9"},"c":"$Qa"}]]
+1:[["children",{"s":"(site)","h":48,"c":"$Q2"}]]
+0:{"t":{"t":{"s":"","h":80,"c":"$Q1"},"h":{"r":["$","$3","h",{"children":[null,["$","$L18",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#edeaed"}]]}],["$","$L1a",null,{"children":[["$","div",null,{"hidden":true,"children":["$","$10",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Contact | Opsiogen"}],["$","meta","1",{"name":"description","content":"Tell us what you need. We’ll come back with a fixed price or the right plan."}],["$","meta","2",{"name":"application-name","content":"Opsiogen"}],["$","link","3",{"rel":"canonical","href":"https://opsiogen.com/contact"}],["$","meta","4",{"property":"og:title","content":"Contact"}],["$","meta","5",{"property":"og:description","content":"Tell us what you need. We’ll come back with a fixed price or the right plan."}],["$","meta","6",{"property":"og:url","content":"https://opsiogen.com/contact"}],["$","meta","7",{"property":"og:image","content":"https://cdn.sanity.io/images/79m429dl/production/ebbab1b61bb91984b9df023a54cd869160e6abae-1200x630.jpg"}],["$","meta","8",{"property":"og:image:width","content":"1200"}],["$","meta","9",{"property":"og:image:height","content":"630"}],["$","meta","10",{"property":"og:image:alt","content":"Opsiogen: Your digital department, without the hiring."}],["$","meta","11",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","12",{"name":"twitter:title","content":"Contact"}],["$","meta","13",{"name":"twitter:description","content":"Tell us what you need. We’ll come back with a fixed price or the right plan."}],["$","meta","14",{"name":"twitter:image","content":"https://cdn.sanity.io/images/79m429dl/production/ebbab1b61bb91984b9df023a54cd869160e6abae-1200x630.jpg"}],["$","meta","15",{"name":"twitter:image:alt","content":"Opsiogen: Your digital department, without the hiring."}],["$","meta","16",{"name":"twitter:image:width","content":"1200"}],["$","meta","17",{"name":"twitter:image:height","content":"630"}],["$","link","18",{"rel":"icon","href":"/icon.png?icon.451_7-3h-7c4v.png","sizes":"96x96","type":"image/png"}],["$","link","19",{"rel":"apple-touch-icon","href":"/apple-icon.png?apple-icon.0ky2a5vzpfsj5.png","sizes":"180x180","type":"image/png"}],["$","$L1b","20",{}]]}]}],null]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"p":"$@1c","v":null,"s":"$9"}},"a":"$@1d","u":"$@1e","b":"t5KZs-TPWVss3mkkp-TUP"}
+15:null
+1e:true
+9:300
+9:C
+1d:0
+7:"$undefined"
+1c:"$undefined"
+16:"$undefined"
