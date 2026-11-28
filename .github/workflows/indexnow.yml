@@ -1,0 +1,27 @@
+# Tells Bing and the other IndexNow search engines which pages changed (scripts/indexnow.mjs): every morning for the
+# pages whose sitemap date is in the last day, or by hand (GitHub → Actions → "IndexNow" → Run workflow), with "all"
+# ticked to send every page, e.g. after a big change.
+name: IndexNow
+
+on:
+  schedule:
+    - cron: "17 2 * * *"
+  workflow_dispatch:
+    inputs:
+      all:
+        description: "Send every page in the sitemap, not only those changed in the last day"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/indexnow.mjs ${{ inputs.all && '--all' || '' }}

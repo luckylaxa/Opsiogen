@@ -78,6 +78,10 @@ Every push to the working branch goes live by itself, in about 5 minutes.
    variables). The API replaces the whole set, so change them in hPanel only.
 5. Hostinger stops a Node app after 5 minutes without visitors; a Hostinger cron job
    (every 4 minutes, `curl` of the home page) keeps it awake so no visitor waits for it.
+6. Search engines: /llms.txt (`src/app/llms.txt/route.ts`) gives AI assistants a plain guide built from the live
+   content; the **IndexNow** action (`scripts/indexnow.mjs`, daily, or by hand with "all") tells Bing and others
+   which pages changed, checked against the key file `public/<key>.txt`; Google and Bing ownership codes go in
+   Studio → Site settings → SEO.
 The old Vercel copy (opsiogen.vercel.app) is paused: don't deploy there.
 
 ## Full checks (layout, image or speed changes)
