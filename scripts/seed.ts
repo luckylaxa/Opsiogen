@@ -38,7 +38,7 @@ import {
   SERVICES,
   SETTINGS,
 } from "../src/content/seed-data";
-import { POSTS } from "../src/content/blog";
+import { POSTS, bodyText } from "../src/content/blog";
 
 nextEnv.loadEnvConfig(process.cwd());
 
@@ -336,6 +336,21 @@ const OLD_TAGLINE: Record<string, string> = {
  */
 const OLD_GALLERY_FILE = /^(m?\d+|sample-(hero|\d+)|(surgo|meetingful|omg|care|rx|rs|sifio|sifioweb|bigtapp|cabot|cabotbrand|carlton|ev|norsecom|sandlogic|afthab)-(hero|\d+)(-wide)?)\.jpg$/;
 const hash = (value: unknown) => createHash("sha1").update(JSON.stringify(value ?? null)).digest("hex").slice(0, 16);
+
+/**
+ * Starter posts rewritten since an earlier seed (28 Nov 2026: the four demo
+ * examples became real articles and the first one was polished), with a
+ * fingerprint of the body that seed wrote. Add mode replaces a post's text,
+ * date, category and demo mark only while Studio still holds that body, so a
+ * post edited in Studio is kept.
+ */
+const OLD_POST_BODY: Record<string, string> = {
+  "post-how-to-brief-a-website-redesign": "9ce6fc611cd545b9",
+  "post-designing-a-product-people-use-without-training": "08a5dc748079bd6a",
+  "post-where-ai-automation-fits-in-everyday-operations": "54a44d5132bb4b21",
+  "post-planning-a-month-of-social-content-in-one-sitting": "83632491840682db",
+  "post-keeping-a-brand-consistent-across-every-channel": "aa9e2c4705ab6ea9",
+};
 
 /** Card images rendered for an earlier version of the page; add mode swaps them for the current ones. */
 const OLD_CARD_IMAGE = /^offer-(new|revamp|landing|saas|corporate|cms)\.jpg$/;
@@ -847,12 +862,12 @@ async function run() {
   }
 
   console.log("Blog posts");
-  const existingCovers = await client.fetch<{ _id: string; file?: string; ref?: string }[]>(
-    `*[_type == "post" && _id in $ids]{ _id, "file": cover.asset->originalFilename, "ref": cover.asset._ref }`,
+  const existingCovers = await client.fetch<{ _id: string; file?: string; ref?: string; body?: (typeof POSTS)[number]["body"] }[]>(
+    `*[_type == "post" && _id in $ids]{ _id, "file": cover.asset->originalFilename, "ref": cover.asset._ref, body }`,
     { ids: POSTS.map((p) => p._id) },
   );
   for (const p of POSTS) {
-    const body = [];
+    const body: unknown[] = [];
     for (const b of p.body) {
       if (b._type === "image" && "url" in b) {
         const { url, alt, caption, _key } = b;
@@ -881,6 +896,21 @@ async function run() {
     if (!OVERWRITE && had?.file === path.basename(p.cover.url) && had.ref !== cover.asset._ref) {
       console.log(`  updating the cover of ${p._id}`);
       tx.patch(p._id, (patch) => patch.set({ cover }));
+    }
+    // A starter post rewritten since, while Studio still holds the body that seed wrote (add mode).
+    if (!OVERWRITE && had?.body && OLD_POST_BODY[p._id] === hash(bodyText(had.body))) {
+      console.log(`  rewriting ${p._id}`);
+      tx.patch(p._id, (patch) =>
+        patch.set({
+          title: p.title,
+          excerpt: p.excerpt,
+          category: p.category,
+          publishedAt: p.publishedAt,
+          body,
+          demo: Boolean(p.demo),
+          "cover.alt": p.cover.alt,
+        }),
+      );
     }
   }
 
