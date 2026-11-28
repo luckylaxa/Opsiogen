@@ -198,7 +198,7 @@ const STARTER_POSTS: StarterPost[] = [
     publishedAt: "2026-11-28T08:00:00Z",
     cover: {
       url: "/blog/where-ai-automation-fits-in-everyday-operations.jpg",
-      alt: "A daily site report on aubergine with its approval route, beside a phone asking to approve a scaffold order",
+      alt: "An enquiry workflow between two phones on violet: a staff assistant answering a holiday question and a request to approve an order",
     },
     body: [
       [

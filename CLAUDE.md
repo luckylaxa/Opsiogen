@@ -53,9 +53,11 @@ modern devices low and right, our own screens, and the owner's approval before s
 - The audit holds first-load JavaScript to 225 KB compressed per page (about 200 KB today).
 
 ## Blog
-- **Switched off since 26 Nov 2026** (`FEATURES.blog` in `src/lib/features.ts`): /blog, its posts and
-  /blog/preview answer 404, with no footer link and no sitemap entries. The code and the posts stay;
-  set it to `true` to bring the blog back. The rules below apply once it is on again.
+- **On again since 28 Nov 2026** with six real articles, one per main service plus one on search and AI answers
+  (`FEATURES.blog` in `src/lib/features.ts`; it was off from 26 Nov). Set it to `false` to hide /blog, its posts
+  and /blog/preview (404), the footer link and the sitemap entries; the code and posts stay.
+- Covers are our own service artwork at 16:10, artwork across the frame (`design/blog/covers.py`): no client logos,
+  no AI-made people.
 - Posts are Studio documents (`post`); starter posts live in `src/content/blog.ts`.
 - `/blog` is linked from the footer only, never the header or menu.
 - Posts marked Demo show only on `/blog/preview` (noindex, not in the sitemap).

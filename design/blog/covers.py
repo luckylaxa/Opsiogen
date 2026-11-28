@@ -1,13 +1,15 @@
 """Blog covers (owner, 28 Nov 2026: six real articles, covers from our own service artwork, no client logos and no
-AI-made people; then "why white space on left": the 4:3 tiles keep their left side clear for the service page's
-heading, which a cover doesn't have). Every cover is 16:10 (1600 x 1000) with its artwork across the frame:
-- three service tiles whose devices already fill the width, cut from the 4:3 tile (1600 x 1200) by dropping the
-  empty band at the top;
-- two service pages' wide top images (2400 x 1200), whose devices spread across the frame: product design cut in
-  the middle; social, whose cards run nearly edge to edge, cut a little wider with its plain background continued
-  above (mirrored, sharp, as design/tiles does);
-- the SEO tile's three cards at their own size, in two columns in the middle, on the tile's own gradient (fitted
-  from its background).
+AI-made people; then "why white space on left" and "this too": the 4:3 tiles keep their left and top clear for the
+service page's heading, which a cover doesn't have). Every cover is 16:10 (1600 x 1000) with its artwork across the
+frame and even margins, at its own size or smaller (never enlarged):
+- the website revamp tile, whose two pages already fill the width, cut from the 4:3 tile (1600 x 1200) by dropping
+  the empty band at the top;
+- three service pages' wide top images (2400 x 1200), whose devices spread across the frame: product design and
+  automation cut in the middle; social, whose cards run nearly edge to edge, cut a little wider with its plain
+  background continued above (mirrored, sharp, as design/tiles does);
+- the brand rollout tile's site, phone and poster, centred in the frame, the tile's plain background continued past
+  its edges with its own gradient (fitted from the background);
+- the SEO tile's three cards at their own size, in two columns in the middle, on the tile's own gradient.
 The post page shows the cover at 21:10 on wider screens (the middle 762 rows), so nothing that matters sits in the
 top or bottom 119 rows unless it runs off the edge anyway.
 Usage: python3 design/blog/covers.py  ->  public/blog/<slug>.jpg"""
@@ -22,16 +24,15 @@ SIZE = (1600, 1000)
 load = lambda p: Image.open(os.path.join(SRC, p)).convert('RGB')
 save = lambda im, slug: (im.save(os.path.join(OUT, slug + '.jpg'), quality=88, optimize=True, progressive=True), print(slug, im.size))
 
-# Service tiles whose devices fill the width.
-for slug, tile in {
-    'how-to-brief-a-website-redesign': 'ai-websites/tile-revamp.jpg',
-    'where-ai-automation-fits-in-everyday-operations': 'ai-automation/tile-approvals.jpg',
-    'keeping-a-brand-consistent-across-every-channel': 'ai-brand-services/tile-rollout.jpg',
-}.items():
-    save(load(tile).crop((0, 200, 1600, 1200)), slug)
+# The revamp tile: its old and new pages fill the width.
+save(load('ai-websites/tile-revamp.jpg').crop((0, 200, 1600, 1200)), 'how-to-brief-a-website-redesign')
 
-# Product design: the wide image's devices span x 300-2090, so the middle 1920 columns hold them all.
-save(load('ai-product-design/page.jpg').crop((240, 0, 2160, 1200)).resize(SIZE, Image.LANCZOS), 'designing-a-product-people-use-without-training')
+# Product design (devices across x 300-2090) and automation (x 300-2090): the middle 1920 columns hold them all.
+for slug, wide in {
+    'designing-a-product-people-use-without-training': 'ai-product-design/page.jpg',
+    'where-ai-automation-fits-in-everyday-operations': 'ai-automation/page.jpg',
+}.items():
+    save(load(wide).crop((240, 0, 2160, 1200)).resize(SIZE, Image.LANCZOS), slug)
 
 # Social: the cards span x 240-2320 and start 210 rows down; columns 160-2400 centre them, and 200 rows of the plain
 # background above (mirrored from the top rows) make the frame 16:10.
@@ -39,27 +40,59 @@ wide = np.asarray(load('ai-social-media-marketing/page.jpg'))
 wide = np.concatenate([wide[1:201][::-1], wide], 0)[:, 160:2400]
 save(Image.fromarray(wide).resize(SIZE, Image.LANCZOS), 'planning-a-month-of-social-content-in-one-sitting')
 
-# SEO: the tile's cards (search result, ranking chart, organic visits; corners 28 px), measured on the tile.
-tile = np.asarray(load('digital-marketing/tile-seo.jpg')).astype(np.float64)
-SEARCH, CHART, VISITS = (880, 170, 1560, 473), (170, 560, 770, 913), (820, 540, 1380, 1073)
-H, W = tile.shape[:2]
-yy, xx = np.mgrid[0:H, 0:W]
-bg = np.ones((H, W), bool)
-for x0, y0, x1, y1 in (SEARCH, CHART, VISITS):
-    bg[max(0, y0 - 14):y1 + 14, max(0, x0 - 14):x1 + 14] = False
-
-
-def terms(x, y):   # a smooth surface over the frame
+def terms(x, y):   # a smooth surface over a 4:3 tile
     x, y = x / 1600.0, y / 1200.0
     return np.stack([np.ones_like(x), x, y, x * x, y * y, x * y, x ** 3, y ** 3], -1)
 
 
-pick = bg & ((xx % 4) == 0) & ((yy % 4) == 0)
-A = terms(xx[pick], yy[pick])
-coef = np.linalg.lstsq(A, tile[pick], rcond=None)[0]
-print('gradient fit: residual sd', (tile[pick] - A @ coef).std(axis=0).round(2))
+def gradient(tile, background):
+    """The tile's background as a smooth surface, fitted on the pixels `background` marks (every 4th)."""
+    H, W = tile.shape[:2]
+    yy, xx = np.mgrid[0:H, 0:W]
+    pick = background & ((xx % 4) == 0) & ((yy % 4) == 0)
+    A = terms(xx[pick], yy[pick])
+    coef = np.linalg.lstsq(A, tile[pick], rcond=None)[0]
+    print('  gradient fit: residual sd', (tile[pick] - A @ coef).std(axis=0).round(2))
+    return coef
+
+
+grain = lambda shape: np.random.default_rng(7).normal(0, 0.8, shape)   # the tiles' own fine noise
+
+# Brand: the rollout tile's site, phone and poster (x 160-1568, y 420-1068, measured) centred in a 1600 x 1000 window.
+# Where the window runs past the tile (64 px at the right, 44 at the bottom), the background continues as its fitted
+# gradient plus the tile's own grain, taken from the plain band along that edge (the last 20 columns, clear of the
+# poster's edge and its halo, which end at column 1576; the last 40 rows) and mirrored back and forth, so the edge doesn't show.
+tile = np.asarray(load('ai-brand-services/tile-rollout.jpg')).astype(np.float64)
+H, W = tile.shape[:2]
+ART = (160, 420, 1568, 1068)
+yy, xx = np.mgrid[0:H, 0:W]
+coef = gradient(tile, ~((xx > ART[0] - 20) & (xx < ART[2] + 20) & (yy > ART[1] - 20) & (yy < ART[3] + 20)))
+grainy = tile - terms(xx.astype(np.float64), yy.astype(np.float64)) @ coef   # the tile's texture over its gradient
+
+
+def fold(v, n, band):   # a coordinate past the edge (v >= n), folded back and forth inside the last `band` pixels
+    d = np.where(v >= n, v - n, 0) % (2 * band)
+    return np.where(v >= n, n - 1 - np.where(d < band, d, 2 * band - 1 - d), v)
+
+
+wx0 = (ART[0] + ART[2]) // 2 - SIZE[0] // 2
+wy0 = (ART[1] + ART[3]) // 2 - SIZE[1] // 2
+gy, gx = np.mgrid[wy0:wy0 + SIZE[1], wx0:wx0 + SIZE[0]]
+win = terms(gx.astype(np.float64), gy.astype(np.float64)) @ coef + grainy[fold(gy, H, 40), fold(gx, W, 20)]
+assert wx0 >= 0 and wy0 >= 0 and W - 20 > 1576 and H - 40 > ART[3]
+print('  window', (wx0, wy0), 'art margins', ART[0] - wx0, wx0 + SIZE[0] - ART[2], ART[1] - wy0, wy0 + SIZE[1] - ART[3])
+save(Image.fromarray(np.clip(win, 0, 255).astype(np.uint8)), 'keeping-a-brand-consistent-across-every-channel')
+
+# SEO: the tile's cards (search result, ranking chart, organic visits; corners 28 px), measured on the tile.
+tile = np.asarray(load('digital-marketing/tile-seo.jpg')).astype(np.float64)
+SEARCH, CHART, VISITS = (880, 170, 1560, 473), (170, 560, 770, 913), (820, 540, 1380, 1073)
+H, W = tile.shape[:2]
+bg = np.ones((H, W), bool)
+for x0, y0, x1, y1 in (SEARCH, CHART, VISITS):
+    bg[max(0, y0 - 14):y1 + 14, max(0, x0 - 14):x1 + 14] = False
+coef = gradient(tile, bg)
 cy, cx = np.mgrid[0:SIZE[1], 0:SIZE[0]]
-canvas = terms(cx.astype(np.float64), cy * 1.2) @ coef + np.random.default_rng(7).normal(0, 0.8, (SIZE[1], SIZE[0], 3))
+canvas = terms(cx.astype(np.float64), cy * 1.2) @ coef + grain((SIZE[1], SIZE[0], 3))
 out = Image.fromarray(np.clip(canvas, 0, 255).astype(np.uint8))
 
 # Two columns in the middle: the search result over the chart on the left, the visits card on the right, 50 px apart.
