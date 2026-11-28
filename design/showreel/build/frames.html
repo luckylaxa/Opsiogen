@@ -194,7 +194,7 @@ const SHOTS=[
 ['Open', 'Opening line', ()=>type(COAL,[[['You bring the ',700,PAPER],['idea.',700,AQUA]]],150),0],
 ...(SHARE?[['Open', 'Brands already did', ()=>brandRows(),1]]:[]),
 ['Open', 'Stock: she points at our character (Adobe Stock 488563452)', ()=>full(S+'stock/stills/point.jpg'),2],
-['Open', 'We take it from here, the character', ()=>{type(COAL,[[['We take it ',700,PAPER],['from here.',700,PAPER]]],130).style.transform='translateY(176px)';img(A+'ch-front.png',f,{position:'absolute',width:'330px',left:'795px',top:'266px'})},3],
+['Open', 'We take it from here, the character', ()=>{type(COAL,[[['We take it ',700,PAPER],['from here.',700,PAPER]]],130).style.transform='translateX(143px)';img(A+'ch-front.png',f,{position:'absolute',width:'330px',left:'192px',top:'376px'})},3],
 ['Burst', 'Three apps, three projects', ()=>{bg(LIME);phone(A+'mf-m1.jpg',330,150,400,-4);phone(A+'omg-08.jpg',760,110,400,0);phone(A+'m-carlton.jpg',1190,181,400,4)},4],
 ['Burst', 'Grid of the work, reshuffles twice', ()=>wall(['Oh My Glam: try-on','Website: Care Connect','Service artwork: product','Website 1','Brand: Cabot team tees','Torvi','Website 3','Service artwork: social','Service artwork: print'],3,12,
   [['Campaigns','Brand: duo, Norsecom','Brand: tiles, out of home','SandLogic: guideline pages','Oh My Glam: row','Website: Carlton Noble, Travel','Product screen: Meetingful','Print: posters','Service artwork: AI automation'],
@@ -389,9 +389,10 @@ if(MOTION)(()=>{
   // Text shots, and the character's part in them.
   if(T==='Opening line'||T.startsWith('Line:'))words.forEach((s,i)=>rise(s,.04+i*BEAT/2,60,.16));
   else if(T.startsWith('We take it')){words.forEach((s,i)=>rise(s,i*.05-.04));
-    // It lands above the line, blinks, and the camera dives into its eye. The two sit centred on the frame together
-    // (owner, 28 Nov: "Text and character should be vertically centre aligned"): 176 px lower than before.
-    const k=330/720,X=795+359.5*k,Y=266+357*k,D=497*k,LX=X,LY=Y,path=hops([[BEAT/4,X,Y]],0,0,D);
+    // It lands beside the line, blinks, and the camera dives into its eye. The two share the frame's middle line, side by
+    // side and centred as a pair (owner, 28 Nov: "Text and character should be vertically centre aligned", then "Text
+    // should be vertically Center aligned").
+    const k=330/720,X=357,Y=540,D=497*k,LX=X,LY=Y,path=hops([[BEAT/4,X,Y]],0,0,D);
     add((t,d)=>{const p=path(t),q=clamp((t-.56)/(d-1/30-.56)),z=Math.pow(24,q*q);
       // Arms up as it drops in, out wide as it lands, a hand over its eyes as it looks up, then a thumbs up: we take it from here.
       ball.at(p.x,p.y,D,{rot:p.rot,pose:t>.15&&t<.32?'upleft':'front',blink:blinkPh(t,.33),res:z,floor:Y+D/2,v:vel(path,t),
@@ -725,7 +726,7 @@ if(MOTION)(()=>{
   // of the work: the app, the coast photo), comes in from the side the camera whipped to (whip), opens out of the
   // white of the high five from the hands (flash), or out of our character's lens over the clip's last frame (lens).
   // Cut 22: the clips that stay keep theirs; each big word hands over the same way, from where its own rush ends.
-  const ENTER={'488563452':['push',960,430],'405010525':['whip',1],
+  const ENTER={'488563452':['push',357,540],'405010525':['whip',1],
     'Word: Recognition.':['lens',955,212],'Word: Trust.':['push',960,540],'Word: Adoption.':['push',763,571],'Word: Clarity.':['push',960,540],
     'Word: Scale.':['push',929,426],'Word: Conversions.':['push',873,696],'Word: Reach.':['whip',-1],'Word: Growth.':['flash',1221,345]};
   const prevName=n?SHOTS[n-1][1]:'',ENT=(Object.entries(ENTER).find(([k])=>prevName.includes(k))||[])[1];
