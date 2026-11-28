@@ -218,7 +218,7 @@ The reel is the `showreel` section of the Home page in `src/content/seed-data.ts
 the Home hero, and the Work page opens with the featured project, Oh My Glam, instead):
 `/work/showreel.mp4`, `/work/showreel.webm` and the poster `/work/showreel.jpg` (1920 x 1080, with
 alt text). Since 18 Nov (Lucky: "for time being you can put this video in website") it is the whole
-showreel with its music (now cut 21: cut 17 rendered again with the character's new bottom cut; cut 14 with the version 3 character acting with its hands, solid, 60 s, the one version, with the opening logo beat: Lucky, 19 Nov, "use 62 sec
+showreel with its music (now cut 24, 28 Nov: one big word per chapter, 49.7 s; before it cut 21: cut 17 rendered again with the character's new bottom cut; cut 14 with the version 3 character acting with its hands, solid, 60 s, the one version, with the opening logo beat: Lucky, 19 Nov, "use 62 sec
 version only", then "merge new opening and publish"): the card plays it muted and shows a sound button and a full-view button
 (`sound: true`; full view fills the screen with the film and its sound and the browser's own controls), and is
 16:9 on phones too, so no edge of the film is cut. Web copies: H.264 CRF 26 with AAC (about 19 MB)
