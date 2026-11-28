@@ -29,7 +29,8 @@ def beats(n):
     if n.startswith("Word:"): return 2
     if n.startswith("Logo"): return 9    # 4 beats flying through the O (frames.html LOGO_IN), then 5 (the film within a minute)
     if n.startswith("Wall of"): return 3   # the closing wall pulls back into the grid (cut 5's tilted wall)
-    if n == "Brand: Rohde & Schwarz keynote": return 2   # in the place and time of the Afthab posters (owner, 27 Nov)
+    if n == "Brand: tiles, mixed pieces": return 3   # the shot after it went (owner, 27 Nov), and its beats came here
+    if n.startswith("Brand: duo, Norsecom"): return 2   # ...and here, so the pair no longer flashes by
     if n == "Website: Cabot Solutions": return 2   # it lands out of the word before: give it time
     if n.startswith("Brand: a brand being built"): return 4   # drawn fast (owner, 27 Nov): the bulb lights up by 1.25 s of its 1.7 s
     if n == "SandLogic: social grid": return 2   # its columns slide like the brand wall's (owner, 27 Nov): its time, the beat the drawing after it gave
