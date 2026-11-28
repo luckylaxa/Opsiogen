@@ -228,6 +228,17 @@ in while Studio still holds the seeded file), update the poster alt, then follow
 in CLAUDE.md (typecheck, commit, push, Seed Sanity in add mode, deploy through the Vercel API)
 and check the live Home page on desktop and phone.
 
+## Owner's rules from 28 Nov (cut 23 review)
+
+- **Replacing an image:** design it properly in Figma as a realistic, modern mockup: the artwork fitted to the surface
+  (perspective, folds, light, texture), never a logo pasted on. If that can't be done well, give the owner a ready
+  image prompt instead; the owner makes it.
+- **People in mockups** for Indian clients are Indian, and never posed as a couple.
+- **Text:** little of it, Superside-style: one big word or one short sentence at a time, never long lines. The film's
+  words follow the website's messaging ("One partner. Every digital need.", the service taglines).
+- The live version (cut 21) is the reference for the feel; the stock clips were replaced with text only because they
+  looked old and unconnected. The film does not have to be a minute long.
+
 ## Order of work
 
 1. Confirm Afthab's work is in.
